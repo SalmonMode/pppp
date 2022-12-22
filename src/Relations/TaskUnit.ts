@@ -23,6 +23,9 @@ export default class TaskUnit {
   get directDependencies(): Set<TaskUnit> {
     return this._directDependencies;
   }
+  /**
+   * All task units this unit depends on.
+   */
   getAllDependencies(): Set<TaskUnit> {
     const deps = new Set<TaskUnit>(this.directDependencies);
     this.directDependencies.forEach((parentUnit) =>
