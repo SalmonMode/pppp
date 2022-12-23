@@ -1,6 +1,6 @@
-import TaskUnit from "./TaskUnit";
 import { v4 as uuidv4 } from "uuid";
 import { DependencyOrderError } from "../Error";
+import TaskUnit from "./TaskUnit";
 
 /**
  * A set of {@link TaskUnit}s that comprise a single "chain", i.e., one that will be positioned on the graph as a row.
@@ -211,5 +211,8 @@ export default class IsolatedDependencyChain {
    */
   getExternalDependencies(): Set<TaskUnit> {
     return this._externalDependencies;
+  }
+  getLastUnit(): TaskUnit {
+    return this._tail[this._tail.length - 1] || this._head;
   }
 }
