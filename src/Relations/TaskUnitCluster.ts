@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { DisjointedUnitsError, NoSuchChainError } from "../Error";
+import { NoSuchChainError } from "../Error";
 import {
   InterconnectionStrengthMapping,
   IsolatedChainMapping,
@@ -7,6 +7,7 @@ import {
   UnitToChainMap,
 } from "../types";
 import IsolatedDependencyChain from "./IsolatedDependencyChain";
+import StrainMap from "./StrainMap";
 import TaskUnit from "./TaskUnit";
 
 /**
@@ -23,82 +24,18 @@ import TaskUnit from "./TaskUnit";
 export default class TaskUnitCluster {
   public readonly id: string;
   private _chains: IsolatedDependencyChain[] = [];
+  /**
+   * The amount of paths that lead to a unit plus the amount of paths it leads to.
+   */
+  private _strainMap: StrainMap;
   private _unitToChainMap: UnitToChainMap = {};
   private _chainMap: IsolatedChainMapping = {};
   private _chainInterconnectionStrengthMap: InterconnectionStrengthMapping = {};
   constructor(public readonly units: TaskUnit[]) {
     this.id = uuidv4();
-
-    this._verifyAllUnitsAreInterconnected();
-    this._buildNextMostDenseChainWithoutIsolatedUnits();
+    this._strainMap = new StrainMap(this.units);
+    this._buildNextMostPreferredChainWithoutIsolatedUnits();
     this._mapChainInterconnections();
-  }
-  /**
-   * Make sure all units passed to the constructor have a path to every other unit.
-   */
-  private _verifyAllUnitsAreInterconnected(): void {
-    const undeterminedUnits: TaskUnit[] = [...this.units];
-    let undeterminedUnitsBuffer: TaskUnit[] = [];
-    const firstUnit = this.units[0];
-    if (firstUnit === undefined) {
-      throw new RangeError("Must provide at least 1 TaskUnit");
-    }
-    const interconnectedUnits = new Set<TaskUnit>();
-    let unit = undeterminedUnits.shift();
-    let foundMatchOnThisRunThrough = false;
-    while (unit !== undefined) {
-      const deps = unit.getAllDependencies();
-      if (interconnectedUnits.has(unit)) {
-        // Unit, and thus, all of its dependencies are accounted for. Nothing will change by processing this unit, so we
-        // should skip to the next without considering this a match.
-      } else if (
-        [...deps].some((depUnit) => interconnectedUnits.has(depUnit))
-      ) {
-        // there is overlap, so merge its dependencies with the established set of interconnected units
-        foundMatchOnThisRunThrough = true;
-        deps.forEach((depUnit) => interconnectedUnits.add(depUnit));
-        // add unit itself
-        interconnectedUnits.add(unit);
-      } else if (interconnectedUnits.size === 0) {
-        // This must be the very first iteration, so we should be adding the first unit to the set to start off our
-        // foundation, as well as prevent issues with it never figuring out to to add the unit to the set because no
-        // other unit references it.
-        foundMatchOnThisRunThrough = true;
-        interconnectedUnits.add(unit);
-        deps.forEach((depUnit) => interconnectedUnits.add(depUnit));
-      } else {
-        // no overlap, so add it to the buffer so it can be checked again later
-        undeterminedUnitsBuffer.push(unit);
-      }
-      unit = undeterminedUnits.shift();
-      if (unit === undefined) {
-        // reached the end of this run through, so check if there was a problem, if followup needs to be done, or we're
-        // finished
-        if (undeterminedUnitsBuffer.length > 0) {
-          // Some things weren't seen as connected.
-          if (foundMatchOnThisRunThrough) {
-            // There's a chance they may be connected to whatever was recently matched on, so add the buffer units back
-            // into the main array and start over.
-            undeterminedUnitsBuffer.forEach((undeterminedUnit) =>
-              undeterminedUnits.push(undeterminedUnit)
-            );
-            undeterminedUnitsBuffer = [];
-            unit = undeterminedUnits.shift();
-          } else {
-            // There's no chance they're connected, so throw an error.
-            throw new DisjointedUnitsError(
-              "All units passed must be interconnected either directly or indirectly."
-            );
-          }
-        } else {
-          // Everything is resolved and all units are interconnected.
-        }
-        foundMatchOnThisRunThrough = false;
-      } else {
-        // This run through is not complete.
-      }
-    }
-    // Everything is resolved and all units are interconnected.
   }
   get chains(): IsolatedDependencyChain[] {
     return this._chains;
@@ -106,38 +43,43 @@ export default class TaskUnitCluster {
   /**
    * Build the chains of units that will comprise the horizontal rows on the graph.
    *
-   * These chains are based on "ideal visual density". It works by first finding the eligible "heads", i.e., the units
-   * that no other units (or at least no already chained units) depend on. Then, of those heads, it finds the one with
-   * the greatest potential visual density. Whichever chain wins is stored, and its units are marked as "isolated"
-   * making them off limits to other chains in recursive calls. Then, the available heads are figured out again, and the
-   * process is repeated until no available heads remain.
+   * These chains are based on what is preferred according to each unit. It works by first finding the eligible "heads",
+   * i.e., the units that no other units (or at least no already chained units) depend on. Then, of those heads, it
+   * finds the one with the greatest preference according to how the sorting works. Whichever chain wins is stored, and
+   * its units are marked as "isolated" making them off limits to other chains in recursive calls. Then, the available
+   * heads are figured out again, and the process is repeated until no available heads remain.
    */
-  private _buildNextMostDenseChainWithoutIsolatedUnits(
+  private _buildNextMostPreferredChainWithoutIsolatedUnits(
     isolatedUnits: TaskUnit[] = []
   ) {
     let heads = this.getHeadsWithoutUnits(isolatedUnits);
-    const potentialIdealChains: IsolatedDependencyChain[] = heads.map((head) =>
-      head.getIdealDensityChainWithoutUnits(isolatedUnits, head)
+    const chainsForHeads = heads.map((head) =>
+      this._strainMap.getMostStrainedPathsFromUnitWithoutUnits(
+        head,
+        isolatedUnits
+      )
     );
-    // Sort the chains according to greatest visual density.
-    potentialIdealChains.sort((prev, next) => {
-      // use density to sort (more preferred)
-      const densityDiff = next.visualDensity - prev.visualDensity;
-      if (densityDiff === 0) {
-        // same density, so use amount of presence (more preferred)
-        const presenceDiff = next.presenceTime - prev.presenceTime;
-        if (presenceDiff === 0) {
-          // same presence, so use collective attachment (more preferred)
-          const attachmentDiff =
-            next.head.getCollectiveAttachment() -
-            prev.head.getCollectiveAttachment();
-          return attachmentDiff;
+    const potentialPreferredChains: IsolatedDependencyChain[] =
+      chainsForHeads.reduce((acc, chains) => [...acc, ...chains], []);
+    // Sort the chains.
+    potentialPreferredChains.sort((prev, next) => {
+      // use total strain (more preferred)
+      const nextStrain = this._strainMap.getStrainOfChain(next);
+      const prevStrain = this._strainMap.getStrainOfChain(prev);
+      const strainDiff = nextStrain - prevStrain;
+      if (strainDiff === 0) {
+        // use density to sort (more preferred)
+        const densityDiff = next.visualDensity - prev.visualDensity;
+        if (densityDiff === 0) {
+          // same density, so use amount of presence (more preferred)
+          const presenceDiff = next.presenceTime - prev.presenceTime;
+          return presenceDiff;
         }
-        return presenceDiff;
+        return densityDiff;
       }
-      return densityDiff;
+      return strainDiff;
     });
-    const nextMostDenseChain = potentialIdealChains[0];
+    const nextMostDenseChain = potentialPreferredChains[0];
     if (nextMostDenseChain === undefined) {
       // There must not have been any remaining heads left, so we're done building the chains.
       return;
@@ -148,7 +90,7 @@ export default class TaskUnitCluster {
     });
     this._chains.push(nextMostDenseChain);
     this._chainMap[nextMostDenseChain.id] = nextMostDenseChain;
-    this._buildNextMostDenseChainWithoutIsolatedUnits(isolatedUnits);
+    this._buildNextMostPreferredChainWithoutIsolatedUnits(isolatedUnits);
   }
   /**
    * Run through the established chains and figure out how they are connected to each other.
@@ -241,7 +183,7 @@ export default class TaskUnitCluster {
   /**
    *
    * @param chain The chain to get the strength map for
-   * @returns The object detailing how strongly a chain it attached to other chains
+   * @returns The object detailing how strongly a chain is attached to other chains
    */
   getStrengthMapForChain(chain: IsolatedDependencyChain): RelationshipMapping {
     let chainRelationships = this._chainInterconnectionStrengthMap[chain.id];

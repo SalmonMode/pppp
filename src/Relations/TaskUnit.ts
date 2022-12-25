@@ -1,15 +1,18 @@
 import { v4 as uuidv4 } from "uuid";
 import { RelationshipMapping } from "../types";
 import IsolatedDependencyChain from "./IsolatedDependencyChain";
+import StrainMap from "./StrainMap";
 
 export default class TaskUnit {
   public readonly id: string;
   /**
    * The direct dependencies of this {@link TaskUnit}.
    */
+  private _providedDirectDependencies: TaskUnit[];
   private _directDependencies: Set<TaskUnit>;
   private _allDependencies: Set<TaskUnit>;
   private _attachmentMap: RelationshipMapping;
+  private _attachmentToDependencies: number;
   private _presenceTime: number;
   constructor(
     parentUnits: TaskUnit[],
@@ -17,14 +20,46 @@ export default class TaskUnit {
     public readonly endDate: Date
   ) {
     this.id = uuidv4();
-    this._directDependencies = new Set<TaskUnit>(parentUnits);
+    this._providedDirectDependencies = parentUnits;
+    this._directDependencies = this._getTrueDirectDependencies();
     this._presenceTime =
       this.endDate.getTime() - this.initialStartDate.getTime();
     this._allDependencies = this._getAllDependencies();
     this._attachmentMap = this._buildAttachmentMap();
+    this._attachmentToDependencies = this._calculateAttachmentToDependencies();
+  }
+  /**
+   * Sometimes, provided dependencies may be redundant. This can occur if a provided direct dependency is provided by
+   * another direct dependency. This function strips out those redundancies and returns a set of units without the
+   * redundant ones.
+   *
+   * For example:
+   *
+   * ```text
+   *          ┏━━━┓___┏━━━┓___┏━━━┓
+   *         A┗━━━┛╲  ┗━━━┛╲B ┗━━━┛C
+   *                ╲_______╲
+   *                 ╲┏━━━┓__╲┏━━━┓
+   *                  ┗━━━┛ D ┗━━━┛E
+   * ```
+   *
+   * `E` has a redundant dependency on `A`, because it is provided through either `B` or `D`.
+   *
+   * @returns a set of task units that aren't dependent on each other
+   */
+  private _getTrueDirectDependencies(): Set<TaskUnit> {
+    const trueDirect = this._providedDirectDependencies.filter(
+      (unit) =>
+        !this._providedDirectDependencies.some((dep) => dep.isDependentOn(unit))
+    );
+    return new Set(trueDirect);
   }
   /**
    * The direct dependencies of this {@link TaskUnit}.
+   *
+   * Sometimes references to units can be provided redundantly. For example, if `A` depends on `B` and `C`, but `B` also
+   * depends on `C`, then `A`'s dependency on C is implied my the transitive property. This property provides access to
+   * only the direct dependencies that are not redundant in this way.
    */
   get directDependencies(): Set<TaskUnit> {
     return this._directDependencies;
@@ -44,6 +79,9 @@ export default class TaskUnit {
    */
   getAllDependencies(): Set<TaskUnit> {
     return this._allDependencies;
+  }
+  get attachmentMap(): RelationshipMapping {
+    return this._attachmentMap;
   }
   /**
    * Determine the numer of possible paths this unit can take to each of its dependencies.
@@ -83,18 +121,16 @@ export default class TaskUnit {
    */
   private _buildAttachmentMap(): RelationshipMapping {
     const mapping: RelationshipMapping = {};
-    for (let dep of this.getAllDependencies()) {
-      if (this.isInirectlyDependentOn(dep)) {
-        // This unit is indirectly dependent on the unit, so counting a direct reference to it would be redundant. This
-        // should only count the number of paths that could be taken to get to it once drawn out.
-        mapping[dep.id] = [...this.directDependencies].reduce(
-          (sum, depUnit) => depUnit.getNumberOfPathsToDependency(dep) + sum,
-          0
-        );
-      } else {
-        // This must be the earliest point in the chain that this unit is a direct dependency, so there is only 1 path to
-        // this unit from here.
-        mapping[dep.id] = 1;
+    for (let dep of this.directDependencies) {
+      // This must be the earliest point in the chain that this unit is a direct dependency, so there is only 1 path
+      // to this unit from here.
+      mapping[dep.id] = 1;
+      // Additionally, any paths to its dependencies can be reached from here, so lets add its total paths to those
+      // depencies to any other paths to them that we've seen from other dependencies.
+      for (let [key, value] of Object.entries(dep.attachmentMap)) {
+        // assign it to 0 if it's not already set
+        mapping[key] ??= 0;
+        mapping[key] += value;
       }
     }
     return mapping;
@@ -147,6 +183,72 @@ export default class TaskUnit {
     return pathCount;
   }
   /**
+   * The amount of paths this unit can go through its dependencies.
+   *
+   * For example:
+   *
+   * ```text
+   *          ┏━━━┓___┏━━━┓
+   *         A┗━━━┛╲ ╱┗━━━┛╲B
+   *                ╳       ╲
+   *          ┏━━━┓╱_╲┏━━━┓__╲┏━━━┓
+   *         D┗━━━┛╲ ╱┗━━━┛E ╱┗━━━┛F
+   *                ╳       ╱
+   *          ┏━━━┓╱_╲┏━━━┓╱
+   *         G┗━━━┛   ┗━━━┛H
+   * ```
+   *
+   * `F` has a total attachment of 7 to all of its dependents, because that's the number of paths it can take to the
+   * ends of each of its available tails. Those paths are:
+   *
+   * 1. `F->B->A`
+   * 2. `F->B->D`
+   * 3. `F->E->A`
+   * 4. `F->E->D`
+   * 5. `F->E->G`
+   * 6. `F->H->D`
+   * 7. `F->H->G`
+   */
+  get attachmentToDependencies(): number {
+    return this._attachmentToDependencies;
+  }
+  /**
+   * Claculate the amount of paths this unit can go through its dependencies.
+   *
+   * For example:
+   *
+   * ```text
+   *          ┏━━━┓___┏━━━┓
+   *         A┗━━━┛╲ ╱┗━━━┛╲B
+   *                ╳       ╲
+   *          ┏━━━┓╱_╲┏━━━┓__╲┏━━━┓
+   *         D┗━━━┛╲ ╱┗━━━┛E ╱┗━━━┛F
+   *                ╳       ╱
+   *          ┏━━━┓╱_╲┏━━━┓╱
+   *         G┗━━━┛   ┗━━━┛H
+   * ```
+   *
+   * `F` has a total attachment of 7 to all of its dependents, because that's the number of paths it can take to the
+   * ends of each of its available tails. Those paths are:
+   *
+   * 1. `F->B->A`
+   * 2. `F->B->D`
+   * 3. `F->E->A`
+   * 4. `F->E->D`
+   * 5. `F->E->G`
+   * 6. `F->H->D`
+   * 7. `F->H->G`
+   *
+   * Note: This is only used in the constructor to cache the value.
+   *
+   */
+  private _calculateAttachmentToDependencies(): number {
+    return [...this.directDependencies].reduce(
+      (acc, dep) => acc + (dep.attachmentToDependencies || 1),
+      0
+    );
+  }
+  /**
    * The amount of "presence" this unit would have on a graph.
    *
    * "Presence":
@@ -169,133 +271,5 @@ export default class TaskUnit {
    */
   isDependentOn(unit: TaskUnit): boolean {
     return this._allDependencies.has(unit);
-  }
-  /**
-   * Check whether or not the passed unit is an indirect dependency of this unit.
-   *
-   * While this unit may be directly dependent on the passed unit, this will tell if there's an earlier point in the
-   * dependencies that is depedent on the passed unit. This is helpful when trying to account for redundant dependency
-   * paths.
-   *
-   * @param unit the unit to check if its a dependency
-   * @returns true, if this unit is indirectly dependent on the passed unit, false, if not
-   */
-  isInirectlyDependentOn(unit: TaskUnit): boolean {
-    return [...this._directDependencies].some((dep) => dep.isDependentOn(unit));
-  }
-  /**
-   * Given a list of "off limits" units, find and return the highest density chain including this unit (greedy).
-   *
-   * This will traverse as far back in the chain of dependencies as it can until it hits a dead each, or would reach an
-   * off limits unit.
-   *
-   * Units are "off limits" usually because this is called when trying to find all the relevant dependency chains for a
-   * cluster and those units were already used to make other chains.
-   *
-   * @param unavailableUnits the set of units that already have been used for other chains
-   * @returns the available chain with the greatest visual density when this unit is included
-   */
-  getIdealDensityChainWithoutUnits(
-    unavailableUnits: TaskUnit[],
-    rootUnit?: TaskUnit
-  ): IsolatedDependencyChain {
-    const referenceUnit: TaskUnit = rootUnit || this;
-    let chains: IsolatedDependencyChain[] = [];
-    const availableParents = [...this.directDependencies].filter(
-      (dep) => !unavailableUnits.includes(dep)
-    );
-    for (let parent of availableParents) {
-      chains.push(
-        new IsolatedDependencyChain([
-          this,
-          ...parent.getIdealDensityChainWithoutUnits(
-            unavailableUnits,
-            referenceUnit
-          ).units,
-        ])
-      );
-    }
-    chains.sort((prev, next) => {
-      // use density to sort (more preferred)
-      const densityDiff = next.visualDensity - prev.visualDensity;
-      if (densityDiff === 0) {
-        // same density, so use amount of presence (more preferred)
-        const presenceDiff = next.presenceTime - prev.presenceTime;
-        if (presenceDiff === 0) {
-          // same presence, so use number of external dependencies (more preferred)
-          const extDepsDiff =
-            next.getExternalDependencies().size -
-            prev.getExternalDependencies().size;
-          if (extDepsDiff === 0) {
-            // same number of external dependencies, so use greatest attachment (more preferred)
-            const nextAttachment = referenceUnit.getNumberOfPathsToDependency(
-              next.getLastUnit()
-            );
-            const prevAttachment = referenceUnit.getNumberOfPathsToDependency(
-              prev.getLastUnit()
-            );
-            const attachmentDiff = nextAttachment - prevAttachment;
-            return attachmentDiff;
-          }
-          return extDepsDiff;
-        }
-        return presenceDiff;
-      }
-      return densityDiff;
-    });
-    let mostDenseChain = chains[0];
-    if (mostDenseChain === undefined) {
-      // No available parents, so this is automatically the most ideal chain, i.e. a chain containing only itself,
-      // because it has nowhere left to go.
-      mostDenseChain = new IsolatedDependencyChain([this]);
-    }
-    return mostDenseChain;
-  }
-  /**
-   * The number of potential paths this unit can take to all of its dependencies.
-   *
-   * For example:
-   *
-   * ```text
-   *          ┏━━━┓___┏━━━┓___┏━━━┓
-   *         A┗━━━┛╲ ╱┗━━━┛╲B╱┗━━━┛C
-   *                ╳       ╳
-   *          ┏━━━┓╱_╲┏━━━┓╱_╲┏━━━┓
-   *         D┗━━━┛╲ ╱┗━━━┛╲E╱┗━━━┛F
-   *                ╳       ╳
-   *          ┏━━━┓╱_╲┏━━━┓╱_╲┏━━━┓
-   *         G┗━━━┛   ┗━━━┛H  ┗━━━┛I
-   * ```
-   *
-   * `F` has a collective attachment of 10. The "attachments" are the edges that it can traverse. In this case, those
-   * edges are: `F->B`; `B->A`; `B->D`; `F->E`; `E->A`; `E->D`; `E->G`; `F->H`; `H->D`; `H->G`. This can be calculated
-   * just by totalling the getting the sum of the paths for each dependency.
-   *
-   * This is helpful for figuring out where the most noise can come from when trying to visualize the dependencies. It
-   * will be helpful to put the most noise at the center of the graph to reduce the amount of intersecting edges. In the
-   * above example, depending on how the units get passed as dependencies, without using collective attachment to
-   * determine ideal paths, `F->B->A` might be considered the ideal, shoving the rest of the noise to one side of the
-   * graph, putting it off balance.
-   *
-   * Redundant paths can occur, for example, if `F` also had a direct dependency on `A`, like so:
-   *
-   * ```text
-   *          ┏━━━┓___┏━━━┓___┏━━━┓
-   *         A┗━━━┛╲  ┗━━━┛╲B ┗━━━┛C
-   *                ╲_______╲
-   *                 ╲┏━━━┓__╲┏━━━┓
-   *                  ┗━━━┛ E ┗━━━┛F
-   * ```
-   *
-   * These redundant paths should be ignored. So in this example, the only accepted paths to `A` from `F` would still
-   * be: `F->B->A`; and `F->E->A`.
-   *
-   * @returns a number representing the number of potential paths this unit can take across its dependencies
-   */
-  getCollectiveAttachment(): number {
-    return Object.values(this._attachmentMap).reduce(
-      (sum, paths) => paths + sum,
-      0
-    );
   }
 }
