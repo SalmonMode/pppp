@@ -1,5 +1,9 @@
 import { expect } from "chai";
-import { DisjointedUnitsError, NoSuchChainError } from "../Error";
+import {
+  DependencyOrderError,
+  DisjointedUnitsError,
+  NoSuchChainError,
+} from "../Error";
 import { assertIsObject } from "../typePredicates";
 import IsolatedDependencyChain from "./IsolatedDependencyChain";
 import { default as TaskUnit } from "./TaskUnit";
@@ -301,11 +305,14 @@ describe("TaskUnitCluster", function () {
        *                                |
        *                                V
        *
-       * Chain 1:         ┏━━━┓_____________┏━━━━━━━━━━━┓
-       *                 A┗━━━┛             ┗━━━━━━━━━━━┛B
+       * Chain 1:                           ┏━━━━━━━━━━━┓
+       *                                    ┗━━━━━━━━━━━┛B
        *
-       * Chain 2:   ┏━━━┓________┏━━━┓
-       *           C┗━━━┛        ┗━━━┛D
+       * Chain 2:         ┏━━━┓__┏━━━┓
+       *                 A┗━━━┛  ┗━━━┛D
+       *
+       * Chain 2:   ┏━━━┓
+       *           C┗━━━┛
        * ```
        */
       let unitA: TaskUnit;
@@ -348,20 +355,22 @@ describe("TaskUnitCluster", function () {
           new IsolatedDependencyChain([unitD, unitA]).visualDensity
         );
       });
-      it("should have only twochains", function () {
-        expect(cluster.chains.length).to.equal(2);
+      it("should have only three chains", function () {
+        expect(cluster.chains.length).to.equal(3);
       });
-      it("should have one chain with just A and B", function () {
+      it("should have one chain with just A and D", function () {
         const aChain = cluster.getChainOfUnit(unitA);
-        const bChain = cluster.getChainOfUnit(unitB);
-        expect(aChain).to.equal(bChain);
+        const dChain = cluster.getChainOfUnit(unitD);
+        expect(aChain).to.equal(dChain);
         expect(aChain.units.length).to.equal(2);
       });
-      it("should have one chain with just C and D", function () {
+      it("should have one chain with just B", function () {
+        const bChain = cluster.getChainOfUnit(unitB);
+        expect(bChain.units.length).to.equal(1);
+      });
+      it("should have one chain with just C", function () {
         const cChain = cluster.getChainOfUnit(unitC);
-        const dChain = cluster.getChainOfUnit(unitD);
-        expect(cChain).to.equal(dChain);
-        expect(cChain.units.length).to.equal(2);
+        expect(cChain.units.length).to.equal(1);
       });
     });
     describe("Same Density, Different Presence (Less Presence First)", function () {
@@ -465,22 +474,23 @@ describe("TaskUnitCluster", function () {
        *                  ╭  ┏━━━┓___┏━━━┓___┏━━━┓  ╮
        *                  │ A┗━━━┛╲ ╱┗━━━┛╲B╱┗━━━┛C │
        *                  │        ╳       ╳        ├ 4 Connections
-       *    0 Connections ┤  ┏━━━┓╱_╲┏━━━┓╱_╲┏━━━┓  │╮        
+       *    0 Connections ┤  ┏━━━┓╱_╲┏━━━┓╱_╲┏━━━┓  │╮
        *                  │ D┗━━━┛╲ ╱┗━━━┛╲E╱┗━━━┛F ╯│
        *                  │        ╳       ╳         ├ 4 Connections
-       *                  │  ┏━━━┓╱_╲┏━━━┓╱_╲┏━━━┓   │        
-       *                  ╰ G┗━━━┛   ┗━━━┛H  ┗━━━┛I  ╯        
-       
-       *                              | 
-       *                              V 
+       *                  │  ┏━━━┓╱_╲┏━━━┓╱_╲┏━━━┓   │
+       *                  ╰ G┗━━━┛   ┗━━━┛H  ┗━━━┛I  ╯
        *
-       *       Chain 1:   ┏━━━┓___┏━━━┓___┏━━━┓ 
-       *                 A┗━━━┛╲ ╱┗━━━┛╲B╱┗━━━┛C
-       *                        ╳       ╳       
-       *       Chain 2:   ┏━━━┓╱_╲┏━━━┓╱_╲┏━━━┓ 
-       *                 D┗━━━┛╲ ╱┗━━━┛╲E╱┗━━━┛F
-       *                        ╳       ╳       
-       *       Chain 3:   ┏━━━┓╱_╲┏━━━┓╱_╲┏━━━┓ 
+       *                              | Favors cascading attachment. F has 3 paths to D and only 2 paths to A, so it
+       *                              | will favor D. C has no preference between A and D, because it has 2 paths to
+       *                              V each.
+       *
+       *       Chain 1:   ┏━━━┓___┏━━━┓___┏━━━┓
+       *                 A┗━━━┛   ┗━━━┛B  ┗━━━┛C
+       *
+       *       Chain 2:   ┏━━━┓___┏━━━┓___┏━━━┓
+       *                 D┗━━━┛   ┗━━━┛E  ┗━━━┛F
+       *
+       *       Chain 3:   ┏━━━┓___┏━━━┓___┏━━━┓
        *                 G┗━━━┛   ┗━━━┛H  ┗━━━┛I
        * ```
        */
@@ -1040,18 +1050,16 @@ describe("TaskUnitCluster", function () {
         hChain = cluster.getChainOfUnit(unitH);
         iChain = cluster.getChainOfUnit(unitI);
       });
+      it("should throw DependencyOrderError when trying to build A-F chain", function () {
+        expect(() => new IsolatedDependencyChain([unitF, unitA])).to.throw(
+          DependencyOrderError
+        );
+      });
       it("should have greater potential visual density for A-B-C than D-E-F", function () {
         expect(
           new IsolatedDependencyChain([unitC, unitB, unitA]).visualDensity
         ).to.be.greaterThan(
           new IsolatedDependencyChain([unitF, unitE, unitD]).visualDensity
-        );
-      });
-      it("should have greater potential visual density for A-B-C than A-F", function () {
-        expect(
-          new IsolatedDependencyChain([unitC, unitB, unitA]).visualDensity
-        ).to.be.greaterThan(
-          new IsolatedDependencyChain([unitF, unitA]).visualDensity
         );
       });
       it("should have greater potential visual density for A-B-C than D-B-C", function () {
@@ -1096,53 +1104,56 @@ describe("TaskUnitCluster", function () {
           new IsolatedDependencyChain([unitI, unitH, unitG]).visualDensity
         );
       });
-      it("should have only three chains", function () {
-        expect(cluster.chains.length).to.equal(3);
+      it("should have only four chains", function () {
+        expect(cluster.chains.length).to.equal(4);
       });
-      it("should have one chain with just A, B, and C", function () {
-        expect(aChain).to.equal(bChain).and.to.equal(cChain);
-        expect(aChain.units.length).to.equal(3);
+      it("should have one chain with just C, E, and A", function () {
+        expect(cChain).to.equal(eChain).and.to.equal(aChain);
+        expect(cChain.units.length).to.equal(3);
       });
-      it("should have one chain with just D, E, and F", function () {
-        expect(dChain).to.equal(eChain).and.to.equal(fChain);
-        expect(dChain.units.length).to.equal(3);
+      it("should have one chain with just D and B", function () {
+        expect(dChain).to.equal(bChain);
+        expect(dChain.units.length).to.equal(2);
       });
       it("should have one chain with just G, H, and I", function () {
         expect(gChain).to.equal(hChain).and.to.equal(iChain);
         expect(gChain.units.length).to.equal(3);
       });
-      it("should have 3 connections between chains for A-B-C and D-E-F", function () {
+      it("should have one chain with just F", function () {
+        expect(fChain.units.length).to.equal(1);
+      });
+      it("should have 3 connections between chains for A-E-C and D-B", function () {
         expect(
           cluster.getNumberOfConnectionsBetweenChains(aChain, dChain)
         ).to.equal(3);
       });
-      it("should have 3 connections between chains for D-E-F and A-B-C", function () {
+      it("should have 3 connections between chains for D-B and A-E-C", function () {
         // same as the other one, but looking it up from the other direction to make sure that's working as well
         expect(
           cluster.getNumberOfConnectionsBetweenChains(dChain, aChain)
         ).to.equal(3);
       });
-      it("should have 0 connections between chains for A-B-C and G-H-I", function () {
+      it("should have 1 connection between chains for A-E-C and G-H-I", function () {
         expect(
           cluster.getNumberOfConnectionsBetweenChains(aChain, gChain)
-        ).to.equal(0);
+        ).to.equal(1);
       });
-      it("should have 0 connections between chains for G-H-I and A-B-C", function () {
+      it("should have 1 connection between chains for G-H-I and A-E-C", function () {
         // same as the other one, but looking it up from the other direction to make sure that's working as well
         expect(
           cluster.getNumberOfConnectionsBetweenChains(gChain, aChain)
-        ).to.equal(0);
-      });
-      it("should have 1 connection between chains for D-E-F and G-H-I", function () {
-        expect(
-          cluster.getNumberOfConnectionsBetweenChains(dChain, gChain)
         ).to.equal(1);
       });
-      it("should have 1 connection between chains for G-H-I and D-E-F", function () {
+      it("should have 0 connections between chains for D-B and G-H-I", function () {
+        expect(
+          cluster.getNumberOfConnectionsBetweenChains(dChain, gChain)
+        ).to.equal(0);
+      });
+      it("should have 0 connections between chains for G-H-I and D-B", function () {
         // same as the other one, but looking it up from the other direction to make sure that's working as well
         expect(
           cluster.getNumberOfConnectionsBetweenChains(gChain, dChain)
-        ).to.equal(1);
+        ).to.equal(0);
       });
       it("should recognize when it doesn't own an unrelated chain", function () {
         const unrelatedChain = new IsolatedDependencyChain([

@@ -33,629 +33,9 @@ describe("TaskUnit", function () {
       expect(unit.getAllDependencies()).to.be.empty;
     });
   });
-  describe("Has Equivalent Branching Dependencies", function () {
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let unitC: TaskUnit;
-    let unitD: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let startDateC: Date;
-    let endDateA: Date;
-    let endDateB: Date;
-    let endDateC: Date;
-    before(function () {
-      endDateA = new Date();
-      startDateA = new Date(endDateA.getTime() - 1000);
-      endDateB = new Date(startDateA.getTime() - 1000);
-      startDateB = new Date(endDateB.getTime() - 1000);
-      endDateC = new Date(startDateB.getTime() - 1000);
-      startDateC = new Date(endDateC.getTime() - 1000);
-      unitD = new TaskUnit([], startDateC, endDateC);
-      unitC = new TaskUnit([], startDateC, endDateC);
-      unitB = new TaskUnit([unitC, unitD], startDateB, endDateB);
-      unitA = new TaskUnit([unitB], startDateA, endDateA);
-    });
-    it("should have correct presence", function () {
-      expect(unitA.presenceTime).to.equal(
-        endDateA.getTime() - startDateA.getTime()
-      );
-    });
-    it("should have correct initial start date", function () {
-      expect(unitA.initialStartDate).to.equal(startDateA);
-    });
-    it("should not be dependent on unit that isn't its parent", function () {
-      expect(unitA.isDependentOn(new TaskUnit([], startDateA, endDateA))).to.be
-        .false;
-    });
-    it("should be dependent on direct dependency", function () {
-      expect(unitA.isDependentOn(unitB)).to.be.true;
-    });
-    it("should be dependent on indirect dependency", function () {
-      expect(unitA.isDependentOn(unitC)).to.be.true;
-      expect(unitA.isDependentOn(unitD)).to.be.true;
-    });
-    it("should have B as a direct dependency", function () {
-      expect(unitA.directDependencies).to.deep.equal(new Set([unitB]));
-    });
-    it("should have B, C, and D as dependencies", function () {
-      expect([...unitA.getAllDependencies()]).to.have.members([
-        unitB,
-        unitC,
-        unitD,
-      ]);
-    });
-    it("should provide A-B-D as ideal chain when C is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitC]).units
-      ).to.deep.equal([unitA, unitB, unitD]);
-    });
-    it("should provide A-B-C as ideal chain when D is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitD]).units
-      ).to.deep.equal([unitA, unitB, unitC]);
-    });
-    it("should provide A-B as ideal chain when C and D are unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitC, unitD]).units
-      ).to.deep.equal([unitA, unitB]);
-    });
-    it("should provide A as ideal chain when B, C, and D are unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitB, unitC, unitD]).units
-      ).to.deep.equal([unitA]);
-    });
-    it("should provide A as ideal chain when B is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitB]).units
-      ).to.deep.equal([unitA]);
-    });
-    it("should provide A-B-C as ideal chain when all available", function () {
-      expect(unitA.getIdealDensityChainWithoutUnits([]).units).to.deep.equal([
-        unitA,
-        unitB,
-        unitC,
-      ]);
-    });
-  });
-  describe("Has Branching Dependencies (Skewed on Presence, Not Time Span (More Presence First))", function () {
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let unitC: TaskUnit;
-    let unitD: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let startDateC: Date;
-    let startDateD: Date;
-    let endDateA: Date;
-    let endDateB: Date;
-    let endDateC: Date;
-    let endDateD: Date;
-    before(function () {
-      endDateA = new Date();
-      startDateA = new Date(endDateA.getTime() - 1000);
-      endDateB = new Date(startDateA.getTime() - 1000);
-      startDateB = new Date(endDateB.getTime() - 1000);
-      endDateC = new Date(startDateB.getTime() - 1000);
-      startDateC = new Date(endDateC.getTime() - 1000);
-      endDateD = new Date(startDateB.getTime() - 1500);
-      startDateD = new Date(endDateD.getTime() - 500);
-      unitD = new TaskUnit([], startDateD, endDateD);
-      unitC = new TaskUnit([], startDateC, endDateC);
-      unitB = new TaskUnit([unitC, unitD], startDateB, endDateB);
-      unitA = new TaskUnit([unitB], startDateA, endDateA);
-    });
-    it("should have correct presence", function () {
-      expect(unitA.presenceTime).to.equal(
-        endDateA.getTime() - startDateA.getTime()
-      );
-    });
-    it("should have correct initial start date", function () {
-      expect(unitA.initialStartDate).to.equal(startDateA);
-    });
-    it("should not be dependent on unit that isn't its parent", function () {
-      expect(unitA.isDependentOn(new TaskUnit([], startDateA, endDateA))).to.be
-        .false;
-    });
-    it("should be dependent on direct dependency", function () {
-      expect(unitA.isDependentOn(unitB)).to.be.true;
-    });
-    it("should be dependent on indirect dependency", function () {
-      expect(unitA.isDependentOn(unitC)).to.be.true;
-      expect(unitA.isDependentOn(unitD)).to.be.true;
-    });
-    it("should have B as a direct dependency", function () {
-      expect(unitA.directDependencies).to.deep.equal(new Set([unitB]));
-    });
-    it("should have B, C, and D as dependencies", function () {
-      expect([...unitA.getAllDependencies()]).to.have.members([
-        unitB,
-        unitC,
-        unitD,
-      ]);
-    });
-    it("should provide A-B-D as ideal chain when C is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitC]).units
-      ).to.deep.equal([unitA, unitB, unitD]);
-    });
-    it("should provide A-B-C as ideal chain when D is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitD]).units
-      ).to.deep.equal([unitA, unitB, unitC]);
-    });
-    it("should provide A-B as ideal chain when C and D are unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitC, unitD]).units
-      ).to.deep.equal([unitA, unitB]);
-    });
-    it("should provide A as ideal chain when B, C, and D are unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitB, unitC, unitD]).units
-      ).to.deep.equal([unitA]);
-    });
-    it("should provide A as ideal chain when B is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitB]).units
-      ).to.deep.equal([unitA]);
-    });
-    it("should provide A-B-C as ideal chain when all available", function () {
-      expect(unitA.getIdealDensityChainWithoutUnits([]).units).to.deep.equal([
-        unitA,
-        unitB,
-        unitC,
-      ]);
-    });
-  });
-  describe("Has Branching Dependencies (Skewed on Presence, Not Time Span (Less Presence First))", function () {
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let unitC: TaskUnit;
-    let unitD: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let startDateC: Date;
-    let startDateD: Date;
-    let endDateA: Date;
-    let endDateB: Date;
-    let endDateC: Date;
-    let endDateD: Date;
-    before(function () {
-      endDateA = new Date();
-      startDateA = new Date(endDateA.getTime() - 1000);
-      endDateB = new Date(startDateA.getTime() - 1000);
-      startDateB = new Date(endDateB.getTime() - 1000);
-      endDateC = new Date(startDateB.getTime() - 1000);
-      startDateC = new Date(endDateC.getTime() - 1000);
-      endDateD = new Date(startDateB.getTime() - 1500);
-      startDateD = new Date(endDateD.getTime() - 500);
-      unitD = new TaskUnit([], startDateD, endDateD);
-      unitC = new TaskUnit([], startDateC, endDateC);
-      unitB = new TaskUnit([unitD, unitC], startDateB, endDateB);
-      unitA = new TaskUnit([unitB], startDateA, endDateA);
-    });
-    it("should have correct presence", function () {
-      expect(unitA.presenceTime).to.equal(
-        endDateA.getTime() - startDateA.getTime()
-      );
-    });
-    it("should have correct initial start date", function () {
-      expect(unitA.initialStartDate).to.equal(startDateA);
-    });
-    it("should not be dependent on unit that isn't its parent", function () {
-      expect(unitA.isDependentOn(new TaskUnit([], startDateA, endDateA))).to.be
-        .false;
-    });
-    it("should be dependent on direct dependency", function () {
-      expect(unitA.isDependentOn(unitB)).to.be.true;
-    });
-    it("should be dependent on indirect dependency", function () {
-      expect(unitA.isDependentOn(unitC)).to.be.true;
-      expect(unitA.isDependentOn(unitD)).to.be.true;
-    });
-    it("should have B as a direct dependency", function () {
-      expect(unitA.directDependencies).to.deep.equal(new Set([unitB]));
-    });
-    it("should have B, C, and D as dependencies", function () {
-      expect([...unitA.getAllDependencies()]).to.have.members([
-        unitB,
-        unitC,
-        unitD,
-      ]);
-    });
-    it("should provide A-B-D as ideal chain when C is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitC]).units
-      ).to.deep.equal([unitA, unitB, unitD]);
-    });
-    it("should provide A-B-C as ideal chain when D is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitD]).units
-      ).to.deep.equal([unitA, unitB, unitC]);
-    });
-    it("should provide A-B as ideal chain when C and D are unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitC, unitD]).units
-      ).to.deep.equal([unitA, unitB]);
-    });
-    it("should provide A as ideal chain when B, C, and D are unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitB, unitC, unitD]).units
-      ).to.deep.equal([unitA]);
-    });
-    it("should provide A as ideal chain when B is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitB]).units
-      ).to.deep.equal([unitA]);
-    });
-    it("should provide A-B-C as ideal chain when all available", function () {
-      expect(unitA.getIdealDensityChainWithoutUnits([]).units).to.deep.equal([
-        unitA,
-        unitB,
-        unitC,
-      ]);
-    });
-  });
-  describe("Has Branching Dependencies (Same Density (More Presence First))", function () {
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let unitC: TaskUnit;
-    let unitD: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let startDateC: Date;
-    let startDateD: Date;
-    let endDateA: Date;
-    let endDateB: Date;
-    let endDateC: Date;
-    let endDateD: Date;
-    before(function () {
-      endDateA = new Date();
-      startDateA = new Date(endDateA.getTime() - 1000);
-      endDateB = new Date(startDateA.getTime() - 1000);
-      startDateB = new Date(endDateB.getTime() - 1000);
-      endDateC = new Date(startDateB.getTime() - 1000);
-      startDateC = new Date(endDateC.getTime() - 1000);
-      endDateD = new Date(startDateB.getTime() - 2000);
-      startDateD = new Date(endDateD.getTime() - 3000);
-      unitD = new TaskUnit([], startDateD, endDateD);
-      unitC = new TaskUnit([], startDateC, endDateC);
-      unitB = new TaskUnit([unitD, unitC], startDateB, endDateB);
-      unitA = new TaskUnit([unitB], startDateA, endDateA);
-    });
-    it("should have correct presence", function () {
-      expect(unitA.presenceTime).to.equal(
-        endDateA.getTime() - startDateA.getTime()
-      );
-    });
-    it("should have correct initial start date", function () {
-      expect(unitA.initialStartDate).to.equal(startDateA);
-    });
-    it("should not be dependent on unit that isn't its parent", function () {
-      expect(unitA.isDependentOn(new TaskUnit([], startDateA, endDateA))).to.be
-        .false;
-    });
-    it("should be dependent on direct dependency", function () {
-      expect(unitA.isDependentOn(unitB)).to.be.true;
-    });
-    it("should be dependent on indirect dependency", function () {
-      expect(unitA.isDependentOn(unitC)).to.be.true;
-      expect(unitA.isDependentOn(unitD)).to.be.true;
-    });
-    it("should have B as a direct dependency", function () {
-      expect(unitA.directDependencies).to.deep.equal(new Set([unitB]));
-    });
-    it("should have B, C, and D as dependencies", function () {
-      expect([...unitA.getAllDependencies()]).to.have.members([
-        unitB,
-        unitC,
-        unitD,
-      ]);
-    });
-    it("should provide A-B-D as ideal chain when C is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitC]).units
-      ).to.deep.equal([unitA, unitB, unitD]);
-    });
-    it("should provide A-B-C as ideal chain when D is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitD]).units
-      ).to.deep.equal([unitA, unitB, unitC]);
-    });
-    it("should provide A-B as ideal chain when C and D are unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitC, unitD]).units
-      ).to.deep.equal([unitA, unitB]);
-    });
-    it("should provide A as ideal chain when B, C, and D are unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitB, unitC, unitD]).units
-      ).to.deep.equal([unitA]);
-    });
-    it("should provide A as ideal chain when B is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitB]).units
-      ).to.deep.equal([unitA]);
-    });
-    it("should provide A-B-D as ideal chain when all available (preferred more presence)", function () {
-      expect(unitA.getIdealDensityChainWithoutUnits([]).units).to.deep.equal([
-        unitA,
-        unitB,
-        unitD,
-      ]);
-    });
-  });
-  describe("Has Branching Dependencies (Same Density (Less Presence First))", function () {
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let unitC: TaskUnit;
-    let unitD: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let startDateC: Date;
-    let startDateD: Date;
-    let endDateA: Date;
-    let endDateB: Date;
-    let endDateC: Date;
-    let endDateD: Date;
-    before(function () {
-      endDateA = new Date();
-      startDateA = new Date(endDateA.getTime() - 1000);
-      endDateB = new Date(startDateA.getTime() - 1000);
-      startDateB = new Date(endDateB.getTime() - 1000);
-      endDateC = new Date(startDateB.getTime() - 1000);
-      startDateC = new Date(endDateC.getTime() - 1000);
-      endDateD = new Date(startDateB.getTime() - 2000);
-      startDateD = new Date(endDateD.getTime() - 3000);
-      unitD = new TaskUnit([], startDateD, endDateD);
-      unitC = new TaskUnit([], startDateC, endDateC);
-      unitB = new TaskUnit([unitC, unitD], startDateB, endDateB);
-      unitA = new TaskUnit([unitB], startDateA, endDateA);
-    });
-    it("should have correct presence", function () {
-      expect(unitA.presenceTime).to.equal(
-        endDateA.getTime() - startDateA.getTime()
-      );
-    });
-    it("should have correct initial start date", function () {
-      expect(unitA.initialStartDate).to.equal(startDateA);
-    });
-    it("should not be dependent on unit that isn't its parent", function () {
-      expect(unitA.isDependentOn(new TaskUnit([], startDateA, endDateA))).to.be
-        .false;
-    });
-    it("should be dependent on direct dependency", function () {
-      expect(unitA.isDependentOn(unitB)).to.be.true;
-    });
-    it("should be dependent on indirect dependency", function () {
-      expect(unitA.isDependentOn(unitC)).to.be.true;
-      expect(unitA.isDependentOn(unitD)).to.be.true;
-    });
-    it("should have B as a direct dependency", function () {
-      expect(unitA.directDependencies).to.deep.equal(new Set([unitB]));
-    });
-    it("should have B, C, and D as dependencies", function () {
-      expect([...unitA.getAllDependencies()]).to.have.members([
-        unitB,
-        unitC,
-        unitD,
-      ]);
-    });
-    it("should provide A-B-D as ideal chain when C is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitC]).units
-      ).to.deep.equal([unitA, unitB, unitD]);
-    });
-    it("should provide A-B-C as ideal chain when D is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitD]).units
-      ).to.deep.equal([unitA, unitB, unitC]);
-    });
-    it("should provide A-B as ideal chain when C and D are unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitC, unitD]).units
-      ).to.deep.equal([unitA, unitB]);
-    });
-    it("should provide A as ideal chain when B, C, and D are unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitB, unitC, unitD]).units
-      ).to.deep.equal([unitA]);
-    });
-    it("should provide A as ideal chain when B is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitB]).units
-      ).to.deep.equal([unitA]);
-    });
-    it("should provide A-B-D as ideal chain when all available (preferred more presence)", function () {
-      expect(unitA.getIdealDensityChainWithoutUnits([]).units).to.deep.equal([
-        unitA,
-        unitB,
-        unitD,
-      ]);
-    });
-  });
-  describe("Has Branching Dependencies (More Density First)", function () {
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let unitC: TaskUnit;
-    let unitD: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let startDateC: Date;
-    let startDateD: Date;
-    let endDateA: Date;
-    let endDateB: Date;
-    let endDateC: Date;
-    let endDateD: Date;
-    before(function () {
-      endDateA = new Date();
-      startDateA = new Date(endDateA.getTime() - 1000);
-      endDateB = new Date(startDateA.getTime() - 1000);
-      startDateB = new Date(endDateB.getTime() - 1000);
-      endDateC = new Date(startDateB.getTime() - 1000);
-      startDateC = new Date(endDateC.getTime() - 1000);
-      endDateD = new Date(startDateB.getTime() - 1000);
-      startDateD = new Date(endDateD.getTime() - 2000);
-      unitD = new TaskUnit([], startDateD, endDateD);
-      unitC = new TaskUnit([], startDateC, endDateC);
-      unitB = new TaskUnit([unitD, unitC], startDateB, endDateB);
-      unitA = new TaskUnit([unitB], startDateA, endDateA);
-    });
-    it("should have correct presence", function () {
-      expect(unitA.presenceTime).to.equal(
-        endDateA.getTime() - startDateA.getTime()
-      );
-    });
-    it("should have correct initial start date", function () {
-      expect(unitA.initialStartDate).to.equal(startDateA);
-    });
-    it("should not be dependent on unit that isn't its parent", function () {
-      expect(unitA.isDependentOn(new TaskUnit([], startDateA, endDateA))).to.be
-        .false;
-    });
-    it("should be dependent on direct dependency", function () {
-      expect(unitA.isDependentOn(unitB)).to.be.true;
-    });
-    it("should be dependent on indirect dependency", function () {
-      expect(unitA.isDependentOn(unitC)).to.be.true;
-      expect(unitA.isDependentOn(unitD)).to.be.true;
-    });
-    it("should have B as a direct dependency", function () {
-      expect(unitA.directDependencies).to.deep.equal(new Set([unitB]));
-    });
-    it("should have B, C, and D as dependencies", function () {
-      expect([...unitA.getAllDependencies()]).to.have.members([
-        unitB,
-        unitC,
-        unitD,
-      ]);
-    });
-    it("should provide A-B-D as ideal chain when C is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitC]).units
-      ).to.deep.equal([unitA, unitB, unitD]);
-    });
-    it("should provide A-B-C as ideal chain when D is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitD]).units
-      ).to.deep.equal([unitA, unitB, unitC]);
-    });
-    it("should provide A-B as ideal chain when C and D are unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitC, unitD]).units
-      ).to.deep.equal([unitA, unitB]);
-    });
-    it("should provide A as ideal chain when B, C, and D are unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitB, unitC, unitD]).units
-      ).to.deep.equal([unitA]);
-    });
-    it("should provide A as ideal chain when B is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitB]).units
-      ).to.deep.equal([unitA]);
-    });
-    it("should provide A-B-D as ideal chain when all available (preferred more density)", function () {
-      expect(unitA.getIdealDensityChainWithoutUnits([]).units).to.deep.equal([
-        unitA,
-        unitB,
-        unitD,
-      ]);
-    });
-  });
-  describe("Has Branching Dependencies (Less Density First)", function () {
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let unitC: TaskUnit;
-    let unitD: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let startDateC: Date;
-    let startDateD: Date;
-    let endDateA: Date;
-    let endDateB: Date;
-    let endDateC: Date;
-    let endDateD: Date;
-    before(function () {
-      endDateA = new Date();
-      startDateA = new Date(endDateA.getTime() - 1000);
-      endDateB = new Date(startDateA.getTime() - 1000);
-      startDateB = new Date(endDateB.getTime() - 1000);
-      endDateC = new Date(startDateB.getTime() - 1000);
-      startDateC = new Date(endDateC.getTime() - 1000);
-      endDateD = new Date(startDateB.getTime() - 1000);
-      startDateD = new Date(endDateD.getTime() - 2000);
-      unitD = new TaskUnit([], startDateD, endDateD);
-      unitC = new TaskUnit([], startDateC, endDateC);
-      unitB = new TaskUnit([unitC, unitD], startDateB, endDateB);
-      unitA = new TaskUnit([unitB], startDateA, endDateA);
-    });
-    it("should have correct presence", function () {
-      expect(unitA.presenceTime).to.equal(
-        endDateA.getTime() - startDateA.getTime()
-      );
-    });
-    it("should have correct initial start date", function () {
-      expect(unitA.initialStartDate).to.equal(startDateA);
-    });
-    it("should not be dependent on unit that isn't its parent", function () {
-      expect(unitA.isDependentOn(new TaskUnit([], startDateA, endDateA))).to.be
-        .false;
-    });
-    it("should be dependent on direct dependency", function () {
-      expect(unitA.isDependentOn(unitB)).to.be.true;
-    });
-    it("should be dependent on indirect dependency", function () {
-      expect(unitA.isDependentOn(unitC)).to.be.true;
-      expect(unitA.isDependentOn(unitD)).to.be.true;
-    });
-    it("should have B as a direct dependency", function () {
-      expect(unitA.directDependencies).to.deep.equal(new Set([unitB]));
-    });
-    it("should have B, C, and D as dependencies", function () {
-      expect([...unitA.getAllDependencies()]).to.have.members([
-        unitB,
-        unitC,
-        unitD,
-      ]);
-    });
-    it("should provide A-B-D as ideal chain when C is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitC]).units
-      ).to.deep.equal([unitA, unitB, unitD]);
-    });
-    it("should provide A-B-C as ideal chain when D is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitD]).units
-      ).to.deep.equal([unitA, unitB, unitC]);
-    });
-    it("should provide A-B as ideal chain when C and D are unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitC, unitD]).units
-      ).to.deep.equal([unitA, unitB]);
-    });
-    it("should provide A as ideal chain when B, C, and D are unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitB, unitC, unitD]).units
-      ).to.deep.equal([unitA]);
-    });
-    it("should provide A as ideal chain when B is unavailable", function () {
-      expect(
-        unitA.getIdealDensityChainWithoutUnits([unitB]).units
-      ).to.deep.equal([unitA]);
-    });
-    it("should provide A-B-D as ideal chain when all available (preferred more density)", function () {
-      expect(unitA.getIdealDensityChainWithoutUnits([]).units).to.deep.equal([
-        unitA,
-        unitB,
-        unitD,
-      ]);
-    });
-  });
   describe("Complex Interconnections", function () {
     /**
      * ```text
-     *
      *    ┏━━━┓___┏━━━┓
      *   A┗━━━┛╲ ╱┗━━━┛╲B
      *          ╳       ╲
@@ -953,6 +333,769 @@ describe("TaskUnit", function () {
       });
       it("should have 1 path to D", function () {
         expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(1);
+      });
+      it("should have 0 paths to E", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
+      });
+      it("should have 2 paths to F", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(2);
+      });
+      it("should have 1 path to G", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(1);
+      });
+      it("should have 0 paths to H", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
+      });
+    });
+  });
+  describe("Complex Interconnections (Redundancies)", function () {
+    /**
+     * ```text
+     *            ┏━━━┓___________┏━━━┓
+     *           ╱┗━━━┛╲B________╱┗━━━┛D
+     *          ╱_______╳       ╱
+     *    ┏━━━┓╱_________╲┏━━━┓╱
+     *   A┗━━━┛           ┗━━━┛C
+     *                  | A path should only be considered if the unit it steps to is only available through that path.
+     *                  V
+     *    ┏━━━┓___┏━━━┓___┏━━━┓___┏━━━┓
+     *   A┗━━━┛  B┗━━━┛   ┗━━━┛C  ┗━━━┛D
+     * ```
+     *
+     * `A` can be reached from `C` by going through `B`, and `B` can be reached from `D` by going through `C`, so the
+     * paths `C`->`A` and `D`->`B` are redundant.
+     */
+    let unitA: TaskUnit;
+    let unitB: TaskUnit;
+    let unitC: TaskUnit;
+    let unitD: TaskUnit;
+    let startDateA: Date;
+    let startDateB: Date;
+    let startDateC: Date;
+    let startDateD: Date;
+    let endDateA: Date;
+    let endDateB: Date;
+    let endDateC: Date;
+    let endDateD: Date;
+    before(function () {
+      startDateA = new Date();
+      endDateA = new Date(startDateA.getTime() + 1000);
+      startDateB = new Date(endDateA.getTime() + 1000);
+      endDateB = new Date(startDateB.getTime() + 1000);
+      startDateC = new Date(endDateB.getTime() + 1000);
+      endDateC = new Date(startDateC.getTime() + 1000);
+      startDateD = new Date(endDateC.getTime() + 1000);
+      endDateD = new Date(startDateD.getTime() + 1000);
+
+      unitA = new TaskUnit([], startDateA, endDateA);
+      unitB = new TaskUnit([unitA], startDateB, endDateB);
+      unitC = new TaskUnit([unitA, unitB], startDateC, endDateC);
+      unitD = new TaskUnit([unitA, unitB, unitC], startDateD, endDateD);
+    });
+    describe("From A", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitA;
+      });
+      it("should have 0 paths to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(0);
+      });
+      it("should have 0 paths to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
+      });
+      it("should have 0 paths to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+    });
+    describe("From B", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitB;
+      });
+      it("should have 1 path to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
+      });
+      it("should have 0 paths to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
+      });
+      it("should have 0 paths to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+    });
+    describe("From C", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitC;
+      });
+      it("should have 1 path to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
+      });
+      it("should have 1 path to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(1);
+      });
+      it("should have 0 paths to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+    });
+    describe("From D", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitD;
+      });
+      it("should have 1 path to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
+      });
+      it("should have 1 path to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(1);
+      });
+      it("should have 1 path to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(1);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+    });
+  });
+  describe("Complex Interconnections (Interwoven Without Redundancies)", function () {
+    /**
+     * ```text
+     *          ┏━━━┓____┏━━━┓____┏━━━┓
+     *        B╱┗━━━┛╲  ╱┗━━━┛╲C ╱┗━━━┛╲D
+     *   ┏━━━┓╱       ╲╱       ╲╱       ╲┏━━━┓
+     *  A┗━━━┛╲       ╱╲       ╱╲       ╱┗━━━┛E
+     *         ╲┏━━━┓╱__╲┏━━━┓╱__╲┏━━━┓╱
+     *         F┗━━━┛    ┗━━━┛G   ┗━━━┛H
+     *
+     * There are no redundant paths.
+     * ```
+     */
+    let unitA: TaskUnit;
+    let unitB: TaskUnit;
+    let unitC: TaskUnit;
+    let unitD: TaskUnit;
+    let unitE: TaskUnit;
+    let unitF: TaskUnit;
+    let unitG: TaskUnit;
+    let unitH: TaskUnit;
+    let startDateA: Date;
+    let startDateB: Date;
+    let startDateC: Date;
+    let startDateD: Date;
+    let startDateE: Date;
+    let startDateF: Date;
+    let startDateG: Date;
+    let startDateH: Date;
+    let endDateA: Date;
+    let endDateB: Date;
+    let endDateC: Date;
+    let endDateD: Date;
+    let endDateE: Date;
+    let endDateF: Date;
+    let endDateG: Date;
+    let endDateH: Date;
+    before(function () {
+      const firstUnitStart = new Date();
+      const firstUnitEnd = new Date(firstUnitStart.getTime() + 1000);
+      const secondUnitStart = new Date(firstUnitEnd.getTime() + 1000);
+      const secondUnitEnd = new Date(secondUnitStart.getTime() + 1000);
+      const thirdUnitStart = new Date(secondUnitEnd.getTime() + 1000);
+      const thirdUnitEnd = new Date(thirdUnitStart.getTime() + 1000);
+      const fourthUnitStart = new Date(thirdUnitEnd.getTime() + 1000);
+      const fourthUnitEnd = new Date(fourthUnitStart.getTime() + 1000);
+      const fifthUnitStart = new Date(fourthUnitEnd.getTime() + 1000);
+      const fifthUnitEnd = new Date(fifthUnitStart.getTime() + 1000);
+      startDateA = new Date(firstUnitStart.getTime());
+      endDateA = new Date(firstUnitEnd.getTime());
+
+      startDateB = new Date(secondUnitStart.getTime());
+      endDateB = new Date(secondUnitEnd.getTime());
+      startDateF = new Date(secondUnitStart.getTime());
+      endDateF = new Date(secondUnitEnd.getTime());
+
+      startDateC = new Date(thirdUnitStart.getTime());
+      endDateC = new Date(thirdUnitEnd.getTime());
+      startDateG = new Date(thirdUnitStart.getTime());
+      endDateG = new Date(thirdUnitEnd.getTime());
+
+      startDateD = new Date(fourthUnitStart.getTime());
+      endDateD = new Date(fourthUnitEnd.getTime());
+      startDateH = new Date(fourthUnitStart.getTime());
+      endDateH = new Date(fourthUnitEnd.getTime());
+
+      startDateE = new Date(fifthUnitStart.getTime());
+      endDateE = new Date(fifthUnitEnd.getTime());
+
+      unitA = new TaskUnit([], startDateA, endDateA);
+
+      unitB = new TaskUnit([unitA], startDateB, endDateB);
+      unitF = new TaskUnit([unitA], startDateF, endDateF);
+
+      unitC = new TaskUnit([unitB, unitF], startDateC, endDateC);
+      unitG = new TaskUnit([unitB, unitF], startDateG, endDateG);
+
+      unitD = new TaskUnit([unitC, unitG], startDateD, endDateD);
+      unitH = new TaskUnit([unitC, unitG], startDateH, endDateH);
+
+      unitE = new TaskUnit([unitD, unitH], startDateE, endDateE);
+    });
+    describe("From A", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitA;
+      });
+      it("should have 0 paths to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(0);
+      });
+      it("should have 0 paths to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
+      });
+      it("should have 0 paths to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+      it("should have 0 paths to E", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
+      });
+      it("should have 0 paths to F", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(0);
+      });
+      it("should have 0 paths to G", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
+      });
+      it("should have 0 paths to H", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
+      });
+    });
+    describe("From B", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitB;
+      });
+      it("should have 1 path to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
+      });
+      it("should have 0 paths to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
+      });
+      it("should have 0 paths to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+      it("should have 0 paths to E", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
+      });
+      it("should have 0 paths to F", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(0);
+      });
+      it("should have 0 paths to G", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
+      });
+      it("should have 0 paths to H", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
+      });
+    });
+    describe("From C", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitC;
+      });
+      it("should have 2 paths to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(2);
+      });
+      it("should have 1 path to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(1);
+      });
+      it("should have 0 paths to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+      it("should have 0 paths to E", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
+      });
+      it("should have 1 paths to F", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(1);
+      });
+      it("should have 0 paths to G", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
+      });
+      it("should have 0 paths to H", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
+      });
+    });
+    describe("From D", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitD;
+      });
+      it("should have 4 paths to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(4);
+      });
+      it("should have 2 paths to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(2);
+      });
+      it("should have 1 path to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(1);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+      it("should have 0 paths to E", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
+      });
+      it("should have 2 paths to F", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(2);
+      });
+      it("should have 1 path to G", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(1);
+      });
+      it("should have 0 paths to H", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
+      });
+    });
+    describe("From E", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitE;
+      });
+      it("should have 8 paths to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(8);
+      });
+      it("should have 4 paths to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(4);
+      });
+      it("should have 2 paths to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(2);
+      });
+      it("should have 1 path to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(1);
+      });
+      it("should have 0 paths to E", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
+      });
+      it("should have 4 paths to F", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(4);
+      });
+      it("should have 2 paths to G", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(2);
+      });
+      it("should have 1 paths to H", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(1);
+      });
+    });
+    describe("From F", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitF;
+      });
+      it("should have 1 path to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
+      });
+      it("should have 0 paths to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
+      });
+      it("should have 0 paths to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+      it("should have 0 paths to E", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
+      });
+      it("should have 0 paths to F", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(0);
+      });
+      it("should have 0 paths to G", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
+      });
+      it("should have 0 paths to H", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
+      });
+    });
+    describe("From G", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitG;
+      });
+      it("should have 2 paths to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(2);
+      });
+      it("should have 1 path to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(1);
+      });
+      it("should have 0 paths to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+      it("should have 0 paths to E", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
+      });
+      it("should have 1 path to F", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(1);
+      });
+      it("should have 0 paths to G", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
+      });
+      it("should have 0 paths to H", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
+      });
+    });
+    describe("From H", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitH;
+      });
+      it("should have 4 paths to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(4);
+      });
+      it("should have 2 paths to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(2);
+      });
+      it("should have 1 path to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(1);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+      it("should have 0 paths to E", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
+      });
+      it("should have 2 paths to F", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(2);
+      });
+      it("should have 1 path to G", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(1);
+      });
+      it("should have 0 paths to H", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
+      });
+    });
+  });
+  describe("Complex Interconnections (Interwoven Without Redundancies)", function () {
+    /**
+     * ```text
+     *          ┏━━━┓____┏━━━┓____┏━━━┓
+     *        B╱┗━━━┛╲  ╱┗━━━┛╲C ╱┗━━━┛╲D
+     *   ┏━━━┓╱       ╲╱       ╲╱       ╲┏━━━┓
+     *  A┗━━━┛╲       ╱╲       ╱╲       ╱┗━━━┛E
+     *         ╲┏━━━┓╱__╲┏━━━┓╱__╲┏━━━┓╱
+     *         F┗━━━┛    ┗━━━┛G   ┗━━━┛H
+     *
+     * There are no redundant paths.
+     * ```
+     */
+    let unitA: TaskUnit;
+    let unitB: TaskUnit;
+    let unitC: TaskUnit;
+    let unitD: TaskUnit;
+    let unitE: TaskUnit;
+    let unitF: TaskUnit;
+    let unitG: TaskUnit;
+    let unitH: TaskUnit;
+    let startDateA: Date;
+    let startDateB: Date;
+    let startDateC: Date;
+    let startDateD: Date;
+    let startDateE: Date;
+    let startDateF: Date;
+    let startDateG: Date;
+    let startDateH: Date;
+    let endDateA: Date;
+    let endDateB: Date;
+    let endDateC: Date;
+    let endDateD: Date;
+    let endDateE: Date;
+    let endDateF: Date;
+    let endDateG: Date;
+    let endDateH: Date;
+    before(function () {
+      const firstUnitStart = new Date();
+      const firstUnitEnd = new Date(firstUnitStart.getTime() + 1000);
+      const secondUnitStart = new Date(firstUnitEnd.getTime() + 1000);
+      const secondUnitEnd = new Date(secondUnitStart.getTime() + 1000);
+      const thirdUnitStart = new Date(secondUnitEnd.getTime() + 1000);
+      const thirdUnitEnd = new Date(thirdUnitStart.getTime() + 1000);
+      const fourthUnitStart = new Date(thirdUnitEnd.getTime() + 1000);
+      const fourthUnitEnd = new Date(fourthUnitStart.getTime() + 1000);
+      const fifthUnitStart = new Date(fourthUnitEnd.getTime() + 1000);
+      const fifthUnitEnd = new Date(fifthUnitStart.getTime() + 1000);
+      startDateA = new Date(firstUnitStart.getTime());
+      endDateA = new Date(firstUnitEnd.getTime());
+
+      startDateB = new Date(secondUnitStart.getTime());
+      endDateB = new Date(secondUnitEnd.getTime());
+      startDateF = new Date(secondUnitStart.getTime());
+      endDateF = new Date(secondUnitEnd.getTime());
+
+      startDateC = new Date(thirdUnitStart.getTime());
+      endDateC = new Date(thirdUnitEnd.getTime());
+      startDateG = new Date(thirdUnitStart.getTime());
+      endDateG = new Date(thirdUnitEnd.getTime());
+
+      startDateD = new Date(fourthUnitStart.getTime());
+      endDateD = new Date(fourthUnitEnd.getTime());
+      startDateH = new Date(fourthUnitStart.getTime());
+      endDateH = new Date(fourthUnitEnd.getTime());
+
+      startDateE = new Date(fifthUnitStart.getTime());
+      endDateE = new Date(fifthUnitEnd.getTime());
+
+      unitA = new TaskUnit([], startDateA, endDateA);
+
+      unitB = new TaskUnit([unitA], startDateB, endDateB);
+      unitF = new TaskUnit([unitA], startDateF, endDateF);
+
+      unitC = new TaskUnit([unitB, unitF], startDateC, endDateC);
+      unitG = new TaskUnit([unitB, unitF], startDateG, endDateG);
+
+      unitD = new TaskUnit([unitC, unitG], startDateD, endDateD);
+      unitH = new TaskUnit([unitC, unitG], startDateH, endDateH);
+
+      unitE = new TaskUnit([unitD, unitH], startDateE, endDateE);
+    });
+    describe("From A", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitA;
+      });
+      it("should have 0 paths to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(0);
+      });
+      it("should have 0 paths to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
+      });
+      it("should have 0 paths to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+      it("should have 0 paths to E", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
+      });
+      it("should have 0 paths to F", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(0);
+      });
+      it("should have 0 paths to G", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
+      });
+      it("should have 0 paths to H", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
+      });
+    });
+    describe("From B", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitB;
+      });
+      it("should have 1 path to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
+      });
+      it("should have 0 paths to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
+      });
+      it("should have 0 paths to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+      it("should have 0 paths to E", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
+      });
+      it("should have 0 paths to F", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(0);
+      });
+      it("should have 0 paths to G", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
+      });
+      it("should have 0 paths to H", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
+      });
+    });
+    describe("From C", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitC;
+      });
+      it("should have 2 paths to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(2);
+      });
+      it("should have 1 path to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(1);
+      });
+      it("should have 0 paths to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+      it("should have 0 paths to E", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
+      });
+      it("should have 1 paths to F", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(1);
+      });
+      it("should have 0 paths to G", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
+      });
+      it("should have 0 paths to H", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
+      });
+    });
+    describe("From D", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitD;
+      });
+      it("should have 4 paths to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(4);
+      });
+      it("should have 2 paths to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(2);
+      });
+      it("should have 1 path to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(1);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+      it("should have 0 paths to E", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
+      });
+      it("should have 2 paths to F", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(2);
+      });
+      it("should have 1 path to G", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(1);
+      });
+      it("should have 0 paths to H", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
+      });
+    });
+    describe("From E", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitE;
+      });
+      it("should have 8 paths to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(8);
+      });
+      it("should have 4 paths to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(4);
+      });
+      it("should have 2 paths to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(2);
+      });
+      it("should have 1 path to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(1);
+      });
+      it("should have 0 paths to E", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
+      });
+      it("should have 4 paths to F", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(4);
+      });
+      it("should have 2 paths to G", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(2);
+      });
+      it("should have 1 paths to H", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(1);
+      });
+    });
+    describe("From F", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitF;
+      });
+      it("should have 1 path to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
+      });
+      it("should have 0 paths to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
+      });
+      it("should have 0 paths to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+      it("should have 0 paths to E", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
+      });
+      it("should have 0 paths to F", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(0);
+      });
+      it("should have 0 paths to G", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
+      });
+      it("should have 0 paths to H", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
+      });
+    });
+    describe("From G", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitG;
+      });
+      it("should have 2 paths to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(2);
+      });
+      it("should have 1 path to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(1);
+      });
+      it("should have 0 paths to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
+      });
+      it("should have 0 paths to E", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
+      });
+      it("should have 1 path to F", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(1);
+      });
+      it("should have 0 paths to G", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
+      });
+      it("should have 0 paths to H", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
+      });
+    });
+    describe("From H", function () {
+      let sourceUnit: TaskUnit;
+      before(function () {
+        sourceUnit = unitH;
+      });
+      it("should have 4 paths to A", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(4);
+      });
+      it("should have 2 paths to B", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(2);
+      });
+      it("should have 1 path to C", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(1);
+      });
+      it("should have 0 paths to D", function () {
+        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
       });
       it("should have 0 paths to E", function () {
         expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);

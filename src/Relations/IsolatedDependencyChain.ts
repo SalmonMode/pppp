@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { DependencyOrderError } from "../Error";
+import StrainMap from "./StrainMap";
 import TaskUnit from "./TaskUnit";
 
 /**
@@ -35,7 +36,7 @@ import TaskUnit from "./TaskUnit";
  * giant slope, making the graph very tall).
  *
  * Because chains like these can be used for a variety of reasons, and they cannot have ultimate knowledge of what goes
- * on outside of themselves, a single chain will not enforce that it has the most ideal density. It will only manage
+ * on outside of themselves, a single chain will not enforce that it has the most preferred density. It will only manage
  * information about the units passed to it. A chain being created does not mean that it will be used to render the
  * graph. It will, however, at least make sure the units passed are a linear, unbroken chain.
  */
@@ -154,11 +155,9 @@ export default class IsolatedDependencyChain {
    *
    * The first has a density of about 1. The second is much greater than 1. And the third is much lower than 1.
    *
-   * While the first is very clean and ideal, this will almost never be what happens in a real project. The second
+   * While the first is very clean and preferred, this will almost never be what happens in a real project. The second
    * and third diagrams are far more likely (the third looking this way probably because of other dependencies not in
-   * the chain). Bringing the most visual density to the center is ideal from an awareness perspective, not only because
-   * it gets the most amount of information in the center of the screen as possible, but also because it brings the most
-   * problematic things closer to the center.
+   * the chain).
    */
   get visualDensity(): number {
     return this.presenceTime / this.timeSpan;
