@@ -18,7 +18,7 @@ import TaskUnit from "./TaskUnit";
  * One piece of the puzzle is figuring out a helpful way to break up the units into various chains. This will help with
  * creating more abstract chunks of visual information that can be ordered above or below depending on what would be
  * most helpful as well as what would reduce the amount of edge intersections. How these are broken up will be based
- * around getting the most dense chains figured out first.
+ * around getting the most interconnected chains figured out first.
  */
 export default class ChainMap {
   private _chains: IsolatedDependencyChain[] = [];
