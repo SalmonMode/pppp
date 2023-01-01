@@ -75,4 +75,55 @@ describe("Matrix", function () {
       expect(matrix.multiply(otherMatrix)).to.deep.equal(expectedMatrix);
     });
   });
+  describe("Addition", function () {
+    let matrix: Matrix;
+    before(function () {
+      matrix = new Matrix([
+        [1, 2],
+        [3, 4],
+        [5, 6],
+      ]);
+    });
+    it("should throw RangeError when adding by matrix with fewer rows than good matrix", function () {
+      const otherMatrix = new Matrix([
+        [1, 2],
+        [3, 4],
+      ]);
+      expect(() => matrix.add(otherMatrix)).to.throw(RangeError);
+    });
+    it("should throw RangeError when adding by matrix with more rows than good matrix", function () {
+      const otherMatrix = new Matrix([
+        [1, 2],
+        [3, 4],
+        [5, 6],
+        [7, 8],
+      ]);
+      expect(() => matrix.add(otherMatrix)).to.throw(RangeError);
+    });
+    it("should throw RangeError when adding by matrix with fewer columns than good matrix", function () {
+      const otherMatrix = new Matrix([[1], [3], [5]]);
+      expect(() => matrix.add(otherMatrix)).to.throw(RangeError);
+    });
+    it("should throw RangeError when adding by matrix with more columns than good matrix", function () {
+      const otherMatrix = new Matrix([
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
+      ]);
+      expect(() => matrix.add(otherMatrix)).to.throw(RangeError);
+    });
+    it("should produce correct sum matrix when adding compatible matrices", function () {
+      const otherMatrix = new Matrix([
+        [0, 5],
+        [4, 0],
+        [4, 1],
+      ]);
+      const expectedMatrix = new Matrix([
+        [1, 7],
+        [7, 4],
+        [9, 7],
+      ]);
+      expect(matrix.add(otherMatrix)).to.deep.equal(expectedMatrix);
+    });
+  });
 });

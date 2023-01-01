@@ -88,19 +88,37 @@ export default class Matrix {
     }
   }
   /**
-   * Check that the passed matrix can actually be multiplied with this matrix.
+   * Add this matrix by the passed matrix and return a new Matrix object containing the sum.
    *
-   * In order for matrices to be multiplied by each other, the number of columns of the first matrix (this one) must be
-   * equal to the number of rows of the second matrix (the one being passed in).
+   * This produces a new matrix, where the elements in each position are the sum of the elements in the respective
+   * positions in this matrix and the passed matrix. For example:
    *
-   * @param matrix the other matrix to check for compatiblity
+   * ```text
+   *      A           B
+   *  ┏       ┓   ┏       ┓   ┏       ┓
+   *  ┃ 0 1 3 ┃   ┃ 0 0 5 ┃   ┃ 0 1 8 ┃
+   *  ┃ 2 0 1 ┃ + ┃ 0 0 3 ┃ = ┃ 2 0 4 ┃
+   *  ┃ 5 1 0 ┃   ┃ 0 6 1 ┃   ┃ 5 7 1 ┃
+   *  ┗       ┛   ┗       ┛   ┗       ┛
+   * ```
+   *
+   * @param otherMatrix The matrix to add by
+   * @returns a new Matrix object containing the sum
    */
-  private _verifyMatrixIsCompatibleForMultiplication(matrix: Matrix): void {
-    if (this.numberOfColumns !== matrix.numberOfRows) {
-      throw new RangeError(
-        "The passed matrix doesn't have as many rows as this matrix has columns, so they cannot be multiplied."
-      );
+  add(otherMatrix: Matrix): Matrix {
+    this._verifyMatrixIsCompatibleForAddition(otherMatrix);
+    const sumMatrixData: number[][] = [];
+    for (let rowIndex = 0; rowIndex < this.numberOfRows; rowIndex++) {
+      const rowData: number[] = [];
+      for (let colIdx = 0; colIdx < this.numberOfColumns; colIdx++) {
+        const sum =
+          this.getElementAtPosition(rowIndex, colIdx) +
+          otherMatrix.getElementAtPosition(rowIndex, colIdx);
+        rowData.push(sum);
+      }
+      sumMatrixData.push(rowData);
     }
+    return new Matrix(sumMatrixData);
   }
   /**
    * Multiply this matrix by the passed matrix and return a new Matrix object containing the product.
@@ -132,5 +150,38 @@ export default class Matrix {
       }
     }
     return new Matrix(productMatrixData);
+  }
+  /**
+   * Check that the passed matrix can actually be summed with this matrix.
+   *
+   * In order for matrices to be added to each other, they must have the same numbers of rows and columns as each other.
+   *
+   * @param matrix the other matrix to check for compatiblity
+   */
+  private _verifyMatrixIsCompatibleForAddition(matrix: Matrix): void {
+    if (
+      this.numberOfRows !== matrix.numberOfRows ||
+      this.numberOfColumns !== matrix.numberOfColumns
+    ) {
+      throw new RangeError(
+        `The passed matrix doesn't have the same number of rows and columns (Rows: ${matrix.numberOfRows}, Columns: ` +
+          `${matrix.numberOfColumns}) as this matrix (Rows: ${this.numberOfRows}, Columns: ${this.numberOfColumns})`
+      );
+    }
+  }
+  /**
+   * Check that the passed matrix can actually be multiplied with this matrix.
+   *
+   * In order for matrices to be multiplied by each other, the number of columns of the first matrix (this one) must be
+   * equal to the number of rows of the second matrix (the one being passed in).
+   *
+   * @param matrix the other matrix to check for compatiblity
+   */
+  private _verifyMatrixIsCompatibleForMultiplication(matrix: Matrix): void {
+    if (this.numberOfColumns !== matrix.numberOfRows) {
+      throw new RangeError(
+        "The passed matrix doesn't have as many rows as this matrix has columns, so they cannot be multiplied."
+      );
+    }
   }
 }
