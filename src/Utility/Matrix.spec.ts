@@ -126,4 +126,55 @@ describe("Matrix", function () {
       expect(matrix.add(otherMatrix)).to.deep.equal(expectedMatrix);
     });
   });
+  describe("Subtraction", function () {
+    let matrix: Matrix;
+    before(function () {
+      matrix = new Matrix([
+        [1, 2],
+        [3, 4],
+        [5, 6],
+      ]);
+    });
+    it("should throw RangeError when subtracting by matrix with fewer rows than good matrix", function () {
+      const otherMatrix = new Matrix([
+        [1, 2],
+        [3, 4],
+      ]);
+      expect(() => matrix.subtract(otherMatrix)).to.throw(RangeError);
+    });
+    it("should throw RangeError when subtracting by matrix with more rows than good matrix", function () {
+      const otherMatrix = new Matrix([
+        [1, 2],
+        [3, 4],
+        [5, 6],
+        [7, 8],
+      ]);
+      expect(() => matrix.subtract(otherMatrix)).to.throw(RangeError);
+    });
+    it("should throw RangeError when subtracting by matrix with fewer columns than good matrix", function () {
+      const otherMatrix = new Matrix([[1], [3], [5]]);
+      expect(() => matrix.subtract(otherMatrix)).to.throw(RangeError);
+    });
+    it("should throw RangeError when subtracting by matrix with more columns than good matrix", function () {
+      const otherMatrix = new Matrix([
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
+      ]);
+      expect(() => matrix.subtract(otherMatrix)).to.throw(RangeError);
+    });
+    it("should produce correct difference matrix when subtracting compatible matrices", function () {
+      const otherMatrix = new Matrix([
+        [0, 5],
+        [1, 0],
+        [3, 2],
+      ]);
+      const expectedMatrix = new Matrix([
+        [1, -3],
+        [2, 4],
+        [2, 4],
+      ]);
+      expect(matrix.subtract(otherMatrix)).to.deep.equal(expectedMatrix);
+    });
+  });
 });
