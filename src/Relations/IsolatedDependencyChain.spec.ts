@@ -42,7 +42,7 @@ describe("IsolatedDependencyChain", function () {
       expect(chain.getExternalDependencies()).to.be.empty;
     });
     it("should provide last unit that's the same as the head", function () {
-      expect(chain.getLastUnit()).to.equal(chain.head);
+      expect(chain.lastUnit).to.equal(chain.head);
     });
   });
   describe("Two Units (Sunny Day)", function () {
@@ -88,7 +88,7 @@ describe("IsolatedDependencyChain", function () {
       expect(chain.getExternalDependencies()).to.be.empty;
     });
     it("should provide last unit that's the second unit", function () {
-      expect(chain.getLastUnit()).to.equal(unitA);
+      expect(chain.lastUnit).to.equal(unitA);
     });
   });
   describe("Three Units (Sunny Day)", function () {
@@ -140,7 +140,7 @@ describe("IsolatedDependencyChain", function () {
       expect(chain.getExternalDependencies()).to.be.empty;
     });
     it("should provide last unit that's the third unit", function () {
-      expect(chain.getLastUnit()).to.equal(unitA);
+      expect(chain.lastUnit).to.equal(unitA);
     });
   });
   describe("Two Units (External Dependency)", function () {
@@ -148,57 +148,102 @@ describe("IsolatedDependencyChain", function () {
     let unitB: TaskUnit;
     let unitC: TaskUnit;
     let unitD: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let startDateC: Date;
-    let startDateD: Date;
-    let endDateA: Date;
-    let endDateB: Date;
-    let endDateC: Date;
-    let endDateD: Date;
+    let unitE: TaskUnit;
+    let unitF: TaskUnit;
     let chain: IsolatedDependencyChain;
     before(function () {
-      startDateA = new Date();
-      endDateA = new Date(startDateA.getTime() + 1000);
-      startDateB = new Date(endDateA.getTime());
-      endDateB = new Date(startDateB.getTime() + 1000);
-      startDateC = new Date();
-      endDateC = new Date(startDateC.getTime() + 500);
-      startDateD = new Date(endDateC.getTime());
-      endDateD = new Date(startDateD.getTime() + 500);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitC = new TaskUnit([], startDateC, endDateC);
-      unitD = new TaskUnit([unitC], startDateD, endDateD);
-      unitB = new TaskUnit([unitA, unitD], startDateB, endDateB);
-      chain = new IsolatedDependencyChain([unitB, unitA]);
+      const firstStartDate = new Date();
+      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
+      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
+      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
+      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
+      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
+      const fourthStartDate = new Date(thirdEndDate.getTime() + 1000);
+      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
+      const fifthStartDate = new Date(fourthEndDate.getTime());
+      const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
+      unitA = new TaskUnit([], firstStartDate, firstEndDate);
+      unitB = new TaskUnit([unitA], secondStartDate, secondEndDate);
+      unitC = new TaskUnit([unitA], secondStartDate, secondEndDate);
+      unitD = new TaskUnit([unitB, unitC], thirdStartDate, thirdEndDate);
+      unitE = new TaskUnit([unitD], fourthStartDate, fourthEndDate);
+      unitF = new TaskUnit([unitE], fifthStartDate, fifthEndDate);
+      chain = new IsolatedDependencyChain([unitF, unitE]);
     });
     it("should have same presence as its units", function () {
       expect(chain.presenceTime).to.equal(
-        unitB.presenceTime + unitA.presenceTime
+        unitE.presenceTime + unitF.presenceTime
       );
     });
     it("should have same initial start date as its prior unit", function () {
-      expect(chain.initialStartDate).to.equal(unitA.initialStartDate);
+      expect(chain.initialStartDate).to.equal(unitE.initialStartDate);
     });
     it("should have same end date as head unit", function () {
-      expect(chain.endDate).to.equal(unitB.endDate);
+      expect(chain.endDate).to.equal(unitF.endDate);
     });
     it("should have timespan from start of prior unit to end of later unit", function () {
       const expectedTimeSpan =
-        unitB.endDate.getTime() - unitA.initialStartDate.getTime();
+        unitF.endDate.getTime() - unitE.initialStartDate.getTime();
       expect(chain.timeSpan).to.equal(expectedTimeSpan);
     });
     it("should have visual density of 1", function () {
       expect(chain.visualDensity).to.equal(1);
     });
     it("should have head property set to its first unit", function () {
-      expect(chain.head).to.equal(unitB);
+      expect(chain.head).to.equal(unitF);
     });
     it("should have D as external dependency", function () {
       expect([...chain.getExternalDependencies()]).to.have.members([unitD]);
     });
     it("should provide last unit that's the second unit", function () {
-      expect(chain.getLastUnit()).to.equal(unitA);
+      expect(chain.lastUnit).to.equal(unitE);
+    });
+    it("should have 2 paths to A", function () {
+      expect(
+        chain.getNumberOfPathsToDependency(new IsolatedDependencyChain([unitA]))
+      ).to.equal(2);
+    });
+    it("should have 1 path to B", function () {
+      expect(
+        chain.getNumberOfPathsToDependency(new IsolatedDependencyChain([unitB]))
+      ).to.equal(1);
+    });
+    it("should have 1 path to C", function () {
+      expect(
+        chain.getNumberOfPathsToDependency(new IsolatedDependencyChain([unitC]))
+      ).to.equal(1);
+    });
+    it("should have 1 path to D", function () {
+      expect(
+        chain.getNumberOfPathsToDependency(new IsolatedDependencyChain([unitD]))
+      ).to.equal(1);
+    });
+    it("should not be directly dependent on A", function () {
+      expect(chain.isDirectlyDependentOn(new IsolatedDependencyChain([unitA])))
+        .to.be.false;
+    });
+    it("should not be directly dependent on B", function () {
+      expect(chain.isDirectlyDependentOn(new IsolatedDependencyChain([unitB])))
+        .to.be.false;
+    });
+    it("should not be directly dependent on C", function () {
+      expect(chain.isDirectlyDependentOn(new IsolatedDependencyChain([unitC])))
+        .to.be.false;
+    });
+    it("should be directly dependent on D", function () {
+      expect(chain.isDirectlyDependentOn(new IsolatedDependencyChain([unitD])))
+        .to.be.true;
+    });
+    it("should not be directly dependent on E", function () {
+      expect(chain.isDirectlyDependentOn(new IsolatedDependencyChain([unitE])))
+        .to.be.false;
+    });
+    it("should not be directly dependent on F", function () {
+      expect(chain.isDirectlyDependentOn(new IsolatedDependencyChain([unitF])))
+        .to.be.false;
+    });
+    it("should have attachment to dependencies of 2", function () {
+      expect(chain.attachmentToDependencies).to.equal(2);
     });
   });
   describe("Two Units (With Gap)", function () {
@@ -244,7 +289,7 @@ describe("IsolatedDependencyChain", function () {
       expect(chain.getExternalDependencies()).to.be.empty;
     });
     it("should provide last unit that's the second unit", function () {
-      expect(chain.getLastUnit()).to.equal(unitA);
+      expect(chain.lastUnit).to.equal(unitA);
     });
   });
   describe("Two Units (With Overlap)", function () {
@@ -292,7 +337,7 @@ describe("IsolatedDependencyChain", function () {
       expect(chain.getExternalDependencies()).to.be.empty;
     });
     it("should provide last unit that's the second unit", function () {
-      expect(chain.getLastUnit()).to.equal(unitA);
+      expect(chain.lastUnit).to.equal(unitA);
     });
   });
   describe("Two Units (Out of Order)", function () {

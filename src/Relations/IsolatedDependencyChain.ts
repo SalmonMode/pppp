@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
 import { DependencyOrderError } from "../Error";
-import StrainMap from "./StrainMap";
 import TaskUnit from "./TaskUnit";
 
 /**
@@ -45,6 +44,7 @@ export default class IsolatedDependencyChain {
   private _chainInitialStartDate: Date;
   private _head: TaskUnit;
   private _tail: TaskUnit[];
+  private _lastUnit: TaskUnit;
   private _chainTotalTime: number;
   private _chainPresenceTime: number;
   private _externalDependencies: Set<TaskUnit>;
@@ -58,8 +58,8 @@ export default class IsolatedDependencyChain {
     }
     this._head = unit;
     this._tail = copyOfUnits;
-    const lastItemInTail = this._tail[this._tail.length - 1] || this.head;
-    this._chainInitialStartDate = lastItemInTail.initialStartDate;
+    this._lastUnit = this._tail[this._tail.length - 1] || this.head;
+    this._chainInitialStartDate = this.lastUnit.initialStartDate;
 
     this._chainTotalTime =
       this.endDate.getTime() - this.initialStartDate.getTime();
@@ -211,7 +211,25 @@ export default class IsolatedDependencyChain {
   getExternalDependencies(): Set<TaskUnit> {
     return this._externalDependencies;
   }
-  getLastUnit(): TaskUnit {
-    return this._tail[this._tail.length - 1] || this._head;
+  get lastUnit(): TaskUnit {
+    return this._lastUnit;
+  }
+  get attachmentToDependencies(): number {
+    return this.lastUnit.attachmentToDependencies;
+  }
+  getNumberOfPathsToDependency(chain: IsolatedDependencyChain): number {
+    return this.lastUnit.getNumberOfPathsToDependency(chain.head);
+  }
+  /**
+   * Check whether or not the passed chain is a dependency of this chain.
+   *
+   * @param chain the chain to check if its a dependency
+   * @returns true, if this chain is dependent on the passed chain, false, if not
+   */
+  isDirectlyDependentOn(chain: IsolatedDependencyChain): boolean {
+    return this.unitsDirectlyDependentOn.has(chain.head);
+  }
+  get unitsDirectlyDependentOn(): Set<TaskUnit> {
+    return this.lastUnit.directDependencies;
   }
 }
