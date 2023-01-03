@@ -1,7 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
 import { RelationshipMapping } from "../types";
-import IsolatedDependencyChain from "./IsolatedDependencyChain";
-import StrainMap from "./StrainMap";
 
 export default class TaskUnit {
   public readonly id: string;
@@ -17,7 +15,8 @@ export default class TaskUnit {
   constructor(
     parentUnits: TaskUnit[],
     public readonly initialStartDate: Date,
-    public readonly endDate: Date
+    public readonly endDate: Date,
+    public readonly name: string = "unknown"
   ) {
     this.id = uuidv4();
     this._providedDirectDependencies = parentUnits;
@@ -80,6 +79,9 @@ export default class TaskUnit {
   getAllDependencies(): Set<TaskUnit> {
     return this._allDependencies;
   }
+  /**
+   * A map of the IDs of the units this unit is dependent on to the number of paths it has to those units.
+   */
   get attachmentMap(): RelationshipMapping {
     return this._attachmentMap;
   }

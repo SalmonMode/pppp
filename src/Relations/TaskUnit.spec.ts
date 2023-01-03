@@ -1111,4 +1111,144 @@ describe("TaskUnit", function () {
       });
     });
   });
+  describe("Competing Heads", function () {
+    /**
+     * ```text
+     *                        ┏━━━┓
+     *                       ╱┗━━━┛╲J
+     *                 ┏━━━┓╱       ╲┏━━━┓
+     *               F╱┗━━━┛╲       ╱┗━━━┛╲O
+     *          ┏━━━┓╱       ╲┏━━━┓╱       ╲┏━━━┓
+     *        C╱┗━━━┛╲       ╱┗━━━┛╲K      ╱┗━━━┛╲S
+     *   ┏━━━┓╱       ╲┏━━━┓╱       ╲┏━━━┓╱       ╲┏━━━┓
+     *  A┗━━━┛╲      G╱┗━━━┛╲       ╱┗━━━┛╲P      ╱┗━━━┛W
+     *         ╲┏━━━┓╱       ╲┏━━━┓╱       ╲┏━━━┓╱
+     *        D╱┗━━━┛╲       ╱┗━━━┛╲L      ╱┗━━━┛╲T
+     *   ┏━━━┓╱       ╲┏━━━┓╱       ╲┏━━━┓╱       ╲┏━━━┓
+     *  B┗━━━┛╲      H╱┗━━━┛╲       ╱┗━━━┛╲Q      ╱┗━━━┛X
+     *         ╲┏━━━┓╱       ╲┏━━━┓╱       ╲┏━━━┓╱
+     *         E┗━━━┛╲       ╱┗━━━┛╲M      ╱┗━━━┛╲U
+     *                ╲┏━━━┓╱       ╲┏━━━┓╱       ╲┏━━━┓
+     *                I┗━━━┛╲       ╱┗━━━┛╲R      ╱┗━━━┛Y
+     *                       ╲┏━━━┓╱       ╲┏━━━┓╱
+     *                        ┗━━━┛N        ┗━━━┛V
+     *
+     *                             |
+     *                             V
+     *
+     *                          ┏━━━┓
+     *                        J╱┗━━━┛╲
+     *                        ╱       ╲
+     *  ┏━━━┓___┏━━━┓___┏━━━┓╱__┏━━━┓__╲┏━━━┓___┏━━━┓___┏━━━┓
+     * A┗━━━┛╲ C┗━━━┛╲ F┗━━━┛  ╱┗━━━┛╲K ┗━━━┛O ╱┗━━━┛S  ┗━━━┛W
+     *        ╲       ╲       ╱       ╲       ╱
+     *        |        ╲┏━━━┓╱         ╲┏━━━┓╱
+     *        |       G╱┗━━━┛╲         ╱┗━━━┛╲P
+     *        |       ╱       ╲       ╱       ╲
+     *  ┏━━━┓__╲┏━━━┓╱__┏━━━┓__╲┏━━━┓╱__┏━━━┓__╲┏━━━┓___┏━━━┓
+     * B┗━━━┛╲ D┗━━━┛ H╱┗━━━┛╲  ┗━━━┛L ╱┗━━━┛╲Q ┗━━━┛T ╱┗━━━┛X
+     *        ╲       |       ╲       ╱       ╲       ╱
+     *        |       |        ╲┏━━━┓╱         ╲┏━━━┓╱
+     *        |       |        ╱┗━━━┛╲M        ╱┗━━━┛╲U
+     *        |       ╱       ╱       ╲       ╱       ╲
+     *         ╲┏━━━┓╱__┏━━━┓╱__┏━━━┓__╲┏━━━┓╱__┏━━━┓__╲┏━━━┓
+     *          ┗━━━┛E  ┗━━━┛I  ┗━━━┛N  ┗━━━┛R  ┗━━━┛V  ┗━━━┛Y
+     * ```
+     */
+    let unitA: TaskUnit;
+    let unitB: TaskUnit;
+    let unitC: TaskUnit;
+    let unitD: TaskUnit;
+    let unitE: TaskUnit;
+    let unitF: TaskUnit;
+    let unitG: TaskUnit;
+    let unitH: TaskUnit;
+    let unitI: TaskUnit;
+    let unitJ: TaskUnit;
+    let unitK: TaskUnit;
+    let unitL: TaskUnit;
+    let unitM: TaskUnit;
+    let unitN: TaskUnit;
+    let unitO: TaskUnit;
+    let unitP: TaskUnit;
+    let unitQ: TaskUnit;
+    let unitR: TaskUnit;
+    let unitS: TaskUnit;
+    let unitT: TaskUnit;
+    let unitU: TaskUnit;
+    let unitV: TaskUnit;
+    let unitW: TaskUnit;
+    let unitX: TaskUnit;
+    let unitY: TaskUnit;
+    before(function () {
+      const firstStartDate = new Date();
+      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
+      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
+      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
+      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
+      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
+      const fourthStartDate = new Date(thirdStartDate.getTime() + 1000);
+      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
+      const fifthStartDate = new Date(fourthEndDate.getTime() + 1000);
+      const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
+      const sixthStartDate = new Date(fifthEndDate.getTime() + 1000);
+      const sixthEndDate = new Date(sixthStartDate.getTime() + 1000);
+      const seventhStartDate = new Date(sixthEndDate.getTime() + 1000);
+      const seventhEndDate = new Date(seventhStartDate.getTime() + 1000);
+      unitA = new TaskUnit([], firstStartDate, firstEndDate, "A");
+      unitB = new TaskUnit([], firstStartDate, firstEndDate, "B");
+
+      unitC = new TaskUnit([unitA], secondStartDate, secondEndDate, "C");
+      unitD = new TaskUnit([unitA, unitB], secondStartDate, secondEndDate, "D");
+      unitE = new TaskUnit([unitB], secondStartDate, secondEndDate, "E");
+
+      unitF = new TaskUnit([unitC], thirdStartDate, thirdEndDate, "F");
+      unitG = new TaskUnit([unitC, unitD], thirdStartDate, thirdEndDate, "G");
+      unitH = new TaskUnit([unitD, unitE], thirdStartDate, thirdEndDate, "H");
+      unitI = new TaskUnit([unitE], thirdStartDate, thirdEndDate, "I");
+
+      unitJ = new TaskUnit([unitF], fourthStartDate, fourthEndDate, "J");
+      unitK = new TaskUnit([unitF, unitG], fourthStartDate, fourthEndDate, "K");
+      unitL = new TaskUnit([unitG, unitH], fourthStartDate, fourthEndDate, "L");
+      unitM = new TaskUnit([unitH, unitI], fourthStartDate, fourthEndDate, "M");
+      unitN = new TaskUnit([unitI], fourthStartDate, fourthEndDate, "N");
+
+      unitO = new TaskUnit([unitJ, unitK], fifthStartDate, fifthEndDate, "O");
+      unitP = new TaskUnit([unitK, unitL], fifthStartDate, fifthEndDate, "P");
+      unitQ = new TaskUnit([unitL, unitM], fifthStartDate, fifthEndDate, "Q");
+      unitR = new TaskUnit([unitM, unitN], fifthStartDate, fifthEndDate, "R");
+
+      unitS = new TaskUnit([unitO, unitP], sixthStartDate, sixthEndDate, "S");
+      unitT = new TaskUnit([unitP, unitQ], sixthStartDate, sixthEndDate, "T");
+      unitU = new TaskUnit([unitQ, unitR], sixthStartDate, sixthEndDate, "U");
+      unitV = new TaskUnit([unitR], sixthStartDate, sixthEndDate, "V");
+
+      unitW = new TaskUnit(
+        [unitS, unitT],
+        seventhStartDate,
+        seventhEndDate,
+        "W"
+      );
+      unitX = new TaskUnit(
+        [unitT, unitU],
+        seventhStartDate,
+        seventhEndDate,
+        "X"
+      );
+      unitY = new TaskUnit(
+        [unitU, unitV],
+        seventhStartDate,
+        seventhEndDate,
+        "Y"
+      );
+    });
+    describe("W", function () {
+      it("should have 2 paths to P", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitP)).to.equal(2);
+      });
+      it("should have 3 paths to K", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitK)).to.equal(3);
+      });
+    });
+  });
 });
