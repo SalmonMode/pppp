@@ -106,7 +106,7 @@ export default class Matrix {
    * @returns a new Matrix object containing the sum
    */
   add(otherMatrix: Matrix): Matrix {
-    this._verifyMatrixIsCompatibleForAddition(otherMatrix);
+    this._verifyMatrixIsCompatibleForAdditionAndSubtraction(otherMatrix);
     const sumMatrixData: number[][] = [];
     for (let rowIndex = 0; rowIndex < this.numberOfRows; rowIndex++) {
       const rowData: number[] = [];
@@ -119,6 +119,39 @@ export default class Matrix {
       sumMatrixData.push(rowData);
     }
     return new Matrix(sumMatrixData);
+  }
+  /**
+   * Subtract this matrix by the passed matrix and return a new Matrix object containing the difference.
+   *
+   * This produces a new matrix, where the elements in each position are the difference of the elements in the
+   * respective positions in this matrix and the passed matrix. For example:
+   *
+   * ```text
+   *      A           B
+   *  ┏       ┓   ┏       ┓   ┏         ┓
+   *  ┃ 0 1 3 ┃   ┃ 0 0 5 ┃   ┃ 0  1 -2 ┃
+   *  ┃ 2 0 3 ┃ - ┃ 0 0 1 ┃ = ┃ 2  0  2 ┃
+   *  ┃ 5 6 7 ┃   ┃ 0 1 4 ┃   ┃ 0  5  3 ┃
+   *  ┗       ┛   ┗       ┛   ┗         ┛
+   * ```
+   *
+   * @param otherMatrix The matrix to subtract by
+   * @returns a new Matrix object containing the difference
+   */
+  subtract(otherMatrix: Matrix): Matrix {
+    this._verifyMatrixIsCompatibleForAdditionAndSubtraction(otherMatrix);
+    const differenceMatrixData: number[][] = [];
+    for (let rowIndex = 0; rowIndex < this.numberOfRows; rowIndex++) {
+      const rowData: number[] = [];
+      for (let colIdx = 0; colIdx < this.numberOfColumns; colIdx++) {
+        const difference =
+          this.getElementAtPosition(rowIndex, colIdx) -
+          otherMatrix.getElementAtPosition(rowIndex, colIdx);
+        rowData.push(difference);
+      }
+      differenceMatrixData.push(rowData);
+    }
+    return new Matrix(differenceMatrixData);
   }
   /**
    * Multiply this matrix by the passed matrix and return a new Matrix object containing the product.
@@ -136,7 +169,7 @@ export default class Matrix {
     // Figure out the products for the numbers in the first row of this matrix
     for (let rowIndex = 0; rowIndex < this.numberOfRows; rowIndex++) {
       // Make sure there an array already started for this row
-      const productRow = (productMatrixData[rowIndex] ??= []);
+      const productRow: number[] = (productMatrixData[rowIndex] = []);
       for (let colIdx = 0; colIdx < otherMatrix.numberOfColumns; colIdx++) {
         // Go column by column of the other matrix
         for (let srcColIdx = 0; srcColIdx < this.numberOfColumns; srcColIdx++) {
@@ -158,7 +191,9 @@ export default class Matrix {
    *
    * @param matrix the other matrix to check for compatiblity
    */
-  private _verifyMatrixIsCompatibleForAddition(matrix: Matrix): void {
+  private _verifyMatrixIsCompatibleForAdditionAndSubtraction(
+    matrix: Matrix
+  ): void {
     if (
       this.numberOfRows !== matrix.numberOfRows ||
       this.numberOfColumns !== matrix.numberOfColumns
