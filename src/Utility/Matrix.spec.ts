@@ -177,4 +177,21 @@ describe("Matrix", function () {
       expect(matrix.subtract(otherMatrix)).to.deep.equal(expectedMatrix);
     });
   });
+  describe("Transpose", function () {
+    let matrix: Matrix;
+    before(function () {
+      matrix = new Matrix([
+        [1, 2],
+        [3, 4],
+        [5, 6],
+      ]);
+    });
+    it("should provide a new matrix with the numbers reflected over the X and Y axis", function () {
+      const expectedMatrix = new Matrix([
+        [1, 3, 5],
+        [2, 4, 6],
+      ]);
+      expect(matrix.transpose()).to.deep.equal(expectedMatrix);
+    });
+  });
 });
