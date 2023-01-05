@@ -185,6 +185,29 @@ export default class Matrix {
     return new Matrix(productMatrixData);
   }
   /**
+   * Transpose this matrix and return a new Matrix object containing the result.
+   *
+   * Transposing a matrix means reflecting it over its X and Y axis. This can be done in one swift action by turning the
+   * rows into columns.
+   *
+   * @returns a new Matrix object containing the transposed result
+   */
+  transpose(): Matrix {
+    const newData: number[][] = [];
+    // Each row needs to become each column in the transposed matrix.
+    for (let row of this.data) {
+      for (let [columnIndexAsString, sourceNumber] of Object.entries(row)) {
+        const newRowIndex = Number(columnIndexAsString);
+        // Make sure there's an array started for the new row in the transposed matrix. This both makes sure the array
+        // exists, and satisfied TypeScript's noUncheckedIndexAccess.
+        const newRow = (newData[newRowIndex] ??= []);
+        // Add the source number to the new row.
+        newRow.push(sourceNumber);
+      }
+    }
+    return new Matrix(newData);
+  }
+  /**
    * Check that the passed matrix can actually be summed with this matrix.
    *
    * In order for matrices to be added to each other, they must have the same numbers of rows and columns as each other.
