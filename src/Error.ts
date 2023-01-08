@@ -21,17 +21,6 @@ export class DisjointedUnitsError extends Error {
   }
 }
 /**
- * This is thrown when the desired {@link TaskUnit} cannot be found.
- */
-export class NoSuchTaskUnitError extends Error {
-  constructor(message?: string) {
-    super(message);
-
-    Object.setPrototypeOf(this, NoSuchTaskUnitError.prototype);
-    this.name = new.target.name;
-  }
-}
-/**
  * This is thrown when the desired {@link IsolatedDependencyChain} cannot be found.
  */
 export class NoSuchChainError extends Error {
@@ -39,6 +28,17 @@ export class NoSuchChainError extends Error {
     super(message);
 
     Object.setPrototypeOf(this, NoSuchChainError.prototype);
+    this.name = new.target.name;
+  }
+}
+/**
+ * This is thrown when the desired {@link ChainPath} cannot be found.
+ */
+export class NoSuchChainPathError extends Error {
+  constructor(message?: string) {
+    super(message);
+
+    Object.setPrototypeOf(this, NoSuchChainPathError.prototype);
     this.name = new.target.name;
   }
 }
