@@ -3,12 +3,12 @@ import {
   DisjointedUnitsError,
   NoSuchChainError,
 } from "../Error";
-import { Matrix } from "../Utility";
 import {
   ConnectedChainMapping,
   IsolatedChainMapping,
   UnitToChainMap,
 } from "../types";
+import { Matrix } from "../Utility";
 import IsolatedDependencyChain from "./IsolatedDependencyChain";
 import TaskUnit from "./TaskUnit";
 import UnitPathMatrix from "./UnitPathMatrix";
@@ -135,34 +135,11 @@ export default class SimpleChainMap {
   /**
    * Check if the provided heads are interconnected.
    *
-   * This is useful not just for checking that all units belong to a single cluster, but also for finding out where
-   * {@link ChainClump}s are. If a chain has multiple direct dependencies, and those direct dependencies are
-   * interconnected through their own direct dependencies, then the that chain, along with its direct dependencies are
-   * part of a clump. Not all of the direct dependencies of the first chain's direct dependencies are necessarily in the
-   * same clump, though.
-   *
-   * For example:
-   *
-   * ```text
-   *          ┏━━━┓
-   *         C┗━━━┛╲
-   *   ┏━━━┓        ╲┏━━━┓
-   *  A┗━━━┛╲      E╱┗━━━┛╲
-   *         ╲┏━━━┓╱       ╲┏━━━┓
-   *        D╱┗━━━┛╲       ╱┗━━━┛G
-   *   ┏━━━┓╱       ╲┏━━━┓╱
-   *  B┗━━━┛        F┗━━━┛
-   * ```
-   *
-   * `D`, `E`, `F`, and `G` are all in the same clump. This is determined by first looking at the direct dependencies of
-   * `G`, and finding that they are interconnected through their own direct dependencies. But that doesn't mean `A`,
-   * `B`, or `C` are part of the clump. Only `D` is. `A` and `B` might later be determined to also be in the same clump
-   * as `D`, `E`, `F`, and `G`, but only if their own direct dependencies were interconnected.
+   * This is useful for checking that all units belong to a single cluster.
    *
    * @param heads The heads to check for interconnectivity
    * @returns true, if the heads are all interconnected somehow, false, if not
    */
-  // headsAreInterconnected(...heads: IsolatedDependencyChain[]): boolean {}
   get heads(): TaskUnit[] {
     return [...this._heads];
   }
@@ -486,6 +463,9 @@ export default class SimpleChainMap {
   }
   /**
    * Build the map of how the chains are connected to each other.
+   *
+   * This details which chains are dependent on which chains, and the reverse. If A is dependent on B, then A is
+   * connected to B and B is connected to A.
    */
   private _buildChainConnections(): void {
     for (let chain of this.chains) {

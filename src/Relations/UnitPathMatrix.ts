@@ -5,19 +5,34 @@ import TaskUnit from "./TaskUnit";
  * A simple abstraction around a matrix of the unit relations to perform helpful operations.
  */
 export default class UnitPathMatrix {
-  private _unitsSortedById: TaskUnit[];
   /**
-   * A matrix showing the direct dependencies of each unit. This will show where each unit can "step" to in just a
-   * single step. This is useful for easily and efficiently identifying which units are usable as heads when other units
-   * have been eliminated.
+   * The units sorted alphabetically by their IDs.
+   *
+   * This is the basis for which the path matrix keys are based. The index in this array is the same as their
+   * corresponding row and column in each matrix.
+   *
+   * For matrix subsets, new arrays will be made containing the subset of units, and the indexes will inherently be
+   * different, but the principle is the same.
    */
-  private _singleStepMatrix: Matrix;
+  private _unitsSortedById: TaskUnit[];
   /**
    * The matrix only understands integers for its column and row indexes. So we need to track the order of all the units
    * according to their sorted ID order. The index of their ID in this list represents the index of their column and row
    * in the matrix.
    */
   private _pathMatrixKeys: string[];
+  /**
+   * A matrix showing the direct connections of each unit in both directions. This will show where each unit can "step"
+   * to, or where they can be stepped to from in exactly one step. This is useful for identifying interconnections,
+   * which is necessary to sort according to the stress model.
+   */
+  private _symmetricSingleStepMatrix: Matrix;
+  /**
+   * A matrix showing the direct dependencies of each unit. This will show where each unit can "step" to in just a
+   * single step. This is useful for easily and efficiently identifying which units are usable as heads when other units
+   * have been eliminated.
+   */
+  private _singleStepMatrix: Matrix;
   constructor(units: TaskUnit[]) {
     const firstUnit = units[0];
     if (firstUnit === undefined) {
@@ -26,6 +41,7 @@ export default class UnitPathMatrix {
     this._unitsSortedById = this._getAllUnitsSortedById(units);
     this._pathMatrixKeys = this._getPathMatrixKeys();
     this._singleStepMatrix = this._buildSingleStepMatrix();
+    this._symmetricSingleStepMatrix = this._buildSymmetricSingleStepMatrix();
   }
   /**
    * Take an array of units, and return a new array with the same units sorted alphabetically by their IDs.
@@ -46,6 +62,17 @@ export default class UnitPathMatrix {
    */
   private _getPathMatrixKeys(): string[] {
     return this._unitsSortedById.map((unit) => unit.id).sort();
+  }
+  /**
+   * A matrix showing which units are connected to which other units.
+   *
+   * This details which units are dependent on which units, and the reverse. If A is dependent on B, then A is connected
+   * to B and B is connected to A.
+   *
+   * This is useful for identifying interconnections, which is necessary to sort according to the stress model.
+   */
+  get taskUnitInterconnections(): Matrix {
+    return this._symmetricSingleStepMatrix;
   }
   /**
    * @param unit
@@ -71,6 +98,15 @@ export default class UnitPathMatrix {
       pathMatrixData.push(rowData);
     }
     return new Matrix(pathMatrixData);
+  }
+  /**
+   * Build a matrix that shows the interconnections of each unit. This will show where each unit can "step" to, or be
+   * stepped to from in exactly a single step.
+   */
+  private _buildSymmetricSingleStepMatrix(): Matrix {
+    const singleStepM = this._singleStepMatrix;
+    // We can get the symmetric matrix by adding the single step matrix to the transposed version of itself.
+    return singleStepM.add(singleStepM.transpose());
   }
   /**
    * Build a matrix showing which units every unit can reach in a single step. This is useful for very easily and
@@ -138,5 +174,30 @@ export default class UnitPathMatrix {
       }
     }
     return headUnits;
+  }
+  getUnitForMatrixIndex(index: number): TaskUnit {
+    const unit = this._unitsSortedById[index];
+    if (!unit) {
+      throw new RangeError(`No unit exsts for matrix index ${index}`);
+    }
+    return unit;
+  }
+
+  /**
+   * Get all units connected to the passed unit, whether it is a direct dependency of them, or they are of it.
+   *
+   * @param unit the unit to find the connected units of
+   * @returns a set of units that have a connection to the passed unit
+   */
+  getUnitsConnectedToUnit(unit: TaskUnit): Set<TaskUnit> {
+    const connectedUnits = new Set<TaskUnit>();
+    const unitIndex = this.getMatrixIndexForUnit(unit);
+    const connectionsRow = this.taskUnitInterconnections.getRow(unitIndex);
+    connectionsRow.forEach((walks, connectionIndex) => {
+      if (!!walks) {
+        connectedUnits.add(this.getUnitForMatrixIndex(connectionIndex));
+      }
+    });
+    return connectedUnits;
   }
 }

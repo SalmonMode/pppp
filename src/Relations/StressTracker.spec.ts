@@ -1,6 +1,4 @@
 import { expect } from "chai";
-import * as Sinon from "sinon";
-import { DependencyOrderError } from "../Error";
 import { assertIsObject } from "../typePredicates";
 import { InterconnectionStrengthMapping } from "../types";
 import { Matrix } from "../Utility";
@@ -246,6 +244,101 @@ describe("StressTracker", function () {
     });
     it("should have a stress of 6 for D", function () {
       expect(stressTracker.getCurrentStressOfPath(pathD)).to.equal(6);
+    });
+  });
+  describe("Many Paths Strength Map Predicting Swap", function () {
+    let startDate: Date;
+    let endDate: Date;
+    let pathA: ChainPath;
+    let pathB: ChainPath;
+    let pathC: ChainPath;
+    let pathD: ChainPath;
+    let pathE: ChainPath;
+    let pathF: ChainPath;
+    let expectedPathAPostSwapStress: number;
+    let expectedPathDPostSwapStress: number;
+    let stressTracker: StressTracker;
+    before(function () {
+      startDate = new Date();
+      endDate = new Date(startDate.getTime() + 1000);
+      const unit = new TaskUnit([], startDate, endDate);
+      const chain = new IsolatedDependencyChain([unit]);
+      // make sure paths are in alphabetical order
+      const paths = [
+        new ChainPath([chain]),
+        new ChainPath([chain]),
+        new ChainPath([chain]),
+        new ChainPath([chain]),
+        new ChainPath([chain]),
+        new ChainPath([chain]),
+      ];
+      paths.sort((prev, next) => prev.id.localeCompare(next.id));
+      const firstPath = paths[0];
+      assertIsObject(firstPath);
+      const secondPath = paths[1];
+      assertIsObject(secondPath);
+      const thirdPath = paths[2];
+      assertIsObject(thirdPath);
+      const fourthPath = paths[3];
+      assertIsObject(fourthPath);
+      const fifthPath = paths[4];
+      assertIsObject(fifthPath);
+      const sixthPath = paths[5];
+      assertIsObject(sixthPath);
+      pathA = firstPath;
+      pathB = secondPath;
+      pathC = thirdPath;
+      pathD = fourthPath;
+      pathE = fifthPath;
+      pathF = sixthPath;
+      const strengthMapping: InterconnectionStrengthMapping = {
+        [pathA.id]: {
+          [pathC.id]: 2,
+          [pathD.id]: 1,
+          [pathF.id]: 4,
+        },
+        [pathB.id]: {
+          [pathC.id]: 3,
+          [pathD.id]: 4,
+        },
+        [pathC.id]: {
+          [pathA.id]: 2,
+          [pathB.id]: 3,
+          [pathE.id]: 3,
+          [pathF.id]: 1,
+        },
+        [pathD.id]: {
+          [pathA.id]: 1,
+          [pathB.id]: 4,
+          [pathE.id]: 3,
+        },
+        [pathE.id]: {
+          [pathC.id]: 3,
+          [pathD.id]: 3,
+          [pathF.id]: 1,
+        },
+        [pathF.id]: {
+          [pathA.id]: 4,
+          [pathC.id]: 1,
+          [pathE.id]: 1,
+        },
+      };
+      stressTracker = new StressTracker(strengthMapping);
+      expectedPathAPostSwapStress =
+        stressTracker.getStressOfPathIfSwappedWithPath(pathA, pathD);
+      expectedPathDPostSwapStress =
+        stressTracker.getStressOfPathIfSwappedWithPath(pathD, pathA);
+      stressTracker.swapPositionsOfPaths(pathA, pathD);
+    });
+    it("should predicted pathA stress correctly", function () {
+      expect(stressTracker.getCurrentStressOfPath(pathA))
+        .to.equal(expectedPathAPostSwapStress)
+        .and.to.equal(1);
+    });
+    it("should predicted pathD stress correctly", function () {
+      expect(stressTracker.getCurrentStressOfPath(pathD))
+        .to.equal(expectedPathDPostSwapStress)
+        .and.to.equal(8);
     });
   });
 });

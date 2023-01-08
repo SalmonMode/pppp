@@ -1,12 +1,21 @@
+import ChainPath from "../Relations/ChainPath";
 import IsolatedDependencyChain from "../Relations/IsolatedDependencyChain";
 import TaskUnit from "../Relations/TaskUnit";
 
 export type UnitToChainMap = {
   [key: TaskUnit["id"]]: IsolatedDependencyChain;
 };
-
+export type ChainToPathMap = {
+  [key: IsolatedDependencyChain["id"]]: ChainPath;
+};
+export type ChainPathMapping = {
+  [key: ChainPath["id"]]: ChainPath;
+};
 export type IsolatedChainMapping = {
   [key: IsolatedDependencyChain["id"]]: IsolatedDependencyChain;
+};
+export type ConnectedChainMapping = {
+  [key: IsolatedDependencyChain["id"]]: Set<IsolatedDependencyChain>;
 };
 
 /**
