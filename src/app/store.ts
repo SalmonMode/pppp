@@ -5,7 +5,11 @@ import {
   combineReducers,
 } from "@reduxjs/toolkit";
 import type { PreloadedState } from "@reduxjs/toolkit";
-const rootReducer = combineReducers({});
+import taskUnitsSlice from "../features/Poster/taskUnitsSlice";
+
+const rootReducer = combineReducers({
+  taskUnits: taskUnitsSlice,
+});
 
 export function makeStore(preloadedState?: PreloadedState<RootState>) {
   return configureStore({
