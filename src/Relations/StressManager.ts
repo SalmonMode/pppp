@@ -74,6 +74,8 @@ export default class StressManager {
           chosenMove.pathA,
           chosenMove.pathB
         );
+        // Reset so we don't accidentally make the same move more than once
+        chosenMove = undefined;
       } else {
         // No moves left, so let's go to phase 2
         canStillMove = false;
@@ -99,7 +101,7 @@ export default class StressManager {
       ) {
         // get the effective number for the path's position by totalling the items in its position row. We can then sort
         // from greatest to least.
-        const rankedIds = this._getRankings();
+        const rankedIds = this.getRankings();
 
         const pathId = rankedIds[pathIndex];
         assertIsString(pathId);
@@ -136,7 +138,7 @@ export default class StressManager {
   ): number {
     return stressLevels.reduce((acc, curr) => acc + Math.abs(curr), 0);
   }
-  private _getRankings(): ChainPath["id"][] {
+  getRankings(): ChainPath["id"][] {
     const rankings: RelationshipMapping = {};
     for (let id of this.stressTracker.pathMatrixKeys) {
       const matrixIndex = this.stressTracker.getMatrixIndexForPathId(id);

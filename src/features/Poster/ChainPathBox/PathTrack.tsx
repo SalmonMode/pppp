@@ -1,16 +1,14 @@
 import { Box } from "@material-ui/core";
 import GraphableChainPath from "../../../Graphing/GraphableChainPath";
-import { Coordinate } from "../../../types/ConnectedPoints";
+import { Coordinate } from "../../../types";
 import ChainPathBox from "./ChainPathBox";
 
 export default function PathTrack({
   paths,
   position,
-  directionOfCenterOfMass,
 }: {
   paths: GraphableChainPath[];
   position: Coordinate;
-  directionOfCenterOfMass: 1 | -1;
 }) {
   const baseHeight = 40;
   const tallestPath = paths.reduce((prev, curr) =>
@@ -40,7 +38,6 @@ export default function PathTrack({
         return (
           <ChainPathBox
             key={index}
-            directionOfCenterOfMass={directionOfCenterOfMass}
             path={path}
             position={{ x: adjustedX, y: 0 }}
           />
