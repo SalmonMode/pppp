@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@material-ui/core";
 import { TaskUnit } from "../../../Relations";
-import { Coordinate } from "../../../types/ConnectedPoints";
+import { Coordinate } from "../../../types";
 
 export default function TaskUnitCard({
   unit,

@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { NoSuchChainPathError } from "../Error";
+import { assertIsObject } from "../typePredicates";
 import {
   ChainPathMapping,
   ChainToPathMap,
@@ -49,6 +50,16 @@ export default class TaskUnitCluster {
    */
   get paths(): ChainPath[] {
     return [...this._paths];
+  }
+  get pathsSortedByRanking(): ChainPath[] {
+    const rankings = this.stressManager.getRankings();
+    const paths: ChainPath[] = [];
+    for (let rankedId of rankings) {
+      const path = this._pathMap[rankedId];
+      assertIsObject(path);
+      paths.push(path);
+    }
+    return paths;
   }
   /**
    * Gets the path of the chain provided.
@@ -210,6 +221,7 @@ export default class TaskUnitCluster {
       // is connected to, and in how many ways. The number of units it's connected to in another path is equal to the
       // amount of connections, and thus, the amount of edges we'd need to draw between the two paths.
       const unitsConnectedToUnitsInPath = this._getUnitsConnectedToPath(path);
+      const pathsUnits = this._getUnitsInPath(path);
       // make sure the mapping exists
       const mapping: RelationshipMapping = (this._pathInterconnectionsStrength[
         path.id
@@ -245,9 +257,15 @@ export default class TaskUnitCluster {
           // Use a copy of the connected units set to avoid issues with modification while iterating
           for (let connectedUnit of [...unitsConnectedToUnitsInPath]) {
             if (otherPathsUnits.has(connectedUnit)) {
-              // Found a connection, so increment the connection count and remove the connected unit from the set to speed
-              // up the next iterations.
-              connections += 1;
+              // Found a connection, so check how many connections there are before removing the unit from the set to
+              // speed up the next iterations.
+              for (let unit of pathsUnits) {
+                if (unit.directDependencies.has(connectedUnit)) {
+                  connections += 1;
+                } else if (connectedUnit.directDependencies.has(unit)) {
+                  connections += 1;
+                }
+              }
               // We can remove the connected unit, because it can only exist in otherPath, and if we already know it
               // exists in otherPath, we don't need to check if it exists in the other paths we have yet to iterate over.
               // Removing it speeds up the remaining iterations of the inner loop.
