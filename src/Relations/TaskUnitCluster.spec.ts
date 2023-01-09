@@ -1057,7 +1057,7 @@ describe("TaskUnitCluster", function () {
       const secondEndDate = new Date(secondStartDate.getTime() + 1000);
       const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
       const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthStartDate = new Date(thirdStartDate.getTime() + 1000);
+      const fourthStartDate = new Date(thirdEndDate.getTime() + 1000);
       const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
       const fifthStartDate = new Date(fourthEndDate.getTime() + 1000);
       const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
