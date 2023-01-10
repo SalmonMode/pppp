@@ -187,7 +187,7 @@ export default class StressTracker {
     // Produce a new matrix containing the updated relative positions.
     const updatedPositionData: number[][] = [];
     for (let i = 0; i < diff.length; i++) {
-      const oldRow = this.positioningMatrix.getRow(i);
+      const oldRow = [...this.positioningMatrix.getRow(i)];
       if (!!diff[i]) {
         // this row is affected so update it.
         const updatedRow = new Matrix([oldRow])
