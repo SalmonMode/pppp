@@ -249,6 +249,11 @@ describe("TaskUnitCluster", function () {
         chainF,
       ]);
     });
+    it("should have D path in the middle", function () {
+      expect(cluster.pathsSortedByRanking[1]).to.equal(
+        cluster.getPathOfChain(chainD)
+      );
+    });
     it("should throw NoSuchChainPathError when getting path of unrecognized chain", function () {
       expect(() =>
         cluster.getPathOfChain(
@@ -459,6 +464,11 @@ describe("TaskUnitCluster", function () {
     });
     it("should have chain C in its own path", function () {
       expect(cluster.getPathOfChain(chainC).chains).to.have.members([chainC]);
+    });
+    it("should have A path in the middle", function () {
+      expect(cluster.pathsSortedByRanking[1]).to.equal(
+        cluster.getPathOfChain(chainA)
+      );
     });
   });
   describe("Competing Heads", function () {
