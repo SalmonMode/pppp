@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@material-ui/core";
 import { TaskUnit } from "../../../Relations";
 import { Coordinate } from "../../../types";
+import { trackHeight, unitTaskTimeConversion } from "../../constants";
 
 export default function TaskUnitCard({
   unit,
@@ -9,7 +10,7 @@ export default function TaskUnitCard({
   unit: TaskUnit;
   position: Coordinate;
 }) {
-  const width = unit.presenceTime / 20;
+  const width = unit.presenceTime / unitTaskTimeConversion;
 
   return (
     <Card
@@ -17,7 +18,7 @@ export default function TaskUnitCard({
       className={`taskUnit`}
       style={{
         width,
-        height: 40,
+        height: trackHeight,
         position: "absolute",
         left: position.x,
         top: position.y,
