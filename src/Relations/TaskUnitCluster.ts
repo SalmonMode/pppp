@@ -42,7 +42,6 @@ export default class TaskUnitCluster {
     this.strainMap = new ChainStrainMap(this.chainMap);
     this._buildPaths([]);
     this._buildPathInterconnections();
-    this.paths.forEach((p) => console.log(p.id, p.head.head.name));
     this.stressTracker = new StressTracker(this._pathInterconnectionsStrength);
     this.stressManager = new StressManager(this.stressTracker);
   }
