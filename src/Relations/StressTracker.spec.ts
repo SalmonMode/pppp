@@ -231,7 +231,7 @@ describe("StressTracker", function () {
         },
       };
       stressTracker = new StressTracker(strengthMapping);
-      stressTracker.swapPositionsOfPaths(pathD, pathB);
+      stressTracker.swapPaths(pathD, pathB);
     });
     it("should have a stress of 5 for A", function () {
       expect(stressTracker.getCurrentStressOfPath(pathA)).to.equal(5);
@@ -328,7 +328,7 @@ describe("StressTracker", function () {
         stressTracker.getStressOfPathIfSwappedWithPath(pathA, pathD);
       expectedPathDPostSwapStress =
         stressTracker.getStressOfPathIfSwappedWithPath(pathD, pathA);
-      stressTracker.swapPositionsOfPaths(pathA, pathD);
+      stressTracker.swapPaths(pathA, pathD);
     });
     it("should predicted pathA stress correctly", function () {
       expect(stressTracker.getCurrentStressOfPath(pathA))

@@ -42,3 +42,15 @@ export class NoSuchChainPathError extends Error {
     this.name = new.target.name;
   }
 }
+/**
+ * This is thrown when there doesn't appear to be anything more that can be done to reduce the imbalance of how the
+ * paths are positioned relative to each other.
+ */
+export class NoMoreSortingOptionsError extends Error {
+  constructor(message?: string) {
+    super(message);
+
+    Object.setPrototypeOf(this, NoMoreSortingOptionsError.prototype);
+    this.name = new.target.name;
+  }
+}

@@ -130,8 +130,8 @@ export default class StressTracker {
    * @param path
    * @param otherPath
    */
-  swapPositionsOfPaths(path: ChainPath, otherPath: ChainPath) {
-    return this.swapPositionsOfPathsById(path.id, otherPath.id);
+  swapPaths(path: ChainPath, otherPath: ChainPath) {
+    return this.swapPathsById(path.id, otherPath.id);
   }
   /**
    * Swap the paths and update all the stress values.
@@ -139,10 +139,7 @@ export default class StressTracker {
    * @param pathId
    * @param otherPathId
    */
-  swapPositionsOfPathsById(
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
-  ): void {
+  swapPathsById(pathId: ChainPath["id"], otherPathId: ChainPath["id"]): void {
     this.positioningMatrix =
       this.getUpdatedRelativePositionsMatrixFromSwitchingPositionsOfPathsById(
         pathId,
