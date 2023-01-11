@@ -1,6 +1,7 @@
 import { Box } from "@material-ui/core";
 import GraphableChainPath from "../../../Graphing/GraphableChainPath";
 import { Coordinate } from "../../../types";
+import { trackHeight, unitTaskTimeConversion } from "../../constants";
 import ChainPathBox from "./ChainPathBox";
 
 export default function PathTrack({
@@ -10,7 +11,6 @@ export default function PathTrack({
   paths: GraphableChainPath[];
   position: Coordinate;
 }) {
-  const baseHeight = 40;
   const tallestPath = paths.reduce((prev, curr) =>
     prev.tracks.length > curr.tracks.length ? prev : curr
   );
@@ -18,7 +18,7 @@ export default function PathTrack({
   const earliestPath = paths.reduce((prev, curr) =>
     prev.path.initialStartDate < curr.path.initialStartDate ? prev : curr
   );
-  const height = tallestPath.tracks.length * baseHeight;
+  const height = tallestPath.tracks.length * trackHeight;
 
   return (
     <Box
@@ -34,7 +34,7 @@ export default function PathTrack({
         const adjustedX =
           (path.path.initialStartDate.getTime() -
             earliestPath.path.initialStartDate.getTime()) /
-          20;
+          unitTaskTimeConversion;
         return (
           <ChainPathBox
             key={index}

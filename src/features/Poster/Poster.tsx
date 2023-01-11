@@ -4,6 +4,7 @@ import GraphableChainPath from "../../Graphing/GraphableChainPath";
 import { TaskUnit, TaskUnitCluster } from "../../Relations";
 import { assertIsObject } from "../../typePredicates";
 import { Coordinate } from "../../types";
+import { trackHeight, unitTaskTimeConversion } from "../constants";
 import PathTrack from "./ChainPathBox/PathTrack";
 
 export default function Poster() {
@@ -20,23 +21,41 @@ export default function Poster() {
   const unitA = new TaskUnit([], firstStartDate, firstEndDate, "A");
 
   const unitB = new TaskUnit([unitA], secondStartDate, secondEndDate, "B");
-  const unitC = new TaskUnit([unitA], secondStartDate, secondEndDate, "C");
 
-  const unitD = new TaskUnit([unitB], thirdStartDate, thirdEndDate, "D");
-  const unitE = new TaskUnit([unitC], thirdStartDate, thirdEndDate, "E");
-  const unitF = new TaskUnit([unitC], thirdStartDate, thirdEndDate, "F");
+  const unitC = new TaskUnit([unitB], thirdStartDate, thirdEndDate, "C");
+  const unitD = new TaskUnit([unitA], thirdStartDate, thirdEndDate, "D");
+  const unitE = new TaskUnit([unitB], thirdStartDate, thirdEndDate, "E");
 
-  const unitG = new TaskUnit([unitB], fourthStartDate, fourthEndDate, "G");
+  const unitF = new TaskUnit([unitC], fourthStartDate, fourthEndDate, "F");
+  const unitG = new TaskUnit([unitC], fourthStartDate, fourthEndDate, "G");
   const unitH = new TaskUnit(
-    [unitE, unitF],
+    [unitC, unitD],
     fourthStartDate,
     fourthEndDate,
     "H"
   );
+  const unitI = new TaskUnit(
+    [unitC, unitD, unitE],
+    fourthStartDate,
+    fourthEndDate,
+    "I"
+  );
+  const unitJ = new TaskUnit(
+    [unitD, unitE],
+    fourthStartDate,
+    fourthEndDate,
+    "J"
+  );
+  const unitK = new TaskUnit([unitE], fourthStartDate, fourthEndDate, "K");
 
-  const unitI = new TaskUnit([unitG, unitH], fifthStartDate, fifthEndDate, "I");
+  const unitL = new TaskUnit(
+    [unitH, unitI, unitJ],
+    fifthStartDate,
+    fifthEndDate,
+    "L"
+  );
 
-  const cluster = new TaskUnitCluster([unitD, unitI]);
+  const cluster = new TaskUnitCluster([unitF, unitG, unitK, unitL]);
   const totalPresence = cluster.paths.reduce(
     (acc: number, path) => acc + path.presenceTime,
     0
@@ -127,9 +146,9 @@ export default function Poster() {
   if (!stateCluster) {
     return <div>loading...</div>;
   }
-  const svgHeight = unitTracksSoFar * 40;
+  const svgHeight = unitTracksSoFar * trackHeight;
   const timespan = latestUnit.endDate.getTime() - earliestStartTime;
-  const svgWidth = timespan / 20;
+  const svgWidth = timespan / unitTaskTimeConversion;
   unitTracksSoFar = 0;
   return (
     <div style={{ position: "relative", margin: 10 }}>
@@ -151,12 +170,16 @@ export default function Poster() {
               assertIsObject(depUnitData);
               const connection = new ConnectedPoints(
                 {
-                  x: (depUnit.endDate.getTime() - earliestStartTime) / 20,
-                  y: depUnitData.trackIndex * 40 + 20,
+                  x:
+                    (depUnit.endDate.getTime() - earliestStartTime) /
+                    unitTaskTimeConversion,
+                  y: depUnitData.trackIndex * trackHeight + trackHeight / 2,
                 },
                 {
-                  x: (unit.initialStartDate.getTime() - earliestStartTime) / 20,
-                  y: unitData.trackIndex * 40 + 20,
+                  x:
+                    (unit.initialStartDate.getTime() - earliestStartTime) /
+                    unitTaskTimeConversion,
+                  y: unitData.trackIndex * trackHeight + trackHeight / 2,
                 }
               );
               const curve = connection.getCubicBezierPathBetweenPoints();
@@ -190,7 +213,7 @@ export default function Poster() {
           // Get the adjusted Y before considering how tall the paths are in this track. We need to track the unit tracks
           // found so far, but this track will be positioned relative to all the tracks that came before it, so we don't
           // need to factor in itself yet.
-          const adjustedY = unitTracksSoFar * 40;
+          const adjustedY = unitTracksSoFar * trackHeight;
           // Update the unitTracksSoFar for future iterations
           const tallestPath = track.reduce((prev, curr) =>
             prev.tracks.length > curr.tracks.length ? prev : curr
@@ -203,7 +226,7 @@ export default function Poster() {
           );
           const adjustedX =
             (earliestPath.path.initialStartDate.getTime() - earliestStartTime) /
-            20;
+            unitTaskTimeConversion;
           const position: Coordinate = { x: adjustedX, y: adjustedY };
           // Grab direction before considering mass of the current track. We only want to swap directions *after* passing
           // the middle point.
