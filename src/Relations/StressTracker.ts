@@ -1,5 +1,9 @@
-import { assertIsObject } from "../typePredicates";
-import { InterconnectionStrengthMapping } from "../types";
+import {
+  assertIsNumber,
+  assertIsObject,
+  assertIsString,
+} from "../typePredicates";
+import { InterconnectionStrengthMapping, RelationshipMapping } from "../types";
 import { Matrix } from "../Utility";
 import ChainPath from "./ChainPath";
 
@@ -149,9 +153,38 @@ export default class StressTracker {
     );
   }
   /**
-   * Get the updated relative positions matrix after swapping the positions of two paths.
+   * Move the path below the other path and update all the stress values.
    *
-   * For details on how this is implemented, see {@link getAdjustmentMatrixBasedOnDifferenceBetweenPaths}.
+   * @param pathId
+   * @param otherPathId
+   */
+  movePathBelowPathById(
+    pathId: ChainPath["id"],
+    otherPathId: ChainPath["id"]
+  ): void {
+    this.positioningMatrix =
+      this.getUpdatedRelativePositionsMatrixFromMovingPathBelowPathById(
+        pathId,
+        otherPathId
+      );
+    this._stressMatrix = this.getStressMatrixUsingPositions(
+      this.positioningMatrix
+    );
+  }
+  /**
+   * Move the path above all other paths and update all the stress values.
+   *
+   * @param pathId
+   */
+  movePathToTopById(pathId: ChainPath["id"]): void {
+    this.positioningMatrix =
+      this.getUpdatedRelativePositionsMatrixFromMovingPathToTopById(pathId);
+    this._stressMatrix = this.getStressMatrixUsingPositions(
+      this.positioningMatrix
+    );
+  }
+  /**
+   * Get the updated relative positions matrix after swapping the positions of two paths.
    *
    * @param path one of the paths that is switching its position
    * @param otherPath the other path that is switching its position with the first path
@@ -169,8 +202,6 @@ export default class StressTracker {
   /**
    * Get the updated relative positions matrix after swapping the positions of two paths.
    *
-   * For details on how this is implemented, see {@link getAdjustmentMatrixBasedOnDifferenceBetweenPaths}.
-   *
    * @param pathId one of the paths that is switching its position
    * @param otherPathId the other path that is switching its position with the first path
    * @returns a matrix showing the relative positions of all paths after swapping the positions of two paths
@@ -180,24 +211,132 @@ export default class StressTracker {
     otherPathId: ChainPath["id"]
   ): Matrix {
     const diff = this.getDifferenceBetweenPathsById(pathId, otherPathId);
-
-    const adjustmentMatrix =
-      this.getAdjustmentMatrixBasedOnDifferenceBetweenPaths(diff);
+    const matrixIndexOfPath = this.getMatrixIndexForPathId(pathId);
+    const matrixIndexOfOtherPath = this.getMatrixIndexForPathId(otherPathId);
 
     // Produce a new matrix containing the updated relative positions.
     const updatedPositionData: number[][] = [];
-    for (let i = 0; i < diff.length; i++) {
-      const oldRow = [...this.positioningMatrix.getRow(i)];
-      if (!!diff[i]) {
-        // this row is affected so update it.
-        const updatedRow = new Matrix([oldRow])
-          .multiply(adjustmentMatrix)
-          .getRow(0);
-        updatedPositionData.push(updatedRow);
+    this.pathMatrixKeys.forEach((key, index) => {
+      const oldRow = [...this.positioningMatrix.getRow(index)];
+      if (!!diff[index]) {
+        // this row was affected so update it
+        if (index === matrixIndexOfPath || index === matrixIndexOfOtherPath) {
+          // The row for one of the swapping paths. All truthy indexes in the diff need to be updated
+          const updatedRow = oldRow.map((value, columnIndex) => {
+            if (!!diff[columnIndex]) {
+              // The value for one of the impacted paths
+              return value * -1;
+            }
+            // A path that was neither one of the swapping paths, nor one of the paths between them.
+            return value;
+          });
+          updatedPositionData.push(updatedRow);
+        } else {
+          // One of the in between paths. Only the values for the swapped paths need to be swapped. All other values can
+          // stay the same.
+          const updatedRow = oldRow.map((value, columnIndex) => {
+            if (
+              columnIndex === matrixIndexOfPath ||
+              columnIndex === matrixIndexOfOtherPath
+            ) {
+              // The value for one of the swapped paths
+              return value * -1;
+            }
+            // A path that was neither one of the swapping paths
+            return value;
+          });
+          updatedPositionData.push(updatedRow);
+        }
       } else {
         updatedPositionData.push(oldRow);
       }
-    }
+    });
+    return new Matrix(updatedPositionData);
+  }
+  /**
+   * Get the updated relative positions matrix after moving one path below another.
+   *
+   * @param pathId the ID of the path that is moving
+   * @param otherPathId the ID of the path that the moving path is moving below
+   * @returns a matrix showing the relative positions of all paths after moving the path below the other path
+   */
+  getUpdatedRelativePositionsMatrixFromMovingPathBelowPathById(
+    pathId: ChainPath["id"],
+    otherPathId: ChainPath["id"]
+  ): Matrix {
+    const matrixIndexOfPathThatIsMoving = this.getMatrixIndexForPathId(pathId);
+    const matrixIndexOfPathThatItIsMovingBelow =
+      this.getMatrixIndexForPathId(otherPathId);
+
+    // Produce a new matrix containing the updated relative positions.
+    const updatedPositionData: number[][] = [];
+    this.pathMatrixKeys.forEach((key, index) => {
+      let updatedRow: number[];
+      if (key === pathId) {
+        // This is the row that is moving, so copy the target path's positions, but update its relative position to the
+        // target path to be -1. It should be relatively positioned the same as the target path, save for it's position
+        // to the target path (since it should be below it).
+        updatedRow = [
+          ...this.positioningMatrix.getRow(
+            matrixIndexOfPathThatItIsMovingBelow
+          ),
+        ];
+        // set it's position relative to itself to be 0
+        updatedRow[matrixIndexOfPathThatIsMoving] = 0;
+        // set it's position relative to the target path to be -1
+        updatedRow[matrixIndexOfPathThatItIsMovingBelow] = -1;
+      } else if (key === otherPathId) {
+        // This is the row for the target path. The only thing that might need to change here is that it's position
+        // relative to the path that is moving should be 1, because it will be above the moving path.
+        updatedRow = [...this.positioningMatrix.getRow(index)];
+        updatedRow[matrixIndexOfPathThatIsMoving] = 1;
+      } else {
+        // This is for the rows of every other path. The only thing that might need to change here is that their
+        // position relative to the moving path should be the same as their position relative to the target path (since
+        // they're right next to each other with nothing in between).
+        updatedRow = [...this.positioningMatrix.getRow(index)];
+        updatedRow.splice(
+          matrixIndexOfPathThatIsMoving,
+          1,
+          ...updatedRow.slice(
+            matrixIndexOfPathThatItIsMovingBelow,
+            matrixIndexOfPathThatItIsMovingBelow + 1
+          )
+        );
+      }
+      updatedPositionData.push(updatedRow);
+    });
+    return new Matrix(updatedPositionData);
+  }
+  /**
+   * Get the updated relative positions matrix after moving one path above another.
+   *
+   * @param pathId the ID of the path that is moving
+   * @param otherPathId the ID of the path that the moving path is moving above
+   * @returns a matrix showing the relative positions of all paths after moving the path above the other path
+   */
+  getUpdatedRelativePositionsMatrixFromMovingPathToTopById(
+    pathId: ChainPath["id"]
+  ): Matrix {
+    const matrixIndexOfPathThatIsMoving = this.getMatrixIndexForPathId(pathId);
+
+    // Produce a new matrix containing the updated relative positions.
+    const updatedPositionData: number[][] = [];
+    this.pathMatrixKeys.forEach((key, index) => {
+      let updatedRow: number[];
+      if (key === pathId) {
+        // This is the row that is moving, so make it all 1s except for a 0 for itself.
+        updatedRow = this.positioningMatrix
+          .getRow(matrixIndexOfPathThatIsMoving)
+          .map((value) => (value === 0 ? 0 : 1));
+      } else {
+        // This is for the rows of every other path. The only thing that might need to change here is that their
+        // position relative to the moving path should -1 (since everything is below it now).
+        updatedRow = [...this.positioningMatrix.getRow(index)];
+        updatedRow[matrixIndexOfPathThatIsMoving] = -1;
+      }
+      updatedPositionData.push(updatedRow);
+    });
     return new Matrix(updatedPositionData);
   }
   /**
@@ -245,9 +384,7 @@ export default class StressTracker {
    *
    * The array simultaneously describes which paths need to have their row in the positions matrix updated, and also
    * which paths they need update their relative position to. B, for example, is not being moved, but we need to update
-   * A and C's position relative to it, and we need to update it's relative position to A and C. This will be taken care
-   * of during multiplication at a later step using a new matrix produced using this array (see
-   * {@link StressTracker.getAdjustmentMatrixBasedOnDifferenceBetweenPaths}).
+   * A and C's position relative to it, and we need to update it's relative position to A and C.
    *
    * @param pathId The first path's ID
    * @param otherPathId the second path's ID
@@ -267,174 +404,6 @@ export default class StressTracker {
       .subtract(new Matrix([otherPathRow]))
       .getRow(0);
     return diff;
-  }
-  /**
-   * A matrix each row in the current positioning matrix can be multiplied by individually to get the row's
-   * corresponding path's position relative to all other units after two units would be swapped.
-   *
-   * For example, if there are paths A, B, C, and D, with their positions in that order, and their IDs in the same
-   * order, the matrix would look something like this:
-   *
-   * ```text
-   *       A  B  C  D
-   *    ┏             ┓
-   *  A ┃  0  1  1  1 ┃
-   *  B ┃ -1  0  1  1 ┃
-   *  C ┃ -1 -1  0  1 ┃
-   *  D ┃ -1 -1 -1  0 ┃
-   *    ┗             ┛
-   * ```
-   *
-   * If we were to swap A and C, the subtraction would look like this:
-   *
-   * ```text
-   *       A  B  C  D         A  B  C  D
-   *    ┏             ┓    ┏             ┓
-   *   A┃  0  1  1  1 ┃ - C┃ -1 -1  0  1 ┃
-   *    ┗             ┛    ┗             ┛
-   * ```
-   *
-   * This would result in the following difference:
-   *
-   * ```text
-   *        A  B  C  D
-   *    ┏              ┓
-   *    ┃  -1  2  1  0 ┃
-   *    ┗              ┛
-   * ```
-   *
-   * From this, we can produce a diagonal matrix with a 1 for every path that doesn't need to have its relative position
-   * updated, and a -1 for those that do. In the example from above, that matrix would look like this:
-   *
-   * ```text
-   *       A  B  C  D
-   *    ┏             ┓
-   *  A ┃ -1  0  0  0 ┃
-   *  B ┃  0 -1  0  0 ┃
-   *  C ┃  0  0 -1  0 ┃
-   *  D ┃  0  0  0  1 ┃
-   *    ┗             ┛
-   * ```
-   *
-   * If we were to multiply the entire position matrix by this in one go, things would get quite messy, because even
-   * though A is being moved, it's position relative to D is the same. But if were to multiply by -1 for it's position
-   * relative to A, it would be swapped, which we don't want. To combat this, we would only multiply the impacted rows
-   * by this matrix, and stitch everything back together. In this case, we multiply the rows for A, B, and C
-   * respectively, but use D's original row because it doesn't need to be updated at all.
-   *
-   * When we actually do the multiplication for any given (impacted) row, we can see how that plays out. For example,
-   * with A, we'd do the following:
-   *
-   * ```text
-   *                            A  B  C  D
-   *       A  B  C  D        ┏             ┓
-   *    ┏             ┓    A ┃ -1  0  0  0 ┃
-   *  A ┃  0  1  1  1 ┃ X  B ┃  0 -1  0  0 ┃
-   *    ┗             ┛    C ┃  0  0 -1  0 ┃
-   *                       D ┃  0  0  0  1 ┃
-   *                         ┗             ┛
-   * ```
-   *
-   * The first step is to get A's relative position to itself. So we multiply the first row of the left matrix by the
-   * first column of the right matrix. That gives us this:
-   *
-   * ```text
-   *    0     1     1     1
-   *       +     +     +
-   *  x-1    x0    x0    x0
-   * ______________________
-   *    0  +  0  +  0  +  0
-   * ```
-   *
-   * and as a result, we have this:
-   *
-   *       A  B  C  D
-   *    ┏             ┓
-   *   A┃  0  ?  ?  ? ┃
-   *    ┗             ┛
-   * ```
-   *
-   * Which is perfect, because each path has a 0 for itself (since it's neither above nor below itself).
-   *
-   * Then we do the next column to get A's position relative to B:
-   *
-   * ```text
-   *    0      1     1     1
-   *       +      +     +
-   *   x0    x-1    x0    x0
-   * ______________________
-   *    0  +  -1  +  0  +  0
-   * ```
-   *
-   * and as a result, we have this:
-   *
-   * ```text
-   *       A   B   C   D
-   *    ┏                 ┓
-   *   A┃  0  -1   ?   ?  ┃
-   *    ┗                 ┛
-   * ```
-   *
-   * This works out because we're multiplying by -1 to get the *opposite* position of whatever A had before. We know to
-   * do this, because it was one of the impacted relative positions. A now properly shows itself as being below B.
-   *
-   * Then we do the same thing for the C column to get:
-   *
-   * ```text
-   *       A   B    C   D
-   *    ┏                  ┓
-   *   A┃  0  -1   -1   ?  ┃
-   *    ┗                  ┛
-   * ```
-   *
-   * And now for D:
-   *
-   * ```text
-   *    0     1     1     1
-   *       +     +     +
-   *   x0    x0    x0    x1
-   * ______________________
-   *    0  +  0  +  0  +  1
-   * ```
-   *
-   * Giving us this:
-   *
-   * ```text
-   *       A   B    C   D
-   *    ┏                  ┓
-   *   A┃  0  -1   -1   1  ┃
-   *    ┗                  ┛
-   * ```
-   *
-   * This works out because we're multiplying by 1, so we get the same exact value, and A still shows itself as being
-   * above D.
-   *
-   * The same thing happens for the B row, and even though B wasn't moving, the matrix we multiply by ensures that only
-   * its relative position to A and C are impacted. Doing the same operations, we'd end up with this:
-   *
-   * ```text
-   *       A   B    C   D
-   *    ┏                  ┓
-   *   B┃  1   0   -1   1  ┃
-   *    ┗                  ┛
-   * ```
-   *
-   * @param diff the paths that have their relative positions effected.
-   * @returns a matrix to multiply impacted rows by to get updated relative positions.
-   */
-  getAdjustmentMatrixBasedOnDifferenceBetweenPaths(diff: number[]): Matrix {
-    const adjustmentMatrixData: number[][] = [];
-    // Find the spots where there are diffs.
-    for (let i = 0; i < diff.length; i++) {
-      const row = new Array(diff.length);
-      row.fill(0);
-      // Put a 1 wherever there was no diff to preserve the values, and a -1 where there was to flip things.
-      // This will produce a matrix with all 0s except for 1s and -1s along the diagonal.
-      row[i] = !!diff[i] ? -1 : 1;
-      adjustmentMatrixData.push(row);
-    }
-    // The affected rows can be multiplied by this to produce their updated values
-    return new Matrix(adjustmentMatrixData);
   }
   /**
    * Given a particular arrangement of paths, return a matrix showing how much stress and in which directions each path
@@ -627,6 +596,35 @@ export default class StressTracker {
         pathId,
         otherPathId
       );
+    return this.getStressOfPathsGivenPositionsMatrix(posMatrix);
+  }
+  /**
+   * Get the theoretical stress levels given the positioning after moving the provided path below the other.
+   *
+   * @param pathId
+   * @param otherPathId
+   * @returns the theoretical stress matrix if the provided path were moved below the other path.
+   */
+  getStressOfPathsIfPathMovedBelowPathById(
+    pathId: ChainPath["id"],
+    otherPathId: ChainPath["id"]
+  ): number[] {
+    const posMatrix =
+      this.getUpdatedRelativePositionsMatrixFromMovingPathBelowPathById(
+        pathId,
+        otherPathId
+      );
+    return this.getStressOfPathsGivenPositionsMatrix(posMatrix);
+  }
+  /**
+   * Get the theoretical stress levels given the positioning after moving the provided path above all others.
+   *
+   * @param pathId
+   * @returns the theoretical stress matrix if the provided path were moved aboveall others.
+   */
+  getStressOfPathsIfPathMovedToTopById(pathId: ChainPath["id"]): number[] {
+    const posMatrix =
+      this.getUpdatedRelativePositionsMatrixFromMovingPathToTopById(pathId);
     return this.getStressOfPathsGivenPositionsMatrix(posMatrix);
   }
 }

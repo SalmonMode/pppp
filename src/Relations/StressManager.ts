@@ -3,62 +3,86 @@ import { RelationshipMapping } from "../types";
 import ChainPath from "./ChainPath";
 import StressTracker from "./StressTracker";
 
-interface SwapDetails {
+enum MoveType {
+  Swap,
+  Below,
+  Top,
+}
+
+interface MoveDetails<T extends MoveType> {
+  type: T;
   totalImbalance: number;
   pathA: ChainPath["id"];
-  pathB: ChainPath["id"];
+  pathB: T extends MoveType.Top ? undefined : ChainPath["id"];
 }
+
+// type RelativeMoveDetails = Required<MoveDetails>;
 
 export default class StressManager {
   constructor(public stressTracker: StressTracker) {
+    this.getRankings().forEach((a) => console.log(a));
     this._organizePathsByStress();
-    this._organizePathsByMovingThemCloserWithoutImpactingImbalance();
   }
   /**
-   * Organize the paths by trying to find the lowest total imbalance we can find.
+   * Organize the paths by trying to find the lowest total imbalance we can.
    */
   private _organizePathsByStress() {
-    // First pass. Focus on relative balance. Eventually, no moves will remain that have any positive balancing effects.
-    // At this point, there may still be neutral moves we can make to help detangle, though. So we can go to the second
-    // phase, where we simply move paths past each other (as long as there's no balance impact) to bring paths closer to
-    // the paths they're connected to, even if they still have to remain on the side they were on.
-
-    // Find the next, most beneficial move
     let canStillMove = true;
     while (canStillMove) {
       // first find biggest delta
       // track the contenderfor most viable move
-      let chosenMove: undefined | SwapDetails;
+      let chosenMove:
+        | undefined
+        | MoveDetails<MoveType.Below>
+        | MoveDetails<MoveType.Swap>
+        | MoveDetails<MoveType.Top>;
       const currentStressLevels = this.stressTracker.getCurrentStressOfPaths();
       const currentStressImbalance =
         this._calculateTotalImbalanceOfStressLevels(currentStressLevels);
       for (let pathId of this.stressTracker.pathMatrixKeys) {
         for (let otherPathId of this.stressTracker.pathMatrixKeys) {
+          let moveType: MoveType;
+          let totalImbalance: number;
           if (pathId === otherPathId) {
-            continue;
-          }
-          const possibleStressLevels =
-            this.stressTracker.getStressOfPathsIfPathSwappedWithPathById(
+            // Consider moving the path to the top. We figure out the move to the top individually because moving below
+            // will not consider this scenario for any path (other than the top most path moving below itself).
+            totalImbalance = this._getTotalImbalanceFromShiftToTop(pathId);
+            moveType = MoveType.Top;
+          } else {
+            // Check for the move where we move this path below the other
+            const totalImbalanceFromBelow =
+              this._getTotalImbalanceFromMovingBelow(pathId, otherPathId);
+            // Check for the move where we swap this path with the other
+            const totalImbalanceFromSwap = this._getTotalImbalanceFromSwap(
               pathId,
               otherPathId
             );
-          const totalImbalance =
-            this._calculateTotalImbalanceOfStressLevels(possibleStressLevels);
-          if (chosenMove) {
-            // Have something to compare it against
-            if (totalImbalance < chosenMove.totalImbalance) {
-              // This move is better, so track it for later
+            if (totalImbalanceFromSwap < totalImbalanceFromBelow) {
+              moveType = MoveType.Swap;
+              totalImbalance = totalImbalanceFromSwap;
+            } else {
+              moveType = MoveType.Below;
+              totalImbalance = totalImbalanceFromBelow;
+            }
+          }
+          if (
+            this._isBestMoveSoFar(
+              currentStressImbalance,
+              totalImbalance,
+              chosenMove?.totalImbalance
+            )
+          ) {
+            // This move is better, so track it for later
+            if (moveType === MoveType.Top) {
               chosenMove = {
+                type: moveType,
                 totalImbalance,
                 pathA: pathId,
-                pathB: otherPathId,
+                pathB: undefined,
               };
-            }
-          } else {
-            // Nothing was set yet, so let's consider the first move.
-            if (totalImbalance < currentStressImbalance) {
-              // This is better than the current layout, so let's track it for later
+            } else {
               chosenMove = {
+                type: moveType,
                 totalImbalance,
                 pathA: pathId,
                 pathB: otherPathId,
@@ -70,74 +94,123 @@ export default class StressManager {
       // Should either have chosen move, or there's no obvious moves left and we can move on to the next phase.
       if (chosenMove) {
         // We found a viable move!
-        this.stressTracker.swapPositionsOfPathsById(
-          chosenMove.pathA,
-          chosenMove.pathB
-        );
-        // Reset so we don't accidentally make the same move more than once
+        switch (chosenMove.type) {
+          case MoveType.Below:
+            this.stressTracker.movePathBelowPathById(
+              chosenMove.pathA,
+              chosenMove.pathB
+            );
+            break;
+          case MoveType.Swap:
+            this.stressTracker.swapPositionsOfPathsById(
+              chosenMove.pathA,
+              chosenMove.pathB
+            );
+            break;
+          case MoveType.Top:
+            this.stressTracker.movePathToTopById(chosenMove.pathA);
+            break;
+        }
+        // Reset so we don't make the same move more than once
         chosenMove = undefined;
       } else {
-        // No moves left, so let's go to phase 2
+        // No moves left
         canStillMove = false;
       }
     }
   }
   /**
-   * Organize the paths by moving them closer to the paths they're most attached to, provided it won't impact balancing.
+   *
+   * @param stressLevels the stress levels of each path
+   * @returns the sum of the absolute value of each stress level
    */
-  private _organizePathsByMovingThemCloserWithoutImpactingImbalance() {
-    // Phase 2
-    // If this finds something it can swap, it will follow it until it can no longer swap it down. If it moves past
-    // multiple other paths,we may skip past some that also need to be shifted down, so we may have to iterate over the
-    // for loop itself multiple times. Putting it in a while loop helps us make sure we use the for loop as many times
-    // as is needed.
-    let foundSomethingToSwap = true;
-    while (foundSomethingToSwap) {
-      foundSomethingToSwap = false;
-      for (
-        let pathIndex = 0;
-        pathIndex < this.stressTracker.pathMatrixKeys.length - 1;
-        pathIndex++
-      ) {
-        // get the effective number for the path's position by totalling the items in its position row. We can then sort
-        // from greatest to least.
-        const rankedIds = this.getRankings();
-
-        const pathId = rankedIds[pathIndex];
-        assertIsString(pathId);
-        const otherPathId = rankedIds[pathIndex + 1];
-        assertIsString(otherPathId);
-        // check if can switch without changing stress levels
-        const currentPathStress =
-          this.stressTracker.getCurrentStressOfPathById(pathId);
-        const newStress =
-          this.stressTracker.getStressOfPathIfSwappedWithPathById(
-            pathId,
-            otherPathId
-          );
-        if (currentPathStress !== newStress) {
-          // would change things, so continue to next iteration
-          continue;
-        }
-        // check if they should be swapped
-        const currentOtherPathStress =
-          this.stressTracker.getCurrentStressOfPathById(otherPathId);
-        if (currentPathStress > currentOtherPathStress) {
-          // path is being pulled down more than other path, so swap
-          this.stressTracker.swapPositionsOfPathsById(pathId, otherPathId);
-          // Track that we found something so we can try going through the loop again
-          foundSomethingToSwap = true;
-        } else {
-          // no benefit from swapping
-        }
-      }
-    }
-  }
   private _calculateTotalImbalanceOfStressLevels(
     stressLevels: number[]
   ): number {
     return stressLevels.reduce((acc, curr) => acc + Math.abs(curr), 0);
   }
+  /**
+   *
+   * @param pathId
+   * @param otherPathId
+   * @returns the total (absolute) imbalance of all paths if the path was swapped with the other path
+   */
+  private _getTotalImbalanceFromSwap(
+    pathId: ChainPath["id"],
+    otherPathId: ChainPath["id"]
+  ): number {
+    const possibleStressLevels =
+      this.stressTracker.getStressOfPathsIfPathSwappedWithPathById(
+        pathId,
+        otherPathId
+      );
+    const totalImbalance =
+      this._calculateTotalImbalanceOfStressLevels(possibleStressLevels);
+    return totalImbalance;
+  }
+  /**
+   *
+   * @param pathId
+   * @returns the total (absolute) imbalance of all paths if the path was moved to the top
+   */
+  private _getTotalImbalanceFromShiftToTop(pathId: ChainPath["id"]): number {
+    const possibleStressLevels =
+      this.stressTracker.getStressOfPathsIfPathMovedToTopById(pathId);
+    const totalImbalance =
+      this._calculateTotalImbalanceOfStressLevels(possibleStressLevels);
+    return totalImbalance;
+  }
+  /**
+   *
+   * @param pathId
+   * @param otherPathId
+   * @returns the total (absolute) imbalance of all paths if the path was moved below the other path
+   */
+  private _getTotalImbalanceFromMovingBelow(
+    pathId: ChainPath["id"],
+    otherPathId: ChainPath["id"]
+  ): number {
+    const possibleStressLevels =
+      this.stressTracker.getStressOfPathsIfPathMovedBelowPathById(
+        pathId,
+        otherPathId
+      );
+    const totalImbalance =
+      this._calculateTotalImbalanceOfStressLevels(possibleStressLevels);
+    return totalImbalance;
+  }
+  /**
+   *
+   * @param currentStressImbalance how imbalanced the stress currently is
+   * @param possibleStressImbalance how imbalanced it could be
+   * @param previousBestStressImbalance how imbalanced the best most we found so far was
+   * @returns true, if the move is better, false, if not
+   */
+  private _isBestMoveSoFar(
+    currentStressImbalance: number,
+    possibleStressImbalance: number,
+    previousBestStressImbalance?: number
+  ): boolean {
+    if (previousBestStressImbalance) {
+      // Have something to compare it against
+      if (possibleStressImbalance < previousBestStressImbalance) {
+        // This move is better, so return true
+        return true;
+      }
+    } else {
+      // Nothing was set yet, so let's consider the first move.
+      if (possibleStressImbalance < currentStressImbalance) {
+        // This is better than the current layout, so return true
+        return true;
+      }
+    }
+    // Not a better move than either what it currently is, or another move we found.
+    return false;
+  }
+  /**
+   *
+   * @returns the path IDs sorted from top to bottom according to their positions.
+   */
   getRankings(): ChainPath["id"][] {
     const rankings: RelationshipMapping = {};
     for (let id of this.stressTracker.pathMatrixKeys) {
