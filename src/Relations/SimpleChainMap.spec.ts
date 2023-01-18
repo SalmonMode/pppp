@@ -1,13 +1,7 @@
 import { expect } from "chai";
-import {
-  DependencyOrderError,
-  DisjointedUnitsError,
-  NoSuchChainError,
-} from "../Error";
+import { DependencyOrderError, NoSuchChainError } from "../Error";
 import { assertIsObject } from "../typePredicates";
-import IsolatedDependencyChain from "./IsolatedDependencyChain";
-import SimpleChainMap from "./SimpleChainMap";
-import TaskUnit from "./TaskUnit";
+import { IsolatedDependencyChain, SimpleChainMap, TaskUnit } from "./";
 
 describe("SimpleChainMap", function () {
   describe("No Units", function () {
@@ -47,66 +41,6 @@ describe("SimpleChainMap", function () {
       ).to.throw(NoSuchChainError);
     });
   });
-  describe("Two Standalone Heads", function () {
-    /**
-     * ```text
-     *  ┏━━━┓  ┏━━━┓
-     * A┗━━━┛  ┗━━━┛B
-     * ```
-     */
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let endDateA: Date;
-    let endDateB: Date;
-    before(function () {
-      startDateA = new Date();
-      endDateA = new Date(startDateA.getTime() + 1000);
-      startDateB = new Date(endDateA.getTime());
-      endDateB = new Date(startDateB.getTime() + 1000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([], startDateB, endDateB);
-    });
-    it("should throw DisjointedUnitsError", function () {
-      expect(() => new SimpleChainMap([unitA, unitB])).to.throw(
-        DisjointedUnitsError
-      );
-    });
-  });
-  describe("Two Standalone Heads With Deps", function () {
-    /**
-     * ```text
-     *   ┏━━━┓___┏━━━┓
-     *  A┗━━━┛   ┗━━━┛C
-     *   ┏━━━┓___┏━━━┓
-     *  B┗━━━┛   ┗━━━┛D
-     * ```
-     */
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let unitC: TaskUnit;
-    let unitD: TaskUnit;
-    let firstStartDate: Date;
-    let secondStartDate: Date;
-    let firstEndDate: Date;
-    let secondEndDate: Date;
-    before(function () {
-      firstStartDate = new Date();
-      firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      secondStartDate = new Date(firstEndDate.getTime());
-      secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      unitB = new TaskUnit([], firstStartDate, firstEndDate);
-      unitC = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      unitD = new TaskUnit([unitB], secondStartDate, secondEndDate);
-    });
-    it("should throw DisjointedUnitsError", function () {
-      expect(() => new SimpleChainMap([unitC, unitD])).to.throw(
-        DisjointedUnitsError
-      );
-    });
-  });
   describe("Two Units in One Chain, Passing Non True Head", function () {
     /**
      * ```text
@@ -116,15 +50,11 @@ describe("SimpleChainMap", function () {
      */
     let unitA: TaskUnit;
     let unitB: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let endDateA: Date;
-    let endDateB: Date;
     before(function () {
-      startDateA = new Date();
-      endDateA = new Date(startDateA.getTime() + 1000);
-      startDateB = new Date(endDateA.getTime());
-      endDateB = new Date(startDateB.getTime() + 1000);
+      const startDateA = new Date();
+      const endDateA = new Date(startDateA.getTime() + 1000);
+      const startDateB = new Date(endDateA.getTime());
+      const endDateB = new Date(startDateB.getTime() + 1000);
       unitA = new TaskUnit([], startDateA, endDateA);
       unitB = new TaskUnit([unitA], startDateB, endDateB);
     });
@@ -143,16 +73,12 @@ describe("SimpleChainMap", function () {
      */
     let unitA: TaskUnit;
     let unitB: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let endDateA: Date;
-    let endDateB: Date;
     let chainMap: SimpleChainMap;
     before(function () {
-      startDateA = new Date();
-      endDateA = new Date(startDateA.getTime() + 1000);
-      startDateB = new Date(endDateA.getTime());
-      endDateB = new Date(startDateB.getTime() + 1000);
+      const startDateA = new Date();
+      const endDateA = new Date(startDateA.getTime() + 1000);
+      const startDateB = new Date(endDateA.getTime());
+      const endDateB = new Date(startDateB.getTime() + 1000);
       unitA = new TaskUnit([], startDateA, endDateA);
       unitB = new TaskUnit([unitA], startDateB, endDateB);
       chainMap = new SimpleChainMap([unitB]);
@@ -176,20 +102,14 @@ describe("SimpleChainMap", function () {
     let unitA: TaskUnit;
     let unitB: TaskUnit;
     let unitC: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let startDateC: Date;
-    let endDateA: Date;
-    let endDateB: Date;
-    let endDateC: Date;
     let chainMap: SimpleChainMap;
     before(function () {
-      startDateA = new Date();
-      endDateA = new Date(startDateA.getTime() + 1000);
-      startDateB = new Date(endDateA.getTime());
-      endDateB = new Date(startDateB.getTime() + 1000);
-      startDateC = new Date(endDateB.getTime());
-      endDateC = new Date(startDateC.getTime() + 1000);
+      const startDateA = new Date();
+      const endDateA = new Date(startDateA.getTime() + 1000);
+      const startDateB = new Date(endDateA.getTime());
+      const endDateB = new Date(startDateB.getTime() + 1000);
+      const startDateC = new Date(endDateB.getTime());
+      const endDateC = new Date(startDateC.getTime() + 1000);
       unitA = new TaskUnit([], startDateA, endDateA);
       unitB = new TaskUnit([unitA], startDateB, endDateB);
       unitC = new TaskUnit([unitB], startDateC, endDateC);

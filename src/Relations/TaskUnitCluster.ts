@@ -1,19 +1,15 @@
 import { v4 as uuidv4 } from "uuid";
 import { NoSuchChainPathError } from "../Error";
 import { assertIsObject } from "../typePredicates";
+import type { ResourceMap } from "../types";
+import type { ChainPath, IsolatedDependencyChain, TaskUnit } from "./";
 import {
-  ChainPathMapping,
-  ChainToPathMap,
-  InterconnectionStrengthMapping,
-  RelationshipMapping,
-} from "../types";
-import ChainPath from "./ChainPath";
-import ChainStrainMap from "./ChainStrainMap";
-import IsolatedDependencyChain from "./IsolatedDependencyChain";
-import SimpleChainMap from "./SimpleChainMap";
-import StressManager from "./StressManager";
-import StressTracker from "./StressTracker";
-import TaskUnit from "./TaskUnit";
+  ChainStrainMap,
+  SimpleChainMap,
+  SimpleChainPathMap,
+  StressManager,
+  StressTracker
+} from "./";
 
 /**
  * A collection of interconnected {@link TaskUnit}s, along with helpful functions to make reasoning about them easier.
@@ -30,10 +26,10 @@ export default class TaskUnitCluster {
   public readonly id: string;
   strainMap: ChainStrainMap;
   chainMap: SimpleChainMap;
-  private _chainToPathMap: ChainToPathMap = {};
+  private _chainToPathMap: ResourceMap<ChainPath> = {};
   private _paths: ChainPath[] = [];
-  private _pathMap: ChainPathMapping = {};
-  private _pathInterconnectionsStrength: InterconnectionStrengthMapping = {};
+  private _pathMap: ResourceMap<ChainPath> = {};
+  private _simplePathMap: SimpleChainPathMap;
   stressTracker: StressTracker;
   stressManager: StressManager;
   constructor(public readonly heads: TaskUnit[]) {
@@ -41,8 +37,8 @@ export default class TaskUnitCluster {
     this.chainMap = new SimpleChainMap(heads);
     this.strainMap = new ChainStrainMap(this.chainMap);
     this._buildPaths([]);
-    this._buildPathInterconnections();
-    this.stressTracker = new StressTracker(this._pathInterconnectionsStrength);
+    this._simplePathMap = new SimpleChainPathMap(this._pathMap, this.chainMap);
+    this.stressTracker = new StressTracker(this._simplePathMap);
     this.stressManager = new StressManager(this.stressTracker);
   }
   /**
@@ -175,113 +171,5 @@ export default class TaskUnitCluster {
       return familiarityDiff;
     });
     return sortedPaths;
-  }
-  /**
-   * Get all the units in the path.
-   *
-   * @param path
-   * @returns A set of task units that are a part of the provided path
-   */
-  private _getUnitsInPath(path: ChainPath): Set<TaskUnit> {
-    return new Set<TaskUnit>(
-      path.chains.reduce(
-        (acc: TaskUnit[], chain) => [...acc, ...chain.units],
-        []
-      )
-    );
-  }
-  /**
-   * Get all the units not in the provided path that have a direct connection to/from the units in the path.
-   *
-   * @param path
-   * @returns a set of units not in the provided path that have a direct connection to/from the units in the path
-   */
-  private _getUnitsConnectedToPath(path: ChainPath): Set<TaskUnit> {
-    const unitsInPath = this._getUnitsInPath(path);
-    const unitsConnectedToUnitsInPath = new Set<TaskUnit>();
-    for (let unit of unitsInPath) {
-      const connectedUnitsOfUnit =
-        this.chainMap.unitPathMatrix.getUnitsConnectedToUnit(unit);
-      for (let connectedUnit of connectedUnitsOfUnit) {
-        if (unitsInPath.has(connectedUnit)) {
-          // Filtering out units already in the path
-          continue;
-        }
-        unitsConnectedToUnitsInPath.add(connectedUnit);
-      }
-    }
-    return unitsConnectedToUnitsInPath;
-  }
-  /**
-   * Build a map showing which paths are connected to which paths.
-   */
-  private _buildPathInterconnections() {
-    for (let path of this.paths) {
-      // Get the units that the units in this path have a connection to. This will tell us which other paths this path
-      // is connected to, and in how many ways. The number of units it's connected to in another path is equal to the
-      // amount of connections, and thus, the amount of edges we'd need to draw between the two paths.
-      const unitsConnectedToUnitsInPath = this._getUnitsConnectedToPath(path);
-      const pathsUnits = this._getUnitsInPath(path);
-      // make sure the mapping exists
-      const mapping: RelationshipMapping = (this._pathInterconnectionsStrength[
-        path.id
-      ] = {});
-      for (let otherPath of this.paths) {
-        if (path === otherPath) {
-          // same path so don't need to do anything
-          continue;
-        }
-        let connections = 0;
-        if (unitsConnectedToUnitsInPath.size > 0) {
-          // make sure the other path's mapping exists
-          const otherMapping = this._pathInterconnectionsStrength[otherPath.id];
-          if (otherMapping) {
-            // otherPath was already iterated over, so if it has a connection to the main path, then we can just copy
-            // it. If it has no connections, then we can move on to the next otherPath.
-            const otherPathRelationshipToPath = otherMapping[path.id];
-            if (otherPathRelationshipToPath) {
-              // otherPath has connections to main path, so let's copy it, remove the units it has from the main path's
-              // set of connected units (to speed up the next iterations), and then move on to the next otherPath.
-              mapping[otherPath.id] = otherPathRelationshipToPath;
-              const otherPathsUnits = this._getUnitsInPath(otherPath);
-              otherPathsUnits.forEach((unit) =>
-                unitsConnectedToUnitsInPath.delete(unit)
-              );
-            } else {
-              // otherPath has no connections to main path, so we can move on to the next otherPath
-            }
-            continue;
-          }
-          // otherPath has not been iterated over yet, so we have to figure out the relationship.
-          const otherPathsUnits = this._getUnitsInPath(otherPath);
-          // Use a copy of the connected units set to avoid issues with modification while iterating
-          for (let connectedUnit of [...unitsConnectedToUnitsInPath]) {
-            if (otherPathsUnits.has(connectedUnit)) {
-              // Found a connection, so check how many connections there are before removing the unit from the set to
-              // speed up the next iterations.
-              for (let unit of pathsUnits) {
-                if (unit.directDependencies.has(connectedUnit)) {
-                  connections += 1;
-                } else if (connectedUnit.directDependencies.has(unit)) {
-                  connections += 1;
-                }
-              }
-              // We can remove the connected unit, because it can only exist in otherPath, and if we already know it
-              // exists in otherPath, we don't need to check if it exists in the other paths we have yet to iterate over.
-              // Removing it speeds up the remaining iterations of the inner loop.
-              unitsConnectedToUnitsInPath.delete(connectedUnit);
-            }
-          }
-          if (connections > 0) {
-            // There were at least some connections to otherPath, so record them.
-            mapping[otherPath.id] = connections;
-          }
-        } else {
-          // Either the path has nothing connected to it at all, or we already know all the other paths it's connected
-          // to and by how many connections. Either way, it has zero connections to otherPath, so we don't need to add
-          // an entry for it.
-        }
-      }
-    }
   }
 }

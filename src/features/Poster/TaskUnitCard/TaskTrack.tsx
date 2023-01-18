@@ -1,14 +1,14 @@
 import { Box } from "@material-ui/core";
-import { TaskUnit } from "../../../Relations";
+import type { TaskUnitDetails } from "../../../types";
 import { trackHeight, unitTaskTimeConversion } from "../../constants";
-import TaskUnitCard from "../TaskUnitCard/TaskUnitCard";
+import TaskUnitCard from "./TaskUnitCard";
 
 export default function TaskTrack({
   units,
   trackIndex,
   pathStartDate,
 }: {
-  units: TaskUnit[];
+  units: TaskUnitDetails[];
   trackIndex: number;
   pathStartDate: Date;
 }) {
@@ -23,11 +23,11 @@ export default function TaskTrack({
         left: 0,
         top: trackIndex * height,
       }}
+      data-testid={`taskTrack-${trackIndex}`}
     >
       {units.map((unit, index) => {
         const adjustedX =
-          (unit.initialStartDate.getTime() - pathStartDate.getTime()) /
-          unitTaskTimeConversion;
+          (unit.startTime - pathStartDate.getTime()) / unitTaskTimeConversion;
         return (
           <TaskUnitCard
             key={index}

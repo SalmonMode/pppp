@@ -1,9 +1,9 @@
-import Poster from "./Poster/Poster";
+import PosterBoard from "./Poster/PosterBoard";
 
 export default function LandingPage() {
   return (
     <div>
-      <Poster />
+      <PosterBoard />
     </div>
   );
 }

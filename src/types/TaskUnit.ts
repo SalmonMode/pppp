@@ -1,22 +1,4 @@
-import ChainPath from "../Relations/ChainPath";
-import IsolatedDependencyChain from "../Relations/IsolatedDependencyChain";
-import TaskUnit from "../Relations/TaskUnit";
-
-export type UnitToChainMap = {
-  [key: TaskUnit["id"]]: IsolatedDependencyChain;
-};
-export type ChainToPathMap = {
-  [key: IsolatedDependencyChain["id"]]: ChainPath;
-};
-export type ChainPathMapping = {
-  [key: ChainPath["id"]]: ChainPath;
-};
-export type IsolatedChainMapping = {
-  [key: IsolatedDependencyChain["id"]]: IsolatedDependencyChain;
-};
-export type ConnectedChainMapping = {
-  [key: IsolatedDependencyChain["id"]]: Set<IsolatedDependencyChain>;
-};
+import type { TaskUnit } from "../Relations";
 
 /**
  * Details the number of respective connections between this map's associated object and the objects associated with the
@@ -38,3 +20,12 @@ export type RelationshipMapping = {
 export type InterconnectionStrengthMapping = {
   [key: string]: RelationshipMapping;
 };
+
+export interface TaskUnitDetails {
+  id: TaskUnit["id"];
+  directDependencies: TaskUnit["id"][];
+  startTime: number;
+  endTime: number;
+  trackIndex: number;
+  name: string;
+}

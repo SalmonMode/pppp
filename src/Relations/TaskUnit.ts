@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { RelationshipMapping } from "../types";
+import type { RelationshipMapping } from "../types";
 
 export default class TaskUnit {
   public readonly id: string;

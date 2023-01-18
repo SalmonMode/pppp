@@ -1,5 +1,5 @@
 import { Matrix } from "../Utility";
-import TaskUnit from "./TaskUnit";
+import type { TaskUnit } from "./";
 
 /**
  * A simple abstraction around a matrix of the unit relations to perform helpful operations.

@@ -1,9 +1,11 @@
 import { expect } from "chai";
 import { NoSuchChainError } from "../Error";
-import ChainStrainMap from "./ChainStrainMap";
-import IsolatedDependencyChain from "./IsolatedDependencyChain";
-import SimpleChainMap from "./SimpleChainMap";
-import { default as TaskUnit } from "./TaskUnit";
+import {
+  ChainStrainMap,
+  IsolatedDependencyChain,
+  SimpleChainMap,
+  TaskUnit,
+} from "./";
 
 describe("ChainStrainMap", function () {
   describe("One Unit", function () {
@@ -35,25 +37,17 @@ describe("ChainStrainMap", function () {
     let unitB: TaskUnit;
     let unitC: TaskUnit;
     let unitD: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let startDateC: Date;
-    let startDateD: Date;
-    let endDateA: Date;
-    let endDateB: Date;
-    let endDateC: Date;
-    let endDateD: Date;
     let chainMap: SimpleChainMap;
     let strainMap: ChainStrainMap;
     before(function () {
-      startDateA = new Date();
-      endDateA = new Date(startDateA.getTime() + 1000);
-      startDateB = new Date(endDateA.getTime());
-      endDateB = new Date(startDateB.getTime() + 1000);
-      startDateC = new Date(startDateB.getTime());
-      endDateC = new Date(endDateB.getTime());
-      startDateD = new Date(endDateC.getTime());
-      endDateD = new Date(startDateD.getTime() + 1000);
+      const startDateA = new Date();
+      const endDateA = new Date(startDateA.getTime() + 1000);
+      const startDateB = new Date(endDateA.getTime());
+      const endDateB = new Date(startDateB.getTime() + 1000);
+      const startDateC = new Date(startDateB.getTime());
+      const endDateC = new Date(endDateB.getTime());
+      const startDateD = new Date(endDateC.getTime());
+      const endDateD = new Date(startDateD.getTime() + 1000);
       unitA = new TaskUnit([], startDateA, endDateA);
       unitB = new TaskUnit([unitA], startDateB, endDateB);
       unitC = new TaskUnit([unitA], startDateC, endDateC);
@@ -97,20 +91,9 @@ describe("ChainStrainMap", function () {
      *                ┗━━━┛G
      * ```
      */
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let unitC: TaskUnit;
-    let unitD: TaskUnit;
-    let unitE: TaskUnit;
-    let unitF: TaskUnit;
-    let unitG: TaskUnit;
-    let chainA: IsolatedDependencyChain;
     let chainB: IsolatedDependencyChain;
     let chainC: IsolatedDependencyChain;
-    let chainD: IsolatedDependencyChain;
-    let chainE: IsolatedDependencyChain;
     let chainF: IsolatedDependencyChain;
-    let chainG: IsolatedDependencyChain;
     let chainMap: SimpleChainMap;
     let strainMap: ChainStrainMap;
     before(function () {
@@ -120,24 +103,20 @@ describe("ChainStrainMap", function () {
       const secondEndDate = new Date(secondStartDate.getTime() + 1000);
       const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
       const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate);
+      const unitA = new TaskUnit([], firstStartDate, firstEndDate);
 
-      unitB = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      unitC = new TaskUnit([unitA], secondStartDate, secondEndDate);
+      const unitB = new TaskUnit([unitA], secondStartDate, secondEndDate);
+      const unitC = new TaskUnit([unitA], secondStartDate, secondEndDate);
 
-      unitD = new TaskUnit([unitB], thirdStartDate, thirdEndDate);
-      unitE = new TaskUnit([unitB], thirdStartDate, thirdEndDate);
-      unitF = new TaskUnit([unitB, unitC], thirdStartDate, thirdEndDate);
-      unitG = new TaskUnit([unitC], thirdStartDate, thirdEndDate);
+      const unitD = new TaskUnit([unitB], thirdStartDate, thirdEndDate);
+      const unitE = new TaskUnit([unitB], thirdStartDate, thirdEndDate);
+      const unitF = new TaskUnit([unitB, unitC], thirdStartDate, thirdEndDate);
+      const unitG = new TaskUnit([unitC], thirdStartDate, thirdEndDate);
 
       chainMap = new SimpleChainMap([unitD, unitE, unitF, unitG]);
-      chainA = chainMap.getChainOfUnit(unitA);
       chainB = chainMap.getChainOfUnit(unitB);
       chainC = chainMap.getChainOfUnit(unitC);
-      chainD = chainMap.getChainOfUnit(unitD);
-      chainE = chainMap.getChainOfUnit(unitE);
       chainF = chainMap.getChainOfUnit(unitF);
-      chainG = chainMap.getChainOfUnit(unitG);
       strainMap = new ChainStrainMap(chainMap);
     });
     it("should have higher relative familiarity from F to C than F to B", function () {

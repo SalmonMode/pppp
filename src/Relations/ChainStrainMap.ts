@@ -1,9 +1,7 @@
 import { NoSuchChainError } from "../Error";
-import { RelationshipMapping } from "../types";
-import ChainPath from "./ChainPath";
-import IsolatedDependencyChain from "./IsolatedDependencyChain";
-import SimpleChainMap from "./SimpleChainMap";
-import TaskUnit from "./TaskUnit";
+import type { RelationshipMapping } from "../types";
+import type { IsolatedDependencyChain, SimpleChainMap } from "./";
+import { ChainPath } from "./";
 
 /**
  * A helper for how much "strain" each {@link IsolatedDependencyChain} is under.
@@ -222,7 +220,8 @@ export default class ChainStrainMap {
    *                ┗━━━┛G   ┗━━━┛H
    * ```
    *
-   * This result is much more balanced because our mess is contained as much as we can get it.
+   * This result is much more balanced because our mess is contained as much as we can get it. As a result, the
+   * connection lines between units are shorter overall.
    *
    * Some units are off limits though, and while this still influences the strain on available units, it does mark off
    * potential paths we can take. This isn't necessarily a problem though, because it still helps keep our mess

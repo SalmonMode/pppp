@@ -1,17 +1,7 @@
-import {
-  DependencyOrderError,
-  DisjointedUnitsError,
-  NoSuchChainError,
-} from "../Error";
-import {
-  ConnectedChainMapping,
-  IsolatedChainMapping,
-  UnitToChainMap,
-} from "../types";
-import { Matrix } from "../Utility";
-import IsolatedDependencyChain from "./IsolatedDependencyChain";
-import TaskUnit from "./TaskUnit";
-import UnitPathMatrix from "./UnitPathMatrix";
+import { DependencyOrderError, NoSuchChainError } from "../Error";
+import type { ConnectedResourcesSetMap, ResourceMap } from "../types";
+import type { TaskUnit } from "./";
+import { IsolatedDependencyChain, UnitPathMatrix } from "./";
 
 /**
  * A collection of interconnected {@link TaskUnit}s, along with helpful functions to make reasoning about them easier.
@@ -26,9 +16,10 @@ import UnitPathMatrix from "./UnitPathMatrix";
  */
 export default class SimpleChainMap {
   private _chains: IsolatedDependencyChain[] = [];
-  private _unitToChainMap: UnitToChainMap = {};
-  private _chainMap: IsolatedChainMapping = {};
-  private _chainConnections: ConnectedChainMapping = {};
+  private _unitToChainMap: ResourceMap<IsolatedDependencyChain> = {};
+  private _chainMap: ResourceMap<IsolatedDependencyChain> = {};
+  private _chainConnections: ConnectedResourcesSetMap<IsolatedDependencyChain> =
+    {};
   unitPathMatrix: UnitPathMatrix;
   private _headChains: IsolatedDependencyChain[];
   private _heads: Set<TaskUnit>;
@@ -38,7 +29,6 @@ export default class SimpleChainMap {
     this._units = this._getAllUnits();
     this.unitPathMatrix = new UnitPathMatrix([...this._units]);
     this._verifyAreTrueHeads();
-    this._verifyAllUnitsAreInterconnected();
     this._buildChains();
     this._headChains = this._getHeadChains();
     this._buildChainConnections();
@@ -60,77 +50,6 @@ export default class SimpleChainMap {
         }
       }
     }
-  }
-  /**
-   * Make sure all units passed to the constructor have a path to every other unit.
-   *
-   * This works by iterating over all units passed, noting which
-   *
-   * ```text
-   *                   ┏━━━┓
-   *                  ╱┗━━━┛C
-   *  ┏━━━┓_____┏━━━┓╱
-   * A┗━━━┛     ┗━━━┛╲B
-   *                  ╲┏━━━┓
-   *                   ┗━━━┛D
-   * ```
-   *
-   * @throws {@link RangeError} when no units are provided
-   * @throws {@link DisjointedUnitsError} when the provided units are not fully interconnected
-   */
-  private _verifyAllUnitsAreInterconnected(): void {
-    // Build a matrix representing which heads each head is directly connected to through shared dependencies.
-    // make a row for each head to use
-    const rows: number[][] = [];
-    for (let [headIndex, head] of Object.entries(this.heads)) {
-      const headIndexAsNumber = Number(headIndex);
-      const headRow: number[] = (rows[headIndexAsNumber] ??= []);
-      for (let [otherHeadIndex, otherHead] of Object.entries(this.heads)) {
-        const otherHeadIndexAsNumber = Number(otherHeadIndex);
-        const otherHeadRow: number[] = (rows[otherHeadIndexAsNumber] ??= []);
-        if (head === otherHead) {
-          // Reflexive relation (points to itself)
-          headRow.push(1);
-          continue;
-        } else if (headRow[otherHeadIndexAsNumber] !== undefined) {
-          // already been here
-          continue;
-        }
-        let adjacent: 0 | 1 = 0;
-        for (let dep of head.getAllDependencies()) {
-          if (otherHead.isDependentOn(dep)) {
-            // They share dependencies, and so are "adjacent"
-            adjacent = 1;
-            break;
-          }
-        }
-        // Apply to both for symmetric relation (the relationship goes both ways)
-        headRow.push(adjacent);
-        otherHeadRow.push(adjacent);
-      }
-    }
-    const adjacentMatrix: Matrix = new Matrix(rows);
-    let productMatrix: Matrix = new Matrix(rows);
-    for (let i = 0; i < this.heads.length; i++) {
-      // Each time we multiply, we see how many "walks" are available from each entry to the others. This lets us see
-      // if all heads are transitively related to each other. If they're related, eventually if we multiply it by itself
-      // enough times, we'll see no 0s in the matrix. If they aren't related, no matter how many times we multiply,
-      // there will always be at least some 0s. There's no need to do this to a greater power than the number of heads,
-      // because that's as far away as any other head could be. See https://www.youtube.com/watch?v=53_cwIT7jpk for more
-      // information.
-      productMatrix = productMatrix.multiply(adjacentMatrix);
-      const allRelated = productMatrix.data.every((row) =>
-        row.every((walks) => walks > 0)
-      );
-      if (allRelated) {
-        // They're all related, so we can safely back out of here.
-        return;
-      }
-    }
-    // They must not all be related.
-    throw new DisjointedUnitsError(
-      "All units passed must be interconnected either directly or indirectly."
-    );
   }
   /**
    * Check if the provided heads are interconnected.

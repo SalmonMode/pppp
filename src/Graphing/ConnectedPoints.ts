@@ -1,4 +1,4 @@
-import { Coordinate, CubicBezierCurve } from "../types";
+import type { Coordinate, CubicBezierCurve } from "../types";
 
 export default class ConnectedPoints {
   /**

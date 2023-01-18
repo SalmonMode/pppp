@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import { DependencyOrderError } from "../Error";
-import { default as IsolatedDependencyChain } from "./IsolatedDependencyChain";
-import { default as TaskUnit } from "./TaskUnit";
+import { IsolatedDependencyChain, TaskUnit } from "./";
 
 describe("IsolatedDependencyChain", function () {
   describe("No Units", function () {
@@ -48,16 +47,12 @@ describe("IsolatedDependencyChain", function () {
   describe("Two Units (Sunny Day)", function () {
     let unitA: TaskUnit;
     let unitB: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let endDateA: Date;
-    let endDateB: Date;
     let chain: IsolatedDependencyChain;
     before(function () {
-      startDateA = new Date();
-      endDateA = new Date(startDateA.getTime() + 1000);
-      startDateB = new Date(endDateA.getTime());
-      endDateB = new Date(startDateB.getTime() + 1000);
+      const startDateA = new Date();
+      const endDateA = new Date(startDateA.getTime() + 1000);
+      const startDateB = new Date(endDateA.getTime());
+      const endDateB = new Date(startDateB.getTime() + 1000);
       unitA = new TaskUnit([], startDateA, endDateA);
       unitB = new TaskUnit([unitA], startDateB, endDateB);
       chain = new IsolatedDependencyChain([unitB, unitA]);
@@ -95,20 +90,14 @@ describe("IsolatedDependencyChain", function () {
     let unitA: TaskUnit;
     let unitB: TaskUnit;
     let unitC: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let startDateC: Date;
-    let endDateA: Date;
-    let endDateB: Date;
-    let endDateC: Date;
     let chain: IsolatedDependencyChain;
     before(function () {
-      startDateA = new Date();
-      endDateA = new Date(startDateA.getTime() + 1000);
-      startDateB = new Date(endDateA.getTime());
-      endDateB = new Date(startDateB.getTime() + 1000);
-      startDateC = new Date(endDateB.getTime());
-      endDateC = new Date(startDateC.getTime() + 1000);
+      const startDateA = new Date();
+      const endDateA = new Date(startDateA.getTime() + 1000);
+      const startDateB = new Date(endDateA.getTime());
+      const endDateB = new Date(startDateB.getTime() + 1000);
+      const startDateC = new Date(endDateB.getTime());
+      const endDateC = new Date(startDateC.getTime() + 1000);
       unitA = new TaskUnit([], startDateA, endDateA);
       unitB = new TaskUnit([unitA], startDateB, endDateB);
       unitC = new TaskUnit([unitB], startDateC, endDateC);
@@ -249,16 +238,12 @@ describe("IsolatedDependencyChain", function () {
   describe("Two Units (With Gap)", function () {
     let unitA: TaskUnit;
     let unitB: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let endDateA: Date;
-    let endDateB: Date;
     let chain: IsolatedDependencyChain;
     before(function () {
-      startDateA = new Date();
-      endDateA = new Date(startDateA.getTime() + 1000);
-      startDateB = new Date(endDateA.getTime() + 1000);
-      endDateB = new Date(startDateB.getTime() + 1000);
+      const startDateA = new Date();
+      const endDateA = new Date(startDateA.getTime() + 1000);
+      const startDateB = new Date(endDateA.getTime() + 1000);
+      const endDateB = new Date(startDateB.getTime() + 1000);
       unitA = new TaskUnit([], startDateA, endDateA);
       unitB = new TaskUnit([unitA], startDateB, endDateB);
       chain = new IsolatedDependencyChain([unitB, unitA]);
@@ -295,18 +280,14 @@ describe("IsolatedDependencyChain", function () {
   describe("Two Units (With Overlap)", function () {
     let unitA: TaskUnit;
     let unitB: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let endDateA: Date;
-    let endDateB: Date;
     let chain: IsolatedDependencyChain;
     before(function () {
-      startDateA = new Date();
-      endDateA = new Date(startDateA.getTime() + 2000);
+      const startDateA = new Date();
+      const endDateA = new Date(startDateA.getTime() + 2000);
       // Pretending A should've only taken 1000 ms, but actually took 2000
-      startDateB = new Date(endDateA.getTime() - 1000);
+      const startDateB = new Date(endDateA.getTime() - 1000);
       // Even though B took 1000 ms once started, we're pretending it got delayed by 1000 ms because of A.
-      endDateB = new Date(startDateB.getTime() + 2000);
+      const endDateB = new Date(startDateB.getTime() + 2000);
       unitA = new TaskUnit([], startDateA, endDateA);
       unitB = new TaskUnit([unitA], startDateB, endDateB);
       chain = new IsolatedDependencyChain([unitB, unitA]);
@@ -343,17 +324,13 @@ describe("IsolatedDependencyChain", function () {
   describe("Two Units (Out of Order)", function () {
     let unitA: TaskUnit;
     let unitB: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let endDateA: Date;
-    let endDateB: Date;
     before(function () {
-      startDateA = new Date();
-      endDateA = new Date(startDateA.getTime() + 2000);
+      const startDateA = new Date();
+      const endDateA = new Date(startDateA.getTime() + 2000);
       // Pretending A should've only taken 1000 ms, but actually took 2000
-      startDateB = new Date(endDateA.getTime() - 1000);
+      const startDateB = new Date(endDateA.getTime() - 1000);
       // Even though B took 1000 ms once started, we're pretending it got delayed by 1000 ms because of A.
-      endDateB = new Date(startDateB.getTime() + 2000);
+      const endDateB = new Date(startDateB.getTime() + 2000);
       unitA = new TaskUnit([], startDateA, endDateA);
       unitB = new TaskUnit([unitA], startDateB, endDateB);
     });
@@ -366,17 +343,13 @@ describe("IsolatedDependencyChain", function () {
   describe("Two Units (No Dependency)", function () {
     let unitA: TaskUnit;
     let unitB: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let endDateA: Date;
-    let endDateB: Date;
     before(function () {
-      startDateA = new Date();
-      endDateA = new Date(startDateA.getTime() + 2000);
+      const startDateA = new Date();
+      const endDateA = new Date(startDateA.getTime() + 2000);
       // Pretending A should've only taken 1000 ms, but actually took 2000
-      startDateB = new Date(endDateA.getTime() - 1000);
+      const startDateB = new Date(endDateA.getTime() - 1000);
       // Even though B took 1000 ms once started, we're pretending it got delayed by 1000 ms because of A.
-      endDateB = new Date(startDateB.getTime() + 2000);
+      const endDateB = new Date(startDateB.getTime() + 2000);
       unitA = new TaskUnit([], startDateA, endDateA);
       unitB = new TaskUnit([], startDateB, endDateB);
     });

@@ -1,5 +1,4 @@
-import { TaskUnit } from "../Relations";
-import ChainPath from "../Relations/ChainPath";
+import type { ChainPath, TaskUnit } from "../Relations";
 
 export default class GraphableChainPath {
   public units: TaskUnit[];

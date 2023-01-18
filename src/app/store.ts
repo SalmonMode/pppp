@@ -1,34 +1,23 @@
 import {
-  configureStore,
-  ThunkAction,
-  Action,
   combineReducers,
+  configureStore,
+  PreloadedState,
 } from "@reduxjs/toolkit";
-import type { PreloadedState } from "@reduxjs/toolkit";
 import taskUnitsSlice from "../features/Poster/taskUnitsSlice";
 
 const rootReducer = combineReducers({
-  taskUnits: taskUnitsSlice,
+  taskUnits: taskUnitsSlice.reducer,
 });
 
 export function makeStore(preloadedState?: PreloadedState<RootState>) {
-  return configureStore({
+  const store = configureStore({
     reducer: rootReducer,
     preloadedState,
   });
+  return store;
 }
 
 const store = makeStore();
-
-export type AppThunk<ReturnType = void> = ThunkAction<
-  ReturnType,
-  AppState,
-  unknown,
-  Action<string>
->;
-
-export type AppState = ReturnType<typeof store.getState>;
-export type AppStore = ReturnType<typeof makeStore>;
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = typeof store.dispatch;

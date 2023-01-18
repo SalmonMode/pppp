@@ -1,11 +1,17 @@
+import { NoSuchChainPathError } from "../Error";
 import {
   assertIsNumber,
   assertIsObject,
   assertIsString,
 } from "../typePredicates";
-import { InterconnectionStrengthMapping, RelationshipMapping } from "../types";
+import type { RelationshipMapping } from "../types";
 import { Matrix } from "../Utility";
-import ChainPath from "./ChainPath";
+import type { ChainPath, SimpleChainPathMap } from "./";
+
+interface TrackDetails {
+  height: number;
+  paths: ChainPath["id"][];
+}
 
 export default class StressTracker {
   /**
@@ -15,58 +21,78 @@ export default class StressTracker {
    * number of connections between each path, ordered in the same way. As paths are swapped with each other to find the
    * optimal order, this matrix will be modified.
    */
-  positioningMatrix: Matrix;
+  private _positionsMatrix: Matrix;
   /**
-   * A matrix showing how many connections each path has to every other path. Useful when combined with the positioning
-   * matrix through multiplication.
+   * The current distance from each path to the others.
+   *
+   * This factors in track height.
    */
-  private _connectionMatrix: Matrix;
+  private _distanceMatrix: Matrix;
+  private _currentTotalDistance: number;
   /**
-   * The current stress levels for each path given the current arrangement of path positions relative to each other.
-   *
-   * Conveniently, each number in each row for a given path represents what the stress for a given path would be if
-   * swapped with the path of the corresponding. For example:
-   *
-   * ```text
-   *       A   B   C   D
-   *    ┏                 ┓
-   *  A ┃  5   4   2   6  ┃
-   *  B ┃  2   1   0   2  ┃
-   *  C ┃ -3  -7  -4  -4  ┃
-   *  D ┃ -1  -3  -2  -2  ┃
-   *    ┗                 ┛
-   * ```
-   *
-   * The diagonal represents each path's current stress (this is what it's stress would be after swapping with itself).
-   *
-   * The A row, for example, shows what stress levels A could be if swapped with the path of the corresponding column.
-   * If A were swapped with B, then A would have a stress of 2, and we can see in B's row that B would have a stress of
-   * 4 if it swapped with A.
-   *
-   * This of course tells us nothing about the stress levels of the other paths after such a swap, so we could only
-   * assume there'd be no other changes along the diagonal if the swapped paths were neighboring each other. It's safe
-   * if they're neighboring because the relative positions of all other paths to every other path remains the same. If
-   * we swapped A and B, and they were neighbors, C and D would still be above or below them after the swap.
-   *
-   * This is useful for finding potential ways to swap
+   * The current information about which paths are on which tracks, and how tall each track is.
    */
-  private _stressMatrix: Matrix;
+  private _allTracksDetails: TrackDetails[];
   /**
    * The matrix only understands integers for its column and row indexes. So we need to track the order of all the paths
    * according to their sorted ID order. The index of their ID in this list represents the index of their column and row
    * in the matrix.
    */
   readonly pathMatrixKeys: string[];
-  constructor(
-    public readonly connectionStrengthMapping: InterconnectionStrengthMapping
-  ) {
+  constructor(public pathMap: SimpleChainPathMap) {
     this.pathMatrixKeys = this._getPathMatrixKeys();
-    this.positioningMatrix = this._buildPositioningMatrix();
-    this._connectionMatrix = this._buildConnectionMatrix();
-    this._stressMatrix = this.getStressMatrixUsingPositions(
-      this.positioningMatrix
+    this._positionsMatrix = this._buildPositionsMatrix();
+    this._allTracksDetails = this.getPathTrackDetailsWithPositions(
+      this.positionsMatrix
+    );
+    this._distanceMatrix = this.getDistanceMatrixUsingPositions(
+      this.positionsMatrix
+    );
+    this._currentTotalDistance = this.getTotalDistanceWithDistances(
+      this._distanceMatrix
     );
   }
+  /**
+   * A matrix that will track the above/below position of every path relative to every other path. If it is above a
+   * path, it will have a 1. If below, a -1. For itself, it will always have a 0. This is useful for calculating the
+   * stress on any given path in any given position relative to others when multiplied by a matrix containing the
+   * number of connections between each path, ordered in the same way. As paths are swapped with each other to find the
+   * optimal order, this matrix will be modified.
+   */
+  get positionsMatrix(): Matrix {
+    return this._positionsMatrix;
+  }
+  set positionsMatrix(positionsMatrix: Matrix) {
+    this._positionsMatrix = positionsMatrix;
+    this._allTracksDetails =
+      this.getPathTrackDetailsWithPositions(positionsMatrix);
+    this._distanceMatrix = this.getDistanceMatrixUsingPositionsAndTrackDetails(
+      positionsMatrix,
+      this._allTracksDetails
+    );
+    this._currentTotalDistance = this.getTotalDistanceWithDistances(
+      this._distanceMatrix
+    );
+  }
+  getTotalConnectionDistanceForPathWithDistancesById(
+    distances: Matrix,
+    pathId: ChainPath["id"]
+  ): number {
+    let distance = 0;
+    const pathMatrixIndex = this.getMatrixIndexForPathId(pathId);
+    const pathConns = this.pathMap.getConnectionsForPathById(pathId);
+    for (let [otherPathId, numberOfConnections] of Object.entries(pathConns)) {
+      const otherPathMatrixIndex = this.getMatrixIndexForPathId(otherPathId);
+
+      const distanceBetween = distances.getElementAtPosition(
+        pathMatrixIndex,
+        otherPathMatrixIndex
+      );
+      distance += distanceBetween * numberOfConnections;
+    }
+    return distance;
+  }
+
   /**
    * Get the IDs of the paths in alphabetical order.
    *
@@ -76,13 +102,13 @@ export default class StressTracker {
    * @returns The IDs of the paths in alphabetical order
    */
   private _getPathMatrixKeys(): string[] {
-    return Object.keys(this.connectionStrengthMapping).sort();
+    return Object.keys(this.pathMap.connectionStrengthMapping).sort();
   }
   /**
    *
    * @returns a matrix showing the initial positions of each path relative to each other.
    */
-  private _buildPositioningMatrix(): Matrix {
+  private _buildPositionsMatrix(): Matrix {
     const matrixData: number[][] = [];
     // The initial order doesn't matter, so we can assume we're positioning them in the order of their keys. The first
     // path will be positioned on top of everything else, so it should have a 0 in its first position, and 1s in the
@@ -98,24 +124,15 @@ export default class StressTracker {
     return new Matrix(matrixData);
   }
   /**
-   *
-   * @returns a matrix showing the number of connections between each path.
+   * @param pathId
+   * @returns The index in matrices that correspond with the row and column index of the path associated with the id.
    */
-  private _buildConnectionMatrix(): Matrix {
-    const matrixData: number[][] = [];
-    // Each row can be filled with 0s to the appropriate size, and then updated based on the connections found in the
-    // strength mapping.
-    for (let id of this.pathMatrixKeys) {
-      const newRow = Array(this.pathMatrixKeys.length).fill(0);
-      const strengthMapping = this.connectionStrengthMapping[id];
-      assertIsObject(strengthMapping);
-      for (let [key, strength] of Object.entries(strengthMapping)) {
-        const index = this.getMatrixIndexForPathId(key);
-        newRow[index] = strength;
-      }
-      matrixData.push(newRow);
+  getPathIdForMatrixIndex(index: number): ChainPath["id"] {
+    const pathId = this.pathMatrixKeys[index];
+    if (!pathId) {
+      throw new NoSuchChainPathError(`No path found at matrix index ${index}`);
     }
-    return new Matrix(matrixData);
+    return pathId;
   }
   /**
    * @param pathId
@@ -127,27 +144,31 @@ export default class StressTracker {
   /**
    * Swap the paths and update all the stress values.
    *
-   * @param path
-   * @param otherPath
-   */
-  swapPaths(path: ChainPath, otherPath: ChainPath) {
-    return this.swapPathsById(path.id, otherPath.id);
-  }
-  /**
-   * Swap the paths and update all the stress values.
-   *
    * @param pathId
    * @param otherPathId
    */
   swapPathsById(pathId: ChainPath["id"], otherPathId: ChainPath["id"]): void {
-    this.positioningMatrix =
+    this.positionsMatrix =
       this.getUpdatedRelativePositionsMatrixFromSwitchingPositionsOfPathsById(
         pathId,
         otherPathId
       );
-    this._stressMatrix = this.getStressMatrixUsingPositions(
-      this.positioningMatrix
-    );
+  }
+  /**
+   * Converge the paths, bringing them together at the middle point between them, and update all the stress values.
+   *
+   * @param pathId
+   * @param otherPathId
+   */
+  convergePathsById(
+    pathId: ChainPath["id"],
+    otherPathId: ChainPath["id"]
+  ): void {
+    this.positionsMatrix =
+      this.getUpdatedRelativePositionsMatrixFromConvergingPathsById(
+        pathId,
+        otherPathId
+      );
   }
   /**
    * Move the path below the other path and update all the stress values.
@@ -159,14 +180,11 @@ export default class StressTracker {
     pathId: ChainPath["id"],
     otherPathId: ChainPath["id"]
   ): void {
-    this.positioningMatrix =
+    this.positionsMatrix =
       this.getUpdatedRelativePositionsMatrixFromMovingPathBelowPathById(
         pathId,
         otherPathId
       );
-    this._stressMatrix = this.getStressMatrixUsingPositions(
-      this.positioningMatrix
-    );
   }
   /**
    * Move the path above all other paths and update all the stress values.
@@ -174,27 +192,8 @@ export default class StressTracker {
    * @param pathId
    */
   movePathToTopById(pathId: ChainPath["id"]): void {
-    this.positioningMatrix =
+    this.positionsMatrix =
       this.getUpdatedRelativePositionsMatrixFromMovingPathToTopById(pathId);
-    this._stressMatrix = this.getStressMatrixUsingPositions(
-      this.positioningMatrix
-    );
-  }
-  /**
-   * Get the updated relative positions matrix after swapping the positions of two paths.
-   *
-   * @param path one of the paths that is switching its position
-   * @param otherPath the other path that is switching its position with the first path
-   * @returns a matrix showing the relative positions of all paths after swapping the positions of two paths
-   */
-  getUpdatedRelativePositionsMatrixFromSwitchingPositionsOfPaths(
-    path: ChainPath,
-    otherPath: ChainPath
-  ): Matrix {
-    return this.getUpdatedRelativePositionsMatrixFromSwitchingPositionsOfPathsById(
-      path.id,
-      otherPath.id
-    );
   }
   /**
    * Get the updated relative positions matrix after swapping the positions of two paths.
@@ -214,7 +213,7 @@ export default class StressTracker {
     // Produce a new matrix containing the updated relative positions.
     const updatedPositionData: number[][] = [];
     this.pathMatrixKeys.forEach((key, index) => {
-      const oldRow = [...this.positioningMatrix.getRow(index)];
+      const oldRow = [...this.positionsMatrix.getRow(index)];
       if (!!diff[index]) {
         // this row was affected so update it
         if (index === matrixIndexOfPath || index === matrixIndexOfOtherPath) {
@@ -251,13 +250,62 @@ export default class StressTracker {
     return new Matrix(updatedPositionData);
   }
   /**
+   * Get the updated relative positions matrix after moving the two paths closer together until they are right night to
+   * each other.
+   *
+   * @param pathId
+   * @param otherPathId
+   * @returns a matrix showing the relative positions of all paths after moving the paths next to each other
+   */
+  getUpdatedRelativePositionsMatrixFromConvergingPathsById(
+    pathId: ChainPath["id"],
+    otherPathId: ChainPath["id"]
+  ): Matrix {
+    let pathsBetween = this.getPathsBetweenPathsWithPositionsById(
+      this.positionsMatrix,
+      pathId,
+      otherPathId
+    );
+    if (pathsBetween.length === 0) {
+      return this.positionsMatrix;
+    }
+    const currentRankings = this.getRankings();
+    const [upperPathId, lowerPathId] = [pathId, otherPathId].sort(
+      (a, b) => currentRankings.indexOf(a) - currentRankings.indexOf(b)
+    );
+    assertIsString(upperPathId);
+    assertIsString(lowerPathId);
+    const middlePathId =
+      pathsBetween[Math.floor((pathsBetween.length - 1) / 2)];
+    assertIsString(middlePathId);
+    // First move the upper path below the middle path. The lower path will be moved below the upper path after the
+    // first move to preserve their order.
+    const firstMoveMatrix =
+      this.getUpdatedRelativePositionsMatrixFromMovingPathBelowPathById(
+        upperPathId,
+        middlePathId
+      );
+    // Now move the lower path below the upper path
+    const secondMoveMatrix =
+      this.getUpdatedRelativePositionsMatrixFromMovingPathBelowPathWithPositionsById(
+        firstMoveMatrix,
+        lowerPathId,
+        upperPathId
+      );
+    // The middle path should now be just above the upper path, and the lower path should now be just below the upper
+    // path.
+    return secondMoveMatrix;
+  }
+  /**
    * Get the updated relative positions matrix after moving one path below another.
    *
+   * @param positions the matrix of positions to move from
    * @param pathId the ID of the path that is moving
    * @param otherPathId the ID of the path that the moving path is moving below
    * @returns a matrix showing the relative positions of all paths after moving the path below the other path
    */
-  getUpdatedRelativePositionsMatrixFromMovingPathBelowPathById(
+  getUpdatedRelativePositionsMatrixFromMovingPathBelowPathWithPositionsById(
+    positions: Matrix,
     pathId: ChainPath["id"],
     otherPathId: ChainPath["id"]
   ): Matrix {
@@ -274,9 +322,7 @@ export default class StressTracker {
         // target path to be -1. It should be relatively positioned the same as the target path, save for it's position
         // to the target path (since it should be below it).
         updatedRow = [
-          ...this.positioningMatrix.getRow(
-            matrixIndexOfPathThatItIsMovingBelow
-          ),
+          ...positions.getRow(matrixIndexOfPathThatItIsMovingBelow),
         ];
         // set it's position relative to itself to be 0
         updatedRow[matrixIndexOfPathThatIsMoving] = 0;
@@ -285,13 +331,13 @@ export default class StressTracker {
       } else if (key === otherPathId) {
         // This is the row for the target path. The only thing that might need to change here is that it's position
         // relative to the path that is moving should be 1, because it will be above the moving path.
-        updatedRow = [...this.positioningMatrix.getRow(index)];
+        updatedRow = [...positions.getRow(index)];
         updatedRow[matrixIndexOfPathThatIsMoving] = 1;
       } else {
         // This is for the rows of every other path. The only thing that might need to change here is that their
         // position relative to the moving path should be the same as their position relative to the target path (since
         // they're right next to each other with nothing in between).
-        updatedRow = [...this.positioningMatrix.getRow(index)];
+        updatedRow = [...positions.getRow(index)];
         updatedRow.splice(
           matrixIndexOfPathThatIsMoving,
           1,
@@ -304,6 +350,23 @@ export default class StressTracker {
       updatedPositionData.push(updatedRow);
     });
     return new Matrix(updatedPositionData);
+  }
+  /**
+   * Get the updated relative positions matrix after moving one path below another.
+   *
+   * @param pathId the ID of the path that is moving
+   * @param otherPathId the ID of the path that the moving path is moving below
+   * @returns a matrix showing the relative positions of all paths after moving the path below the other path
+   */
+  getUpdatedRelativePositionsMatrixFromMovingPathBelowPathById(
+    pathId: ChainPath["id"],
+    otherPathId: ChainPath["id"]
+  ): Matrix {
+    return this.getUpdatedRelativePositionsMatrixFromMovingPathBelowPathWithPositionsById(
+      this.positionsMatrix,
+      pathId,
+      otherPathId
+    );
   }
   /**
    * Get the updated relative positions matrix after moving one path above another.
@@ -323,13 +386,13 @@ export default class StressTracker {
       let updatedRow: number[];
       if (key === pathId) {
         // This is the row that is moving, so make it all 1s except for a 0 for itself.
-        updatedRow = this.positioningMatrix
+        updatedRow = this.positionsMatrix
           .getRow(matrixIndexOfPathThatIsMoving)
           .map((value) => (value === 0 ? 0 : 1));
       } else {
         // This is for the rows of every other path. The only thing that might need to change here is that their
         // position relative to the moving path should -1 (since everything is below it now).
-        updatedRow = [...this.positioningMatrix.getRow(index)];
+        updatedRow = [...this.positionsMatrix.getRow(index)];
         updatedRow[matrixIndexOfPathThatIsMoving] = -1;
       }
       updatedPositionData.push(updatedRow);
@@ -391,11 +454,74 @@ export default class StressTracker {
     pathId: ChainPath["id"],
     otherPathId: ChainPath["id"]
   ): number[] {
+    return this.getDifferenceBetweenPathsWithPositionsById(
+      this.positionsMatrix,
+      pathId,
+      otherPathId
+    );
+  }
+  /**
+   * Get the difference of relative positions between these two paths, given a particular positioning matrix.
+   *
+   * This will tell us if both paths are above/below another path (in which case, there's no difference between the two
+   * paths), or if they differ. If they differ, then the relative positions will need to be updated.
+   *
+   * In the array returned, each item corresponds to one of the paths, in the order their keys are sorted. Each number
+   * in the array indicates if the associated path would be impacted by the swapping of the two chosen paths. For
+   * example, if there are paths A, B, C, and D, with their positions in that order, and their IDs in the same order,
+   * the matrix would look something like this:
+   *
+   * ```text
+   *       A  B  C  D
+   *    ┏             ┓
+   *  A ┃  0  1  1  1 ┃
+   *  B ┃ -1  0  1  1 ┃
+   *  C ┃ -1 -1  0  1 ┃
+   *  D ┃ -1 -1 -1  0 ┃
+   *    ┗             ┛
+   * ```
+   *
+   * If we were to swap A and C, the subtraction would look like this:
+   *
+   * ```text
+   *       A  B  C  D         A  B  C  D
+   *    ┏             ┓    ┏             ┓
+   *   A┃  0  1  1  1 ┃ - C┃ -1 -1  0  1 ┃
+   *    ┗             ┛    ┗             ┛
+   * ```
+   *
+   * This would result in the following difference:
+   *
+   * ```text
+   *        A  B  C  D
+   *    ┏              ┓
+   *    ┃  -1  2  1  0 ┃
+   *    ┗              ┛
+   * ```
+   *
+   * This difference tells us that A, B, and C, but not D, will be impacted by this shift. We can tell this is the
+   * case because D would still be at the bottom, but A would be below B and C, B would be below C and above A, and C
+   * would be above A and B. As a result, their respective values must be switched when the time comes.
+   *
+   * The array simultaneously describes which paths need to have their row in the positions matrix updated, and also
+   * which paths they need update their relative position to. B, for example, is not being moved, but we need to update
+   * A and C's position relative to it, and we need to update it's relative position to A and C.
+   *
+   * @param positions The positions of each path
+   * @param pathId The first path's ID
+   * @param otherPathId the second path's ID
+   * @returns an array indicating which paths are between the two provided (including the two paths themselves)
+   */
+  getDifferenceBetweenPathsWithPositionsById(
+    positions: Matrix,
+    pathId: ChainPath["id"],
+    otherPathId: ChainPath["id"]
+  ): number[] {
     const pathIndex = this.getMatrixIndexForPathId(pathId);
     const otherPathIndex = this.getMatrixIndexForPathId(otherPathId);
     // Find out what else will need to change after this swap
-    const pathRow = this.positioningMatrix.getRow(pathIndex);
-    const otherPathRow = this.positioningMatrix.getRow(otherPathIndex);
+    const pathRow = positions.getRow(pathIndex);
+    const otherPathRow = positions.getRow(otherPathIndex);
     // Wherever there is a difference is where updates need to occur.
     const diff = new Matrix([pathRow])
       .subtract(new Matrix([otherPathRow]))
@@ -403,225 +529,227 @@ export default class StressTracker {
     return diff;
   }
   /**
-   * Given a particular arrangement of paths, return a matrix showing how much stress and in which directions each path
-   * would be under.
-   *
-   * Since each path is already positioned somewhere, this will help us consider what it would be like if any other path
-   * were in the position of the path we're looking at. In other words, we're considering what it would be like for each
-   * path to swap positions with the path positioned here. As a result, where the 0 is will need to be swapped with the
-   * inverse of the position the other path has for it. For example, if A swapped with C, C's 0 might be at index 2,
-   * while A's is at 0. But if A already has a -1 in its index 2 (where C is, indicating A is below C), and C has a 1 in
-   * its index 0 (indicating it's above A), then in order to consider what it would be like for A to be swapped with C,
-   * A could use C's position array and simply swap the numbers in the 0th and 2nd index.
-   *
-   * We can get away with this implementation, because we aren't concerned about the stress of the other paths for the
-   * purposes of this.
+   * Given a particular arrangement of paths, return a matrix showing how much distance is between each path.
    *
    * @param positionsMatrix the positions of all paths relative to each other
    * @returns a matrix showing the relative stress vectors of each path
    */
-  getStressMatrixUsingPositions(positionsMatrix: Matrix): Matrix {
-    const stressData: number[][] = [];
-    for (
-      let pathIndex = 0;
-      pathIndex < this.pathMatrixKeys.length;
-      pathIndex++
-    ) {
-      // generate possible positions matrix for this path by using the position rows of each path. It only needs to swap
-      // the value that's at the pathIndex with wherever the zero is in this row to get the right position row.
-      const positionsData: number[][] = [];
-      for (let positionsRow of positionsMatrix.data) {
-        // find where the zero is in this positionsMatrix row
-        const zeroIndex = positionsRow.indexOf(0);
-        // make a copy because we'll be modifying it
-        const swappedPositionsRow = [...positionsRow];
-        if (zeroIndex !== pathIndex) {
-          // Swap the zero and relative position.
-          swappedPositionsRow.splice(
-            zeroIndex,
-            1,
-            ...swappedPositionsRow.slice(pathIndex, pathIndex + 1)
-          );
-          swappedPositionsRow[pathIndex] = 0;
-        } else {
-          // no need to do this for the current path, as we'd just be replacing 0 with 0 twice.
+  getDistanceMatrixUsingPositions(positions: Matrix): Matrix {
+    const tracks = this._getPathTracksWithPositions(positions);
+    const allTracksDetails = this._getPathTrackDetails(tracks);
+    return this.getDistanceMatrixUsingPositionsAndTrackDetails(
+      positions,
+      allTracksDetails
+    );
+  }
+  /**
+   * Given a particular arrangement of paths, return a matrix showing how much distance each path would need to take to
+   * reach each other path.
+   *
+   * @param positionsMatrix the positions of all paths relative to each other
+   * @returns a matrix showing the relative stress vectors of each path
+   */
+  getDistanceMatrixUsingPositionsAndTrackDetails(
+    positions: Matrix,
+    allTracksDetails: TrackDetails[]
+  ): Matrix {
+    const distanceData: number[][] = [];
+    /**
+     * Tracks which track each path is on to speed up lookup times.
+     */
+    const pathTrackMap: RelationshipMapping = allTracksDetails.reduce(
+      (acc, track, index) => {
+        return {
+          ...acc,
+          ...track.paths.reduce((innerAcc, pathId) => {
+            return { ...innerAcc, [pathId]: index };
+          }, {}),
+        };
+      },
+      {}
+    );
+    for (let pathId of this.pathMatrixKeys) {
+      for (let otherPathId of this.pathMatrixKeys) {
+        const matrixIndex = this.getMatrixIndexForPathId(pathId);
+        const pathRow: number[] = (distanceData[matrixIndex] ??= []);
+        if (pathId === otherPathId) {
+          // same path, so put a 0
+          pathRow.push(0);
+          continue;
         }
-        positionsData.push(swappedPositionsRow);
+        const inBetweens = this.getDifferenceBetweenPathsWithPositionsById(
+          positions,
+          pathId,
+          otherPathId
+        );
+        const trackIndexesInvolved = new Set<number>();
+        inBetweens.forEach((value, index) => {
+          if (!!value) {
+            // is in between
+            const pathId = this.getPathIdForMatrixIndex(index);
+            const trackIndex = pathTrackMap[pathId];
+            assertIsNumber(trackIndex);
+            trackIndexesInvolved.add(trackIndex);
+          }
+        });
+        // remove indexes for the tracks for the path themselves
+        const pathTrackIndex = pathTrackMap[pathId];
+        assertIsNumber(pathTrackIndex);
+        trackIndexesInvolved.delete(pathTrackIndex);
+        let distanceBetween = 0;
+        for (let trackIndex of trackIndexesInvolved) {
+          const trackDetails = allTracksDetails[trackIndex];
+          assertIsObject(trackDetails);
+          distanceBetween += trackDetails.height;
+        }
+        pathRow.push(distanceBetween);
       }
-      // Must be transposed to produce a clean row when multiplied by this path's connections row for the final matrix.
-      const possiblePositionsOfPathMatrix = new Matrix(
-        positionsData
-      ).transpose();
-      const connStrengthMatrixForPath = new Matrix([
-        this._connectionMatrix.getRow(pathIndex),
-      ]);
-      const possibleStressMatrix = connStrengthMatrixForPath.multiply(
-        possiblePositionsOfPathMatrix
-      );
-      // Grab the only row from the resulting matrix.
-      stressData.push(possibleStressMatrix.getRow(0));
     }
-    return new Matrix(stressData);
+    return new Matrix(distanceData);
   }
   /**
-   * Get the stress of the provided path according to the provided stress path.
    *
-   * @param path the path to get the stress of
-   * @param stressMatrix the stress matrix to pull the stress information from
-   * @returns the stress of the path according to the provided stress matrix
+   * @param distances The matrix showing how far each path is from every other path
+   * @returns the amount of distance each path's connections must take to reach their connected paths
    */
-  getStressOfPathWithStressMatrix(
-    path: ChainPath,
-    stressMatrix: Matrix
-  ): number {
-    return this.getStressOfPathWithStressMatrixById(path.id, stressMatrix);
-  }
-  /**
-   * Get the stress of the provided path according to the provided stress path.
-   *
-   * @param path the path to get the stress of
-   * @param stressMatrix the stress matrix to pull the stress information from
-   * @returns the stress of the path according to the provided stress matrix
-   */
-  getStressOfPathWithStressMatrixById(
-    pathId: ChainPath["id"],
-    stressMatrix: Matrix
-  ): number {
-    const matrixIndex = this.getMatrixIndexForPathId(pathId);
-    return stressMatrix.getElementAtPosition(matrixIndex, matrixIndex);
-  }
-  /**
-   * Get the stress of the provided path according to the current arrangement of the paths.
-   *
-   * The arrangment of the paths is tracked to have a singular "current reality" to compare against when sorting, and to
-   * reference after sorting. Because the stress of this state will need to be referenced a lot, the value is cached
-   * both when instantiating the StressTracker, and whenever committing to swapping the positions of two paths. This way
-   * it's calculated fewer times.
-   *
-   * @param path the path to get the current stress of
-   * @returns the stress of the path according to the current arrangement of paths
-   */
-  getCurrentStressOfPath(path: ChainPath): number {
-    return this.getCurrentStressOfPathById(path.id);
-  }
-  /**
-   * Get the stress of the provided path according to the current arrangement of the paths.
-   *
-   * The arrangment of the paths is tracked to have a singular "current reality" to compare against when sorting, and to
-   * reference after sorting. Because the stress of this state will need to be referenced a lot, the value is cached
-   * both when instantiating the StressTracker, and whenever committing to swapping the positions of two paths. This way
-   * it's calculated fewer times.
-   *
-   * @param pathId the ID of the path to get the current stress of
-   * @returns the stress of the path according to the current arrangement of paths
-   */
-  getCurrentStressOfPathById(pathId: ChainPath["id"]): number {
-    return this.getStressOfPathWithStressMatrixById(pathId, this._stressMatrix);
-  }
-  /**
-   * Get the stress of the first path passed if it were to be swapped with the second path passed.
-   *
-   * @param path
-   * @param otherPath
-   * @returns the theoretical stress of the path argument if it were to be swapped with the otherPath argument
-   */
-  getStressOfPathIfSwappedWithPath(
-    path: ChainPath,
-    otherPath: ChainPath
-  ): number {
-    return this.getStressOfPathIfSwappedWithPathById(path.id, otherPath.id);
-  }
-  /**
-   * Get the stress of the first path passed if it were to be swapped with the second path passed.
-   *
-   * @param pathId
-   * @param otherPathId
-   * @returns the theoretical stress of the path argument if it were to be swapped with the otherPath argument
-   */
-  getStressOfPathIfSwappedWithPathById(
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
-  ): number {
-    const pathIndex = this.getMatrixIndexForPathId(pathId);
-    const otherPathIndex = this.getMatrixIndexForPathId(otherPathId);
-    return this._stressMatrix.getElementAtPosition(pathIndex, otherPathIndex);
-  }
-  /**
-   * Get the stress levels of each path given the provided positioning.
-   *
-   * @param positionsMatrix the positions to get the stress levels for
-   * @returns an array containing the stress levels for each path in the order according to the pathMatrixKeys
-   */
-  getStressOfPathsGivenPositionsMatrix(positionsMatrix: Matrix): number[] {
-    const stressLevels: number[] = [];
-    for (
-      let pathIndex = 0;
-      pathIndex < this.pathMatrixKeys.length;
-      pathIndex++
-    ) {
-      const connRow = this._connectionMatrix.getRow(pathIndex);
-      const connMatForPath = new Matrix([connRow]).transpose();
-      const positionRow = positionsMatrix.getRow(pathIndex);
-      const positionMatrix = new Matrix([positionRow]);
-      stressLevels.push(
-        positionMatrix.multiply(connMatForPath).getElementAtPosition(0, 0)
+  getTotalDistanceWithDistances(distances: Matrix): number {
+    let distance = 0;
+    for (let pathId of this.pathMatrixKeys) {
+      distance += this.getTotalConnectionDistanceForPathWithDistancesById(
+        distances,
+        pathId
       );
     }
-    return stressLevels;
+    return distance;
   }
   /**
-   * Get the stress levels of each path given the current positioning.
    *
-   * @param positionsMatrix the positions to get the stress levels for
-   * @returns an array containing the stress levels for each path in the order according to the pathMatrixKeys
+   * @returns The total distance of all connections of all paths with the current positioning
    */
-  getCurrentStressOfPaths(): number[] {
-    return this.getStressOfPathsGivenPositionsMatrix(this.positioningMatrix);
+  getCurrentTotalDistanceOfPaths(): number {
+    return this._currentTotalDistance;
   }
-  /**
-   * Get the stress levels of each path given the positioning after the swap between the provided paths is reflected.
-   *
-   * @param positionsMatrix the positions to get the stress levels for
-   * @returns an array containing the stress levels for each path in the order according to the pathMatrixKeys
-   */
-  getStressOfPathsIfPathSwappedWithPathById(
+  private _getPathTracksWithPositions(positions: Matrix): ChainPath[][] {
+    const rankings = this.getRankingsUsingPositions(positions);
+    // First figure out the tracks
+    let trackCurrentlyBeingBuilt: ChainPath[] = [];
+    let pathTracks: ChainPath[][] = [trackCurrentlyBeingBuilt];
+    for (let pathId of rankings) {
+      const path = this.pathMap.getPathById(pathId);
+      let overlapFound = false;
+      for (let trackedPath of trackCurrentlyBeingBuilt) {
+        if (path.overlapsWithPath(trackedPath)) {
+          // Overlap found, meaning it cannot fit on the same track, so track and break from the innermost loop.
+          overlapFound = true;
+          break;
+        }
+      }
+      if (overlapFound) {
+        // Can't fit on the same track so start building the next
+        trackCurrentlyBeingBuilt = [path];
+        pathTracks.push(trackCurrentlyBeingBuilt);
+        continue;
+      }
+      // No overlap, so it can go in the same track
+      trackCurrentlyBeingBuilt.push(path);
+    }
+    return pathTracks;
+  }
+  private _getPathTrackDetails(tracks: ChainPath[][]): TrackDetails[] {
+    const trackDetails: TrackDetails[] = [];
+    for (let track of tracks) {
+      const height = track.reduce(
+        (acc, path) => Math.max(acc, path.tracks.length),
+        0
+      );
+      trackDetails.push({
+        height,
+        paths: track.map((path) => path.id),
+      });
+    }
+    return trackDetails;
+  }
+  getPathTrackDetailsWithPositions(positions: Matrix): TrackDetails[] {
+    const tracks = this._getPathTracksWithPositions(positions);
+    return this._getPathTrackDetails(tracks);
+  }
+  getTotalDistanceOfPathsWithPositions(positions: Matrix): number {
+    const allTracksDetails = this.getPathTrackDetailsWithPositions(positions);
+    return this.getTotalDistanceOfPathsWithPositionsWithTrackDetails(
+      positions,
+      allTracksDetails
+    );
+  }
+  getTotalDistanceOfPathsWithPositionsWithTrackDetails(
+    positions: Matrix,
+    allTracksDetails: TrackDetails[]
+  ): number {
+    const distances = this.getDistanceMatrixUsingPositionsAndTrackDetails(
+      positions,
+      allTracksDetails
+    );
+    return this.getTotalDistanceWithDistances(distances);
+  }
+  getPathsBetweenPathsWithPositionsById(
+    positions: Matrix,
     pathId: ChainPath["id"],
     otherPathId: ChainPath["id"]
-  ): number[] {
-    const posMatrix =
-      this.getUpdatedRelativePositionsMatrixFromSwitchingPositionsOfPathsById(
-        pathId,
-        otherPathId
-      );
-    return this.getStressOfPathsGivenPositionsMatrix(posMatrix);
+  ): ChainPath["id"][] {
+    const inBetweens = this.getDifferenceBetweenPathsWithPositionsById(
+      positions,
+      pathId,
+      otherPathId
+    );
+    const pathIdsInvolved: ChainPath["id"][] = [];
+    inBetweens.forEach((value, index) => {
+      if (!!value) {
+        // is in between
+        const inBetweenPathId = this.pathMatrixKeys[index];
+        if (
+          inBetweenPathId &&
+          ![pathId, otherPathId].includes(inBetweenPathId)
+        ) {
+          pathIdsInvolved.push(inBetweenPathId);
+        }
+      }
+    });
+    return pathIdsInvolved;
   }
   /**
-   * Get the theoretical stress levels given the positioning after moving the provided path below the other.
    *
-   * @param pathId
-   * @param otherPathId
-   * @returns the theoretical stress matrix if the provided path were moved below the other path.
+   * @returns the path IDs sorted from top to bottom according to their positions.
    */
-  getStressOfPathsIfPathMovedBelowPathById(
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
-  ): number[] {
-    const posMatrix =
-      this.getUpdatedRelativePositionsMatrixFromMovingPathBelowPathById(
-        pathId,
-        otherPathId
-      );
-    return this.getStressOfPathsGivenPositionsMatrix(posMatrix);
+  getRankings(): ChainPath["id"][] {
+    return this.getRankingsUsingPositions(this.positionsMatrix);
   }
   /**
-   * Get the theoretical stress levels given the positioning after moving the provided path above all others.
    *
-   * @param pathId
-   * @returns the theoretical stress matrix if the provided path were moved aboveall others.
+   * @returns the path IDs sorted from top to bottom according to their positions.
    */
-  getStressOfPathsIfPathMovedToTopById(pathId: ChainPath["id"]): number[] {
-    const posMatrix =
-      this.getUpdatedRelativePositionsMatrixFromMovingPathToTopById(pathId);
-    return this.getStressOfPathsGivenPositionsMatrix(posMatrix);
+  getRankingsUsingPositions(positions: Matrix): ChainPath["id"][] {
+    const rankings: RelationshipMapping = {};
+    for (let id of this.pathMatrixKeys) {
+      const matrixIndex = this.getMatrixIndexForPathId(id);
+      const positionRow = positions.getRow(matrixIndex);
+      const rank = positionRow.reduce((acc, curr) => acc + curr, 0);
+      rankings[id] = rank;
+    }
+    const rankedIds = [...this.pathMatrixKeys];
+    rankedIds.sort((a, b) => {
+      const rankA = rankings[a];
+      assertIsNumber(rankA);
+      const rankB = rankings[b];
+      assertIsNumber(rankB);
+      return rankB - rankA;
+    });
+    return rankedIds;
+  }
+  getCurrentTracks(): TrackDetails[] {
+    return this._allTracksDetails;
+  }
+  getTracksWithPositions(positions: Matrix): TrackDetails[] {
+    const tracks = this._getPathTracksWithPositions(positions);
+    const allTracksDetails = this._getPathTrackDetails(tracks);
+    return allTracksDetails;
   }
 }

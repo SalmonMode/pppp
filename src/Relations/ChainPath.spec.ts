@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { DependencyOrderError } from "../Error";
 import ChainPath from "./ChainPath";
-import { default as IsolatedDependencyChain } from "./IsolatedDependencyChain";
-import { default as TaskUnit } from "./TaskUnit";
+import IsolatedDependencyChain from "./IsolatedDependencyChain";
+import TaskUnit from "./TaskUnit";
 
 describe("ChainPath", function () {
   describe("No Chains", function () {
@@ -11,22 +11,16 @@ describe("ChainPath", function () {
     });
   });
   describe("Multiple Chains", function () {
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let endDateA: Date;
-    let endDateB: Date;
     let chainA: IsolatedDependencyChain;
     let chainB: IsolatedDependencyChain;
     let path: ChainPath;
     before(function () {
-      startDateA = new Date();
-      endDateA = new Date(startDateA.getTime() + 1000);
-      startDateB = new Date(endDateA.getTime() + 1000);
-      endDateB = new Date(startDateB.getTime() + 1000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([unitA], startDateB, endDateB);
+      const startDateA = new Date();
+      const endDateA = new Date(startDateA.getTime() + 1000);
+      const startDateB = new Date(endDateA.getTime() + 1000);
+      const endDateB = new Date(startDateB.getTime() + 1000);
+      const unitA = new TaskUnit([], startDateA, endDateA);
+      const unitB = new TaskUnit([unitA], startDateB, endDateB);
       chainA = new IsolatedDependencyChain([unitA]);
       chainB = new IsolatedDependencyChain([unitB]);
       path = new ChainPath([chainB, chainA]);
@@ -55,21 +49,15 @@ describe("ChainPath", function () {
     });
   });
   describe("Chains Not Connected", function () {
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let endDateA: Date;
-    let endDateB: Date;
     let chainA: IsolatedDependencyChain;
     let chainB: IsolatedDependencyChain;
     before(function () {
-      startDateA = new Date();
-      endDateA = new Date(startDateA.getTime() + 1000);
-      startDateB = new Date(endDateA.getTime());
-      endDateB = new Date(startDateB.getTime() + 1000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([], startDateB, endDateB);
+      const startDateA = new Date();
+      const endDateA = new Date(startDateA.getTime() + 1000);
+      const startDateB = new Date(endDateA.getTime());
+      const endDateB = new Date(startDateB.getTime() + 1000);
+      const unitA = new TaskUnit([], startDateA, endDateA);
+      const unitB = new TaskUnit([], startDateB, endDateB);
       chainA = new IsolatedDependencyChain([unitA]);
       chainB = new IsolatedDependencyChain([unitB]);
     });
@@ -80,21 +68,15 @@ describe("ChainPath", function () {
     });
   });
   describe("Chains Out Of Order", function () {
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let endDateA: Date;
-    let endDateB: Date;
     let chainA: IsolatedDependencyChain;
     let chainB: IsolatedDependencyChain;
     before(function () {
-      startDateA = new Date();
-      endDateA = new Date(startDateA.getTime() + 1000);
-      startDateB = new Date(endDateA.getTime());
-      endDateB = new Date(startDateB.getTime() + 1000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([unitA], startDateB, endDateB);
+      const startDateA = new Date();
+      const endDateA = new Date(startDateA.getTime() + 1000);
+      const startDateB = new Date(endDateA.getTime());
+      const endDateB = new Date(startDateB.getTime() + 1000);
+      const unitA = new TaskUnit([], startDateA, endDateA);
+      const unitB = new TaskUnit([unitA], startDateB, endDateB);
       chainA = new IsolatedDependencyChain([unitA]);
       chainB = new IsolatedDependencyChain([unitB]);
     });

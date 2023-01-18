@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { default as TaskUnit } from "./TaskUnit";
+import { TaskUnit } from "./";
 
 describe("TaskUnit", function () {
   describe("No Dependencies", function () {
@@ -54,58 +54,28 @@ describe("TaskUnit", function () {
     let unitF: TaskUnit;
     let unitG: TaskUnit;
     let unitH: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let startDateC: Date;
-    let startDateD: Date;
-    let startDateE: Date;
-    let startDateF: Date;
-    let startDateG: Date;
-    let startDateH: Date;
-    let endDateA: Date;
-    let endDateB: Date;
-    let endDateC: Date;
-    let endDateD: Date;
-    let endDateE: Date;
-    let endDateF: Date;
-    let endDateG: Date;
-    let endDateH: Date;
     before(function () {
-      const firstUnitStart = new Date();
-      const firstUnitEnd = new Date(firstUnitStart.getTime() + 1000);
-      const secondUnitStart = new Date(firstUnitEnd.getTime() + 1000);
-      const secondUnitEnd = new Date(secondUnitStart.getTime() + 1000);
-      const thirdUnitStart = new Date(secondUnitEnd.getTime() + 1000);
-      const thirdUnitEnd = new Date(thirdUnitStart.getTime() + 1000);
-      startDateA = new Date(firstUnitStart.getTime());
-      endDateA = new Date(firstUnitEnd.getTime());
-      startDateB = new Date(secondUnitStart.getTime());
-      endDateB = new Date(secondUnitEnd.getTime());
+      const firstStartDate = new Date();
+      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
+      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
+      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
+      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
+      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
 
-      startDateC = new Date(firstUnitStart.getTime());
-      endDateC = new Date(firstUnitEnd.getTime());
-      startDateD = new Date(secondUnitStart.getTime());
-      endDateD = new Date(secondUnitEnd.getTime());
-      startDateE = new Date(thirdUnitStart.getTime());
-      endDateE = new Date(thirdUnitEnd.getTime());
+      unitA = new TaskUnit([], firstStartDate, firstEndDate);
+      unitC = new TaskUnit([], firstStartDate, firstEndDate);
+      unitF = new TaskUnit([], firstStartDate, firstEndDate);
 
-      startDateF = new Date(firstUnitStart.getTime());
-      endDateF = new Date(firstUnitEnd.getTime());
-      startDateG = new Date(secondUnitStart.getTime());
-      endDateG = new Date(secondUnitEnd.getTime());
-      startDateH = new Date(thirdUnitStart.getTime());
-      endDateH = new Date(thirdUnitEnd.getTime());
+      unitB = new TaskUnit([unitA, unitC], secondStartDate, secondEndDate);
+      unitD = new TaskUnit(
+        [unitA, unitC, unitF],
+        secondStartDate,
+        secondEndDate
+      );
+      unitG = new TaskUnit([unitC, unitF], secondStartDate, secondEndDate);
 
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitC = new TaskUnit([], startDateC, endDateC);
-      unitF = new TaskUnit([], startDateF, endDateF);
-
-      unitB = new TaskUnit([unitA, unitC], startDateB, endDateB);
-      unitD = new TaskUnit([unitA, unitC, unitF], startDateD, endDateD);
-      unitG = new TaskUnit([unitC, unitF], startDateG, endDateG);
-
-      unitE = new TaskUnit([unitB, unitD, unitG], startDateE, endDateE);
-      unitH = new TaskUnit([unitD, unitG], startDateH, endDateH);
+      unitE = new TaskUnit([unitB, unitD, unitG], thirdStartDate, thirdEndDate);
+      unitH = new TaskUnit([unitD, unitG], thirdStartDate, thirdEndDate);
     });
     describe("From A", function () {
       let sourceUnit: TaskUnit;
@@ -369,28 +339,24 @@ describe("TaskUnit", function () {
     let unitB: TaskUnit;
     let unitC: TaskUnit;
     let unitD: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let startDateC: Date;
-    let startDateD: Date;
-    let endDateA: Date;
-    let endDateB: Date;
-    let endDateC: Date;
-    let endDateD: Date;
     before(function () {
-      startDateA = new Date();
-      endDateA = new Date(startDateA.getTime() + 1000);
-      startDateB = new Date(endDateA.getTime() + 1000);
-      endDateB = new Date(startDateB.getTime() + 1000);
-      startDateC = new Date(endDateB.getTime() + 1000);
-      endDateC = new Date(startDateC.getTime() + 1000);
-      startDateD = new Date(endDateC.getTime() + 1000);
-      endDateD = new Date(startDateD.getTime() + 1000);
+      const firstStartDate = new Date();
+      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
+      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
+      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
+      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
+      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
+      const fourthStartDate = new Date(thirdEndDate.getTime() + 1000);
+      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
 
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([unitA], startDateB, endDateB);
-      unitC = new TaskUnit([unitA, unitB], startDateC, endDateC);
-      unitD = new TaskUnit([unitA, unitB, unitC], startDateD, endDateD);
+      unitA = new TaskUnit([], firstStartDate, firstEndDate);
+      unitB = new TaskUnit([unitA], secondStartDate, secondEndDate);
+      unitC = new TaskUnit([unitA, unitB], thirdStartDate, thirdEndDate);
+      unitD = new TaskUnit(
+        [unitA, unitB, unitC],
+        fourthStartDate,
+        fourthEndDate
+      );
     });
     describe("From A", function () {
       let sourceUnit: TaskUnit;
@@ -503,36 +469,36 @@ describe("TaskUnit", function () {
     let endDateG: Date;
     let endDateH: Date;
     before(function () {
-      const firstUnitStart = new Date();
-      const firstUnitEnd = new Date(firstUnitStart.getTime() + 1000);
-      const secondUnitStart = new Date(firstUnitEnd.getTime() + 1000);
-      const secondUnitEnd = new Date(secondUnitStart.getTime() + 1000);
-      const thirdUnitStart = new Date(secondUnitEnd.getTime() + 1000);
-      const thirdUnitEnd = new Date(thirdUnitStart.getTime() + 1000);
-      const fourthUnitStart = new Date(thirdUnitEnd.getTime() + 1000);
-      const fourthUnitEnd = new Date(fourthUnitStart.getTime() + 1000);
-      const fifthUnitStart = new Date(fourthUnitEnd.getTime() + 1000);
-      const fifthUnitEnd = new Date(fifthUnitStart.getTime() + 1000);
-      startDateA = new Date(firstUnitStart.getTime());
-      endDateA = new Date(firstUnitEnd.getTime());
+      const firstStartDate = new Date();
+      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
+      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
+      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
+      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
+      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
+      const fourthStartDate = new Date(thirdEndDate.getTime() + 1000);
+      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
+      const fifthStartDate = new Date(fourthEndDate.getTime() + 1000);
+      const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
+      startDateA = new Date(firstStartDate.getTime());
+      endDateA = new Date(firstEndDate.getTime());
 
-      startDateB = new Date(secondUnitStart.getTime());
-      endDateB = new Date(secondUnitEnd.getTime());
-      startDateF = new Date(secondUnitStart.getTime());
-      endDateF = new Date(secondUnitEnd.getTime());
+      startDateB = new Date(secondStartDate.getTime());
+      endDateB = new Date(secondEndDate.getTime());
+      startDateF = new Date(secondStartDate.getTime());
+      endDateF = new Date(secondEndDate.getTime());
 
-      startDateC = new Date(thirdUnitStart.getTime());
-      endDateC = new Date(thirdUnitEnd.getTime());
-      startDateG = new Date(thirdUnitStart.getTime());
-      endDateG = new Date(thirdUnitEnd.getTime());
+      startDateC = new Date(thirdStartDate.getTime());
+      endDateC = new Date(thirdEndDate.getTime());
+      startDateG = new Date(thirdStartDate.getTime());
+      endDateG = new Date(thirdEndDate.getTime());
 
-      startDateD = new Date(fourthUnitStart.getTime());
-      endDateD = new Date(fourthUnitEnd.getTime());
-      startDateH = new Date(fourthUnitStart.getTime());
-      endDateH = new Date(fourthUnitEnd.getTime());
+      startDateD = new Date(fourthStartDate.getTime());
+      endDateD = new Date(fourthEndDate.getTime());
+      startDateH = new Date(fourthStartDate.getTime());
+      endDateH = new Date(fourthEndDate.getTime());
 
-      startDateE = new Date(fifthUnitStart.getTime());
-      endDateE = new Date(fifthUnitEnd.getTime());
+      startDateE = new Date(fifthStartDate.getTime());
+      endDateE = new Date(fifthEndDate.getTime());
 
       unitA = new TaskUnit([], startDateA, endDateA);
 
@@ -809,66 +775,30 @@ describe("TaskUnit", function () {
     let unitF: TaskUnit;
     let unitG: TaskUnit;
     let unitH: TaskUnit;
-    let startDateA: Date;
-    let startDateB: Date;
-    let startDateC: Date;
-    let startDateD: Date;
-    let startDateE: Date;
-    let startDateF: Date;
-    let startDateG: Date;
-    let startDateH: Date;
-    let endDateA: Date;
-    let endDateB: Date;
-    let endDateC: Date;
-    let endDateD: Date;
-    let endDateE: Date;
-    let endDateF: Date;
-    let endDateG: Date;
-    let endDateH: Date;
     before(function () {
-      const firstUnitStart = new Date();
-      const firstUnitEnd = new Date(firstUnitStart.getTime() + 1000);
-      const secondUnitStart = new Date(firstUnitEnd.getTime() + 1000);
-      const secondUnitEnd = new Date(secondUnitStart.getTime() + 1000);
-      const thirdUnitStart = new Date(secondUnitEnd.getTime() + 1000);
-      const thirdUnitEnd = new Date(thirdUnitStart.getTime() + 1000);
-      const fourthUnitStart = new Date(thirdUnitEnd.getTime() + 1000);
-      const fourthUnitEnd = new Date(fourthUnitStart.getTime() + 1000);
-      const fifthUnitStart = new Date(fourthUnitEnd.getTime() + 1000);
-      const fifthUnitEnd = new Date(fifthUnitStart.getTime() + 1000);
-      startDateA = new Date(firstUnitStart.getTime());
-      endDateA = new Date(firstUnitEnd.getTime());
+      const firstStartDate = new Date();
+      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
+      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
+      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
+      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
+      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
+      const fourthStartDate = new Date(thirdEndDate.getTime() + 1000);
+      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
+      const fifthStartDate = new Date(fourthEndDate.getTime() + 1000);
+      const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
 
-      startDateB = new Date(secondUnitStart.getTime());
-      endDateB = new Date(secondUnitEnd.getTime());
-      startDateF = new Date(secondUnitStart.getTime());
-      endDateF = new Date(secondUnitEnd.getTime());
+      unitA = new TaskUnit([], firstStartDate, firstEndDate);
 
-      startDateC = new Date(thirdUnitStart.getTime());
-      endDateC = new Date(thirdUnitEnd.getTime());
-      startDateG = new Date(thirdUnitStart.getTime());
-      endDateG = new Date(thirdUnitEnd.getTime());
+      unitB = new TaskUnit([unitA], secondStartDate, secondEndDate);
+      unitF = new TaskUnit([unitA], secondStartDate, secondEndDate);
 
-      startDateD = new Date(fourthUnitStart.getTime());
-      endDateD = new Date(fourthUnitEnd.getTime());
-      startDateH = new Date(fourthUnitStart.getTime());
-      endDateH = new Date(fourthUnitEnd.getTime());
+      unitC = new TaskUnit([unitB, unitF], thirdStartDate, thirdEndDate);
+      unitG = new TaskUnit([unitB, unitF], thirdStartDate, thirdEndDate);
 
-      startDateE = new Date(fifthUnitStart.getTime());
-      endDateE = new Date(fifthUnitEnd.getTime());
+      unitD = new TaskUnit([unitC, unitG], fourthStartDate, fourthEndDate);
+      unitH = new TaskUnit([unitC, unitG], fourthStartDate, fourthEndDate);
 
-      unitA = new TaskUnit([], startDateA, endDateA);
-
-      unitB = new TaskUnit([unitA], startDateB, endDateB);
-      unitF = new TaskUnit([unitA], startDateF, endDateF);
-
-      unitC = new TaskUnit([unitB, unitF], startDateC, endDateC);
-      unitG = new TaskUnit([unitB, unitF], startDateG, endDateG);
-
-      unitD = new TaskUnit([unitC, unitG], startDateD, endDateD);
-      unitH = new TaskUnit([unitC, unitG], startDateH, endDateH);
-
-      unitE = new TaskUnit([unitD, unitH], startDateE, endDateE);
+      unitE = new TaskUnit([unitD, unitH], fifthStartDate, fifthEndDate);
     });
     describe("From A", function () {
       let sourceUnit: TaskUnit;
@@ -1140,12 +1070,12 @@ describe("TaskUnit", function () {
      *                        J╱┗━━━┛╲
      *                        ╱       ╲
      *  ┏━━━┓___┏━━━┓___┏━━━┓╱__┏━━━┓__╲┏━━━┓___┏━━━┓___┏━━━┓
-     * A┗━━━┛╲ C┗━━━┛╲ F┗━━━┛  ╱┗━━━┛╲K ┗━━━┛O ╱┗━━━┛S  ┗━━━┛W
-     *        ╲       ╲       ╱       ╲       ╱
-     *        |        ╲┏━━━┓╱         ╲┏━━━┓╱
-     *        |       G╱┗━━━┛╲         ╱┗━━━┛╲P
-     *        |       ╱       ╲       ╱       ╲
-     *  ┏━━━┓__╲┏━━━┓╱__┏━━━┓__╲┏━━━┓╱__┏━━━┓__╲┏━━━┓___┏━━━┓
+     * A┗━━━┛╲ C┗━━━┛╲ F┗━━━┛  ╱┗━━━┛╲K ┗━━━┛O ╱┗━━━┛S ╱┗━━━┛W
+     *        ╲       ╲       ╱       ╲       ╱       |
+     *        |        ╲┏━━━┓╱         ╲┏━━━┓╱        |
+     *        |       G╱┗━━━┛╲         ╱┗━━━┛╲P       |
+     *        |       ╱       ╲       ╱       ╲       |
+     *  ┏━━━┓__╲┏━━━┓╱__┏━━━┓__╲┏━━━┓╱__┏━━━┓__╲┏━━━┓╱__┏━━━┓
      * B┗━━━┛╲ D┗━━━┛ H╱┗━━━┛╲  ┗━━━┛L ╱┗━━━┛╲Q ┗━━━┛T ╱┗━━━┛X
      *        ╲       |       ╲       ╱       ╲       ╱
      *        |       |        ╲┏━━━┓╱         ╲┏━━━┓╱
@@ -1243,11 +1173,234 @@ describe("TaskUnit", function () {
       );
     });
     describe("W", function () {
-      it("should have 2 paths to P", function () {
-        expect(unitW.getNumberOfPathsToDependency(unitP)).to.equal(2);
+      it("should have 20 paths to A", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitA)).to.equal(20);
+      });
+      it("should have 15 paths to B", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitB)).to.equal(15);
+      });
+      it("should have 10 paths to C", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitC)).to.equal(10);
+      });
+      it("should have 10 paths to D", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitD)).to.equal(10);
+      });
+      it("should have 5 paths to E", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitE)).to.equal(5);
+      });
+      it("should have 4 paths to F", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitF)).to.equal(4);
+      });
+      it("should have 6 paths to G", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitG)).to.equal(6);
+      });
+      it("should have 4 paths to H", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitH)).to.equal(4);
+      });
+      it("should have 1 paths to I", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitI)).to.equal(1);
+      });
+      it("should have 1 paths to J", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitJ)).to.equal(1);
       });
       it("should have 3 paths to K", function () {
         expect(unitW.getNumberOfPathsToDependency(unitK)).to.equal(3);
+      });
+      it("should have 3 paths to L", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitL)).to.equal(3);
+      });
+      it("should have 1 paths to M", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitM)).to.equal(1);
+      });
+      it("should have 0 paths to N", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitN)).to.equal(0);
+      });
+      it("should have 1 paths to O", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitO)).to.equal(1);
+      });
+      it("should have 2 paths to P", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitP)).to.equal(2);
+      });
+      it("should have 1 paths to Q", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitQ)).to.equal(1);
+      });
+      it("should have 0 paths to R", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitR)).to.equal(0);
+      });
+      it("should have 1 paths to S", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitS)).to.equal(1);
+      });
+      it("should have 1 paths to T", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitT)).to.equal(1);
+      });
+      it("should have 0 paths to U", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitU)).to.equal(0);
+      });
+      it("should have 0 paths to V", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitV)).to.equal(0);
+      });
+      it("should have 0 paths to W", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitW)).to.equal(0);
+      });
+      it("should have 0 paths to X", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitX)).to.equal(0);
+      });
+      it("should have 0 paths to Y", function () {
+        expect(unitW.getNumberOfPathsToDependency(unitY)).to.equal(0);
+      });
+    });
+    describe("X", function () {
+      it("should have 15 paths to A", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitA)).to.equal(15);
+      });
+      it("should have 20 paths to B", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitB)).to.equal(20);
+      });
+      it("should have 5 paths to C", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitC)).to.equal(5);
+      });
+      it("should have 10 paths to D", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitD)).to.equal(10);
+      });
+      it("should have 10 paths to E", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitE)).to.equal(10);
+      });
+      it("should have 1 paths to F", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitF)).to.equal(1);
+      });
+      it("should have 4 paths to G", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitG)).to.equal(4);
+      });
+      it("should have 6 paths to H", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitH)).to.equal(6);
+      });
+      it("should have 4 paths to I", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitI)).to.equal(4);
+      });
+      it("should have 0 paths to J", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitJ)).to.equal(0);
+      });
+      it("should have 1 paths to K", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitK)).to.equal(1);
+      });
+      it("should have 3 paths to L", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitL)).to.equal(3);
+      });
+      it("should have 3 paths to M", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitM)).to.equal(3);
+      });
+      it("should have 1 paths to N", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitN)).to.equal(1);
+      });
+      it("should have 0 paths to O", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitO)).to.equal(0);
+      });
+      it("should have 1 paths to P", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitP)).to.equal(1);
+      });
+      it("should have 2 paths to Q", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitQ)).to.equal(2);
+      });
+      it("should have 1 paths to R", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitR)).to.equal(1);
+      });
+      it("should have 0 paths to S", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitS)).to.equal(0);
+      });
+      it("should have 1 paths to T", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitT)).to.equal(1);
+      });
+      it("should have 1 paths to U", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitU)).to.equal(1);
+      });
+      it("should have 0 paths to V", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitV)).to.equal(0);
+      });
+      it("should have 0 paths to W", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitW)).to.equal(0);
+      });
+      it("should have 0 paths to X", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitX)).to.equal(0);
+      });
+      it("should have 0 paths to Y", function () {
+        expect(unitX.getNumberOfPathsToDependency(unitY)).to.equal(0);
+      });
+    });
+    describe("Y", function () {
+      it("should have 6 paths to A", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitA)).to.equal(6);
+      });
+      it("should have 14 paths to B", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitB)).to.equal(14);
+      });
+      it("should have 1 paths to C", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitC)).to.equal(1);
+      });
+      it("should have 5 paths to D", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitD)).to.equal(5);
+      });
+      it("should have 9 paths to E", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitE)).to.equal(9);
+      });
+      it("should have 0 paths to F", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitF)).to.equal(0);
+      });
+      it("should have 1 paths to G", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitG)).to.equal(1);
+      });
+      it("should have 4 paths to H", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitH)).to.equal(4);
+      });
+      it("should have 5 paths to I", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitI)).to.equal(5);
+      });
+      it("should have 0 paths to J", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitJ)).to.equal(0);
+      });
+      it("should have 0 paths to K", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitK)).to.equal(0);
+      });
+      it("should have 1 paths to L", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitL)).to.equal(1);
+      });
+      it("should have 3 paths to M", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitM)).to.equal(3);
+      });
+      it("should have 2 paths to N", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitN)).to.equal(2);
+      });
+      it("should have 0 paths to O", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitO)).to.equal(0);
+      });
+      it("should have 0 paths to P", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitP)).to.equal(0);
+      });
+      it("should have 1 paths to Q", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitQ)).to.equal(1);
+      });
+      it("should have 2 paths to R", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitR)).to.equal(2);
+      });
+      it("should have 0 paths to S", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitS)).to.equal(0);
+      });
+      it("should have 0 paths to T", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitT)).to.equal(0);
+      });
+      it("should have 1 paths to U", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitU)).to.equal(1);
+      });
+      it("should have 1 paths to V", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitV)).to.equal(1);
+      });
+      it("should have 0 paths to W", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitW)).to.equal(0);
+      });
+      it("should have 0 paths to X", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitX)).to.equal(0);
+      });
+      it("should have 0 paths to Y", function () {
+        expect(unitY.getNumberOfPathsToDependency(unitY)).to.equal(0);
       });
     });
   });

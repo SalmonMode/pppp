@@ -1,2 +1,10 @@
+export { default as ChainPath } from "./ChainPath";
+export { default as ChainStrainMap } from "./ChainStrainMap";
+export { default as IsolatedDependencyChain } from "./IsolatedDependencyChain";
+export { default as SimpleChainMap } from "./SimpleChainMap";
+export { default as SimpleChainPathMap } from "./SimpleChainPathMap";
+export { default as StressManager } from "./StressManager";
+export { default as StressTracker } from "./StressTracker";
 export { default as TaskUnit } from "./TaskUnit";
 export { default as TaskUnitCluster } from "./TaskUnitCluster";
+export { default as UnitPathMatrix } from "./UnitPathMatrix";
