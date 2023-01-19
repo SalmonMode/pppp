@@ -43,18 +43,21 @@ export default class TaskUnit {
   get apparentEndDate(): Date {
     return this._apparentEndDate;
   }
+  set apparentEndDate(date: Date) {
+    this._apparentEndDate = date;
+    this._presenceTime =
+      this._apparentEndDate.getTime() - this.anticipatedStartDate.getTime();
+  }
   get apparentStartDate(): Date {
     return this._apparentStartDate;
   }
   set apparentStartDate(date: Date) {
-    this._apparentStartDate = date;
     const estimatedTaskDuration =
-      this.anticipatedEndDate.getTime() - this.anticipatedStartDate.getTime();
-    this._apparentEndDate = new Date(
+      this.apparentEndDate.getTime() - this.apparentStartDate.getTime();
+    this._apparentStartDate = date;
+    this.apparentEndDate = new Date(
       this._apparentStartDate.getTime() + estimatedTaskDuration
     );
-    this._presenceTime =
-      this._apparentEndDate.getTime() - this.anticipatedStartDate.getTime();
   }
   /**
    * The amount of "presence" this unit would have on a graph.
