@@ -1,8 +1,6 @@
 import { TaskUnit, TaskUnitCluster } from "../../Relations";
-import type { TaskUnitsState } from "./taskUnitsSlice";
-import { turnClusterIntoState } from "./turnClusterIntoState";
 
-export function getSeedData(): TaskUnitsState {
+export function getSeedData(): TaskUnitCluster {
   const firstStartDate = new Date();
   const firstEndDate = new Date(firstStartDate.getTime() + 1000);
   const secondStartDate = new Date(firstEndDate.getTime() + 1000);
@@ -56,5 +54,5 @@ export function getSeedData(): TaskUnitsState {
   );
 
   const cluster = new TaskUnitCluster([unitB, unitD, unitH, unitL]);
-  return turnClusterIntoState(cluster);
+  return cluster;
 }

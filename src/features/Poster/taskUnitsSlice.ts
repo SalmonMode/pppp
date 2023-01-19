@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { TaskUnit } from "../../Relations";
 import type { TaskUnitDetails } from "../../types";
 import { getSeedData } from "./seedData";
+import { turnClusterIntoState } from "./turnClusterIntoState";
 
 export interface TaskUnitMap {
   [key: TaskUnit["id"]]: TaskUnitDetails;
@@ -21,7 +22,8 @@ const initialState: TaskUnitsState = {
 };
 
 export const generateCluster = createAsyncThunk("tasks/generate", async () => {
-  return getSeedData();
+  const seedData = getSeedData();
+  return turnClusterIntoState(seedData);
 });
 
 export const taskUnitsSlice = createSlice<TaskUnitsState, {}, "tasks">({
