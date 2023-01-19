@@ -34,7 +34,7 @@ export default class GraphableChainPath {
           nextTask = tasks.pop();
           break;
         } else if (
-          lastItemInTrack.endDate <= currentTask.anticipatedStartDate
+          lastItemInTrack.anticipatedEndDate <= currentTask.anticipatedStartDate
         ) {
           // It can fit in this track, so add it here and move on to the next track.
           track.push(currentTask);

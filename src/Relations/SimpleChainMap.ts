@@ -29,6 +29,8 @@ export default class SimpleChainMap {
     this._units = this._getAllUnits();
     this.unitPathMatrix = new UnitPathMatrix([...this._units]);
     this._verifyAreTrueHeads();
+    // Must be done before chains are made so that chains have correct times
+    this._updateApparentDatesOfAllUnits();
     this._buildChains();
     this._headChains = this._getHeadChains();
     this._buildChainConnections();
@@ -415,5 +417,27 @@ export default class SimpleChainMap {
       throw new NoSuchChainError(`Could not find chain with ID ${chain.id}`);
     }
     return connectedChains;
+  }
+  private _updateApparentDatesOfAllUnits(): void {
+    for (let head of this._heads) {
+      this._updateApparentDatesOfUnitAndItsDeps(head);
+    }
+  }
+  private _updateApparentDatesOfUnitAndItsDeps(unit: TaskUnit): void {
+    // Start by using recursion to dig down into the dependencies and make sure the earliest units get updated first.
+    for (let dep of unit.directDependencies) {
+      this._updateApparentDatesOfUnitAndItsDeps(dep);
+    }
+    const depApparentEndDates = [...unit.directDependencies].map((unit) =>
+      unit.apparentEndDate.getTime()
+    );
+    // There may be no deps here, and the unit's apparent start date may have been set explicitely. If the apparent
+    // start date wasn't set explicitely, it would be the anticipated start date, which also works. We'll consider both
+    // to find out how far the unit was pushed into the future.
+    const latestTime = Math.max(
+      ...depApparentEndDates,
+      unit.apparentStartDate.getTime()
+    );
+    unit.apparentStartDate = new Date(latestTime);
   }
 }

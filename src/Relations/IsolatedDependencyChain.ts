@@ -101,7 +101,7 @@ export default class IsolatedDependencyChain {
    * The final point in time this chain has presence.
    */
   get endDate(): Date {
-    return this.head.endDate;
+    return this.head.apparentEndDate;
   }
   /**
    * The earliest point in time for this chain of {@link TaskUnit}s that has presence.

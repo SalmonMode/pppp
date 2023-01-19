@@ -26,7 +26,7 @@ describe("IsolatedDependencyChain", function () {
       expect(chain.anticipatedStartDate).to.equal(unit.anticipatedStartDate);
     });
     it("should have same end date as its unit", function () {
-      expect(chain.endDate).to.equal(unit.endDate);
+      expect(chain.endDate).to.deep.equal(unit.anticipatedEndDate);
     });
     it("should have same timespan as its unit presence time", function () {
       expect(chain.timeSpan).to.equal(unit.presenceTime);
@@ -66,11 +66,12 @@ describe("IsolatedDependencyChain", function () {
       expect(chain.anticipatedStartDate).to.equal(unitA.anticipatedStartDate);
     });
     it("should have same end date as head unit", function () {
-      expect(chain.endDate).to.equal(unitB.endDate);
+      expect(chain.endDate).to.deep.equal(unitB.anticipatedEndDate);
     });
     it("should have timespan from start of prior unit to end of later unit", function () {
       const expectedTimeSpan =
-        unitB.endDate.getTime() - unitA.anticipatedStartDate.getTime();
+        unitB.anticipatedEndDate.getTime() -
+        unitA.anticipatedStartDate.getTime();
       expect(chain.timeSpan).to.equal(expectedTimeSpan);
     });
     it("should have visual density of 1", function () {
@@ -112,11 +113,12 @@ describe("IsolatedDependencyChain", function () {
       expect(chain.anticipatedStartDate).to.equal(unitA.anticipatedStartDate);
     });
     it("should have same end date as head unit", function () {
-      expect(chain.endDate).to.equal(unitC.endDate);
+      expect(chain.endDate).to.deep.equal(unitC.anticipatedEndDate);
     });
     it("should have timespan from start of prior unit to end of later unit", function () {
       const expectedTimeSpan =
-        unitC.endDate.getTime() - unitA.anticipatedStartDate.getTime();
+        unitC.anticipatedEndDate.getTime() -
+        unitA.anticipatedStartDate.getTime();
       expect(chain.timeSpan).to.equal(expectedTimeSpan);
     });
     it("should have visual density of 1", function () {
@@ -168,11 +170,12 @@ describe("IsolatedDependencyChain", function () {
       expect(chain.anticipatedStartDate).to.equal(unitE.anticipatedStartDate);
     });
     it("should have same end date as head unit", function () {
-      expect(chain.endDate).to.equal(unitF.endDate);
+      expect(chain.endDate).to.deep.equal(unitF.anticipatedEndDate);
     });
     it("should have timespan from start of prior unit to end of later unit", function () {
       const expectedTimeSpan =
-        unitF.endDate.getTime() - unitE.anticipatedStartDate.getTime();
+        unitF.anticipatedEndDate.getTime() -
+        unitE.anticipatedStartDate.getTime();
       expect(chain.timeSpan).to.equal(expectedTimeSpan);
     });
     it("should have visual density of 1", function () {
@@ -257,11 +260,12 @@ describe("IsolatedDependencyChain", function () {
       expect(chain.anticipatedStartDate).to.equal(unitA.anticipatedStartDate);
     });
     it("should have same end date as head unit", function () {
-      expect(chain.endDate).to.equal(unitB.endDate);
+      expect(chain.endDate).to.deep.equal(unitB.anticipatedEndDate);
     });
     it("should have timespan from start of prior unit to end of later unit", function () {
       const expectedTimeSpan =
-        unitB.endDate.getTime() - unitA.anticipatedStartDate.getTime();
+        unitB.anticipatedEndDate.getTime() -
+        unitA.anticipatedStartDate.getTime();
       expect(chain.timeSpan).to.equal(expectedTimeSpan);
     });
     it("should have visual density of 2/3 (1000 ms gap between both 1000 ms chunks of presence)", function () {
@@ -301,11 +305,12 @@ describe("IsolatedDependencyChain", function () {
       expect(chain.anticipatedStartDate).to.equal(unitA.anticipatedStartDate);
     });
     it("should have same end date as head unit", function () {
-      expect(chain.endDate).to.equal(unitB.endDate);
+      expect(chain.endDate).to.deep.equal(unitB.anticipatedEndDate);
     });
     it("should have timespan from start of prior unit to end of later unit", function () {
       const expectedTimeSpan =
-        unitB.endDate.getTime() - unitA.anticipatedStartDate.getTime();
+        unitB.anticipatedEndDate.getTime() -
+        unitA.anticipatedStartDate.getTime();
       expect(chain.timeSpan).to.equal(expectedTimeSpan);
     });
     it("should have visual density of 4/3 (overlap)", function () {

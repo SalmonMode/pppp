@@ -58,7 +58,9 @@ export function turnClusterIntoState(cluster: TaskUnitCluster): TaskUnitsState {
         for (let unit of track) {
           unitCoords[unit.id] = {
             anticipatedStartTime: unit.anticipatedStartDate.getTime(),
-            anticipatedEndTime: unit.endDate.getTime(),
+            anticipatedEndTime: unit.anticipatedEndDate.getTime(),
+            apparentStartTime: unit.anticipatedStartDate.getTime(),
+            apparentEndTime: unit.anticipatedEndDate.getTime(),
             trackIndex: unitTracksSoFar + unitTrackIndex,
             name: unit.name,
             id: unit.id,

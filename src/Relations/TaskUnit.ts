@@ -12,20 +12,64 @@ export default class TaskUnit {
   private _attachmentMap: RelationshipMapping;
   private _attachmentToDependencies: number;
   private _presenceTime: number;
+  private _apparentStartDate: Date;
+  private _apparentEndDate: Date;
   constructor(
     parentUnits: TaskUnit[],
     public readonly anticipatedStartDate: Date,
-    public readonly endDate: Date,
-    public readonly name: string = "unknown"
+    public readonly anticipatedEndDate: Date,
+    public readonly name: string = "unknown",
+    /**
+     * Optional because we can just defer to the anticipated start date and the SimpleChainMap can adjust apparent start
+     * times
+     */
+    apparentStartDate?: Date
   ) {
     this.id = uuidv4();
+    this._apparentStartDate = apparentStartDate || this.anticipatedStartDate;
+    const estimatedTaskDuration =
+      this.anticipatedEndDate.getTime() - this.anticipatedStartDate.getTime();
+    this._apparentEndDate = new Date(
+      this._apparentStartDate.getTime() + estimatedTaskDuration
+    );
     this._providedDirectDependencies = parentUnits;
     this._directDependencies = this._getTrueDirectDependencies();
     this._presenceTime =
-      this.endDate.getTime() - this.anticipatedStartDate.getTime();
+      this._apparentEndDate.getTime() - this.anticipatedStartDate.getTime();
     this._allDependencies = this._getAllDependencies();
     this._attachmentMap = this._buildAttachmentMap();
     this._attachmentToDependencies = this._calculateAttachmentToDependencies();
+  }
+  get apparentEndDate(): Date {
+    return this._apparentEndDate;
+  }
+  get apparentStartDate(): Date {
+    return this._apparentStartDate;
+  }
+  set apparentStartDate(date: Date) {
+    this._apparentStartDate = date;
+    const estimatedTaskDuration =
+      this.anticipatedEndDate.getTime() - this.anticipatedStartDate.getTime();
+    this._apparentEndDate = new Date(
+      this._apparentStartDate.getTime() + estimatedTaskDuration
+    );
+    this._presenceTime =
+      this._apparentEndDate.getTime() - this.anticipatedStartDate.getTime();
+  }
+  /**
+   * The amount of "presence" this unit would have on a graph.
+   *
+   * "Presence":
+   *
+   * Every {@link TaskUnit} will need to be rendered on a graph more or less as a rectangle, with a "snail trail"
+   * directly behind (if it's been delayed) it to show how much it has been delayed from its original start date. Each
+   * unit must have a horizontal space available on the graph to be placed without overlapping the space needed for
+   * other {@link TaskUnit}s.
+   *
+   * "Presence" is the horizontal space a {@link TaskUnit} would take up.
+   */
+  get presenceTime(): number {
+    return this._presenceTime;
   }
   /**
    * Sometimes, provided dependencies may be redundant. This can occur if a provided direct dependency is provided by
@@ -249,21 +293,6 @@ export default class TaskUnit {
       (acc, dep) => acc + (dep.attachmentToDependencies || 1),
       0
     );
-  }
-  /**
-   * The amount of "presence" this unit would have on a graph.
-   *
-   * "Presence":
-   *
-   * Every {@link TaskUnit} will need to be rendered on a graph more or less as a rectangle, with a "snail trail"
-   * directly behind (if it's been delayed) it to show how much it has been delayed from its original start date. Each
-   * unit must have a horizontal space available on the graph to be placed without overlapping the space needed for
-   * other {@link TaskUnit}s.
-   *
-   * "Presence" is the horizontal space a {@link TaskUnit} would take up.
-   */
-  get presenceTime(): number {
-    return this._presenceTime;
   }
   /**
    * Check whether or not the passed unit is a dependency of this unit.
