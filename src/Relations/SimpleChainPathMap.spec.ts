@@ -3,7 +3,7 @@ import { NoSuchChainPathError } from "../Error";
 import { InterconnectionStrengthMapping, ResourceMap } from "../types";
 import { ChainPath, SimpleChainMap, SimpleChainPathMap, TaskUnit } from "./";
 
-describe("SimpleChainMap", function () {
+describe("SimpleChainPathMap", function () {
   describe("No Units", function () {
     it("should throw RangeError", function () {
       expect(() => new SimpleChainMap([])).to.throw(RangeError);
