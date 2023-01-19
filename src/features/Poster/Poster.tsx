@@ -12,11 +12,11 @@ export default function Poster() {
   }
   const tracks = taskUnits.unitTrackMap;
   const unitStartTimes = Object.values(taskUnits.units).map(
-    (unit) => unit.startTime
+    (unit) => unit.anticipatedStartTime
   );
   const earliestStartTime = Math.min(...unitStartTimes);
   const unitEndTimes = Object.values(taskUnits.units).map(
-    (unit) => unit.endTime
+    (unit) => unit.anticipatedEndTime
   );
   const latestTime = Math.max(...unitEndTimes);
   const trackCount =
@@ -43,13 +43,13 @@ export default function Poster() {
               const connection = new ConnectedPoints(
                 {
                   x:
-                    (depUnitData.endTime - earliestStartTime) /
+                    (depUnitData.anticipatedEndTime - earliestStartTime) /
                     unitTaskTimeConversion,
                   y: depUnitData.trackIndex * trackHeight + trackHeight / 2,
                 },
                 {
                   x:
-                    (unit.startTime - earliestStartTime) /
+                    (unit.anticipatedStartTime - earliestStartTime) /
                     unitTaskTimeConversion,
                   y: unit.trackIndex * trackHeight + trackHeight / 2,
                 }

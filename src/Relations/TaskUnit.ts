@@ -14,7 +14,7 @@ export default class TaskUnit {
   private _presenceTime: number;
   constructor(
     parentUnits: TaskUnit[],
-    public readonly initialStartDate: Date,
+    public readonly anticipatedStartDate: Date,
     public readonly endDate: Date,
     public readonly name: string = "unknown"
   ) {
@@ -22,7 +22,7 @@ export default class TaskUnit {
     this._providedDirectDependencies = parentUnits;
     this._directDependencies = this._getTrueDirectDependencies();
     this._presenceTime =
-      this.endDate.getTime() - this.initialStartDate.getTime();
+      this.endDate.getTime() - this.anticipatedStartDate.getTime();
     this._allDependencies = this._getAllDependencies();
     this._attachmentMap = this._buildAttachmentMap();
     this._attachmentToDependencies = this._calculateAttachmentToDependencies();

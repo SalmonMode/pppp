@@ -14,11 +14,12 @@ export default class GraphableChainPath {
     const tracks: TaskUnit[][] = [[]];
     // Units should already be sorted from latest to earliest
     const tasks = [...this.units];
-    // Sort them according to initial start date so they go from latest to earliest just to be safe.This is to help
+    // Sort them according to anticipated start date so they go from latest to earliest just to be safe. This is to help
     // layer the tracks in a way that shows them branching away from the center (as needed) as time goes on, rather than
     // starting out in open space and moving towards the center.
     tasks.sort(
-      (a, b) => b.initialStartDate.getTime() - a.initialStartDate.getTime()
+      (a, b) =>
+        b.anticipatedStartDate.getTime() - a.anticipatedStartDate.getTime()
     );
     let nextTask = tasks.pop();
     while (nextTask) {
@@ -32,7 +33,9 @@ export default class GraphableChainPath {
           track.push(currentTask);
           nextTask = tasks.pop();
           break;
-        } else if (lastItemInTrack.endDate <= currentTask.initialStartDate) {
+        } else if (
+          lastItemInTrack.endDate <= currentTask.anticipatedStartDate
+        ) {
           // It can fit in this track, so add it here and move on to the next track.
           track.push(currentTask);
           nextTask = tasks.pop();

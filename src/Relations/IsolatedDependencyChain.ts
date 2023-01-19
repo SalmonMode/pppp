@@ -41,7 +41,7 @@ import type { TaskUnit } from "./";
  */
 export default class IsolatedDependencyChain {
   public readonly id: string;
-  private _chainInitialStartDate: Date;
+  private _chainAnticipatedStartDate: Date;
   private _head: TaskUnit;
   private _tail: TaskUnit[];
   private _lastUnit: TaskUnit;
@@ -59,10 +59,10 @@ export default class IsolatedDependencyChain {
     this._head = unit;
     this._tail = copyOfUnits;
     this._lastUnit = this._tail[this._tail.length - 1] || this.head;
-    this._chainInitialStartDate = this.lastUnit.initialStartDate;
+    this._chainAnticipatedStartDate = this.lastUnit.anticipatedStartDate;
 
     this._chainTotalTime =
-      this.endDate.getTime() - this.initialStartDate.getTime();
+      this.endDate.getTime() - this.anticipatedStartDate.getTime();
     this._chainPresenceTime = this.units.reduce(
       (sum, curr) => sum + curr.presenceTime,
       0
@@ -106,8 +106,8 @@ export default class IsolatedDependencyChain {
   /**
    * The earliest point in time for this chain of {@link TaskUnit}s that has presence.
    */
-  get initialStartDate(): Date {
-    return this._chainInitialStartDate;
+  get anticipatedStartDate(): Date {
+    return this._chainAnticipatedStartDate;
   }
   /**
    * The amount of milliseconds from the start of the last item in the chain to the end date of the head.

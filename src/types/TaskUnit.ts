@@ -3,8 +3,8 @@ import type { TaskUnit } from "../Relations";
 export interface TaskUnitDetails {
   id: TaskUnit["id"];
   directDependencies: TaskUnit["id"][];
-  startTime: number;
-  endTime: number;
+  anticipatedStartTime: number;
+  anticipatedEndTime: number;
   trackIndex: number;
   name: string;
 }

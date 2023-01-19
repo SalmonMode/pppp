@@ -31,12 +31,12 @@ describe("ChainPath", function () {
     it("should have end date of head unit", function () {
       expect(path.endDate).to.equal(chainB.endDate);
     });
-    it("should have initial start date of last unit", function () {
-      expect(path.initialStartDate).to.equal(chainA.initialStartDate);
+    it("should have anticipated start date of last unit", function () {
+      expect(path.anticipatedStartDate).to.equal(chainA.anticipatedStartDate);
     });
-    it("should have timespan of time between last unit initial start date and head end date", function () {
+    it("should have timespan of time between last unit anticipated start date and head end date", function () {
       expect(path.timeSpan).to.equal(
-        chainB.endDate.getTime() - chainA.initialStartDate.getTime()
+        chainB.endDate.getTime() - chainA.anticipatedStartDate.getTime()
       );
     });
     it("should have presence time of both chains combined", function () {

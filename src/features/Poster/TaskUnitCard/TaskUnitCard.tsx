@@ -9,7 +9,9 @@ export default function TaskUnitCard({
   unit: TaskUnitDetails;
   position: Coordinate;
 }) {
-  const width = (unit.endTime - unit.startTime) / unitTaskTimeConversion;
+  const width =
+    (unit.anticipatedEndTime - unit.anticipatedStartTime) /
+    unitTaskTimeConversion;
 
   return (
     <Card

@@ -41,7 +41,7 @@ import type { IsolatedDependencyChain, TaskUnit } from "./";
  */
 export default class ChainPath {
   public id: string;
-  private _chainInitialStartDate: Date;
+  private _chainAnticipatedStartDate: Date;
   private _units: Set<TaskUnit>;
   private _head: IsolatedDependencyChain;
   private _tail: IsolatedDependencyChain[];
@@ -60,10 +60,10 @@ export default class ChainPath {
     this._head = chain;
     this._tail = copyOfChains;
     this._lastChain = this._tail[this._tail.length - 1] || this.head;
-    this._chainInitialStartDate = this._lastChain.initialStartDate;
+    this._chainAnticipatedStartDate = this._lastChain.anticipatedStartDate;
 
     this._pathTotalTime =
-      this.endDate.getTime() - this.initialStartDate.getTime();
+      this.endDate.getTime() - this.anticipatedStartDate.getTime();
     this._pathPresenceTime = this.chains.reduce(
       (sum, curr) => sum + curr.presenceTime,
       0
@@ -113,8 +113,8 @@ export default class ChainPath {
   /**
    * The earliest point in time for this path of {@link IsolatedDependencyChain}s that has presence.
    */
-  get initialStartDate(): Date {
-    return this._chainInitialStartDate;
+  get anticipatedStartDate(): Date {
+    return this._chainAnticipatedStartDate;
   }
   /**
    * The amount of milliseconds from the start of the last item in the path to the end date of the head.
@@ -171,8 +171,8 @@ export default class ChainPath {
   }
   overlapsWithPath(otherPath: ChainPath): boolean {
     if (
-      this.initialStartDate <= otherPath.endDate &&
-      this.endDate >= otherPath.initialStartDate
+      this.anticipatedStartDate <= otherPath.endDate &&
+      this.endDate >= otherPath.anticipatedStartDate
     ) {
       return true;
     }
@@ -182,11 +182,12 @@ export default class ChainPath {
     const tracks: TaskUnit[][] = [[]];
     // Units should already be sorted from latest to earliest
     const tasks = [...this._units];
-    // Sort them according to initial start date so they go from latest to earliest just to be safe.This is to help
+    // Sort them according to anticipated start date so they go from latest to earliest just to be safe. This is to help
     // layer the tracks in a way that shows them branching away from the center (as needed) as time goes on, rather than
     // starting out in open space and moving towards the center.
     tasks.sort(
-      (a, b) => b.initialStartDate.getTime() - a.initialStartDate.getTime()
+      (a, b) =>
+        b.anticipatedStartDate.getTime() - a.anticipatedStartDate.getTime()
     );
     let nextTask = tasks.pop();
     while (nextTask) {
@@ -200,7 +201,9 @@ export default class ChainPath {
           track.push(currentTask);
           nextTask = tasks.pop();
           break;
-        } else if (lastItemInTrack.endDate <= currentTask.initialStartDate) {
+        } else if (
+          lastItemInTrack.endDate <= currentTask.anticipatedStartDate
+        ) {
           // It can fit in this track, so add it here and move on to the next track.
           track.push(currentTask);
           nextTask = tasks.pop();

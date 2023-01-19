@@ -16,8 +16,8 @@ describe("TaskUnit", function () {
         endDate.getTime() - startDate.getTime()
       );
     });
-    it("should have correct initial start date", function () {
-      expect(unit.initialStartDate).to.equal(startDate);
+    it("should have correct anticipated start date", function () {
+      expect(unit.anticipatedStartDate).to.equal(startDate);
     });
     it("should not be dependent on self", function () {
       expect(unit.isDependentOn(unit)).to.be.false;

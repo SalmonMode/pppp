@@ -27,7 +27,8 @@ export default function TaskTrack({
     >
       {units.map((unit, index) => {
         const adjustedX =
-          (unit.startTime - pathStartDate.getTime()) / unitTaskTimeConversion;
+          (unit.anticipatedStartTime - pathStartDate.getTime()) /
+          unitTaskTimeConversion;
         return (
           <TaskUnitCard
             key={index}
