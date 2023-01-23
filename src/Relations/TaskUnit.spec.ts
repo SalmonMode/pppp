@@ -1,4 +1,6 @@
 import { expect } from "chai";
+import { PrematureTaskStartError } from "../Error";
+import { EventType } from "../types";
 import { TaskUnit } from "./";
 
 describe("TaskUnit", function () {
@@ -17,7 +19,10 @@ describe("TaskUnit", function () {
       );
     });
     it("should have correct anticipated start date", function () {
-      expect(unit.anticipatedStartDate).to.equal(startDate);
+      expect(unit.anticipatedStartDate).to.deep.equal(startDate);
+    });
+    it("should have correct apparent start date", function () {
+      expect(unit.apparentStartDate).to.deep.equal(startDate);
     });
     it("should not be dependent on self", function () {
       expect(unit.isDependentOn(unit)).to.be.false;
@@ -31,6 +36,273 @@ describe("TaskUnit", function () {
     });
     it("should have no dependencies", function () {
       expect(unit.getAllDependencies()).to.be.empty;
+    });
+  });
+  describe("ReviewedAndComplete Event Provided", function () {
+    let unit: TaskUnit;
+    let startDate: Date;
+    let actualEndDate: Date;
+    let endDate: Date;
+    before(function () {
+      startDate = new Date();
+      endDate = new Date(startDate.getTime() + 1000);
+      actualEndDate = new Date(endDate.getTime() + 1000);
+      unit = new TaskUnit([], startDate, endDate, undefined, [
+        { type: EventType.TaskStarted, date: startDate },
+        { type: EventType.ReviewedAndComplete, date: actualEndDate },
+      ]);
+    });
+    it("should have correct presence", function () {
+      expect(unit.presenceTime).to.equal(
+        actualEndDate.getTime() - startDate.getTime()
+      );
+    });
+    it("should have correct anticipated start date", function () {
+      expect(unit.anticipatedStartDate).to.deep.equal(startDate);
+    });
+    it("should have correct anticipated end date", function () {
+      expect(unit.anticipatedEndDate).to.deep.equal(endDate);
+    });
+    it("should have correct apparent start date", function () {
+      expect(unit.apparentStartDate).to.deep.equal(startDate);
+    });
+    it("should have correct apparent end date", function () {
+      expect(unit.apparentEndDate).to.deep.equal(actualEndDate);
+    });
+  });
+  describe("Task Started Provided", function () {
+    let unit: TaskUnit;
+    let startDate: Date;
+    let actualStartDate: Date;
+    let endDate: Date;
+    before(function () {
+      startDate = new Date();
+      endDate = new Date(startDate.getTime() + 1000);
+      actualStartDate = new Date(endDate.getTime() + 1000);
+      unit = new TaskUnit([], startDate, endDate, undefined, [
+        { type: EventType.TaskStarted, date: actualStartDate },
+      ]);
+    });
+    it("should have correct presence", function () {
+      expect(unit.presenceTime).to.equal(
+        actualStartDate.getTime() - startDate.getTime() + 1000
+      );
+    });
+    it("should have correct anticipated start date", function () {
+      expect(unit.anticipatedStartDate).to.deep.equal(startDate);
+    });
+    it("should have correct anticipated end date", function () {
+      expect(unit.anticipatedEndDate).to.deep.equal(endDate);
+    });
+    it("should have correct apparent start date", function () {
+      expect(unit.apparentStartDate).to.deep.equal(actualStartDate);
+    });
+    it("should have correct apparent end date", function () {
+      expect(unit.apparentEndDate).to.deep.equal(
+        new Date(actualStartDate.getTime() + 1000)
+      );
+    });
+  });
+  describe("Non TaskStarted Event Provided First", function () {
+    describe("NewRequirementsProvided", function () {
+      let startDate: Date;
+      let endDate: Date;
+      before(function () {
+        startDate = new Date();
+        endDate = new Date(startDate.getTime() + 1000);
+      });
+      it("should throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], startDate, endDate, undefined, [
+              { type: EventType.NewRequirementsProvided, date: startDate },
+            ])
+        ).to.throw(Error);
+      });
+    });
+    describe("ReviewedAndComplete", function () {
+      let startDate: Date;
+      let endDate: Date;
+      before(function () {
+        startDate = new Date();
+        endDate = new Date(startDate.getTime() + 1000);
+      });
+      it("should throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], startDate, endDate, undefined, [
+              { type: EventType.ReviewedAndComplete, date: startDate },
+            ])
+        ).to.throw(Error);
+      });
+    });
+    describe("ReviewedAndNeedsMajorRevision", function () {
+      let startDate: Date;
+      let endDate: Date;
+      before(function () {
+        startDate = new Date();
+        endDate = new Date(startDate.getTime() + 1000);
+      });
+      it("should throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], startDate, endDate, undefined, [
+              {
+                type: EventType.ReviewedAndNeedsMajorRevision,
+                date: startDate,
+              },
+            ])
+        ).to.throw(Error);
+      });
+    });
+    describe("ReviewedAndNeedsMinorRevision", function () {
+      let startDate: Date;
+      let endDate: Date;
+      before(function () {
+        startDate = new Date();
+        endDate = new Date(startDate.getTime() + 1000);
+      });
+      it("should throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], startDate, endDate, undefined, [
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: startDate,
+              },
+            ])
+        ).to.throw(Error);
+      });
+    });
+    describe("ReviewedAndNeedsRebuild", function () {
+      let startDate: Date;
+      let endDate: Date;
+      before(function () {
+        startDate = new Date();
+        endDate = new Date(startDate.getTime() + 1000);
+      });
+      it("should throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], startDate, endDate, undefined, [
+              { type: EventType.ReviewedAndNeedsRebuild, date: startDate },
+            ])
+        ).to.throw(Error);
+      });
+    });
+  });
+  describe("Task Started Before Dependency Finished (First Task Was Started)", function () {
+    let unitA: TaskUnit;
+    let firstStartDate: Date;
+    let firstEndDate: Date;
+    let secondStartDate: Date;
+    let secondEndDate: Date;
+    before(function () {
+      firstStartDate = new Date();
+      firstEndDate = new Date(firstStartDate.getTime() + 1000);
+      secondStartDate = new Date(firstEndDate.getTime());
+      secondEndDate = new Date(secondStartDate.getTime() + 1000);
+      unitA = new TaskUnit([], firstStartDate, firstEndDate, undefined, [
+        { type: EventType.TaskStarted, date: firstStartDate },
+      ]);
+    });
+    it("should throw PrematureTaskStartError when instantiating unit B", function () {
+      expect(
+        () =>
+          new TaskUnit([unitA], secondStartDate, secondEndDate, undefined, [
+            { type: EventType.TaskStarted, date: secondStartDate },
+          ])
+      ).to.throw(PrematureTaskStartError);
+    });
+  });
+  describe("Task Started Before Dependency Finished (First Task Was Not Started)", function () {
+    let unitA: TaskUnit;
+    let firstStartDate: Date;
+    let firstEndDate: Date;
+    let secondStartDate: Date;
+    let secondEndDate: Date;
+    before(function () {
+      firstStartDate = new Date();
+      firstEndDate = new Date(firstStartDate.getTime() + 1000);
+      secondStartDate = new Date(firstEndDate.getTime());
+      secondEndDate = new Date(secondStartDate.getTime() + 1000);
+      unitA = new TaskUnit([], firstStartDate, firstEndDate);
+    });
+    it("should throw PrematureTaskStartError when instantiating unit B", function () {
+      expect(
+        () =>
+          new TaskUnit([unitA], secondStartDate, secondEndDate, undefined, [
+            { type: EventType.TaskStarted, date: secondStartDate },
+          ])
+      ).to.throw(PrematureTaskStartError);
+    });
+  });
+  describe("Task Started Before Dependency Finished (But Dependency Was Finished)", function () {
+    let unitA: TaskUnit;
+    let firstStartDate: Date;
+    let firstEndDate: Date;
+    let secondStartDate: Date;
+    let secondEndDate: Date;
+    before(function () {
+      firstStartDate = new Date();
+      firstEndDate = new Date(firstStartDate.getTime() + 1000);
+      secondStartDate = new Date(firstStartDate.getTime() + 500);
+      secondEndDate = new Date(secondStartDate.getTime() + 1000);
+      unitA = new TaskUnit([], firstStartDate, firstEndDate, undefined, [
+        {
+          type: EventType.TaskStarted,
+          date: firstStartDate,
+        },
+        {
+          type: EventType.ReviewedAndComplete,
+          date: firstEndDate,
+        },
+      ]);
+    });
+    it("should throw PrematureTaskStartError when instantiating unit B", function () {
+      expect(
+        () =>
+          new TaskUnit([unitA], secondStartDate, secondEndDate, undefined, [
+            {
+              type: EventType.TaskStarted,
+              date: secondStartDate,
+            },
+          ])
+      ).to.throw(PrematureTaskStartError);
+    });
+  });
+  describe("Task Started After Dependency Finished (But Dependency Was Finished)", function () {
+    let unitA: TaskUnit;
+    let firstStartDate: Date;
+    let firstEndDate: Date;
+    let secondStartDate: Date;
+    let secondEndDate: Date;
+    before(function () {
+      firstStartDate = new Date();
+      firstEndDate = new Date(firstStartDate.getTime() + 1000);
+      secondStartDate = new Date(firstStartDate.getTime() + 1500);
+      secondEndDate = new Date(secondStartDate.getTime() + 1000);
+      unitA = new TaskUnit([], firstStartDate, firstEndDate, undefined, [
+        {
+          type: EventType.TaskStarted,
+          date: firstStartDate,
+        },
+        {
+          type: EventType.ReviewedAndComplete,
+          date: firstEndDate,
+        },
+      ]);
+    });
+    it("should not throw Error when instantiating unit B", function () {
+      expect(
+        () =>
+          new TaskUnit([unitA], secondStartDate, secondEndDate, undefined, [
+            {
+              type: EventType.TaskStarted,
+              date: secondStartDate,
+            },
+          ])
+      ).to.not.throw(Error);
     });
   });
   describe("Complex Interconnections", function () {

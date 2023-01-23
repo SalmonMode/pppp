@@ -1,6 +1,11 @@
 import { Box } from "@material-ui/core";
 import type { TaskUnitDetails } from "../../../types";
-import { trackHeight, unitTaskTimeConversion } from "../../constants";
+import {
+  trackGapHeight,
+  trackHeight,
+  unitTaskTimeConversion,
+} from "../../constants";
+import getYOfTrackTop from "../getYOfTrackTop";
 import TaskUnitCard from "./TaskUnitCard";
 
 export default function TaskTrack({
@@ -12,16 +17,14 @@ export default function TaskTrack({
   trackIndex: number;
   pathStartDate: Date;
 }) {
-  const height = trackHeight;
-
   return (
     <Box
       className={`taskTrack`}
       style={{
-        height,
+        height: trackHeight,
         position: "absolute",
         left: 0,
-        top: trackIndex * height,
+        top: getYOfTrackTop(trackIndex),
       }}
       data-testid={`taskTrack-${trackIndex}`}
     >

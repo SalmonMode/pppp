@@ -9,3 +9,8 @@ export interface CubicBezierCurve {
   endControlPoint: Coordinate;
   endPoint: Coordinate;
 }
+
+export type CoordinateString = `${number},${number}`;
+
+export type CubicBezierCurveString =
+  `M${CoordinateString} C${CoordinateString} ${CoordinateString} ${CoordinateString}`;

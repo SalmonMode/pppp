@@ -26,3 +26,17 @@ export interface TaskUnitDetails {
   trackIndex: number;
   name: string;
 }
+
+export enum EventType {
+  TaskStarted,
+  NewRequirementsProvided,
+  ReviewedAndComplete,
+  ReviewedAndNeedsMinorRevision,
+  ReviewedAndNeedsMajorRevision,
+  ReviewedAndNeedsRebuild,
+}
+
+export interface TaskEvent {
+  type: EventType;
+  date: Date;
+}

@@ -304,17 +304,16 @@ describe("IsolatedDependencyChain", function () {
     it("should have same anticipated start date as its prior unit", function () {
       expect(chain.anticipatedStartDate).to.equal(unitA.anticipatedStartDate);
     });
-    it("should have same end date as head unit", function () {
-      expect(chain.endDate).to.deep.equal(unitB.anticipatedEndDate);
+    it("should have same apparent end date as head unit", function () {
+      expect(chain.endDate).to.deep.equal(unitB.apparentEndDate);
     });
     it("should have timespan from start of prior unit to end of later unit", function () {
       const expectedTimeSpan =
-        unitB.anticipatedEndDate.getTime() -
-        unitA.anticipatedStartDate.getTime();
+        unitB.apparentEndDate.getTime() - unitA.anticipatedStartDate.getTime();
       expect(chain.timeSpan).to.equal(expectedTimeSpan);
     });
-    it("should have visual density of 4/3 (overlap)", function () {
-      expect(chain.visualDensity).to.equal(4 / 3);
+    it("should have visual density of 5/4 (overlap)", function () {
+      expect(chain.visualDensity).to.equal(5 / 4);
     });
     it("should have head property set to its unit", function () {
       expect(chain.head).to.equal(unitB);

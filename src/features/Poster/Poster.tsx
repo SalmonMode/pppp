@@ -2,7 +2,12 @@ import { useAppSelector } from "../../app/hooks";
 import ConnectedPoints from "../../Graphing/ConnectedPoints";
 import { assertIsObject } from "../../typePredicates";
 import type { TaskUnitDetails } from "../../types";
-import { trackHeight, unitTaskTimeConversion } from "../constants";
+import {
+  trackGapHeight,
+  trackHeight,
+  unitTaskTimeConversion,
+} from "../constants";
+import getYOfTrackTop from "./getYOfTrackTop";
 import TaskTrack from "./TaskUnitCard/TaskTrack";
 
 export default function Poster() {
@@ -21,13 +26,17 @@ export default function Poster() {
   const latestTime = Math.max(...unitEndTimes);
   const trackCount =
     Math.max(...Object.values(taskUnits.units).map((u) => u.trackIndex)) + 1;
-  const svgHeight = trackCount * trackHeight;
+  const svgHeight = trackCount * trackHeight + trackCount * trackGapHeight;
   const timespan = latestTime - earliestStartTime;
   const svgWidth = timespan / unitTaskTimeConversion;
   return (
-    <div style={{ position: "relative", margin: 10 }}>
+    <div
+      data-testid={"poster-container"}
+      style={{ position: "relative", margin: 10 }}
+    >
       <svg
         style={{
+          zIndex: 10,
           position: "absolute",
           width: svgWidth,
           height: svgHeight,
@@ -43,21 +52,24 @@ export default function Poster() {
               const connection = new ConnectedPoints(
                 {
                   x:
-                    (depUnitData.anticipatedEndTime - earliestStartTime) /
+                    (depUnitData.apparentEndTime - earliestStartTime) /
                     unitTaskTimeConversion,
-                  y: depUnitData.trackIndex * trackHeight + trackHeight / 2,
+                  y: getYOfTrackTop(depUnitData.trackIndex) + trackHeight / 2,
                 },
                 {
                   x:
-                    (unit.anticipatedStartTime - earliestStartTime) /
+                    (unit.apparentStartTime - earliestStartTime) /
                     unitTaskTimeConversion,
-                  y: unit.trackIndex * trackHeight + trackHeight / 2,
+                  y: getYOfTrackTop(unit.trackIndex) + trackHeight / 2,
                 }
               );
-              const curve = connection.getCubicBezierPathBetweenPoints();
-              const curveAsPathString = `M${curve.startPoint.x},${curve.startPoint.y} C${curve.startControlPoint.x},${curve.startControlPoint.y} ${curve.endControlPoint.x},${curve.endControlPoint.y} ${curve.endPoint.x},${curve.endPoint.y}`;
+              const curveAsPathString =
+                connection.getCubicBezierCurvePathShape();
               return (
-                <g key={`${unit.id}-${depUnitId}`}>
+                <g
+                  data-testid={`pathGroup-${unit.id}-${depUnitId}`}
+                  key={`${unit.id}-${depUnitId}`}
+                >
                   <path
                     d={curveAsPathString}
                     style={{

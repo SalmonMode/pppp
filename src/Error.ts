@@ -43,3 +43,14 @@ export class NoMoreSortingOptionsError extends Error {
     this.name = new.target.name;
   }
 }
+/**
+ * This is thrown when a task unit was started before it should've been allowed to.
+ */
+export class PrematureTaskStartError extends Error {
+  constructor(message?: string) {
+    super(message);
+
+    Object.setPrototypeOf(this, PrematureTaskStartError.prototype);
+    this.name = new.target.name;
+  }
+}

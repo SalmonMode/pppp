@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
-import type { RelationshipMapping } from "../types";
+import { PrematureTaskStartError } from "../Error";
+import { EventType, RelationshipMapping, TaskEvent } from "../types";
 
 export default class TaskUnit {
   public readonly id: string;
@@ -19,21 +20,48 @@ export default class TaskUnit {
     public readonly anticipatedStartDate: Date,
     public readonly anticipatedEndDate: Date,
     public readonly name: string = "unknown",
-    /**
-     * Optional because we can just defer to the anticipated start date and the SimpleChainMap can adjust apparent start
-     * times
-     */
-    apparentStartDate?: Date
+    public eventHistory: TaskEvent[] = []
   ) {
     this.id = uuidv4();
-    this._apparentStartDate = apparentStartDate || this.anticipatedStartDate;
-    const estimatedTaskDuration =
-      this.anticipatedEndDate.getTime() - this.anticipatedStartDate.getTime();
-    this._apparentEndDate = new Date(
-      this._apparentStartDate.getTime() + estimatedTaskDuration
-    );
     this._providedDirectDependencies = parentUnits;
     this._directDependencies = this._getTrueDirectDependencies();
+    const earliestPossibleTime = this._getEarliestPossibleStartTime();
+    // If the first event exists and is not EventType.TaskStarted, throw an Error. If it exists but is
+    // EventType.TaskStarted, use it as the apparent start date. Otherwise, stick with the initial start date.
+    const firstEvent = this.eventHistory[0];
+    if (firstEvent) {
+      if (firstEvent.type !== EventType.TaskStarted) {
+        throw new Error(
+          `The first event is always TaskStarted (${EventType.TaskStarted}), not ${firstEvent.type}`
+        );
+      }
+      if (
+        !this._shouldBeAbleToStart() ||
+        firstEvent.date.getTime() < earliestPossibleTime
+      ) {
+        throw new PrematureTaskStartError(
+          "Task was started before it should have been allowed to."
+        );
+      }
+      this._apparentStartDate = firstEvent.date;
+    } else {
+      const latestRequiredDate = new Date(
+        Math.max(earliestPossibleTime, this.anticipatedStartDate.getTime())
+      );
+      this._apparentStartDate = latestRequiredDate;
+    }
+    // If the last event is EventType.ReviewedAndComplete, then update the apparent end date to that date. Otherwise,
+    // estimate the apparent end date relative to the apparent start date.
+    const lastEvent = this.eventHistory[this.eventHistory.length - 1];
+    if (lastEvent && lastEvent.type === EventType.ReviewedAndComplete) {
+      this._apparentEndDate = lastEvent.date;
+    } else {
+      const estimatedTaskDuration =
+        this.anticipatedEndDate.getTime() - this.anticipatedStartDate.getTime();
+      this._apparentEndDate = new Date(
+        this._apparentStartDate.getTime() + estimatedTaskDuration
+      );
+    }
     this._presenceTime =
       this._apparentEndDate.getTime() - this.anticipatedStartDate.getTime();
     this._allDependencies = this._getAllDependencies();
@@ -50,14 +78,6 @@ export default class TaskUnit {
   }
   get apparentStartDate(): Date {
     return this._apparentStartDate;
-  }
-  set apparentStartDate(date: Date) {
-    const estimatedTaskDuration =
-      this.apparentEndDate.getTime() - this.apparentStartDate.getTime();
-    this._apparentStartDate = date;
-    this.apparentEndDate = new Date(
-      this._apparentStartDate.getTime() + estimatedTaskDuration
-    );
   }
   /**
    * The amount of "presence" this unit would have on a graph.
@@ -99,6 +119,30 @@ export default class TaskUnit {
         !this._providedDirectDependencies.some((dep) => dep.isDependentOn(unit))
     );
     return new Set(trueDirect);
+  }
+  /**
+   * Get the earliest possible time this unit could possibly start, given it's dependencies.
+   *
+   * This is used to figure out when the unit's apparent start time is. When tasks haven't been completed, we don't know
+   * when they'll be done, and so we can't know when their dependents will start. But when we estimate the completion
+   * time, it lets us figure out when the unit could possibly start. This looks at when each of the unit's direct
+   * dependencies are apparently ending, and provides the latest time from those.
+   *
+   * This is also used to determine if the task is allowed to have started when it claims to have been started. If all
+   * of the dependencies are completed, this still shouldn't be able to start before they were claimed to have been
+   * finished.
+   *
+   * @returns the time in ms of the apparent end time of the last apparently finished direct dependency
+   */
+  private _getEarliestPossibleStartTime(): number {
+    const depApparentEndDates = [...this.directDependencies].map((unit) =>
+      unit.apparentEndDate.getTime()
+    );
+    // There may be no deps here, and the unit's apparent start date may have been set explicitely. If the apparent
+    // start date wasn't set explicitely, it would be the anticipated start date, which also works. We'll consider both
+    // to find out how far the unit was pushed into the future.
+    const earliestTime = Math.max(...depApparentEndDates);
+    return earliestTime;
   }
   /**
    * The direct dependencies of this {@link TaskUnit}.
@@ -305,5 +349,22 @@ export default class TaskUnit {
    */
   isDependentOn(unit: TaskUnit): boolean {
     return this._allDependencies.has(unit);
+  }
+  /**
+   * @returns true, if the task has been reviewed and completed, false, if not
+   */
+  isComplete(): boolean {
+    const lastEvent = this.eventHistory[this.eventHistory.length - 1];
+    if (lastEvent && lastEvent.type === EventType.ReviewedAndComplete) {
+      return true;
+    }
+    return false;
+  }
+  /**
+   *
+   * @returns true, if all the direct dependencies are completed, false, if not
+   */
+  private _shouldBeAbleToStart(): boolean {
+    return [...this.directDependencies].every((unit) => unit.isComplete());
   }
 }

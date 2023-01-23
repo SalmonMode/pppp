@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { DependencyOrderError, NoSuchChainError } from "../Error";
 import { assertIsObject } from "../typePredicates";
+import { EventType } from "../types";
 import { IsolatedDependencyChain, SimpleChainMap, TaskUnit } from "./";
 
 describe("SimpleChainMap", function () {
@@ -2107,33 +2108,29 @@ describe("SimpleChainMap", function () {
     let unitH: TaskUnit;
     let unitI: TaskUnit;
     let unitJ: TaskUnit;
-    let unitAPresencePreShift: number;
-    let unitBPresencePreShift: number;
-    let unitCPresencePreShift: number;
-    let unitDPresencePreShift: number;
-    let unitEPresencePreShift: number;
-    let unitFPresencePreShift: number;
-    let unitGPresencePreShift: number;
-    let unitHPresencePreShift: number;
-    let unitIPresencePreShift: number;
-    let unitJPresencePreShift: number;
     let chainMap: SimpleChainMap;
+    const normalTaskDuration = 1000;
     const firstStartDate = new Date();
-    const firstEndDate = new Date(firstStartDate.getTime() + 1000);
+    const firstEndDate = new Date(
+      firstStartDate.getTime() + normalTaskDuration
+    );
     const secondStartDate = new Date(firstEndDate.getTime());
-    const secondEndDate = new Date(secondStartDate.getTime() + 1000);
+    const secondEndDate = new Date(
+      secondStartDate.getTime() + normalTaskDuration
+    );
     const thirdStartDate = new Date(secondEndDate.getTime());
-    const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
+    const thirdEndDate = new Date(
+      thirdStartDate.getTime() + normalTaskDuration
+    );
     const fourthStartDate = new Date(thirdEndDate.getTime());
-    const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
+    const fourthEndDate = new Date(
+      fourthStartDate.getTime() + normalTaskDuration
+    );
+    const aDelay = secondStartDate.getTime() - firstStartDate.getTime();
     before(function () {
-      unitA = new TaskUnit(
-        [],
-        firstStartDate,
-        firstEndDate,
-        "A",
-        secondStartDate
-      );
+      unitA = new TaskUnit([], firstStartDate, firstEndDate, "A", [
+        { type: EventType.TaskStarted, date: secondStartDate },
+      ]);
       unitB = new TaskUnit([], firstStartDate, firstEndDate);
       unitC = new TaskUnit([], firstStartDate, firstEndDate);
 
@@ -2145,16 +2142,6 @@ describe("SimpleChainMap", function () {
       unitH = new TaskUnit([unitD, unitE], thirdStartDate, thirdEndDate);
       unitI = new TaskUnit([unitE, unitF], thirdStartDate, thirdEndDate);
       unitJ = new TaskUnit([unitF, unitG], thirdStartDate, thirdEndDate);
-      unitAPresencePreShift = unitA.presenceTime;
-      unitBPresencePreShift = unitB.presenceTime;
-      unitCPresencePreShift = unitC.presenceTime;
-      unitDPresencePreShift = unitD.presenceTime;
-      unitEPresencePreShift = unitE.presenceTime;
-      unitFPresencePreShift = unitF.presenceTime;
-      unitGPresencePreShift = unitG.presenceTime;
-      unitHPresencePreShift = unitH.presenceTime;
-      unitIPresencePreShift = unitI.presenceTime;
-      unitJPresencePreShift = unitJ.presenceTime;
       chainMap = new SimpleChainMap([unitH, unitI, unitJ]);
     });
     it("should have A anticipated to start at first date", function () {
@@ -2477,35 +2464,35 @@ describe("SimpleChainMap", function () {
         unitJ.apparentEndDate
       );
     });
-    it("should have same presence after shift for A", function () {
-      expect(unitA.presenceTime).to.equal(unitAPresencePreShift);
+    it("should have presence of normal duration plus A's delay for A", function () {
+      expect(unitA.presenceTime).to.equal(normalTaskDuration + aDelay);
     });
-    it("should have same presence after shift for B", function () {
-      expect(unitB.presenceTime).to.equal(unitBPresencePreShift);
+    it("should have presence of normal duration for B", function () {
+      expect(unitB.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for C", function () {
-      expect(unitC.presenceTime).to.equal(unitCPresencePreShift);
+    it("should have presence of normal duration for C", function () {
+      expect(unitC.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have more presence after shift for D", function () {
-      expect(unitD.presenceTime).to.be.greaterThan(unitDPresencePreShift);
+    it("should have presence of normal duration plus A's delay for D", function () {
+      expect(unitD.presenceTime).to.equal(normalTaskDuration + aDelay);
     });
-    it("should have more presence after shift for E", function () {
-      expect(unitE.presenceTime).to.be.greaterThan(unitEPresencePreShift);
+    it("should have presence of normal duration plus A's delay for E", function () {
+      expect(unitE.presenceTime).to.equal(normalTaskDuration + aDelay);
     });
-    it("should have same presence after shift for F", function () {
-      expect(unitF.presenceTime).to.equal(unitFPresencePreShift);
+    it("should have presence of normal duration for F", function () {
+      expect(unitF.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for G", function () {
-      expect(unitG.presenceTime).to.equal(unitGPresencePreShift);
+    it("should have presence of normal duration for G", function () {
+      expect(unitG.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have more presence after shift for H", function () {
-      expect(unitH.presenceTime).to.be.greaterThan(unitHPresencePreShift);
+    it("should have presence of normal duration plus A's delay for H", function () {
+      expect(unitH.presenceTime).to.equal(normalTaskDuration + aDelay);
     });
-    it("should have more presence after shift for I", function () {
-      expect(unitI.presenceTime).to.be.greaterThan(unitIPresencePreShift);
+    it("should have presence of normal duration plus A's delay for I", function () {
+      expect(unitI.presenceTime).to.equal(normalTaskDuration + aDelay);
     });
-    it("should have same presence after shift for J", function () {
-      expect(unitJ.presenceTime).to.equal(unitJPresencePreShift);
+    it("should have presence of normal duration for J", function () {
+      expect(unitJ.presenceTime).to.equal(normalTaskDuration);
     });
   });
   describe("Complex Interdependence With Delays But Task Was Scheduled Later Anyway", function () {
@@ -2555,27 +2542,33 @@ describe("SimpleChainMap", function () {
     let unitH: TaskUnit;
     let unitI: TaskUnit;
     let unitJ: TaskUnit;
-    let unitAPresencePreShift: number;
-    let unitBPresencePreShift: number;
-    let unitCPresencePreShift: number;
-    let unitDPresencePreShift: number;
-    let unitEPresencePreShift: number;
-    let unitFPresencePreShift: number;
-    let unitGPresencePreShift: number;
-    let unitHPresencePreShift: number;
-    let unitIPresencePreShift: number;
-    let unitJPresencePreShift: number;
     let chainMap: SimpleChainMap;
+    const normalTaskDuration = 1000;
     const firstStartDate = new Date();
-    const firstEndDate = new Date(firstStartDate.getTime() + 1000);
+    const firstEndDate = new Date(
+      firstStartDate.getTime() + normalTaskDuration
+    );
     const secondStartDate = new Date(firstEndDate.getTime() + 1500);
-    const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-    const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-    const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-    const fourthStartDate = new Date(thirdEndDate.getTime() + 1000);
-    const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
+    const secondEndDate = new Date(
+      secondStartDate.getTime() + normalTaskDuration
+    );
+    const thirdStartDate = new Date(
+      secondEndDate.getTime() + normalTaskDuration
+    );
+    const thirdEndDate = new Date(
+      thirdStartDate.getTime() + normalTaskDuration
+    );
+    const fourthStartDate = new Date(
+      thirdEndDate.getTime() + normalTaskDuration
+    );
+    const fourthEndDate = new Date(
+      fourthStartDate.getTime() + normalTaskDuration
+    );
+    const aDelay = firstEndDate.getTime() - firstStartDate.getTime();
     before(function () {
-      unitA = new TaskUnit([], firstStartDate, firstEndDate, "A", firstEndDate);
+      unitA = new TaskUnit([], firstStartDate, firstEndDate, "A", [
+        { type: EventType.TaskStarted, date: firstEndDate },
+      ]);
       unitB = new TaskUnit([], firstStartDate, firstEndDate);
       unitC = new TaskUnit([], firstStartDate, firstEndDate);
 
@@ -2587,16 +2580,6 @@ describe("SimpleChainMap", function () {
       unitH = new TaskUnit([unitD, unitE], fourthStartDate, fourthEndDate);
       unitI = new TaskUnit([unitE, unitF], fourthStartDate, fourthEndDate);
       unitJ = new TaskUnit([unitF, unitG], thirdStartDate, thirdEndDate);
-      unitAPresencePreShift = unitA.presenceTime;
-      unitBPresencePreShift = unitB.presenceTime;
-      unitCPresencePreShift = unitC.presenceTime;
-      unitDPresencePreShift = unitD.presenceTime;
-      unitEPresencePreShift = unitE.presenceTime;
-      unitFPresencePreShift = unitF.presenceTime;
-      unitGPresencePreShift = unitG.presenceTime;
-      unitHPresencePreShift = unitH.presenceTime;
-      unitIPresencePreShift = unitI.presenceTime;
-      unitJPresencePreShift = unitJ.presenceTime;
 
       chainMap = new SimpleChainMap([unitH, unitI, unitJ]);
     });
@@ -2922,35 +2905,35 @@ describe("SimpleChainMap", function () {
         unitJ.apparentEndDate
       );
     });
-    it("should have same presence after shift for A", function () {
-      expect(unitA.presenceTime).to.equal(unitAPresencePreShift);
+    it("should have presence of normal duration plus A's delay for A", function () {
+      expect(unitA.presenceTime).to.equal(normalTaskDuration + aDelay);
     });
-    it("should have same presence after shift for B", function () {
-      expect(unitB.presenceTime).to.equal(unitBPresencePreShift);
+    it("should have presence of normal duration for B", function () {
+      expect(unitB.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for C", function () {
-      expect(unitC.presenceTime).to.equal(unitCPresencePreShift);
+    it("should have presence of normal duration for C", function () {
+      expect(unitC.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for D", function () {
-      expect(unitD.presenceTime).to.equal(unitDPresencePreShift);
+    it("should have presence of normal duration for D", function () {
+      expect(unitD.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for E", function () {
-      expect(unitE.presenceTime).to.equal(unitEPresencePreShift);
+    it("should have presence of normal duration for E", function () {
+      expect(unitE.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for F", function () {
-      expect(unitF.presenceTime).to.equal(unitFPresencePreShift);
+    it("should have presence of normal duration for F", function () {
+      expect(unitF.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for G", function () {
-      expect(unitG.presenceTime).to.equal(unitGPresencePreShift);
+    it("should have presence of normal duration for G", function () {
+      expect(unitG.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for H", function () {
-      expect(unitH.presenceTime).to.equal(unitHPresencePreShift);
+    it("should have presence of normal duration for H", function () {
+      expect(unitH.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for I", function () {
-      expect(unitI.presenceTime).to.equal(unitIPresencePreShift);
+    it("should have presence of normal duration for I", function () {
+      expect(unitI.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for J", function () {
-      expect(unitJ.presenceTime).to.equal(unitJPresencePreShift);
+    it("should have presence of normal duration for J", function () {
+      expect(unitJ.presenceTime).to.equal(normalTaskDuration);
     });
   });
   describe("Complex Interdependence With Extensions", function () {
@@ -3000,28 +2983,30 @@ describe("SimpleChainMap", function () {
     let unitH: TaskUnit;
     let unitI: TaskUnit;
     let unitJ: TaskUnit;
-    let unitAPresencePreShift: number;
-    let unitBPresencePreShift: number;
-    let unitCPresencePreShift: number;
-    let unitDPresencePreShift: number;
-    let unitEPresencePreShift: number;
-    let unitFPresencePreShift: number;
-    let unitGPresencePreShift: number;
-    let unitHPresencePreShift: number;
-    let unitIPresencePreShift: number;
-    let unitJPresencePreShift: number;
     let chainMap: SimpleChainMap;
+    const normalTaskDuration = 1000;
     const firstStartDate = new Date();
-    const firstEndDate = new Date(firstStartDate.getTime() + 1000);
+    const firstEndDate = new Date(
+      firstStartDate.getTime() + normalTaskDuration
+    );
     const secondStartDate = new Date(firstEndDate.getTime());
-    const secondEndDate = new Date(secondStartDate.getTime() + 1000);
+    const secondEndDate = new Date(
+      secondStartDate.getTime() + normalTaskDuration
+    );
     const thirdStartDate = new Date(secondEndDate.getTime());
-    const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
+    const thirdEndDate = new Date(
+      thirdStartDate.getTime() + normalTaskDuration
+    );
     const fourthStartDate = new Date(thirdEndDate.getTime());
-    const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
+    const fourthEndDate = new Date(
+      fourthStartDate.getTime() + normalTaskDuration
+    );
+    const aExtension = secondEndDate.getTime() - firstEndDate.getTime();
     before(function () {
-      unitA = new TaskUnit([], firstStartDate, firstEndDate, "A");
-      unitA.apparentEndDate = secondEndDate;
+      unitA = new TaskUnit([], firstStartDate, firstEndDate, "A", [
+        { type: EventType.TaskStarted, date: firstStartDate },
+        { type: EventType.ReviewedAndComplete, date: secondEndDate },
+      ]);
       unitB = new TaskUnit([], firstStartDate, firstEndDate);
       unitC = new TaskUnit([], firstStartDate, firstEndDate);
 
@@ -3033,16 +3018,6 @@ describe("SimpleChainMap", function () {
       unitH = new TaskUnit([unitD, unitE], thirdStartDate, thirdEndDate);
       unitI = new TaskUnit([unitE, unitF], thirdStartDate, thirdEndDate);
       unitJ = new TaskUnit([unitF, unitG], thirdStartDate, thirdEndDate);
-      unitAPresencePreShift = unitA.presenceTime;
-      unitBPresencePreShift = unitB.presenceTime;
-      unitCPresencePreShift = unitC.presenceTime;
-      unitDPresencePreShift = unitD.presenceTime;
-      unitEPresencePreShift = unitE.presenceTime;
-      unitFPresencePreShift = unitF.presenceTime;
-      unitGPresencePreShift = unitG.presenceTime;
-      unitHPresencePreShift = unitH.presenceTime;
-      unitIPresencePreShift = unitI.presenceTime;
-      unitJPresencePreShift = unitJ.presenceTime;
       chainMap = new SimpleChainMap([unitH, unitI, unitJ]);
     });
     it("should have A anticipated to start at first date", function () {
@@ -3365,35 +3340,35 @@ describe("SimpleChainMap", function () {
         unitJ.apparentEndDate
       );
     });
-    it("should have same presence after shift for A", function () {
-      expect(unitA.presenceTime).to.equal(unitAPresencePreShift);
+    it("should have presence of normal duration plus A's extension for A", function () {
+      expect(unitA.presenceTime).to.equal(normalTaskDuration + aExtension);
     });
-    it("should have same presence after shift for B", function () {
-      expect(unitB.presenceTime).to.equal(unitBPresencePreShift);
+    it("should have presence of normal duration for B", function () {
+      expect(unitB.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for C", function () {
-      expect(unitC.presenceTime).to.equal(unitCPresencePreShift);
+    it("should have presence of normal duration for C", function () {
+      expect(unitC.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have more presence after shift for D", function () {
-      expect(unitD.presenceTime).to.be.greaterThan(unitDPresencePreShift);
+    it("should have presence of normal duration plus A's extension for D", function () {
+      expect(unitD.presenceTime).to.equal(normalTaskDuration + aExtension);
     });
-    it("should have more presence after shift for E", function () {
-      expect(unitE.presenceTime).to.be.greaterThan(unitEPresencePreShift);
+    it("should have presence of normal duration plus A's extension for E", function () {
+      expect(unitE.presenceTime).to.equal(normalTaskDuration + aExtension);
     });
-    it("should have same presence after shift for F", function () {
-      expect(unitF.presenceTime).to.equal(unitFPresencePreShift);
+    it("should have presence of normal duration for F", function () {
+      expect(unitF.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for G", function () {
-      expect(unitG.presenceTime).to.equal(unitGPresencePreShift);
+    it("should have presence of normal duration for G", function () {
+      expect(unitG.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have more presence after shift for H", function () {
-      expect(unitH.presenceTime).to.be.greaterThan(unitHPresencePreShift);
+    it("should have presence of normal duration plus A's extension for H", function () {
+      expect(unitH.presenceTime).to.equal(normalTaskDuration + aExtension);
     });
-    it("should have more presence after shift for I", function () {
-      expect(unitI.presenceTime).to.be.greaterThan(unitIPresencePreShift);
+    it("should have presence of normal duration plus A's extension for I", function () {
+      expect(unitI.presenceTime).to.equal(normalTaskDuration + aExtension);
     });
-    it("should have same presence after shift for J", function () {
-      expect(unitJ.presenceTime).to.equal(unitJPresencePreShift);
+    it("should have presence of normal duration for J", function () {
+      expect(unitJ.presenceTime).to.equal(normalTaskDuration);
     });
   });
   describe("Complex Interdependence With Extensions But Task Was Scheduled Later Anyway", function () {
@@ -3443,27 +3418,37 @@ describe("SimpleChainMap", function () {
     let unitH: TaskUnit;
     let unitI: TaskUnit;
     let unitJ: TaskUnit;
-    let unitAPresencePreShift: number;
-    let unitBPresencePreShift: number;
-    let unitCPresencePreShift: number;
-    let unitDPresencePreShift: number;
-    let unitEPresencePreShift: number;
-    let unitFPresencePreShift: number;
-    let unitGPresencePreShift: number;
-    let unitHPresencePreShift: number;
-    let unitIPresencePreShift: number;
-    let unitJPresencePreShift: number;
     let chainMap: SimpleChainMap;
+    const normalTaskDuration = 1000;
     const firstStartDate = new Date();
-    const firstEndDate = new Date(firstStartDate.getTime() + 1000);
+    const firstEndDate = new Date(
+      firstStartDate.getTime() + normalTaskDuration
+    );
     const secondStartDate = new Date(firstEndDate.getTime() + 1500);
-    const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-    const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-    const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-    const fourthStartDate = new Date(thirdEndDate.getTime() + 1000);
-    const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
+    const secondEndDate = new Date(
+      secondStartDate.getTime() + normalTaskDuration
+    );
+    const thirdStartDate = new Date(
+      secondEndDate.getTime() + normalTaskDuration
+    );
+    const thirdEndDate = new Date(
+      thirdStartDate.getTime() + normalTaskDuration
+    );
+    const fourthStartDate = new Date(
+      thirdEndDate.getTime() + normalTaskDuration
+    );
+    const fourthEndDate = new Date(
+      fourthStartDate.getTime() + normalTaskDuration
+    );
+    const aExtension = normalTaskDuration;
     before(function () {
-      unitA = new TaskUnit([], firstStartDate, firstEndDate, "A");
+      unitA = new TaskUnit([], firstStartDate, firstEndDate, "A", [
+        { type: EventType.TaskStarted, date: firstStartDate },
+        {
+          type: EventType.ReviewedAndComplete,
+          date: new Date(firstEndDate.getTime() + normalTaskDuration),
+        },
+      ]);
       unitA.apparentEndDate = new Date(firstEndDate.getTime() + 1000);
       unitB = new TaskUnit([], firstStartDate, firstEndDate);
       unitC = new TaskUnit([], firstStartDate, firstEndDate);
@@ -3476,16 +3461,6 @@ describe("SimpleChainMap", function () {
       unitH = new TaskUnit([unitD, unitE], fourthStartDate, fourthEndDate);
       unitI = new TaskUnit([unitE, unitF], fourthStartDate, fourthEndDate);
       unitJ = new TaskUnit([unitF, unitG], thirdStartDate, thirdEndDate);
-      unitAPresencePreShift = unitA.presenceTime;
-      unitBPresencePreShift = unitB.presenceTime;
-      unitCPresencePreShift = unitC.presenceTime;
-      unitDPresencePreShift = unitD.presenceTime;
-      unitEPresencePreShift = unitE.presenceTime;
-      unitFPresencePreShift = unitF.presenceTime;
-      unitGPresencePreShift = unitG.presenceTime;
-      unitHPresencePreShift = unitH.presenceTime;
-      unitIPresencePreShift = unitI.presenceTime;
-      unitJPresencePreShift = unitJ.presenceTime;
 
       chainMap = new SimpleChainMap([unitH, unitI, unitJ]);
     });
@@ -3811,35 +3786,35 @@ describe("SimpleChainMap", function () {
         unitJ.apparentEndDate
       );
     });
-    it("should have same presence after shift for A", function () {
-      expect(unitA.presenceTime).to.equal(unitAPresencePreShift);
+    it("should have presence of normal duration plus A's extension for A", function () {
+      expect(unitA.presenceTime).to.equal(normalTaskDuration + aExtension);
     });
-    it("should have same presence after shift for B", function () {
-      expect(unitB.presenceTime).to.equal(unitBPresencePreShift);
+    it("should have presence of normal duration for B", function () {
+      expect(unitB.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for C", function () {
-      expect(unitC.presenceTime).to.equal(unitCPresencePreShift);
+    it("should have presence of normal duration for C", function () {
+      expect(unitC.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for D", function () {
-      expect(unitD.presenceTime).to.equal(unitDPresencePreShift);
+    it("should have presence of normal duration for D", function () {
+      expect(unitD.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for E", function () {
-      expect(unitE.presenceTime).to.equal(unitEPresencePreShift);
+    it("should have presence of normal duration for E", function () {
+      expect(unitE.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for F", function () {
-      expect(unitF.presenceTime).to.equal(unitFPresencePreShift);
+    it("should have presence of normal duration for F", function () {
+      expect(unitF.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for G", function () {
-      expect(unitG.presenceTime).to.equal(unitGPresencePreShift);
+    it("should have presence of normal duration for G", function () {
+      expect(unitG.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for H", function () {
-      expect(unitH.presenceTime).to.equal(unitHPresencePreShift);
+    it("should have presence of normal duration for H", function () {
+      expect(unitH.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for I", function () {
-      expect(unitI.presenceTime).to.equal(unitIPresencePreShift);
+    it("should have presence of normal duration for I", function () {
+      expect(unitI.presenceTime).to.equal(normalTaskDuration);
     });
-    it("should have same presence after shift for J", function () {
-      expect(unitJ.presenceTime).to.equal(unitJPresencePreShift);
+    it("should have presence of normal duration for J", function () {
+      expect(unitJ.presenceTime).to.equal(normalTaskDuration);
     });
   });
 });

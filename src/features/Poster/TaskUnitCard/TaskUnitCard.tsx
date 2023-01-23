@@ -1,6 +1,10 @@
-import { Card, CardContent } from "@material-ui/core";
+import { Box, Card, CardContent } from "@material-ui/core";
 import type { Coordinate, TaskUnitDetails } from "../../../types";
-import { trackHeight, unitTaskTimeConversion } from "../../constants";
+import {
+  snailTrailColor,
+  trackHeight,
+  unitTaskTimeConversion,
+} from "../../constants";
 
 export default function TaskUnitCard({
   unit,
@@ -9,23 +13,37 @@ export default function TaskUnitCard({
   unit: TaskUnitDetails;
   position: Coordinate;
 }) {
-  const width =
-    (unit.anticipatedEndTime - unit.anticipatedStartTime) /
-    unitTaskTimeConversion;
+  const cardWidth =
+    (unit.apparentEndTime - unit.apparentStartTime) / unitTaskTimeConversion;
+  const presenceWidth =
+    (unit.apparentEndTime - unit.anticipatedStartTime) / unitTaskTimeConversion;
 
   return (
-    <Card
-      variant="outlined"
-      className={`taskUnit`}
+    <Box
+      data-testid={`task-${unit.id}`}
       style={{
-        width,
+        width: presenceWidth,
         height: trackHeight,
         position: "absolute",
         left: position.x,
         top: position.y,
+        backgroundColor: presenceWidth === cardWidth ? "none" : snailTrailColor,
       }}
     >
-      <CardContent>{unit.name}</CardContent>
-    </Card>
+      <Card
+        variant="outlined"
+        className={`taskUnit`}
+        style={{
+          zIndex: 20,
+          width: cardWidth,
+          height: trackHeight,
+          position: "absolute",
+          left: presenceWidth - cardWidth,
+          top: 0,
+        }}
+      >
+        <CardContent>{unit.name}</CardContent>
+      </Card>
+    </Box>
   );
 }

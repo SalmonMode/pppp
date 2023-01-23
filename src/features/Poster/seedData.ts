@@ -52,7 +52,46 @@ export function getSeedData(): TaskUnitCluster {
     fourthEndDate,
     "L"
   );
-
   const cluster = new TaskUnitCluster([unitB, unitD, unitH, unitL]);
+  // const firstStartDate = new Date();
+  // const firstEndDate = new Date(firstStartDate.getTime() + 1000);
+  // const secondStartDate = new Date(firstEndDate.getTime());
+  // const secondEndDate = new Date(secondStartDate.getTime() + 1000);
+  // const thirdStartDate = new Date(secondEndDate.getTime());
+  // const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
+  // const fourthStartDate = new Date(thirdEndDate.getTime());
+  // const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
+  // const unitA = new TaskUnit(
+  //   [],
+  //   firstStartDate,
+  //   firstEndDate,
+  //   "A",
+  //   secondStartDate
+  // );
+  // // unitA.apparentEndDate = secondEndDate;
+  // const unitB = new TaskUnit([], firstStartDate, firstEndDate, "B");
+  // const unitC = new TaskUnit([], firstStartDate, firstEndDate, "C");
+
+  // const unitD = new TaskUnit([unitA], secondStartDate, secondEndDate, "D");
+  // const unitE = new TaskUnit(
+  //   [unitA, unitB],
+  //   secondStartDate,
+  //   secondEndDate,
+  //   "E"
+  // );
+  // const unitF = new TaskUnit(
+  //   [unitB, unitC],
+  //   secondStartDate,
+  //   secondEndDate,
+  //   "F"
+  // );
+  // const unitG = new TaskUnit([unitC], secondStartDate, secondEndDate, "G");
+
+  // const unitH = new TaskUnit([unitD, unitE], thirdStartDate, thirdEndDate, "H");
+  // const unitI = new TaskUnit([unitE, unitF], thirdStartDate, thirdEndDate, "I");
+  // const unitJ = new TaskUnit([unitF, unitG], thirdStartDate, thirdEndDate, "J");
+
+  // const cluster = new TaskUnitCluster([unitH, unitI, unitJ]);
+
   return cluster;
 }

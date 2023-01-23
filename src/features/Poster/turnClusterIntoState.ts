@@ -59,8 +59,8 @@ export function turnClusterIntoState(cluster: TaskUnitCluster): TaskUnitsState {
           unitCoords[unit.id] = {
             anticipatedStartTime: unit.anticipatedStartDate.getTime(),
             anticipatedEndTime: unit.anticipatedEndDate.getTime(),
-            apparentStartTime: unit.anticipatedStartDate.getTime(),
-            apparentEndTime: unit.anticipatedEndDate.getTime(),
+            apparentStartTime: unit.apparentStartDate.getTime(),
+            apparentEndTime: unit.apparentEndDate.getTime(),
             trackIndex: unitTracksSoFar + unitTrackIndex,
             name: unit.name,
             id: unit.id,
