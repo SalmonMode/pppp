@@ -1,4 +1,5 @@
 import { TaskUnit, TaskUnitCluster } from "../../Relations";
+import { EventType } from "../../types";
 
 export function getSeedData(): TaskUnitCluster {
   const firstStartDate = new Date();
@@ -9,19 +10,67 @@ export function getSeedData(): TaskUnitCluster {
   const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
   const fourthStartDate = new Date(thirdEndDate.getTime() + 1000);
   const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
-  const unitA = new TaskUnit([], firstStartDate, firstEndDate, "A");
+  const fifthStartDate = new Date(fourthEndDate.getTime() + 1000);
+  const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
+  const unitA = new TaskUnit([], firstStartDate, firstEndDate, "A", [
+    {
+      type: EventType.TaskIterationStarted,
+      date: firstStartDate,
+    },
+    {
+      type: EventType.ReviewedAndAccepted,
+      date: secondStartDate,
+    },
+  ]);
   const unitB = new TaskUnit(
     [unitA],
     new Date(firstStartDate.getTime() + 100),
     new Date(firstEndDate.getTime() + 100),
-    "B"
+    "B",
+    [
+      {
+        type: EventType.TaskIterationStarted,
+        date: secondStartDate,
+      },
+      {
+        type: EventType.ReviewedAndNeedsMinorRevision,
+        date: new Date(secondEndDate.getTime() - 100),
+      },
+    ]
   );
-  const unitC = new TaskUnit([], thirdStartDate, thirdEndDate, "C");
+  const unitC = new TaskUnit([], thirdStartDate, thirdEndDate, "C", [
+    {
+      type: EventType.TaskIterationStarted,
+      date: thirdStartDate,
+    },
+    {
+      type: EventType.ReviewedAndAccepted,
+      date: thirdEndDate,
+    },
+  ]);
   const unitD = new TaskUnit(
     [unitC],
     new Date(thirdStartDate.getTime() + 100),
     new Date(thirdEndDate.getTime() + 100),
-    "D"
+    "D",
+    [
+      {
+        type: EventType.TaskIterationStarted,
+        date: fourthStartDate,
+      },
+      {
+        type: EventType.ReviewedAndNeedsRebuild,
+        date: fourthEndDate,
+      },
+      {
+        type: EventType.TaskIterationStarted,
+        date: fifthStartDate,
+      },
+      {
+        type: EventType.ReviewedAndNeedsMajorRevision,
+        date: fifthEndDate,
+      },
+    ]
   );
 
   const unitE = new TaskUnit([], firstStartDate, firstEndDate, "E");
@@ -53,45 +102,6 @@ export function getSeedData(): TaskUnitCluster {
     "L"
   );
   const cluster = new TaskUnitCluster([unitB, unitD, unitH, unitL]);
-  // const firstStartDate = new Date();
-  // const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-  // const secondStartDate = new Date(firstEndDate.getTime());
-  // const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-  // const thirdStartDate = new Date(secondEndDate.getTime());
-  // const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-  // const fourthStartDate = new Date(thirdEndDate.getTime());
-  // const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
-  // const unitA = new TaskUnit(
-  //   [],
-  //   firstStartDate,
-  //   firstEndDate,
-  //   "A",
-  //   secondStartDate
-  // );
-  // // unitA.apparentEndDate = secondEndDate;
-  // const unitB = new TaskUnit([], firstStartDate, firstEndDate, "B");
-  // const unitC = new TaskUnit([], firstStartDate, firstEndDate, "C");
-
-  // const unitD = new TaskUnit([unitA], secondStartDate, secondEndDate, "D");
-  // const unitE = new TaskUnit(
-  //   [unitA, unitB],
-  //   secondStartDate,
-  //   secondEndDate,
-  //   "E"
-  // );
-  // const unitF = new TaskUnit(
-  //   [unitB, unitC],
-  //   secondStartDate,
-  //   secondEndDate,
-  //   "F"
-  // );
-  // const unitG = new TaskUnit([unitC], secondStartDate, secondEndDate, "G");
-
-  // const unitH = new TaskUnit([unitD, unitE], thirdStartDate, thirdEndDate, "H");
-  // const unitI = new TaskUnit([unitE, unitF], thirdStartDate, thirdEndDate, "I");
-  // const unitJ = new TaskUnit([unitF, unitG], thirdStartDate, thirdEndDate, "J");
-
-  // const cluster = new TaskUnitCluster([unitH, unitI, unitJ]);
 
   return cluster;
 }

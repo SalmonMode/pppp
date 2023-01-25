@@ -65,6 +65,11 @@ export function turnClusterIntoState(cluster: TaskUnitCluster): TaskUnitsState {
             name: unit.name,
             id: unit.id,
             directDependencies: [...unit.directDependencies].map((u) => u.id),
+            eventHistory: unit.interpolatedEventHistory.map((event) => ({
+              type: event.type,
+              time: event.date.getTime(),
+              projected: event.projected,
+            })),
           };
         }
       });

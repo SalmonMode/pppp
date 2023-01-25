@@ -2129,7 +2129,7 @@ describe("SimpleChainMap", function () {
     const aDelay = secondStartDate.getTime() - firstStartDate.getTime();
     before(function () {
       unitA = new TaskUnit([], firstStartDate, firstEndDate, "A", [
-        { type: EventType.TaskStarted, date: secondStartDate },
+        { type: EventType.TaskIterationStarted, date: secondStartDate },
       ]);
       unitB = new TaskUnit([], firstStartDate, firstEndDate);
       unitC = new TaskUnit([], firstStartDate, firstEndDate);
@@ -2567,7 +2567,7 @@ describe("SimpleChainMap", function () {
     const aDelay = firstEndDate.getTime() - firstStartDate.getTime();
     before(function () {
       unitA = new TaskUnit([], firstStartDate, firstEndDate, "A", [
-        { type: EventType.TaskStarted, date: firstEndDate },
+        { type: EventType.TaskIterationStarted, date: firstEndDate },
       ]);
       unitB = new TaskUnit([], firstStartDate, firstEndDate);
       unitC = new TaskUnit([], firstStartDate, firstEndDate);
@@ -3004,8 +3004,8 @@ describe("SimpleChainMap", function () {
     const aExtension = secondEndDate.getTime() - firstEndDate.getTime();
     before(function () {
       unitA = new TaskUnit([], firstStartDate, firstEndDate, "A", [
-        { type: EventType.TaskStarted, date: firstStartDate },
-        { type: EventType.ReviewedAndComplete, date: secondEndDate },
+        { type: EventType.TaskIterationStarted, date: firstStartDate },
+        { type: EventType.ReviewedAndAccepted, date: secondEndDate },
       ]);
       unitB = new TaskUnit([], firstStartDate, firstEndDate);
       unitC = new TaskUnit([], firstStartDate, firstEndDate);
@@ -3443,9 +3443,9 @@ describe("SimpleChainMap", function () {
     const aExtension = normalTaskDuration;
     before(function () {
       unitA = new TaskUnit([], firstStartDate, firstEndDate, "A", [
-        { type: EventType.TaskStarted, date: firstStartDate },
+        { type: EventType.TaskIterationStarted, date: firstStartDate },
         {
-          type: EventType.ReviewedAndComplete,
+          type: EventType.ReviewedAndAccepted,
           date: new Date(firstEndDate.getTime() + normalTaskDuration),
         },
       ]);

@@ -21,7 +21,7 @@ export default function Poster() {
   );
   const earliestStartTime = Math.min(...unitStartTimes);
   const unitEndTimes = Object.values(taskUnits.units).map(
-    (unit) => unit.anticipatedEndTime
+    (unit) => unit.apparentEndTime
   );
   const latestTime = Math.max(...unitEndTimes);
   const trackCount =

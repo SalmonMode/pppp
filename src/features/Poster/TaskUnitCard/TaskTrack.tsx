@@ -1,10 +1,6 @@
 import { Box } from "@material-ui/core";
 import type { TaskUnitDetails } from "../../../types";
-import {
-  trackGapHeight,
-  trackHeight,
-  unitTaskTimeConversion,
-} from "../../constants";
+import { trackHeight, unitTaskTimeConversion } from "../../constants";
 import getYOfTrackTop from "../getYOfTrackTop";
 import TaskUnitCard from "./TaskUnitCard";
 

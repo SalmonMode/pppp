@@ -25,18 +25,34 @@ export interface TaskUnitDetails {
   apparentEndTime: number;
   trackIndex: number;
   name: string;
+  eventHistory: SerializableTaskEvent[];
 }
 
 export enum EventType {
-  TaskStarted,
-  NewRequirementsProvided,
-  ReviewedAndComplete,
+  TaskIterationStarted,
+  MinorRevisionComplete,
+  ReviewedAndAccepted,
   ReviewedAndNeedsMinorRevision,
   ReviewedAndNeedsMajorRevision,
   ReviewedAndNeedsRebuild,
+}
+export enum ReviewType {
+  Pending,
+  Accepted,
+  NeedsMinorRevision,
+  NeedsMajorRevision,
+  NeedsRebuild,
 }
 
 export interface TaskEvent {
   type: EventType;
   date: Date;
+}
+export interface InterpolatedTaskEvent extends TaskEvent {
+  projected: boolean;
+}
+export interface SerializableTaskEvent {
+  type: EventType;
+  time: number;
+  projected: boolean;
 }
