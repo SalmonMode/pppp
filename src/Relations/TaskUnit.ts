@@ -150,6 +150,14 @@ export default class TaskUnit {
       // Don't check the next event if it can be helped, because if there is a next event, it'll have its turn to check
       // previous events, and that presents much narrower criteria to check.
       const prevEvent = this.eventHistory[index - 1];
+      if (prevEvent) {
+        // Make sure the dates are in order.
+        if (prevEvent.date >= event.date) {
+          throw new EventHistoryInvalidError(
+            "Events must be provided in chronological order."
+          );
+        }
+      }
       switch (event.type) {
         case EventType.TaskIterationStarted:
           if (prevEvent) {

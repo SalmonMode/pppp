@@ -806,6 +806,29 @@ describe("TaskUnit", function () {
         ).to.not.throw(Error);
       });
     });
+    describe("Starts With TaskIterationStarted, ReviewedAndAccepted (Swapped Dates)", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+      });
+      it("should throw EventHistoryInvalidError", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndAccepted,
+                date: firstDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision", function () {
       let firstDate: Date;
       let secondDate: Date;
