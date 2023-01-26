@@ -4,6 +4,11 @@ import ChainPath from "./ChainPath";
 import IsolatedDependencyChain from "./IsolatedDependencyChain";
 import TaskUnit from "./TaskUnit";
 
+const firstDate = new Date();
+const secondDate = new Date(firstDate.getTime() + 1000);
+const thirdDate = new Date(secondDate.getTime() + 1000);
+const fourthDate = new Date(thirdDate.getTime() + 1000);
+
 describe("ChainPath", function () {
   describe("No Chains", function () {
     it("should throw RangeError", function () {
@@ -15,12 +20,8 @@ describe("ChainPath", function () {
     let chainB: IsolatedDependencyChain;
     let path: ChainPath;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 1000);
-      const startDateB = new Date(endDateA.getTime() + 1000);
-      const endDateB = new Date(startDateB.getTime() + 1000);
-      const unitA = new TaskUnit([], startDateA, endDateA);
-      const unitB = new TaskUnit([unitA], startDateB, endDateB);
+      const unitA = new TaskUnit([], firstDate, secondDate);
+      const unitB = new TaskUnit([unitA], thirdDate, fourthDate);
       chainA = new IsolatedDependencyChain([unitA]);
       chainB = new IsolatedDependencyChain([unitB]);
       path = new ChainPath([chainB, chainA]);
@@ -52,12 +53,8 @@ describe("ChainPath", function () {
     let chainA: IsolatedDependencyChain;
     let chainB: IsolatedDependencyChain;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 1000);
-      const startDateB = new Date(endDateA.getTime());
-      const endDateB = new Date(startDateB.getTime() + 1000);
-      const unitA = new TaskUnit([], startDateA, endDateA);
-      const unitB = new TaskUnit([], startDateB, endDateB);
+      const unitA = new TaskUnit([], firstDate, secondDate);
+      const unitB = new TaskUnit([], secondDate, thirdDate);
       chainA = new IsolatedDependencyChain([unitA]);
       chainB = new IsolatedDependencyChain([unitB]);
     });
@@ -71,12 +68,8 @@ describe("ChainPath", function () {
     let chainA: IsolatedDependencyChain;
     let chainB: IsolatedDependencyChain;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 1000);
-      const startDateB = new Date(endDateA.getTime());
-      const endDateB = new Date(startDateB.getTime() + 1000);
-      const unitA = new TaskUnit([], startDateA, endDateA);
-      const unitB = new TaskUnit([unitA], startDateB, endDateB);
+      const unitA = new TaskUnit([], firstDate, secondDate);
+      const unitB = new TaskUnit([unitA], secondDate, thirdDate);
       chainA = new IsolatedDependencyChain([unitA]);
       chainB = new IsolatedDependencyChain([unitB]);
     });

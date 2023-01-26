@@ -4,6 +4,21 @@ import { assertIsObject } from "../typePredicates";
 import { EventType } from "../types";
 import { IsolatedDependencyChain, SimpleChainMap, TaskUnit } from "./";
 
+const firstDate = new Date();
+const secondDate = new Date(firstDate.getTime() + 1000);
+const thirdDate = new Date(secondDate.getTime() + 1000);
+const lateThirdDate = new Date(thirdDate.getTime() + 500);
+const fourthDate = new Date(thirdDate.getTime() + 1000);
+const lateFourthDate = new Date(fourthDate.getTime() + 500);
+const fifthDate = new Date(fourthDate.getTime() + 1000);
+const lateFifthDate = new Date(fifthDate.getTime() + 500);
+const sixthDate = new Date(fifthDate.getTime() + 1000);
+const lateSixthDate = new Date(sixthDate.getTime() + 500);
+const seventhDate = new Date(sixthDate.getTime() + 1000);
+const lateSeventhDate = new Date(seventhDate.getTime() + 500);
+const eighthDate = new Date(seventhDate.getTime() + 1000);
+const lateEighthDate = new Date(eighthDate.getTime() + 500);
+
 describe("SimpleChainMap", function () {
   describe("No Units", function () {
     it("should throw RangeError", function () {
@@ -12,13 +27,9 @@ describe("SimpleChainMap", function () {
   });
   describe("One Unit", function () {
     let unit: TaskUnit;
-    let startDate: Date;
-    let endDate: Date;
     let chainMap: SimpleChainMap;
     before(function () {
-      startDate = new Date();
-      endDate = new Date(startDate.getTime() + 1000);
-      unit = new TaskUnit([], startDate, endDate);
+      unit = new TaskUnit([], firstDate, secondDate);
       chainMap = new SimpleChainMap([unit]);
     });
     it("should have one chain", function () {
@@ -31,13 +42,13 @@ describe("SimpleChainMap", function () {
     });
     it("should throw NoSuchChainError when getting chain of unrecognized unit", function () {
       expect(() =>
-        chainMap.getChainOfUnit(new TaskUnit([], startDate, endDate))
+        chainMap.getChainOfUnit(new TaskUnit([], firstDate, secondDate))
       ).to.throw(NoSuchChainError);
     });
     it("should throw NoSuchChainError when getting chains connected to unrecognized chain", function () {
       expect(() =>
         chainMap.getChainsConnectedToChain(
-          new IsolatedDependencyChain([new TaskUnit([], startDate, endDate)])
+          new IsolatedDependencyChain([new TaskUnit([], firstDate, secondDate)])
         )
       ).to.throw(NoSuchChainError);
     });
@@ -52,12 +63,8 @@ describe("SimpleChainMap", function () {
     let unitA: TaskUnit;
     let unitB: TaskUnit;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 1000);
-      const startDateB = new Date(endDateA.getTime());
-      const endDateB = new Date(startDateB.getTime() + 1000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([unitA], startDateB, endDateB);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([unitA], secondDate, thirdDate);
     });
     it("should throw DependencyOrderError", function () {
       expect(() => new SimpleChainMap([unitA, unitB])).to.throw(
@@ -76,12 +83,8 @@ describe("SimpleChainMap", function () {
     let unitB: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 1000);
-      const startDateB = new Date(endDateA.getTime());
-      const endDateB = new Date(startDateB.getTime() + 1000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([unitA], startDateB, endDateB);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([unitA], secondDate, thirdDate);
       chainMap = new SimpleChainMap([unitB]);
     });
     it("should have one chain", function () {
@@ -105,15 +108,9 @@ describe("SimpleChainMap", function () {
     let unitC: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 1000);
-      const startDateB = new Date(endDateA.getTime());
-      const endDateB = new Date(startDateB.getTime() + 1000);
-      const startDateC = new Date(endDateB.getTime());
-      const endDateC = new Date(startDateC.getTime() + 1000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([unitA], startDateB, endDateB);
-      unitC = new TaskUnit([unitB], startDateC, endDateC);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([unitA], secondDate, thirdDate);
+      unitC = new TaskUnit([unitB], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitC]);
     });
     it("should have one chain", function () {
@@ -141,13 +138,9 @@ describe("SimpleChainMap", function () {
     let unitC: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime());
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      unitB = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      unitC = new TaskUnit([unitA], secondStartDate, secondEndDate);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([unitA], secondDate, thirdDate);
+      unitC = new TaskUnit([unitA], secondDate, thirdDate);
       chainMap = new SimpleChainMap([unitB, unitC]);
     });
     it("should have 3 chains", function () {
@@ -218,16 +211,10 @@ describe("SimpleChainMap", function () {
     let unitD: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 1000);
-      const startDateB = new Date(endDateA.getTime());
-      const endDateB = new Date(startDateB.getTime() + 1000);
-      const thirdStartDate = new Date(endDateB.getTime());
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([unitA], startDateB, endDateB);
-      unitC = new TaskUnit([unitB], thirdStartDate, thirdEndDate);
-      unitD = new TaskUnit([unitB], thirdStartDate, thirdEndDate);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([unitA], secondDate, thirdDate);
+      unitC = new TaskUnit([unitB], thirdDate, fourthDate);
+      unitD = new TaskUnit([unitB], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitC, unitD]);
     });
     it("should have 4 chains", function () {
@@ -366,19 +353,11 @@ describe("SimpleChainMap", function () {
     let unitE: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 1000);
-      const startDateB = new Date(endDateA.getTime());
-      const endDateB = new Date(startDateB.getTime() + 1000);
-      const thirdStartDate = new Date(endDateB.getTime());
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthStartDate = new Date(thirdEndDate.getTime());
-      const fourthEndDate = new Date(thirdStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([unitA], startDateB, endDateB);
-      unitC = new TaskUnit([unitB], thirdStartDate, thirdEndDate);
-      unitD = new TaskUnit([unitB], thirdStartDate, thirdEndDate);
-      unitE = new TaskUnit([unitC], fourthStartDate, fourthEndDate);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([unitA], secondDate, thirdDate);
+      unitC = new TaskUnit([unitB], thirdDate, fourthDate);
+      unitD = new TaskUnit([unitB], thirdDate, fourthDate);
+      unitE = new TaskUnit([unitC], fourthDate, fifthDate);
       chainMap = new SimpleChainMap([unitD, unitE]);
     });
     it("should have 4 chains", function () {
@@ -479,19 +458,11 @@ describe("SimpleChainMap", function () {
     let unitE: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 1000);
-      const startDateB = new Date(endDateA.getTime());
-      const endDateB = new Date(startDateB.getTime() + 1000);
-      const thirdStartDate = new Date(endDateB.getTime());
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthStartDate = new Date(thirdEndDate.getTime());
-      const fourthEndDate = new Date(thirdStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([unitA], startDateB, endDateB);
-      unitC = new TaskUnit([unitB], thirdStartDate, thirdEndDate);
-      unitD = new TaskUnit([unitB], thirdStartDate, thirdEndDate);
-      unitE = new TaskUnit([unitD], fourthStartDate, fourthEndDate);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([unitA], secondDate, thirdDate);
+      unitC = new TaskUnit([unitB], thirdDate, fourthDate);
+      unitD = new TaskUnit([unitB], thirdDate, fourthDate);
+      unitE = new TaskUnit([unitD], fourthDate, fifthDate);
       chainMap = new SimpleChainMap([unitC, unitE]);
     });
     it("should have 4 chains", function () {
@@ -590,13 +561,9 @@ describe("SimpleChainMap", function () {
     let unitC: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime());
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      unitB = new TaskUnit([], firstStartDate, firstEndDate);
-      unitC = new TaskUnit([unitA, unitB], secondStartDate, secondEndDate);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([], firstDate, secondDate);
+      unitC = new TaskUnit([unitA, unitB], secondDate, thirdDate);
       chainMap = new SimpleChainMap([unitC]);
     });
     it("should have 3 chains", function () {
@@ -661,16 +628,10 @@ describe("SimpleChainMap", function () {
     let unitD: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime());
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime());
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      unitB = new TaskUnit([], secondStartDate, secondEndDate);
-      unitC = new TaskUnit([unitA, unitB], thirdStartDate, thirdEndDate);
-      unitD = new TaskUnit([unitC], thirdStartDate, thirdEndDate);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([], secondDate, thirdDate);
+      unitC = new TaskUnit([unitA, unitB], thirdDate, fourthDate);
+      unitD = new TaskUnit([unitC], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitD]);
     });
     it("should have 4 chains", function () {
@@ -769,17 +730,11 @@ describe("SimpleChainMap", function () {
     let unitE: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime());
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime());
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      unitB = new TaskUnit([], firstStartDate, firstEndDate);
-      unitC = new TaskUnit([unitA, unitB], secondStartDate, secondEndDate);
-      unitD = new TaskUnit([unitC], thirdStartDate, thirdEndDate);
-      unitE = new TaskUnit([unitC], thirdStartDate, thirdEndDate);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([], firstDate, secondDate);
+      unitC = new TaskUnit([unitA, unitB], secondDate, thirdDate);
+      unitD = new TaskUnit([unitC], thirdDate, fourthDate);
+      unitE = new TaskUnit([unitC], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitD, unitE]);
     });
     it("should have 5 chains", function () {
@@ -922,20 +877,12 @@ describe("SimpleChainMap", function () {
     let unitF: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime());
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime());
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthStartDate = new Date(thirdEndDate.getTime());
-      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      unitB = new TaskUnit([], firstStartDate, firstEndDate);
-      unitC = new TaskUnit([unitA, unitB], secondStartDate, secondEndDate);
-      unitD = new TaskUnit([unitC], thirdStartDate, thirdEndDate);
-      unitE = new TaskUnit([unitD], fourthStartDate, fourthEndDate);
-      unitF = new TaskUnit([unitD], fourthStartDate, fourthEndDate);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([], firstDate, secondDate);
+      unitC = new TaskUnit([unitA, unitB], secondDate, thirdDate);
+      unitD = new TaskUnit([unitC], thirdDate, fourthDate);
+      unitE = new TaskUnit([unitD], fourthDate, fifthDate);
+      unitF = new TaskUnit([unitD], fourthDate, fifthDate);
       chainMap = new SimpleChainMap([unitE, unitF]);
     });
     it("should have 6 chains", function () {
@@ -1124,23 +1071,13 @@ describe("SimpleChainMap", function () {
     let unitG: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime());
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime());
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthStartDate = new Date(thirdEndDate.getTime());
-      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
-      const fifthStartDate = new Date(fourthEndDate.getTime());
-      const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      unitB = new TaskUnit([], firstStartDate, firstEndDate);
-      unitC = new TaskUnit([unitA, unitB], secondStartDate, secondEndDate);
-      unitD = new TaskUnit([unitC], thirdStartDate, thirdEndDate);
-      unitE = new TaskUnit([unitD], fourthStartDate, fourthEndDate);
-      unitF = new TaskUnit([unitE], fifthStartDate, fifthEndDate);
-      unitG = new TaskUnit([unitE], fifthStartDate, fifthEndDate);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([], firstDate, secondDate);
+      unitC = new TaskUnit([unitA, unitB], secondDate, thirdDate);
+      unitD = new TaskUnit([unitC], thirdDate, fourthDate);
+      unitE = new TaskUnit([unitD], fourthDate, fifthDate);
+      unitF = new TaskUnit([unitE], fifthDate, sixthDate);
+      unitG = new TaskUnit([unitE], fifthDate, sixthDate);
       chainMap = new SimpleChainMap([unitF, unitG]);
     });
     it("should have 7 chains", function () {
@@ -1383,26 +1320,14 @@ describe("SimpleChainMap", function () {
     let unitH: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime());
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime());
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthStartDate = new Date(thirdEndDate.getTime());
-      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
-      const fifthStartDate = new Date(fourthEndDate.getTime());
-      const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
-      const sixthStartDate = new Date(fifthEndDate.getTime());
-      const sixthEndDate = new Date(sixthStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      unitB = new TaskUnit([], firstStartDate, firstEndDate);
-      unitC = new TaskUnit([unitA, unitB], secondStartDate, secondEndDate);
-      unitD = new TaskUnit([unitC], thirdStartDate, thirdEndDate);
-      unitE = new TaskUnit([unitD], fourthStartDate, fourthEndDate);
-      unitF = new TaskUnit([unitE], fifthStartDate, fifthEndDate);
-      unitG = new TaskUnit([unitF], sixthStartDate, sixthEndDate);
-      unitH = new TaskUnit([unitF], sixthStartDate, sixthEndDate);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([], firstDate, secondDate);
+      unitC = new TaskUnit([unitA, unitB], secondDate, thirdDate);
+      unitD = new TaskUnit([unitC], thirdDate, fourthDate);
+      unitE = new TaskUnit([unitD], fourthDate, fifthDate);
+      unitF = new TaskUnit([unitE], fifthDate, sixthDate);
+      unitG = new TaskUnit([unitF], sixthDate, seventhDate);
+      unitH = new TaskUnit([unitF], sixthDate, seventhDate);
       chainMap = new SimpleChainMap([unitG, unitH]);
     });
     it("should have 7 chains", function () {
@@ -1660,16 +1585,10 @@ describe("SimpleChainMap", function () {
     let unitD: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime());
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime());
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      unitB = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      unitC = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      unitD = new TaskUnit([unitB, unitC], thirdStartDate, thirdEndDate);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([unitA], secondDate, thirdDate);
+      unitC = new TaskUnit([unitA], secondDate, thirdDate);
+      unitD = new TaskUnit([unitB, unitC], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitD]);
     });
     it("should have 4 chains", function () {
@@ -1767,14 +1686,10 @@ describe("SimpleChainMap", function () {
     let unitD: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime());
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      unitB = new TaskUnit([], firstStartDate, firstEndDate);
-      unitC = new TaskUnit([unitA, unitB], secondStartDate, secondEndDate);
-      unitD = new TaskUnit([unitA, unitB], secondStartDate, secondEndDate);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([], firstDate, secondDate);
+      unitC = new TaskUnit([unitA, unitB], secondDate, thirdDate);
+      unitD = new TaskUnit([unitA, unitB], secondDate, thirdDate);
       chainMap = new SimpleChainMap([unitC, unitD]);
     });
     it("should have 4 chains", function () {
@@ -1872,14 +1787,10 @@ describe("SimpleChainMap", function () {
     let unitD: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime());
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      unitB = new TaskUnit([], firstStartDate, firstEndDate);
-      unitC = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      unitD = new TaskUnit([unitA, unitB], secondStartDate, secondEndDate);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([], firstDate, secondDate);
+      unitC = new TaskUnit([unitA], secondDate, thirdDate);
+      unitD = new TaskUnit([unitA, unitB], secondDate, thirdDate);
       chainMap = new SimpleChainMap([unitC, unitD]);
     });
     it("should have 4 chains", function () {
@@ -1991,24 +1902,18 @@ describe("SimpleChainMap", function () {
     let unitJ: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      unitB = new TaskUnit([], firstStartDate, firstEndDate);
-      unitC = new TaskUnit([], firstStartDate, firstEndDate);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([], firstDate, secondDate);
+      unitC = new TaskUnit([], firstDate, secondDate);
 
-      unitD = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      unitE = new TaskUnit([unitA, unitB], secondStartDate, secondEndDate);
-      unitF = new TaskUnit([unitB, unitC], secondStartDate, secondEndDate);
-      unitG = new TaskUnit([unitC], secondStartDate, secondEndDate);
+      unitD = new TaskUnit([unitA], secondDate, thirdDate);
+      unitE = new TaskUnit([unitA, unitB], secondDate, thirdDate);
+      unitF = new TaskUnit([unitB, unitC], secondDate, thirdDate);
+      unitG = new TaskUnit([unitC], secondDate, thirdDate);
 
-      unitH = new TaskUnit([unitD, unitE], thirdStartDate, thirdEndDate);
-      unitI = new TaskUnit([unitE, unitF], thirdStartDate, thirdEndDate);
-      unitJ = new TaskUnit([unitF, unitG], thirdStartDate, thirdEndDate);
+      unitH = new TaskUnit([unitD, unitE], thirdDate, fourthDate);
+      unitI = new TaskUnit([unitE, unitF], thirdDate, fourthDate);
+      unitJ = new TaskUnit([unitF, unitG], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitH, unitI, unitJ]);
     });
     it("should have heads of I and J without A, D, and H", function () {
@@ -2110,159 +2015,143 @@ describe("SimpleChainMap", function () {
     let unitJ: TaskUnit;
     let chainMap: SimpleChainMap;
     const normalTaskDuration = 1000;
-    const firstStartDate = new Date();
-    const firstEndDate = new Date(
-      firstStartDate.getTime() + normalTaskDuration
-    );
-    const secondStartDate = new Date(firstEndDate.getTime());
-    const secondEndDate = new Date(
-      secondStartDate.getTime() + normalTaskDuration
-    );
-    const thirdStartDate = new Date(secondEndDate.getTime());
-    const thirdEndDate = new Date(
-      thirdStartDate.getTime() + normalTaskDuration
-    );
-    const fourthStartDate = new Date(thirdEndDate.getTime());
-    const fourthEndDate = new Date(
-      fourthStartDate.getTime() + normalTaskDuration
-    );
-    const aDelay = secondStartDate.getTime() - firstStartDate.getTime();
+    const aDelay = secondDate.getTime() - firstDate.getTime();
     before(function () {
-      unitA = new TaskUnit([], firstStartDate, firstEndDate, "A", [
-        { type: EventType.TaskIterationStarted, date: secondStartDate },
+      unitA = new TaskUnit([], firstDate, secondDate, "A", [
+        { type: EventType.TaskIterationStarted, date: secondDate },
       ]);
-      unitB = new TaskUnit([], firstStartDate, firstEndDate);
-      unitC = new TaskUnit([], firstStartDate, firstEndDate);
+      unitB = new TaskUnit([], firstDate, secondDate);
+      unitC = new TaskUnit([], firstDate, secondDate);
 
-      unitD = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      unitE = new TaskUnit([unitA, unitB], secondStartDate, secondEndDate);
-      unitF = new TaskUnit([unitB, unitC], secondStartDate, secondEndDate);
-      unitG = new TaskUnit([unitC], secondStartDate, secondEndDate);
+      unitD = new TaskUnit([unitA], secondDate, thirdDate);
+      unitE = new TaskUnit([unitA, unitB], secondDate, thirdDate);
+      unitF = new TaskUnit([unitB, unitC], secondDate, thirdDate);
+      unitG = new TaskUnit([unitC], secondDate, thirdDate);
 
-      unitH = new TaskUnit([unitD, unitE], thirdStartDate, thirdEndDate);
-      unitI = new TaskUnit([unitE, unitF], thirdStartDate, thirdEndDate);
-      unitJ = new TaskUnit([unitF, unitG], thirdStartDate, thirdEndDate);
+      unitH = new TaskUnit([unitD, unitE], thirdDate, fourthDate);
+      unitI = new TaskUnit([unitE, unitF], thirdDate, fourthDate);
+      unitJ = new TaskUnit([unitF, unitG], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitH, unitI, unitJ]);
     });
     it("should have A anticipated to start at first date", function () {
-      expect(unitA.anticipatedStartDate).to.deep.equal(firstStartDate);
+      expect(unitA.anticipatedStartDate).to.deep.equal(firstDate);
     });
     it("should have A anticipated to end at first date", function () {
-      expect(unitA.anticipatedEndDate).to.deep.equal(firstEndDate);
+      expect(unitA.anticipatedEndDate).to.deep.equal(secondDate);
     });
     it("should have A apparently starting at second date", function () {
-      expect(unitA.apparentStartDate).to.deep.equal(secondStartDate);
+      expect(unitA.apparentStartDate).to.deep.equal(secondDate);
     });
     it("should have A apparently ending at second date", function () {
-      expect(unitA.apparentEndDate).to.deep.equal(secondEndDate);
+      expect(unitA.apparentEndDate).to.deep.equal(thirdDate);
     });
     it("should have B anticipated to start at first date", function () {
-      expect(unitB.anticipatedStartDate).to.deep.equal(firstStartDate);
+      expect(unitB.anticipatedStartDate).to.deep.equal(firstDate);
     });
     it("should have B anticipated to end at first date", function () {
-      expect(unitB.anticipatedEndDate).to.deep.equal(firstEndDate);
+      expect(unitB.anticipatedEndDate).to.deep.equal(secondDate);
     });
     it("should have B apparently starting at first date", function () {
-      expect(unitB.apparentStartDate).to.deep.equal(firstStartDate);
+      expect(unitB.apparentStartDate).to.deep.equal(firstDate);
     });
     it("should have B apparently ending at first date", function () {
-      expect(unitB.apparentEndDate).to.deep.equal(firstEndDate);
+      expect(unitB.apparentEndDate).to.deep.equal(secondDate);
     });
     it("should have C anticipated to start at first date", function () {
-      expect(unitC.anticipatedStartDate).to.deep.equal(firstStartDate);
+      expect(unitC.anticipatedStartDate).to.deep.equal(firstDate);
     });
     it("should have C anticipated to end at first date", function () {
-      expect(unitC.anticipatedEndDate).to.deep.equal(firstEndDate);
+      expect(unitC.anticipatedEndDate).to.deep.equal(secondDate);
     });
     it("should have C apparently starting at first date", function () {
-      expect(unitC.apparentStartDate).to.deep.equal(firstStartDate);
+      expect(unitC.apparentStartDate).to.deep.equal(firstDate);
     });
     it("should have C apparently ending at first date", function () {
-      expect(unitC.apparentEndDate).to.deep.equal(firstEndDate);
+      expect(unitC.apparentEndDate).to.deep.equal(secondDate);
     });
     it("should have D anticipated to start at second date", function () {
-      expect(unitD.anticipatedStartDate).to.deep.equal(secondStartDate);
+      expect(unitD.anticipatedStartDate).to.deep.equal(secondDate);
     });
     it("should have D anticipated to end at second date", function () {
-      expect(unitD.anticipatedEndDate).to.deep.equal(secondEndDate);
+      expect(unitD.anticipatedEndDate).to.deep.equal(thirdDate);
     });
     it("should have D apparently starting at third date", function () {
-      expect(unitD.apparentStartDate).to.deep.equal(thirdStartDate);
+      expect(unitD.apparentStartDate).to.deep.equal(thirdDate);
     });
     it("should have D apparently ending at third date", function () {
-      expect(unitD.apparentEndDate).to.deep.equal(thirdEndDate);
+      expect(unitD.apparentEndDate).to.deep.equal(fourthDate);
     });
     it("should have E anticipated to start at second date", function () {
-      expect(unitE.anticipatedStartDate).to.deep.equal(secondStartDate);
+      expect(unitE.anticipatedStartDate).to.deep.equal(secondDate);
     });
     it("should have E anticipated to end at second date", function () {
-      expect(unitE.anticipatedEndDate).to.deep.equal(secondEndDate);
+      expect(unitE.anticipatedEndDate).to.deep.equal(thirdDate);
     });
     it("should have E apparently starting at third date", function () {
-      expect(unitE.apparentStartDate).to.deep.equal(thirdStartDate);
+      expect(unitE.apparentStartDate).to.deep.equal(thirdDate);
     });
     it("should have E apparently ending at third date", function () {
-      expect(unitE.apparentEndDate).to.deep.equal(thirdEndDate);
+      expect(unitE.apparentEndDate).to.deep.equal(fourthDate);
     });
     it("should have F anticipated to start at second date", function () {
-      expect(unitF.anticipatedStartDate).to.deep.equal(secondStartDate);
+      expect(unitF.anticipatedStartDate).to.deep.equal(secondDate);
     });
     it("should have F anticipated to end at second date", function () {
-      expect(unitF.anticipatedEndDate).to.deep.equal(secondEndDate);
+      expect(unitF.anticipatedEndDate).to.deep.equal(thirdDate);
     });
     it("should have F apparently starting at second date", function () {
-      expect(unitF.apparentStartDate).to.deep.equal(secondStartDate);
+      expect(unitF.apparentStartDate).to.deep.equal(secondDate);
     });
     it("should have F apparently ending at second date", function () {
-      expect(unitF.apparentEndDate).to.deep.equal(secondEndDate);
+      expect(unitF.apparentEndDate).to.deep.equal(thirdDate);
     });
     it("should have G anticipated to start at second date", function () {
-      expect(unitG.anticipatedStartDate).to.deep.equal(secondStartDate);
+      expect(unitG.anticipatedStartDate).to.deep.equal(secondDate);
     });
     it("should have G anticipated to end at second date", function () {
-      expect(unitG.anticipatedEndDate).to.deep.equal(secondEndDate);
+      expect(unitG.anticipatedEndDate).to.deep.equal(thirdDate);
     });
     it("should have G apparently starting at second date", function () {
-      expect(unitG.apparentStartDate).to.deep.equal(secondStartDate);
+      expect(unitG.apparentStartDate).to.deep.equal(secondDate);
     });
     it("should have G apparently ending at second date", function () {
-      expect(unitG.apparentEndDate).to.deep.equal(secondEndDate);
+      expect(unitG.apparentEndDate).to.deep.equal(thirdDate);
     });
     it("should have H anticipated to start at third date", function () {
-      expect(unitH.anticipatedStartDate).to.deep.equal(thirdStartDate);
+      expect(unitH.anticipatedStartDate).to.deep.equal(thirdDate);
     });
     it("should have H anticipated to end at third date", function () {
-      expect(unitH.anticipatedEndDate).to.deep.equal(thirdEndDate);
+      expect(unitH.anticipatedEndDate).to.deep.equal(fourthDate);
     });
     it("should have H apparently starting at fourth date", function () {
-      expect(unitH.apparentStartDate).to.deep.equal(fourthStartDate);
+      expect(unitH.apparentStartDate).to.deep.equal(fourthDate);
     });
     it("should have H apparently ending at fourth date", function () {
-      expect(unitH.apparentEndDate).to.deep.equal(fourthEndDate);
+      expect(unitH.apparentEndDate).to.deep.equal(fifthDate);
     });
     it("should have I anticipated to start at third date", function () {
-      expect(unitI.anticipatedStartDate).to.deep.equal(thirdStartDate);
+      expect(unitI.anticipatedStartDate).to.deep.equal(thirdDate);
     });
     it("should have I anticipated to end at third date", function () {
-      expect(unitI.anticipatedEndDate).to.deep.equal(thirdEndDate);
+      expect(unitI.anticipatedEndDate).to.deep.equal(fourthDate);
     });
     it("should have I apparently starting at fourth date", function () {
-      expect(unitI.apparentStartDate).to.deep.equal(fourthStartDate);
+      expect(unitI.apparentStartDate).to.deep.equal(fourthDate);
     });
     it("should have I apparently ending at fourth date", function () {
-      expect(unitI.apparentEndDate).to.deep.equal(fourthEndDate);
+      expect(unitI.apparentEndDate).to.deep.equal(fifthDate);
     });
     it("should have J anticipated to start at third date", function () {
-      expect(unitJ.anticipatedStartDate).to.deep.equal(thirdStartDate);
+      expect(unitJ.anticipatedStartDate).to.deep.equal(thirdDate);
     });
     it("should have J anticipated to end at third date", function () {
-      expect(unitJ.anticipatedEndDate).to.deep.equal(thirdEndDate);
+      expect(unitJ.anticipatedEndDate).to.deep.equal(fourthDate);
     });
     it("should have J apparently starting at third date", function () {
-      expect(unitJ.apparentStartDate).to.deep.equal(thirdStartDate);
+      expect(unitJ.apparentStartDate).to.deep.equal(thirdDate);
     });
     it("should have J apparently ending at third date", function () {
-      expect(unitJ.apparentEndDate).to.deep.equal(thirdEndDate);
+      expect(unitJ.apparentEndDate).to.deep.equal(fourthDate);
     });
     it("should have same start time of unit for chain for A", function () {
       expect(chainMap.getChainOfUnit(unitA).anticipatedStartDate).to.deep.equal(
@@ -2544,166 +2433,146 @@ describe("SimpleChainMap", function () {
     let unitJ: TaskUnit;
     let chainMap: SimpleChainMap;
     const normalTaskDuration = 1000;
-    const firstStartDate = new Date();
-    const firstEndDate = new Date(
-      firstStartDate.getTime() + normalTaskDuration
-    );
-    const secondStartDate = new Date(firstEndDate.getTime() + 1500);
-    const secondEndDate = new Date(
-      secondStartDate.getTime() + normalTaskDuration
-    );
-    const thirdStartDate = new Date(
-      secondEndDate.getTime() + normalTaskDuration
-    );
-    const thirdEndDate = new Date(
-      thirdStartDate.getTime() + normalTaskDuration
-    );
-    const fourthStartDate = new Date(
-      thirdEndDate.getTime() + normalTaskDuration
-    );
-    const fourthEndDate = new Date(
-      fourthStartDate.getTime() + normalTaskDuration
-    );
-    const aDelay = firstEndDate.getTime() - firstStartDate.getTime();
+    const aDelay = secondDate.getTime() - firstDate.getTime();
     before(function () {
-      unitA = new TaskUnit([], firstStartDate, firstEndDate, "A", [
-        { type: EventType.TaskIterationStarted, date: firstEndDate },
+      unitA = new TaskUnit([], firstDate, secondDate, "A", [
+        { type: EventType.TaskIterationStarted, date: secondDate },
       ]);
-      unitB = new TaskUnit([], firstStartDate, firstEndDate);
-      unitC = new TaskUnit([], firstStartDate, firstEndDate);
+      unitB = new TaskUnit([], firstDate, secondDate);
+      unitC = new TaskUnit([], firstDate, secondDate);
 
-      unitD = new TaskUnit([unitA], thirdStartDate, thirdEndDate);
-      unitE = new TaskUnit([unitA, unitB], thirdStartDate, thirdEndDate);
-      unitF = new TaskUnit([unitB, unitC], secondStartDate, secondEndDate);
-      unitG = new TaskUnit([unitC], secondStartDate, secondEndDate);
+      unitD = new TaskUnit([unitA], lateFifthDate, lateSixthDate);
+      unitE = new TaskUnit([unitA, unitB], lateFifthDate, lateSixthDate);
+      unitF = new TaskUnit([unitB, unitC], lateThirdDate, lateFourthDate);
+      unitG = new TaskUnit([unitC], lateThirdDate, lateFourthDate);
 
-      unitH = new TaskUnit([unitD, unitE], fourthStartDate, fourthEndDate);
-      unitI = new TaskUnit([unitE, unitF], fourthStartDate, fourthEndDate);
-      unitJ = new TaskUnit([unitF, unitG], thirdStartDate, thirdEndDate);
+      unitH = new TaskUnit([unitD, unitE], lateSeventhDate, lateEighthDate);
+      unitI = new TaskUnit([unitE, unitF], lateSeventhDate, lateEighthDate);
+      unitJ = new TaskUnit([unitF, unitG], lateFifthDate, lateSixthDate);
 
       chainMap = new SimpleChainMap([unitH, unitI, unitJ]);
     });
     it("should have A anticipated to start at first date", function () {
-      expect(unitA.anticipatedStartDate).to.deep.equal(firstStartDate);
+      expect(unitA.anticipatedStartDate).to.deep.equal(firstDate);
     });
     it("should have A anticipated to end at first date", function () {
-      expect(unitA.anticipatedEndDate).to.deep.equal(firstEndDate);
+      expect(unitA.anticipatedEndDate).to.deep.equal(secondDate);
     });
     it("should have A apparently starting at first end date", function () {
-      expect(unitA.apparentStartDate).to.deep.equal(firstEndDate);
+      expect(unitA.apparentStartDate).to.deep.equal(secondDate);
     });
     it("should have A apparently ending after first end date and before second start date", function () {
       expect(unitA.apparentEndDate)
-        .to.be.greaterThan(firstEndDate)
-        .and.lessThan(secondStartDate);
+        .to.be.greaterThan(secondDate)
+        .and.lessThan(lateThirdDate);
     });
     it("should have B anticipated to start at first date", function () {
-      expect(unitB.anticipatedStartDate).to.deep.equal(firstStartDate);
+      expect(unitB.anticipatedStartDate).to.deep.equal(firstDate);
     });
     it("should have B anticipated to end at first date", function () {
-      expect(unitB.anticipatedEndDate).to.deep.equal(firstEndDate);
+      expect(unitB.anticipatedEndDate).to.deep.equal(secondDate);
     });
     it("should have B apparently starting at first date", function () {
-      expect(unitB.apparentStartDate).to.deep.equal(firstStartDate);
+      expect(unitB.apparentStartDate).to.deep.equal(firstDate);
     });
     it("should have B apparently ending at first date", function () {
-      expect(unitB.apparentEndDate).to.deep.equal(firstEndDate);
+      expect(unitB.apparentEndDate).to.deep.equal(secondDate);
     });
     it("should have C anticipated to start at first date", function () {
-      expect(unitC.anticipatedStartDate).to.deep.equal(firstStartDate);
+      expect(unitC.anticipatedStartDate).to.deep.equal(firstDate);
     });
     it("should have C anticipated to end at first date", function () {
-      expect(unitC.anticipatedEndDate).to.deep.equal(firstEndDate);
+      expect(unitC.anticipatedEndDate).to.deep.equal(secondDate);
     });
     it("should have C apparently starting at first date", function () {
-      expect(unitC.apparentStartDate).to.deep.equal(firstStartDate);
+      expect(unitC.apparentStartDate).to.deep.equal(firstDate);
     });
     it("should have C apparently ending at first date", function () {
-      expect(unitC.apparentEndDate).to.deep.equal(firstEndDate);
+      expect(unitC.apparentEndDate).to.deep.equal(secondDate);
     });
     it("should have D anticipated to start at third date", function () {
-      expect(unitD.anticipatedStartDate).to.deep.equal(thirdStartDate);
+      expect(unitD.anticipatedStartDate).to.deep.equal(lateFifthDate);
     });
     it("should have D anticipated to end at third date", function () {
-      expect(unitD.anticipatedEndDate).to.deep.equal(thirdEndDate);
+      expect(unitD.anticipatedEndDate).to.deep.equal(lateSixthDate);
     });
     it("should have D apparently starting at third date", function () {
-      expect(unitD.apparentStartDate).to.deep.equal(thirdStartDate);
+      expect(unitD.apparentStartDate).to.deep.equal(lateFifthDate);
     });
     it("should have D apparently ending at third date", function () {
-      expect(unitD.apparentEndDate).to.deep.equal(thirdEndDate);
+      expect(unitD.apparentEndDate).to.deep.equal(lateSixthDate);
     });
     it("should have E anticipated to start at third date", function () {
-      expect(unitE.anticipatedStartDate).to.deep.equal(thirdStartDate);
+      expect(unitE.anticipatedStartDate).to.deep.equal(lateFifthDate);
     });
     it("should have E anticipated to end at third date", function () {
-      expect(unitE.anticipatedEndDate).to.deep.equal(thirdEndDate);
+      expect(unitE.anticipatedEndDate).to.deep.equal(lateSixthDate);
     });
     it("should have E apparently starting at third date", function () {
-      expect(unitE.apparentStartDate).to.deep.equal(thirdStartDate);
+      expect(unitE.apparentStartDate).to.deep.equal(lateFifthDate);
     });
     it("should have E apparently ending at third date", function () {
-      expect(unitE.apparentEndDate).to.deep.equal(thirdEndDate);
+      expect(unitE.apparentEndDate).to.deep.equal(lateSixthDate);
     });
     it("should have F anticipated to start at second date", function () {
-      expect(unitF.anticipatedStartDate).to.deep.equal(secondStartDate);
+      expect(unitF.anticipatedStartDate).to.deep.equal(lateThirdDate);
     });
     it("should have F anticipated to end at second date", function () {
-      expect(unitF.anticipatedEndDate).to.deep.equal(secondEndDate);
+      expect(unitF.anticipatedEndDate).to.deep.equal(lateFourthDate);
     });
     it("should have F apparently starting at second date", function () {
-      expect(unitF.apparentStartDate).to.deep.equal(secondStartDate);
+      expect(unitF.apparentStartDate).to.deep.equal(lateThirdDate);
     });
     it("should have F apparently ending at second date", function () {
-      expect(unitF.apparentEndDate).to.deep.equal(secondEndDate);
+      expect(unitF.apparentEndDate).to.deep.equal(lateFourthDate);
     });
     it("should have G anticipated to start at second date", function () {
-      expect(unitG.anticipatedStartDate).to.deep.equal(secondStartDate);
+      expect(unitG.anticipatedStartDate).to.deep.equal(lateThirdDate);
     });
     it("should have G anticipated to end at second date", function () {
-      expect(unitG.anticipatedEndDate).to.deep.equal(secondEndDate);
+      expect(unitG.anticipatedEndDate).to.deep.equal(lateFourthDate);
     });
     it("should have G apparently starting at second date", function () {
-      expect(unitG.apparentStartDate).to.deep.equal(secondStartDate);
+      expect(unitG.apparentStartDate).to.deep.equal(lateThirdDate);
     });
     it("should have G apparently ending at second date", function () {
-      expect(unitG.apparentEndDate).to.deep.equal(secondEndDate);
+      expect(unitG.apparentEndDate).to.deep.equal(lateFourthDate);
     });
     it("should have H anticipated to start at fourth date", function () {
-      expect(unitH.anticipatedStartDate).to.deep.equal(fourthStartDate);
+      expect(unitH.anticipatedStartDate).to.deep.equal(lateSeventhDate);
     });
     it("should have H anticipated to end at fourth date", function () {
-      expect(unitH.anticipatedEndDate).to.deep.equal(fourthEndDate);
+      expect(unitH.anticipatedEndDate).to.deep.equal(lateEighthDate);
     });
     it("should have H apparently starting at fourth date", function () {
-      expect(unitH.apparentStartDate).to.deep.equal(fourthStartDate);
+      expect(unitH.apparentStartDate).to.deep.equal(lateSeventhDate);
     });
     it("should have H apparently ending at fourth date", function () {
-      expect(unitH.apparentEndDate).to.deep.equal(fourthEndDate);
+      expect(unitH.apparentEndDate).to.deep.equal(lateEighthDate);
     });
     it("should have I anticipated to start at fourth date", function () {
-      expect(unitI.anticipatedStartDate).to.deep.equal(fourthStartDate);
+      expect(unitI.anticipatedStartDate).to.deep.equal(lateSeventhDate);
     });
     it("should have I anticipated to end at fourth date", function () {
-      expect(unitI.anticipatedEndDate).to.deep.equal(fourthEndDate);
+      expect(unitI.anticipatedEndDate).to.deep.equal(lateEighthDate);
     });
     it("should have I apparently starting at fourth date", function () {
-      expect(unitI.apparentStartDate).to.deep.equal(fourthStartDate);
+      expect(unitI.apparentStartDate).to.deep.equal(lateSeventhDate);
     });
     it("should have I apparently ending at fourth date", function () {
-      expect(unitI.apparentEndDate).to.deep.equal(fourthEndDate);
+      expect(unitI.apparentEndDate).to.deep.equal(lateEighthDate);
     });
     it("should have J anticipated to start at third date", function () {
-      expect(unitJ.anticipatedStartDate).to.deep.equal(thirdStartDate);
+      expect(unitJ.anticipatedStartDate).to.deep.equal(lateFifthDate);
     });
     it("should have J anticipated to end at third date", function () {
-      expect(unitJ.anticipatedEndDate).to.deep.equal(thirdEndDate);
+      expect(unitJ.anticipatedEndDate).to.deep.equal(lateSixthDate);
     });
     it("should have J apparently starting at third date", function () {
-      expect(unitJ.apparentStartDate).to.deep.equal(thirdStartDate);
+      expect(unitJ.apparentStartDate).to.deep.equal(lateFifthDate);
     });
     it("should have J apparently ending at third date", function () {
-      expect(unitJ.apparentEndDate).to.deep.equal(thirdEndDate);
+      expect(unitJ.apparentEndDate).to.deep.equal(lateSixthDate);
     });
     it("should have same start time of unit for chain for A", function () {
       expect(chainMap.getChainOfUnit(unitA).anticipatedStartDate).to.deep.equal(
@@ -2985,160 +2854,144 @@ describe("SimpleChainMap", function () {
     let unitJ: TaskUnit;
     let chainMap: SimpleChainMap;
     const normalTaskDuration = 1000;
-    const firstStartDate = new Date();
-    const firstEndDate = new Date(
-      firstStartDate.getTime() + normalTaskDuration
-    );
-    const secondStartDate = new Date(firstEndDate.getTime());
-    const secondEndDate = new Date(
-      secondStartDate.getTime() + normalTaskDuration
-    );
-    const thirdStartDate = new Date(secondEndDate.getTime());
-    const thirdEndDate = new Date(
-      thirdStartDate.getTime() + normalTaskDuration
-    );
-    const fourthStartDate = new Date(thirdEndDate.getTime());
-    const fourthEndDate = new Date(
-      fourthStartDate.getTime() + normalTaskDuration
-    );
-    const aExtension = secondEndDate.getTime() - firstEndDate.getTime();
+    const aExtension = thirdDate.getTime() - secondDate.getTime();
     before(function () {
-      unitA = new TaskUnit([], firstStartDate, firstEndDate, "A", [
-        { type: EventType.TaskIterationStarted, date: firstStartDate },
-        { type: EventType.ReviewedAndAccepted, date: secondEndDate },
+      unitA = new TaskUnit([], firstDate, secondDate, "A", [
+        { type: EventType.TaskIterationStarted, date: firstDate },
+        { type: EventType.ReviewedAndAccepted, date: thirdDate },
       ]);
-      unitB = new TaskUnit([], firstStartDate, firstEndDate);
-      unitC = new TaskUnit([], firstStartDate, firstEndDate);
+      unitB = new TaskUnit([], firstDate, secondDate);
+      unitC = new TaskUnit([], firstDate, secondDate);
 
-      unitD = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      unitE = new TaskUnit([unitA, unitB], secondStartDate, secondEndDate);
-      unitF = new TaskUnit([unitB, unitC], secondStartDate, secondEndDate);
-      unitG = new TaskUnit([unitC], secondStartDate, secondEndDate);
+      unitD = new TaskUnit([unitA], secondDate, thirdDate);
+      unitE = new TaskUnit([unitA, unitB], secondDate, thirdDate);
+      unitF = new TaskUnit([unitB, unitC], secondDate, thirdDate);
+      unitG = new TaskUnit([unitC], secondDate, thirdDate);
 
-      unitH = new TaskUnit([unitD, unitE], thirdStartDate, thirdEndDate);
-      unitI = new TaskUnit([unitE, unitF], thirdStartDate, thirdEndDate);
-      unitJ = new TaskUnit([unitF, unitG], thirdStartDate, thirdEndDate);
+      unitH = new TaskUnit([unitD, unitE], thirdDate, fourthDate);
+      unitI = new TaskUnit([unitE, unitF], thirdDate, fourthDate);
+      unitJ = new TaskUnit([unitF, unitG], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitH, unitI, unitJ]);
     });
     it("should have A anticipated to start at first date", function () {
-      expect(unitA.anticipatedStartDate).to.deep.equal(firstStartDate);
+      expect(unitA.anticipatedStartDate).to.deep.equal(firstDate);
     });
     it("should have A anticipated to end at first date", function () {
-      expect(unitA.anticipatedEndDate).to.deep.equal(firstEndDate);
+      expect(unitA.anticipatedEndDate).to.deep.equal(secondDate);
     });
     it("should have A apparently starting at first date", function () {
-      expect(unitA.apparentStartDate).to.deep.equal(firstStartDate);
+      expect(unitA.apparentStartDate).to.deep.equal(firstDate);
     });
     it("should have A apparently ending at second date", function () {
-      expect(unitA.apparentEndDate).to.deep.equal(secondEndDate);
+      expect(unitA.apparentEndDate).to.deep.equal(thirdDate);
     });
     it("should have B anticipated to start at first date", function () {
-      expect(unitB.anticipatedStartDate).to.deep.equal(firstStartDate);
+      expect(unitB.anticipatedStartDate).to.deep.equal(firstDate);
     });
     it("should have B anticipated to end at first date", function () {
-      expect(unitB.anticipatedEndDate).to.deep.equal(firstEndDate);
+      expect(unitB.anticipatedEndDate).to.deep.equal(secondDate);
     });
     it("should have B apparently starting at first date", function () {
-      expect(unitB.apparentStartDate).to.deep.equal(firstStartDate);
+      expect(unitB.apparentStartDate).to.deep.equal(firstDate);
     });
     it("should have B apparently ending at first date", function () {
-      expect(unitB.apparentEndDate).to.deep.equal(firstEndDate);
+      expect(unitB.apparentEndDate).to.deep.equal(secondDate);
     });
     it("should have C anticipated to start at first date", function () {
-      expect(unitC.anticipatedStartDate).to.deep.equal(firstStartDate);
+      expect(unitC.anticipatedStartDate).to.deep.equal(firstDate);
     });
     it("should have C anticipated to end at first date", function () {
-      expect(unitC.anticipatedEndDate).to.deep.equal(firstEndDate);
+      expect(unitC.anticipatedEndDate).to.deep.equal(secondDate);
     });
     it("should have C apparently starting at first date", function () {
-      expect(unitC.apparentStartDate).to.deep.equal(firstStartDate);
+      expect(unitC.apparentStartDate).to.deep.equal(firstDate);
     });
     it("should have C apparently ending at first date", function () {
-      expect(unitC.apparentEndDate).to.deep.equal(firstEndDate);
+      expect(unitC.apparentEndDate).to.deep.equal(secondDate);
     });
     it("should have D anticipated to start at second date", function () {
-      expect(unitD.anticipatedStartDate).to.deep.equal(secondStartDate);
+      expect(unitD.anticipatedStartDate).to.deep.equal(secondDate);
     });
     it("should have D anticipated to end at second date", function () {
-      expect(unitD.anticipatedEndDate).to.deep.equal(secondEndDate);
+      expect(unitD.anticipatedEndDate).to.deep.equal(thirdDate);
     });
     it("should have D apparently starting at third date", function () {
-      expect(unitD.apparentStartDate).to.deep.equal(thirdStartDate);
+      expect(unitD.apparentStartDate).to.deep.equal(thirdDate);
     });
     it("should have D apparently ending at third date", function () {
-      expect(unitD.apparentEndDate).to.deep.equal(thirdEndDate);
+      expect(unitD.apparentEndDate).to.deep.equal(fourthDate);
     });
     it("should have E anticipated to start at second date", function () {
-      expect(unitE.anticipatedStartDate).to.deep.equal(secondStartDate);
+      expect(unitE.anticipatedStartDate).to.deep.equal(secondDate);
     });
     it("should have E anticipated to end at second date", function () {
-      expect(unitE.anticipatedEndDate).to.deep.equal(secondEndDate);
+      expect(unitE.anticipatedEndDate).to.deep.equal(thirdDate);
     });
     it("should have E apparently starting at third date", function () {
-      expect(unitE.apparentStartDate).to.deep.equal(thirdStartDate);
+      expect(unitE.apparentStartDate).to.deep.equal(thirdDate);
     });
     it("should have E apparently ending at third date", function () {
-      expect(unitE.apparentEndDate).to.deep.equal(thirdEndDate);
+      expect(unitE.apparentEndDate).to.deep.equal(fourthDate);
     });
     it("should have F anticipated to start at second date", function () {
-      expect(unitF.anticipatedStartDate).to.deep.equal(secondStartDate);
+      expect(unitF.anticipatedStartDate).to.deep.equal(secondDate);
     });
     it("should have F anticipated to end at second date", function () {
-      expect(unitF.anticipatedEndDate).to.deep.equal(secondEndDate);
+      expect(unitF.anticipatedEndDate).to.deep.equal(thirdDate);
     });
     it("should have F apparently starting at second date", function () {
-      expect(unitF.apparentStartDate).to.deep.equal(secondStartDate);
+      expect(unitF.apparentStartDate).to.deep.equal(secondDate);
     });
     it("should have F apparently ending at second date", function () {
-      expect(unitF.apparentEndDate).to.deep.equal(secondEndDate);
+      expect(unitF.apparentEndDate).to.deep.equal(thirdDate);
     });
     it("should have G anticipated to start at second date", function () {
-      expect(unitG.anticipatedStartDate).to.deep.equal(secondStartDate);
+      expect(unitG.anticipatedStartDate).to.deep.equal(secondDate);
     });
     it("should have G anticipated to end at second date", function () {
-      expect(unitG.anticipatedEndDate).to.deep.equal(secondEndDate);
+      expect(unitG.anticipatedEndDate).to.deep.equal(thirdDate);
     });
     it("should have G apparently starting at second date", function () {
-      expect(unitG.apparentStartDate).to.deep.equal(secondStartDate);
+      expect(unitG.apparentStartDate).to.deep.equal(secondDate);
     });
     it("should have G apparently ending at second date", function () {
-      expect(unitG.apparentEndDate).to.deep.equal(secondEndDate);
+      expect(unitG.apparentEndDate).to.deep.equal(thirdDate);
     });
     it("should have H anticipated to start at third date", function () {
-      expect(unitH.anticipatedStartDate).to.deep.equal(thirdStartDate);
+      expect(unitH.anticipatedStartDate).to.deep.equal(thirdDate);
     });
     it("should have H anticipated to end at third date", function () {
-      expect(unitH.anticipatedEndDate).to.deep.equal(thirdEndDate);
+      expect(unitH.anticipatedEndDate).to.deep.equal(fourthDate);
     });
     it("should have H apparently starting at fourth date", function () {
-      expect(unitH.apparentStartDate).to.deep.equal(fourthStartDate);
+      expect(unitH.apparentStartDate).to.deep.equal(fourthDate);
     });
     it("should have H apparently ending at fourth date", function () {
-      expect(unitH.apparentEndDate).to.deep.equal(fourthEndDate);
+      expect(unitH.apparentEndDate).to.deep.equal(fifthDate);
     });
     it("should have I anticipated to start at third date", function () {
-      expect(unitI.anticipatedStartDate).to.deep.equal(thirdStartDate);
+      expect(unitI.anticipatedStartDate).to.deep.equal(thirdDate);
     });
     it("should have I anticipated to end at third date", function () {
-      expect(unitI.anticipatedEndDate).to.deep.equal(thirdEndDate);
+      expect(unitI.anticipatedEndDate).to.deep.equal(fourthDate);
     });
     it("should have I apparently starting at fourth date", function () {
-      expect(unitI.apparentStartDate).to.deep.equal(fourthStartDate);
+      expect(unitI.apparentStartDate).to.deep.equal(fourthDate);
     });
     it("should have I apparently ending at fourth date", function () {
-      expect(unitI.apparentEndDate).to.deep.equal(fourthEndDate);
+      expect(unitI.apparentEndDate).to.deep.equal(fifthDate);
     });
     it("should have J anticipated to start at third date", function () {
-      expect(unitJ.anticipatedStartDate).to.deep.equal(thirdStartDate);
+      expect(unitJ.anticipatedStartDate).to.deep.equal(thirdDate);
     });
     it("should have J anticipated to end at third date", function () {
-      expect(unitJ.anticipatedEndDate).to.deep.equal(thirdEndDate);
+      expect(unitJ.anticipatedEndDate).to.deep.equal(fourthDate);
     });
     it("should have J apparently starting at third date", function () {
-      expect(unitJ.apparentStartDate).to.deep.equal(thirdStartDate);
+      expect(unitJ.apparentStartDate).to.deep.equal(thirdDate);
     });
     it("should have J apparently ending at third date", function () {
-      expect(unitJ.apparentEndDate).to.deep.equal(thirdEndDate);
+      expect(unitJ.apparentEndDate).to.deep.equal(fourthDate);
     });
     it("should have same start time of unit for chain for A", function () {
       expect(chainMap.getChainOfUnit(unitA).anticipatedStartDate).to.deep.equal(
@@ -3420,171 +3273,151 @@ describe("SimpleChainMap", function () {
     let unitJ: TaskUnit;
     let chainMap: SimpleChainMap;
     const normalTaskDuration = 1000;
-    const firstStartDate = new Date();
-    const firstEndDate = new Date(
-      firstStartDate.getTime() + normalTaskDuration
-    );
-    const secondStartDate = new Date(firstEndDate.getTime() + 1500);
-    const secondEndDate = new Date(
-      secondStartDate.getTime() + normalTaskDuration
-    );
-    const thirdStartDate = new Date(
-      secondEndDate.getTime() + normalTaskDuration
-    );
-    const thirdEndDate = new Date(
-      thirdStartDate.getTime() + normalTaskDuration
-    );
-    const fourthStartDate = new Date(
-      thirdEndDate.getTime() + normalTaskDuration
-    );
-    const fourthEndDate = new Date(
-      fourthStartDate.getTime() + normalTaskDuration
-    );
     const aExtension = normalTaskDuration;
     before(function () {
-      unitA = new TaskUnit([], firstStartDate, firstEndDate, "A", [
-        { type: EventType.TaskIterationStarted, date: firstStartDate },
+      unitA = new TaskUnit([], firstDate, secondDate, "A", [
+        { type: EventType.TaskIterationStarted, date: firstDate },
         {
           type: EventType.ReviewedAndAccepted,
-          date: new Date(firstEndDate.getTime() + normalTaskDuration),
+          date: new Date(secondDate.getTime() + normalTaskDuration),
         },
       ]);
-      unitA.apparentEndDate = new Date(firstEndDate.getTime() + 1000);
-      unitB = new TaskUnit([], firstStartDate, firstEndDate);
-      unitC = new TaskUnit([], firstStartDate, firstEndDate);
+      unitA.apparentEndDate = new Date(secondDate.getTime() + 1000);
+      unitB = new TaskUnit([], firstDate, secondDate);
+      unitC = new TaskUnit([], firstDate, secondDate);
 
-      unitD = new TaskUnit([unitA], thirdStartDate, thirdEndDate);
-      unitE = new TaskUnit([unitA, unitB], thirdStartDate, thirdEndDate);
-      unitF = new TaskUnit([unitB, unitC], secondStartDate, secondEndDate);
-      unitG = new TaskUnit([unitC], secondStartDate, secondEndDate);
+      unitD = new TaskUnit([unitA], lateFifthDate, lateSixthDate);
+      unitE = new TaskUnit([unitA, unitB], lateFifthDate, lateSixthDate);
+      unitF = new TaskUnit([unitB, unitC], lateThirdDate, lateFourthDate);
+      unitG = new TaskUnit([unitC], lateThirdDate, lateFourthDate);
 
-      unitH = new TaskUnit([unitD, unitE], fourthStartDate, fourthEndDate);
-      unitI = new TaskUnit([unitE, unitF], fourthStartDate, fourthEndDate);
-      unitJ = new TaskUnit([unitF, unitG], thirdStartDate, thirdEndDate);
+      unitH = new TaskUnit([unitD, unitE], lateSeventhDate, lateEighthDate);
+      unitI = new TaskUnit([unitE, unitF], lateSeventhDate, lateEighthDate);
+      unitJ = new TaskUnit([unitF, unitG], lateFifthDate, lateSixthDate);
 
       chainMap = new SimpleChainMap([unitH, unitI, unitJ]);
     });
     it("should have A anticipated to start at first date", function () {
-      expect(unitA.anticipatedStartDate).to.deep.equal(firstStartDate);
+      expect(unitA.anticipatedStartDate).to.deep.equal(firstDate);
     });
     it("should have A anticipated to end at first date", function () {
-      expect(unitA.anticipatedEndDate).to.deep.equal(firstEndDate);
+      expect(unitA.anticipatedEndDate).to.deep.equal(secondDate);
     });
     it("should have A apparently starting at first start date", function () {
-      expect(unitA.apparentStartDate).to.deep.equal(firstStartDate);
+      expect(unitA.apparentStartDate).to.deep.equal(firstDate);
     });
     it("should have A apparently ending after first end date and before second start date", function () {
       expect(unitA.apparentEndDate)
-        .to.be.greaterThan(firstEndDate)
-        .and.lessThan(secondStartDate);
+        .to.be.greaterThan(secondDate)
+        .and.lessThan(lateThirdDate);
     });
     it("should have B anticipated to start at first date", function () {
-      expect(unitB.anticipatedStartDate).to.deep.equal(firstStartDate);
+      expect(unitB.anticipatedStartDate).to.deep.equal(firstDate);
     });
     it("should have B anticipated to end at first date", function () {
-      expect(unitB.anticipatedEndDate).to.deep.equal(firstEndDate);
+      expect(unitB.anticipatedEndDate).to.deep.equal(secondDate);
     });
     it("should have B apparently starting at first date", function () {
-      expect(unitB.apparentStartDate).to.deep.equal(firstStartDate);
+      expect(unitB.apparentStartDate).to.deep.equal(firstDate);
     });
     it("should have B apparently ending at first date", function () {
-      expect(unitB.apparentEndDate).to.deep.equal(firstEndDate);
+      expect(unitB.apparentEndDate).to.deep.equal(secondDate);
     });
     it("should have C anticipated to start at first date", function () {
-      expect(unitC.anticipatedStartDate).to.deep.equal(firstStartDate);
+      expect(unitC.anticipatedStartDate).to.deep.equal(firstDate);
     });
     it("should have C anticipated to end at first date", function () {
-      expect(unitC.anticipatedEndDate).to.deep.equal(firstEndDate);
+      expect(unitC.anticipatedEndDate).to.deep.equal(secondDate);
     });
     it("should have C apparently starting at first date", function () {
-      expect(unitC.apparentStartDate).to.deep.equal(firstStartDate);
+      expect(unitC.apparentStartDate).to.deep.equal(firstDate);
     });
     it("should have C apparently ending at first date", function () {
-      expect(unitC.apparentEndDate).to.deep.equal(firstEndDate);
+      expect(unitC.apparentEndDate).to.deep.equal(secondDate);
     });
     it("should have D anticipated to start at third date", function () {
-      expect(unitD.anticipatedStartDate).to.deep.equal(thirdStartDate);
+      expect(unitD.anticipatedStartDate).to.deep.equal(lateFifthDate);
     });
     it("should have D anticipated to end at third date", function () {
-      expect(unitD.anticipatedEndDate).to.deep.equal(thirdEndDate);
+      expect(unitD.anticipatedEndDate).to.deep.equal(lateSixthDate);
     });
     it("should have D apparently starting at third date", function () {
-      expect(unitD.apparentStartDate).to.deep.equal(thirdStartDate);
+      expect(unitD.apparentStartDate).to.deep.equal(lateFifthDate);
     });
     it("should have D apparently ending at third date", function () {
-      expect(unitD.apparentEndDate).to.deep.equal(thirdEndDate);
+      expect(unitD.apparentEndDate).to.deep.equal(lateSixthDate);
     });
     it("should have E anticipated to start at third date", function () {
-      expect(unitE.anticipatedStartDate).to.deep.equal(thirdStartDate);
+      expect(unitE.anticipatedStartDate).to.deep.equal(lateFifthDate);
     });
     it("should have E anticipated to end at third date", function () {
-      expect(unitE.anticipatedEndDate).to.deep.equal(thirdEndDate);
+      expect(unitE.anticipatedEndDate).to.deep.equal(lateSixthDate);
     });
     it("should have E apparently starting at third date", function () {
-      expect(unitE.apparentStartDate).to.deep.equal(thirdStartDate);
+      expect(unitE.apparentStartDate).to.deep.equal(lateFifthDate);
     });
     it("should have E apparently ending at third date", function () {
-      expect(unitE.apparentEndDate).to.deep.equal(thirdEndDate);
+      expect(unitE.apparentEndDate).to.deep.equal(lateSixthDate);
     });
     it("should have F anticipated to start at second date", function () {
-      expect(unitF.anticipatedStartDate).to.deep.equal(secondStartDate);
+      expect(unitF.anticipatedStartDate).to.deep.equal(lateThirdDate);
     });
     it("should have F anticipated to end at second date", function () {
-      expect(unitF.anticipatedEndDate).to.deep.equal(secondEndDate);
+      expect(unitF.anticipatedEndDate).to.deep.equal(lateFourthDate);
     });
     it("should have F apparently starting at second date", function () {
-      expect(unitF.apparentStartDate).to.deep.equal(secondStartDate);
+      expect(unitF.apparentStartDate).to.deep.equal(lateThirdDate);
     });
     it("should have F apparently ending at second date", function () {
-      expect(unitF.apparentEndDate).to.deep.equal(secondEndDate);
+      expect(unitF.apparentEndDate).to.deep.equal(lateFourthDate);
     });
     it("should have G anticipated to start at second date", function () {
-      expect(unitG.anticipatedStartDate).to.deep.equal(secondStartDate);
+      expect(unitG.anticipatedStartDate).to.deep.equal(lateThirdDate);
     });
     it("should have G anticipated to end at second date", function () {
-      expect(unitG.anticipatedEndDate).to.deep.equal(secondEndDate);
+      expect(unitG.anticipatedEndDate).to.deep.equal(lateFourthDate);
     });
     it("should have G apparently starting at second date", function () {
-      expect(unitG.apparentStartDate).to.deep.equal(secondStartDate);
+      expect(unitG.apparentStartDate).to.deep.equal(lateThirdDate);
     });
     it("should have G apparently ending at second date", function () {
-      expect(unitG.apparentEndDate).to.deep.equal(secondEndDate);
+      expect(unitG.apparentEndDate).to.deep.equal(lateFourthDate);
     });
     it("should have H anticipated to start at fourth date", function () {
-      expect(unitH.anticipatedStartDate).to.deep.equal(fourthStartDate);
+      expect(unitH.anticipatedStartDate).to.deep.equal(lateSeventhDate);
     });
     it("should have H anticipated to end at fourth date", function () {
-      expect(unitH.anticipatedEndDate).to.deep.equal(fourthEndDate);
+      expect(unitH.anticipatedEndDate).to.deep.equal(lateEighthDate);
     });
     it("should have H apparently starting at fourth date", function () {
-      expect(unitH.apparentStartDate).to.deep.equal(fourthStartDate);
+      expect(unitH.apparentStartDate).to.deep.equal(lateSeventhDate);
     });
     it("should have H apparently ending at fourth date", function () {
-      expect(unitH.apparentEndDate).to.deep.equal(fourthEndDate);
+      expect(unitH.apparentEndDate).to.deep.equal(lateEighthDate);
     });
     it("should have I anticipated to start at fourth date", function () {
-      expect(unitI.anticipatedStartDate).to.deep.equal(fourthStartDate);
+      expect(unitI.anticipatedStartDate).to.deep.equal(lateSeventhDate);
     });
     it("should have I anticipated to end at fourth date", function () {
-      expect(unitI.anticipatedEndDate).to.deep.equal(fourthEndDate);
+      expect(unitI.anticipatedEndDate).to.deep.equal(lateEighthDate);
     });
     it("should have I apparently starting at fourth date", function () {
-      expect(unitI.apparentStartDate).to.deep.equal(fourthStartDate);
+      expect(unitI.apparentStartDate).to.deep.equal(lateSeventhDate);
     });
     it("should have I apparently ending at fourth date", function () {
-      expect(unitI.apparentEndDate).to.deep.equal(fourthEndDate);
+      expect(unitI.apparentEndDate).to.deep.equal(lateEighthDate);
     });
     it("should have J anticipated to start at third date", function () {
-      expect(unitJ.anticipatedStartDate).to.deep.equal(thirdStartDate);
+      expect(unitJ.anticipatedStartDate).to.deep.equal(lateFifthDate);
     });
     it("should have J anticipated to end at third date", function () {
-      expect(unitJ.anticipatedEndDate).to.deep.equal(thirdEndDate);
+      expect(unitJ.anticipatedEndDate).to.deep.equal(lateSixthDate);
     });
     it("should have J apparently starting at third date", function () {
-      expect(unitJ.apparentStartDate).to.deep.equal(thirdStartDate);
+      expect(unitJ.apparentStartDate).to.deep.equal(lateFifthDate);
     });
     it("should have J apparently ending at third date", function () {
-      expect(unitJ.apparentEndDate).to.deep.equal(thirdEndDate);
+      expect(unitJ.apparentEndDate).to.deep.equal(lateSixthDate);
     });
     it("should have same start time of unit for chain for A", function () {
       expect(chainMap.getChainOfUnit(unitA).anticipatedStartDate).to.deep.equal(

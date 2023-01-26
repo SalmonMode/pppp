@@ -2,6 +2,21 @@ import { expect } from "chai";
 import { NoSuchChainPathError } from "../Error";
 import { IsolatedDependencyChain, TaskUnit, TaskUnitCluster } from "./";
 
+const firstDate = new Date();
+const secondDate = new Date(firstDate.getTime() + 1000);
+const thirdDate = new Date(secondDate.getTime() + 1000);
+const fourthDate = new Date(thirdDate.getTime() + 1000);
+const fifthDate = new Date(fourthDate.getTime() + 1000);
+const sixthDate = new Date(fifthDate.getTime() + 1000);
+const seventhDate = new Date(sixthDate.getTime() + 1000);
+const eighthDate = new Date(seventhDate.getTime() + 1000);
+const ninthDate = new Date(eighthDate.getTime() + 1000);
+const tenthDate = new Date(ninthDate.getTime() + 1000);
+const eleventhDate = new Date(tenthDate.getTime() + 1000);
+const twelfthDate = new Date(eleventhDate.getTime() + 1000);
+const thirteenthDate = new Date(twelfthDate.getTime() + 1000);
+const fourteenthDate = new Date(thirteenthDate.getTime() + 1000);
+
 describe("TaskUnitCluster", function () {
   describe("No Units", function () {
     it("should throw RangeError", function () {
@@ -21,18 +36,10 @@ describe("TaskUnitCluster", function () {
      */
     let cluster: TaskUnitCluster;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 1000);
-      const startDateB = new Date(endDateA.getTime());
-      const endDateB = new Date(startDateB.getTime() + 1000);
-      const startDateC = new Date(startDateB.getTime());
-      const endDateC = new Date(endDateB.getTime());
-      const startDateD = new Date(endDateC.getTime());
-      const endDateD = new Date(startDateD.getTime() + 1000);
-      const unitA = new TaskUnit([], startDateA, endDateA);
-      const unitB = new TaskUnit([unitA], startDateB, endDateB);
-      const unitC = new TaskUnit([unitA], startDateC, endDateC);
-      const unitD = new TaskUnit([unitB, unitC], startDateD, endDateD);
+      const unitA = new TaskUnit([], firstDate, secondDate);
+      const unitB = new TaskUnit([unitA], secondDate, thirdDate);
+      const unitC = new TaskUnit([unitA], secondDate, thirdDate);
+      const unitD = new TaskUnit([unitB, unitC], thirdDate, fourthDate);
       cluster = new TaskUnitCluster([unitD]);
     });
     it("should have 2 paths", function () {
@@ -63,25 +70,15 @@ describe("TaskUnitCluster", function () {
     let chainG: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      const unitE = new TaskUnit([], firstStartDate, firstEndDate);
+      const unitA = new TaskUnit([], firstDate, secondDate);
+      const unitE = new TaskUnit([], firstDate, secondDate);
 
-      const unitB = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      const unitD = new TaskUnit(
-        [unitA, unitE],
-        secondStartDate,
-        secondEndDate
-      );
-      const unitG = new TaskUnit([unitE], secondStartDate, secondEndDate);
+      const unitB = new TaskUnit([unitA], thirdDate, fourthDate);
+      const unitD = new TaskUnit([unitA, unitE], thirdDate, fourthDate);
+      const unitG = new TaskUnit([unitE], thirdDate, fourthDate);
 
-      const unitC = new TaskUnit([unitB, unitD], thirdStartDate, thirdEndDate);
-      const unitF = new TaskUnit([unitD, unitG], thirdStartDate, thirdEndDate);
+      const unitC = new TaskUnit([unitB, unitD], fifthDate, sixthDate);
+      const unitF = new TaskUnit([unitD, unitG], fifthDate, sixthDate);
       cluster = new TaskUnitCluster([unitC, unitF]);
       chainA = cluster.chainMap.getChainOfUnit(unitA);
       chainB = cluster.chainMap.getChainOfUnit(unitB);
@@ -157,32 +154,18 @@ describe("TaskUnitCluster", function () {
     let chainJ: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      const unitB = new TaskUnit([], firstStartDate, firstEndDate);
-      const unitC = new TaskUnit([], firstStartDate, firstEndDate);
+      const unitA = new TaskUnit([], firstDate, secondDate);
+      const unitB = new TaskUnit([], firstDate, secondDate);
+      const unitC = new TaskUnit([], firstDate, secondDate);
 
-      const unitD = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      const unitE = new TaskUnit(
-        [unitA, unitB],
-        secondStartDate,
-        secondEndDate
-      );
-      const unitF = new TaskUnit(
-        [unitB, unitC],
-        secondStartDate,
-        secondEndDate
-      );
-      const unitG = new TaskUnit([unitC], secondStartDate, secondEndDate);
+      const unitD = new TaskUnit([unitA], thirdDate, fourthDate);
+      const unitE = new TaskUnit([unitA, unitB], thirdDate, fourthDate);
+      const unitF = new TaskUnit([unitB, unitC], thirdDate, fourthDate);
+      const unitG = new TaskUnit([unitC], thirdDate, fourthDate);
 
-      const unitH = new TaskUnit([unitD, unitE], thirdStartDate, thirdEndDate);
-      const unitI = new TaskUnit([unitE, unitF], thirdStartDate, thirdEndDate);
-      const unitJ = new TaskUnit([unitF, unitG], thirdStartDate, thirdEndDate);
+      const unitH = new TaskUnit([unitD, unitE], fifthDate, sixthDate);
+      const unitI = new TaskUnit([unitE, unitF], fifthDate, sixthDate);
+      const unitJ = new TaskUnit([unitF, unitG], fifthDate, sixthDate);
       cluster = new TaskUnitCluster([unitH, unitI, unitJ]);
       chainA = cluster.chainMap.getChainOfUnit(unitA);
       chainB = cluster.chainMap.getChainOfUnit(unitB);
@@ -259,37 +242,19 @@ describe("TaskUnitCluster", function () {
     let chainI: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthStartDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
-      const fifthStartDate = new Date(fourthEndDate.getTime() + 1000);
-      const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
-      const unitA = new TaskUnit([], firstStartDate, firstEndDate);
+      const unitA = new TaskUnit([], firstDate, secondDate);
 
-      const unitB = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      const unitG = new TaskUnit([unitA], secondStartDate, secondEndDate);
+      const unitB = new TaskUnit([unitA], thirdDate, fourthDate);
+      const unitG = new TaskUnit([unitA], thirdDate, fourthDate);
 
-      const unitC = new TaskUnit([unitB], thirdStartDate, thirdEndDate);
-      const unitE = new TaskUnit([unitB, unitG], thirdStartDate, thirdEndDate);
-      const unitI = new TaskUnit([unitG], thirdStartDate, thirdEndDate);
+      const unitC = new TaskUnit([unitB], fifthDate, sixthDate);
+      const unitE = new TaskUnit([unitB, unitG], fifthDate, sixthDate);
+      const unitI = new TaskUnit([unitG], fifthDate, sixthDate);
 
-      const unitD = new TaskUnit(
-        [unitC, unitE],
-        fourthStartDate,
-        fourthEndDate
-      );
-      const unitH = new TaskUnit(
-        [unitE, unitI],
-        fourthStartDate,
-        fourthEndDate
-      );
+      const unitD = new TaskUnit([unitC, unitE], seventhDate, eighthDate);
+      const unitH = new TaskUnit([unitE, unitI], seventhDate, eighthDate);
 
-      const unitF = new TaskUnit([unitD, unitH], fifthStartDate, fifthEndDate);
+      const unitF = new TaskUnit([unitD, unitH], ninthDate, tenthDate);
 
       cluster = new TaskUnitCluster([unitF]);
       chainA = cluster.chainMap.getChainOfUnit(unitA);
@@ -404,129 +369,65 @@ describe("TaskUnitCluster", function () {
     let chainY: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthStartDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
-      const fifthStartDate = new Date(fourthEndDate.getTime() + 1000);
-      const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
-      const sixthStartDate = new Date(fifthEndDate.getTime() + 1000);
-      const sixthEndDate = new Date(sixthStartDate.getTime() + 1000);
-      const seventhStartDate = new Date(sixthEndDate.getTime() + 1000);
-      const seventhEndDate = new Date(seventhStartDate.getTime() + 1000);
-      const unitA = new TaskUnit([], firstStartDate, firstEndDate, "A");
-      const unitB = new TaskUnit([], firstStartDate, firstEndDate, "B");
+      const unitA = new TaskUnit([], firstDate, secondDate, "A");
+      const unitB = new TaskUnit([], firstDate, secondDate, "B");
 
-      const unitC = new TaskUnit([unitA], secondStartDate, secondEndDate, "C");
-      const unitD = new TaskUnit(
-        [unitA, unitB],
-        secondStartDate,
-        secondEndDate,
-        "D"
-      );
-      const unitE = new TaskUnit([unitB], secondStartDate, secondEndDate, "E");
+      const unitC = new TaskUnit([unitA], thirdDate, fourthDate, "C");
+      const unitD = new TaskUnit([unitA, unitB], thirdDate, fourthDate, "D");
+      const unitE = new TaskUnit([unitB], thirdDate, fourthDate, "E");
 
-      const unitF = new TaskUnit([unitC], thirdStartDate, thirdEndDate, "F");
-      const unitG = new TaskUnit(
-        [unitC, unitD],
-        thirdStartDate,
-        thirdEndDate,
-        "G"
-      );
-      const unitH = new TaskUnit(
-        [unitD, unitE],
-        thirdStartDate,
-        thirdEndDate,
-        "H"
-      );
-      const unitI = new TaskUnit([unitE], thirdStartDate, thirdEndDate, "I");
+      const unitF = new TaskUnit([unitC], fifthDate, sixthDate, "F");
+      const unitG = new TaskUnit([unitC, unitD], fifthDate, sixthDate, "G");
+      const unitH = new TaskUnit([unitD, unitE], fifthDate, sixthDate, "H");
+      const unitI = new TaskUnit([unitE], fifthDate, sixthDate, "I");
 
-      const unitJ = new TaskUnit([unitF], fourthStartDate, fourthEndDate, "J");
-      const unitK = new TaskUnit(
-        [unitF, unitG],
-        fourthStartDate,
-        fourthEndDate,
-        "K"
-      );
-      const unitL = new TaskUnit(
-        [unitG, unitH],
-        fourthStartDate,
-        fourthEndDate,
-        "L"
-      );
-      const unitM = new TaskUnit(
-        [unitH, unitI],
-        fourthStartDate,
-        fourthEndDate,
-        "M"
-      );
-      const unitN = new TaskUnit([unitI], fourthStartDate, fourthEndDate, "N");
+      const unitJ = new TaskUnit([unitF], seventhDate, eighthDate, "J");
+      const unitK = new TaskUnit([unitF, unitG], seventhDate, eighthDate, "K");
+      const unitL = new TaskUnit([unitG, unitH], seventhDate, eighthDate, "L");
+      const unitM = new TaskUnit([unitH, unitI], seventhDate, eighthDate, "M");
+      const unitN = new TaskUnit([unitI], seventhDate, eighthDate, "N");
 
-      const unitO = new TaskUnit(
-        [unitJ, unitK],
-        fifthStartDate,
-        fifthEndDate,
-        "O"
-      );
-      const unitP = new TaskUnit(
-        [unitK, unitL],
-        fifthStartDate,
-        fifthEndDate,
-        "P"
-      );
-      const unitQ = new TaskUnit(
-        [unitL, unitM],
-        fifthStartDate,
-        fifthEndDate,
-        "Q"
-      );
-      const unitR = new TaskUnit(
-        [unitM, unitN],
-        fifthStartDate,
-        fifthEndDate,
-        "R"
-      );
+      const unitO = new TaskUnit([unitJ, unitK], ninthDate, tenthDate, "O");
+      const unitP = new TaskUnit([unitK, unitL], ninthDate, tenthDate, "P");
+      const unitQ = new TaskUnit([unitL, unitM], ninthDate, tenthDate, "Q");
+      const unitR = new TaskUnit([unitM, unitN], ninthDate, tenthDate, "R");
 
       const unitS = new TaskUnit(
         [unitO, unitP],
-        sixthStartDate,
-        sixthEndDate,
+        eleventhDate,
+        twelfthDate,
         "S"
       );
       const unitT = new TaskUnit(
         [unitP, unitQ],
-        sixthStartDate,
-        sixthEndDate,
+        eleventhDate,
+        twelfthDate,
         "T"
       );
       const unitU = new TaskUnit(
         [unitQ, unitR],
-        sixthStartDate,
-        sixthEndDate,
+        eleventhDate,
+        twelfthDate,
         "U"
       );
-      const unitV = new TaskUnit([unitR], sixthStartDate, sixthEndDate, "V");
+      const unitV = new TaskUnit([unitR], eleventhDate, twelfthDate, "V");
 
       const unitW = new TaskUnit(
         [unitS, unitT],
-        seventhStartDate,
-        seventhEndDate,
+        thirteenthDate,
+        fourteenthDate,
         "W"
       );
       const unitX = new TaskUnit(
         [unitT, unitU],
-        seventhStartDate,
-        seventhEndDate,
+        thirteenthDate,
+        fourteenthDate,
         "X"
       );
       const unitY = new TaskUnit(
         [unitU, unitV],
-        seventhStartDate,
-        seventhEndDate,
+        thirteenthDate,
+        fourteenthDate,
         "Y"
       );
 
@@ -635,34 +536,22 @@ describe("TaskUnitCluster", function () {
     let chainK: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthStartDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
-      const fifthStartDate = new Date(fourthEndDate.getTime() + 1000);
-      const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
-      const sixthStartDate = new Date(fifthEndDate.getTime() + 1000);
-      const sixthEndDate = new Date(sixthStartDate.getTime() + 1000);
-      const unitA = new TaskUnit([], firstStartDate, firstEndDate);
+      const unitA = new TaskUnit([], firstDate, secondDate);
 
-      const unitB = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      const unitC = new TaskUnit([unitA], secondStartDate, secondEndDate);
+      const unitB = new TaskUnit([unitA], thirdDate, fourthDate);
+      const unitC = new TaskUnit([unitA], thirdDate, fourthDate);
 
-      const unitD = new TaskUnit([unitB, unitC], thirdStartDate, thirdEndDate);
+      const unitD = new TaskUnit([unitB, unitC], fifthDate, sixthDate);
 
-      const unitE = new TaskUnit([], fourthStartDate, fourthEndDate);
-      const unitF = new TaskUnit([unitD], fourthStartDate, fourthEndDate);
+      const unitE = new TaskUnit([], seventhDate, eighthDate);
+      const unitF = new TaskUnit([unitD], seventhDate, eighthDate);
 
-      const unitG = new TaskUnit([unitE], fifthStartDate, fifthEndDate);
-      const unitH = new TaskUnit([unitE, unitF], fifthStartDate, fifthEndDate);
-      const unitI = new TaskUnit([unitF], fifthStartDate, fifthEndDate);
+      const unitG = new TaskUnit([unitE], ninthDate, tenthDate);
+      const unitH = new TaskUnit([unitE, unitF], ninthDate, tenthDate);
+      const unitI = new TaskUnit([unitF], ninthDate, tenthDate);
 
-      const unitJ = new TaskUnit([unitG, unitH], sixthStartDate, sixthEndDate);
-      const unitK = new TaskUnit([unitH, unitI], sixthStartDate, sixthEndDate);
+      const unitJ = new TaskUnit([unitG, unitH], eleventhDate, twelfthDate);
+      const unitK = new TaskUnit([unitH, unitI], eleventhDate, twelfthDate);
       cluster = new TaskUnitCluster([unitJ, unitK]);
       chainA = cluster.chainMap.getChainOfUnit(unitA);
       chainB = cluster.chainMap.getChainOfUnit(unitB);
@@ -737,33 +626,18 @@ describe("TaskUnitCluster", function () {
     let chainJ: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const secondEndDateAlt = new Date(secondStartDate.getTime() + 2000);
-      const thirdStartDate = new Date(secondEndDateAlt.getTime() + 1000);
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      const unitB = new TaskUnit([], firstStartDate, firstEndDate);
-      const unitC = new TaskUnit([], firstStartDate, firstEndDate);
+      const unitA = new TaskUnit([], firstDate, secondDate);
+      const unitB = new TaskUnit([], firstDate, secondDate);
+      const unitC = new TaskUnit([], firstDate, secondDate);
 
-      const unitD = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      const unitE = new TaskUnit(
-        [unitA, unitB],
-        secondStartDate,
-        secondEndDateAlt
-      );
-      const unitF = new TaskUnit(
-        [unitB, unitC],
-        secondStartDate,
-        secondEndDate
-      );
-      const unitG = new TaskUnit([unitC], secondStartDate, secondEndDate);
+      const unitD = new TaskUnit([unitA], thirdDate, fourthDate);
+      const unitE = new TaskUnit([unitA, unitB], thirdDate, fifthDate);
+      const unitF = new TaskUnit([unitB, unitC], thirdDate, fourthDate);
+      const unitG = new TaskUnit([unitC], thirdDate, fourthDate);
 
-      const unitH = new TaskUnit([unitD, unitE], thirdStartDate, thirdEndDate);
-      const unitI = new TaskUnit([unitE, unitF], thirdStartDate, thirdEndDate);
-      const unitJ = new TaskUnit([unitF, unitG], thirdStartDate, thirdEndDate);
+      const unitH = new TaskUnit([unitD, unitE], sixthDate, seventhDate);
+      const unitI = new TaskUnit([unitE, unitF], sixthDate, seventhDate);
+      const unitJ = new TaskUnit([unitF, unitG], sixthDate, seventhDate);
       cluster = new TaskUnitCluster([unitH, unitI, unitJ]);
 
       chainA = cluster.chainMap.getChainOfUnit(unitA);
@@ -839,33 +713,18 @@ describe("TaskUnitCluster", function () {
     let chainJ: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const secondEndDateAlt = new Date(secondStartDate.getTime() + 2000);
-      const thirdStartDate = new Date(secondEndDateAlt.getTime() + 1000);
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      const unitB = new TaskUnit([], firstStartDate, firstEndDate);
-      const unitC = new TaskUnit([], firstStartDate, firstEndDate);
+      const unitA = new TaskUnit([], firstDate, secondDate);
+      const unitB = new TaskUnit([], firstDate, secondDate);
+      const unitC = new TaskUnit([], firstDate, secondDate);
 
-      const unitD = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      const unitE = new TaskUnit(
-        [unitA, unitB],
-        secondStartDate,
-        secondEndDate
-      );
-      const unitF = new TaskUnit(
-        [unitB, unitC],
-        secondStartDate,
-        secondEndDateAlt
-      );
-      const unitG = new TaskUnit([unitC], secondStartDate, secondEndDate);
+      const unitD = new TaskUnit([unitA], thirdDate, fourthDate);
+      const unitE = new TaskUnit([unitA, unitB], thirdDate, fourthDate);
+      const unitF = new TaskUnit([unitB, unitC], thirdDate, fifthDate);
+      const unitG = new TaskUnit([unitC], thirdDate, fourthDate);
 
-      const unitH = new TaskUnit([unitD, unitE], thirdStartDate, thirdEndDate);
-      const unitI = new TaskUnit([unitE, unitF], thirdStartDate, thirdEndDate);
-      const unitJ = new TaskUnit([unitF, unitG], thirdStartDate, thirdEndDate);
+      const unitH = new TaskUnit([unitD, unitE], sixthDate, seventhDate);
+      const unitI = new TaskUnit([unitE, unitF], sixthDate, seventhDate);
+      const unitJ = new TaskUnit([unitF, unitG], sixthDate, seventhDate);
       cluster = new TaskUnitCluster([unitH, unitI, unitJ]);
       chainA = cluster.chainMap.getChainOfUnit(unitA);
       chainB = cluster.chainMap.getChainOfUnit(unitB);
@@ -936,33 +795,19 @@ describe("TaskUnitCluster", function () {
     let chainI: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthStartDate = new Date(thirdEndDate.getTime() + 1000);
-      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
-      const fifthStartDate = new Date(fourthEndDate.getTime() + 1000);
-      const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
-      const unitA = new TaskUnit([], firstStartDate, firstEndDate);
+      const unitA = new TaskUnit([], firstDate, secondDate);
 
-      const unitB = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      const unitC = new TaskUnit([unitA], secondStartDate, secondEndDate);
+      const unitB = new TaskUnit([unitA], thirdDate, fourthDate);
+      const unitC = new TaskUnit([unitA], thirdDate, fourthDate);
 
-      const unitD = new TaskUnit([unitB], thirdStartDate, thirdEndDate);
-      const unitE = new TaskUnit([unitC], thirdStartDate, thirdEndDate);
-      const unitF = new TaskUnit([unitC], thirdStartDate, thirdEndDate);
+      const unitD = new TaskUnit([unitB], fifthDate, sixthDate);
+      const unitE = new TaskUnit([unitC], fifthDate, sixthDate);
+      const unitF = new TaskUnit([unitC], fifthDate, sixthDate);
 
-      const unitG = new TaskUnit([unitB], fourthStartDate, fourthEndDate);
-      const unitH = new TaskUnit(
-        [unitE, unitF],
-        fourthStartDate,
-        fourthEndDate
-      );
+      const unitG = new TaskUnit([unitB], seventhDate, eighthDate);
+      const unitH = new TaskUnit([unitE, unitF], seventhDate, eighthDate);
 
-      const unitI = new TaskUnit([unitG, unitH], fifthStartDate, fifthEndDate);
+      const unitI = new TaskUnit([unitG, unitH], ninthDate, tenthDate);
 
       cluster = new TaskUnitCluster([unitD, unitI]);
       chainA = cluster.chainMap.getChainOfUnit(unitA);
@@ -1037,48 +882,26 @@ describe("TaskUnitCluster", function () {
     let chainL: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthStartDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
-      const fifthStartDate = new Date(fourthEndDate.getTime() + 1000);
-      const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
-      const unitA = new TaskUnit([], firstStartDate, firstEndDate);
+      const unitA = new TaskUnit([], firstDate, secondDate);
 
-      const unitB = new TaskUnit([unitA], secondStartDate, secondEndDate);
+      const unitB = new TaskUnit([unitA], thirdDate, fourthDate);
 
-      const unitC = new TaskUnit([unitB], thirdStartDate, thirdEndDate);
-      const unitD = new TaskUnit([unitA], thirdStartDate, thirdEndDate);
-      const unitE = new TaskUnit([unitB], thirdStartDate, thirdEndDate);
+      const unitC = new TaskUnit([unitB], fifthDate, sixthDate);
+      const unitD = new TaskUnit([unitA], fifthDate, sixthDate);
+      const unitE = new TaskUnit([unitB], fifthDate, sixthDate);
 
-      const unitF = new TaskUnit([unitC], fourthStartDate, fourthEndDate);
-      const unitG = new TaskUnit([unitC], fourthStartDate, fourthEndDate);
-      const unitH = new TaskUnit(
-        [unitC, unitD],
-        fourthStartDate,
-        fourthEndDate
-      );
+      const unitF = new TaskUnit([unitC], seventhDate, eighthDate);
+      const unitG = new TaskUnit([unitC], seventhDate, eighthDate);
+      const unitH = new TaskUnit([unitC, unitD], seventhDate, eighthDate);
       const unitI = new TaskUnit(
         [unitC, unitD, unitE],
-        fourthStartDate,
-        fourthEndDate
+        seventhDate,
+        eighthDate
       );
-      const unitJ = new TaskUnit(
-        [unitD, unitE],
-        fourthStartDate,
-        fourthEndDate
-      );
-      const unitK = new TaskUnit([unitE], fourthStartDate, fourthEndDate);
+      const unitJ = new TaskUnit([unitD, unitE], seventhDate, eighthDate);
+      const unitK = new TaskUnit([unitE], seventhDate, eighthDate);
 
-      const unitL = new TaskUnit(
-        [unitH, unitI, unitJ],
-        fifthStartDate,
-        fifthEndDate
-      );
+      const unitL = new TaskUnit([unitH, unitI, unitJ], ninthDate, tenthDate);
 
       cluster = new TaskUnitCluster([unitF, unitG, unitK, unitL]);
       chainA = cluster.chainMap.getChainOfUnit(unitA);

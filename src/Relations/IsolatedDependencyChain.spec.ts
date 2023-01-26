@@ -2,6 +2,17 @@ import { expect } from "chai";
 import { DependencyOrderError } from "../Error";
 import { IsolatedDependencyChain, TaskUnit } from "./";
 
+const firstDate = new Date();
+const secondDate = new Date(firstDate.getTime() + 1000);
+const thirdDate = new Date(secondDate.getTime() + 1000);
+const fourthDate = new Date(thirdDate.getTime() + 1000);
+const fifthDate = new Date(fourthDate.getTime() + 1000);
+const sixthDate = new Date(fifthDate.getTime() + 1000);
+const seventhDate = new Date(sixthDate.getTime() + 1000);
+const eighthDate = new Date(seventhDate.getTime() + 1000);
+const ninthDate = new Date(eighthDate.getTime() + 1000);
+const tenthDate = new Date(ninthDate.getTime() + 1000);
+
 describe("IsolatedDependencyChain", function () {
   describe("No Units", function () {
     it("should throw RangeError", function () {
@@ -10,13 +21,9 @@ describe("IsolatedDependencyChain", function () {
   });
   describe("One Unit", function () {
     let unit: TaskUnit;
-    let startDate: Date;
-    let endDate: Date;
     let chain: IsolatedDependencyChain;
     before(function () {
-      startDate = new Date();
-      endDate = new Date(startDate.getTime() + 1000);
-      unit = new TaskUnit([], startDate, endDate);
+      unit = new TaskUnit([], firstDate, secondDate);
       chain = new IsolatedDependencyChain([unit]);
     });
     it("should have same presence as its unit", function () {
@@ -49,12 +56,8 @@ describe("IsolatedDependencyChain", function () {
     let unitB: TaskUnit;
     let chain: IsolatedDependencyChain;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 1000);
-      const startDateB = new Date(endDateA.getTime());
-      const endDateB = new Date(startDateB.getTime() + 1000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([unitA], startDateB, endDateB);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([unitA], secondDate, thirdDate);
       chain = new IsolatedDependencyChain([unitB, unitA]);
     });
     it("should have same presence as its units", function () {
@@ -93,15 +96,9 @@ describe("IsolatedDependencyChain", function () {
     let unitC: TaskUnit;
     let chain: IsolatedDependencyChain;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 1000);
-      const startDateB = new Date(endDateA.getTime());
-      const endDateB = new Date(startDateB.getTime() + 1000);
-      const startDateC = new Date(endDateB.getTime());
-      const endDateC = new Date(startDateC.getTime() + 1000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([unitA], startDateB, endDateB);
-      unitC = new TaskUnit([unitB], startDateC, endDateC);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([unitA], secondDate, thirdDate);
+      unitC = new TaskUnit([unitB], thirdDate, fourthDate);
       chain = new IsolatedDependencyChain([unitC, unitB, unitA]);
     });
     it("should have same presence as its units", function () {
@@ -143,22 +140,12 @@ describe("IsolatedDependencyChain", function () {
     let unitF: TaskUnit;
     let chain: IsolatedDependencyChain;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthStartDate = new Date(thirdEndDate.getTime() + 1000);
-      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
-      const fifthStartDate = new Date(fourthEndDate.getTime());
-      const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate);
-      unitB = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      unitC = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      unitD = new TaskUnit([unitB, unitC], thirdStartDate, thirdEndDate);
-      unitE = new TaskUnit([unitD], fourthStartDate, fourthEndDate);
-      unitF = new TaskUnit([unitE], fifthStartDate, fifthEndDate);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([unitA], thirdDate, fourthDate);
+      unitC = new TaskUnit([unitA], thirdDate, fourthDate);
+      unitD = new TaskUnit([unitB, unitC], fifthDate, sixthDate);
+      unitE = new TaskUnit([unitD], seventhDate, eighthDate);
+      unitF = new TaskUnit([unitE], eighthDate, ninthDate);
       chain = new IsolatedDependencyChain([unitF, unitE]);
     });
     it("should have same presence as its units", function () {
@@ -243,12 +230,8 @@ describe("IsolatedDependencyChain", function () {
     let unitB: TaskUnit;
     let chain: IsolatedDependencyChain;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 1000);
-      const startDateB = new Date(endDateA.getTime() + 1000);
-      const endDateB = new Date(startDateB.getTime() + 1000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([unitA], startDateB, endDateB);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([unitA], thirdDate, fourthDate);
       chain = new IsolatedDependencyChain([unitB, unitA]);
     });
     it("should have same presence as its units", function () {
@@ -286,14 +269,10 @@ describe("IsolatedDependencyChain", function () {
     let unitB: TaskUnit;
     let chain: IsolatedDependencyChain;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 2000);
       // Pretending A should've only taken 1000 ms, but actually took 2000
-      const startDateB = new Date(endDateA.getTime() - 1000);
       // Even though B took 1000 ms once started, we're pretending it got delayed by 1000 ms because of A.
-      const endDateB = new Date(startDateB.getTime() + 2000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([unitA], startDateB, endDateB);
+      unitA = new TaskUnit([], firstDate, thirdDate);
+      unitB = new TaskUnit([unitA], secondDate, fourthDate);
       chain = new IsolatedDependencyChain([unitB, unitA]);
     });
     it("should have same presence as its units", function () {
@@ -329,14 +308,10 @@ describe("IsolatedDependencyChain", function () {
     let unitA: TaskUnit;
     let unitB: TaskUnit;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 2000);
       // Pretending A should've only taken 1000 ms, but actually took 2000
-      const startDateB = new Date(endDateA.getTime() - 1000);
       // Even though B took 1000 ms once started, we're pretending it got delayed by 1000 ms because of A.
-      const endDateB = new Date(startDateB.getTime() + 2000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([unitA], startDateB, endDateB);
+      unitA = new TaskUnit([], firstDate, thirdDate);
+      unitB = new TaskUnit([unitA], secondDate, fourthDate);
     });
     it("should throw DependencyOrderError", function () {
       expect(() => new IsolatedDependencyChain([unitA, unitB])).to.throw(
@@ -348,14 +323,10 @@ describe("IsolatedDependencyChain", function () {
     let unitA: TaskUnit;
     let unitB: TaskUnit;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 2000);
       // Pretending A should've only taken 1000 ms, but actually took 2000
-      const startDateB = new Date(endDateA.getTime() - 1000);
       // Even though B took 1000 ms once started, we're pretending it got delayed by 1000 ms because of A.
-      const endDateB = new Date(startDateB.getTime() + 2000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([], startDateB, endDateB);
+      unitA = new TaskUnit([], firstDate, thirdDate);
+      unitB = new TaskUnit([], secondDate, fourthDate);
     });
     it("should throw DependencyOrderError", function () {
       expect(() => new IsolatedDependencyChain([unitB, unitA])).to.throw(

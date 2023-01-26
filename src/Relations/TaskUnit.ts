@@ -146,6 +146,7 @@ export default class TaskUnit {
     } else {
       // This task hasn't been started yet, so there's no need to check if it was started before it should have.
     }
+    const now = new Date();
     this.eventHistory.forEach((event, index) => {
       // Don't check the next event if it can be helped, because if there is a next event, it'll have its turn to check
       // previous events, and that presents much narrower criteria to check.
@@ -158,6 +159,9 @@ export default class TaskUnit {
           );
         }
       }
+      // if (event.date > now) {
+      //   throw new EventHistoryInvalidError("Events cannot be in the future.");
+      // }
       switch (event.type) {
         case EventType.TaskIterationStarted:
           if (prevEvent) {

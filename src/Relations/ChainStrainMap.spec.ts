@@ -7,6 +7,17 @@ import {
   TaskUnit,
 } from "./";
 
+const firstDate = new Date();
+const secondDate = new Date(firstDate.getTime() + 1000);
+const thirdDate = new Date(secondDate.getTime() + 1000);
+const fourthDate = new Date(thirdDate.getTime() + 1000);
+const fifthDate = new Date(fourthDate.getTime() + 1000);
+const sixthDate = new Date(fifthDate.getTime() + 1000);
+const seventhDate = new Date(sixthDate.getTime() + 1000);
+const eighthDate = new Date(seventhDate.getTime() + 1000);
+const ninthDate = new Date(eighthDate.getTime() + 1000);
+const tenthDate = new Date(ninthDate.getTime() + 1000);
+
 describe("ChainStrainMap", function () {
   describe("One Unit", function () {
     let chainMap: SimpleChainMap;
@@ -40,18 +51,10 @@ describe("ChainStrainMap", function () {
     let chainMap: SimpleChainMap;
     let strainMap: ChainStrainMap;
     before(function () {
-      const startDateA = new Date();
-      const endDateA = new Date(startDateA.getTime() + 1000);
-      const startDateB = new Date(endDateA.getTime());
-      const endDateB = new Date(startDateB.getTime() + 1000);
-      const startDateC = new Date(startDateB.getTime());
-      const endDateC = new Date(endDateB.getTime());
-      const startDateD = new Date(endDateC.getTime());
-      const endDateD = new Date(startDateD.getTime() + 1000);
-      unitA = new TaskUnit([], startDateA, endDateA);
-      unitB = new TaskUnit([unitA], startDateB, endDateB);
-      unitC = new TaskUnit([unitA], startDateC, endDateC);
-      unitD = new TaskUnit([unitB, unitC], startDateD, endDateD);
+      unitA = new TaskUnit([], firstDate, secondDate);
+      unitB = new TaskUnit([unitA], secondDate, thirdDate);
+      unitC = new TaskUnit([unitA], secondDate, thirdDate);
+      unitD = new TaskUnit([unitB, unitC], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitD]);
       strainMap = new ChainStrainMap(chainMap);
     });
@@ -97,21 +100,15 @@ describe("ChainStrainMap", function () {
     let chainMap: SimpleChainMap;
     let strainMap: ChainStrainMap;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const unitA = new TaskUnit([], firstStartDate, firstEndDate);
+      const unitA = new TaskUnit([], firstDate, secondDate);
 
-      const unitB = new TaskUnit([unitA], secondStartDate, secondEndDate);
-      const unitC = new TaskUnit([unitA], secondStartDate, secondEndDate);
+      const unitB = new TaskUnit([unitA], thirdDate, fourthDate);
+      const unitC = new TaskUnit([unitA], thirdDate, fourthDate);
 
-      const unitD = new TaskUnit([unitB], thirdStartDate, thirdEndDate);
-      const unitE = new TaskUnit([unitB], thirdStartDate, thirdEndDate);
-      const unitF = new TaskUnit([unitB, unitC], thirdStartDate, thirdEndDate);
-      const unitG = new TaskUnit([unitC], thirdStartDate, thirdEndDate);
+      const unitD = new TaskUnit([unitB], fifthDate, sixthDate);
+      const unitE = new TaskUnit([unitB], fifthDate, sixthDate);
+      const unitF = new TaskUnit([unitB, unitC], fifthDate, sixthDate);
+      const unitG = new TaskUnit([unitC], fifthDate, sixthDate);
 
       chainMap = new SimpleChainMap([unitD, unitE, unitF, unitG]);
       chainB = chainMap.getChainOfUnit(unitB);

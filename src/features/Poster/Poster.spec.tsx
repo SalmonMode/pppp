@@ -23,6 +23,17 @@ import Poster from "./Poster";
 import type { TaskUnitsState } from "./taskUnitsSlice";
 import { turnClusterIntoState } from "./turnClusterIntoState";
 
+const firstDate = new Date();
+const secondDate = new Date(firstDate.getTime() + 1000);
+const thirdDate = new Date(secondDate.getTime() + 1000);
+const fourthDate = new Date(thirdDate.getTime() + 1000);
+const fifthDate = new Date(fourthDate.getTime() + 1000);
+const sixthDate = new Date(fifthDate.getTime() + 1000);
+const seventhDate = new Date(sixthDate.getTime() + 1000);
+const eighthDate = new Date(seventhDate.getTime() + 1000);
+const ninthDate = new Date(eighthDate.getTime() + 1000);
+const tenthDate = new Date(ninthDate.getTime() + 1000);
+
 describe("React Integration: Poster", () => {
   describe("Initial State", () => {
     beforeEach(function () {
@@ -52,37 +63,29 @@ describe("React Integration: Poster", () => {
     let unitL: TaskUnit;
 
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthStartDate = new Date(thirdEndDate.getTime() + 1000);
-      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate, "A");
+      unitA = new TaskUnit([], firstDate, secondDate, "A");
       unitB = new TaskUnit(
         [unitA],
-        new Date(firstStartDate.getTime() + 100),
-        new Date(firstEndDate.getTime() + 100),
+        new Date(firstDate.getTime() + 100),
+        new Date(secondDate.getTime() + 100),
         "B"
       );
-      unitC = new TaskUnit([], thirdStartDate, thirdEndDate, "C");
+      unitC = new TaskUnit([], fifthDate, sixthDate, "C");
       unitD = new TaskUnit(
         [unitC],
-        new Date(thirdStartDate.getTime() + 100),
-        new Date(thirdEndDate.getTime() + 100),
+        new Date(fifthDate.getTime() + 100),
+        new Date(sixthDate.getTime() + 100),
         "D"
       );
 
-      unitE = new TaskUnit([], firstStartDate, firstEndDate, "E");
-      unitF = new TaskUnit([unitA, unitE], secondStartDate, secondEndDate, "F");
-      unitG = new TaskUnit([unitF], thirdStartDate, thirdEndDate, "G");
-      unitH = new TaskUnit([unitC, unitG], fourthStartDate, fourthEndDate, "H");
-      unitI = new TaskUnit([], firstStartDate, firstEndDate, "I");
-      unitJ = new TaskUnit([unitA, unitI], secondStartDate, secondEndDate, "J");
-      unitK = new TaskUnit([unitJ], thirdStartDate, thirdEndDate, "K");
-      unitL = new TaskUnit([unitC, unitK], fourthStartDate, fourthEndDate, "L");
+      unitE = new TaskUnit([], firstDate, secondDate, "E");
+      unitF = new TaskUnit([unitA, unitE], thirdDate, fourthDate, "F");
+      unitG = new TaskUnit([unitF], fifthDate, sixthDate, "G");
+      unitH = new TaskUnit([unitC, unitG], seventhDate, eighthDate, "H");
+      unitI = new TaskUnit([], firstDate, secondDate, "I");
+      unitJ = new TaskUnit([unitA, unitI], thirdDate, fourthDate, "J");
+      unitK = new TaskUnit([unitJ], fifthDate, sixthDate, "K");
+      unitL = new TaskUnit([unitC, unitK], seventhDate, eighthDate, "L");
 
       const cluster = new TaskUnitCluster([unitB, unitD, unitH, unitL]);
 
@@ -539,52 +542,24 @@ describe("React Integration: Poster", () => {
     let poster: HTMLElement;
     let tracks: NodeListOf<Element>;
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthStartDate = new Date(thirdEndDate.getTime() + 1000);
-      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
-      const unitA = new TaskUnit([], firstStartDate, firstEndDate, "A");
+      const unitA = new TaskUnit([], firstDate, secondDate, "A");
       const unitB = new TaskUnit(
         [unitA],
-        new Date(firstStartDate.getTime() + 100),
-        new Date(firstEndDate.getTime() + 100),
+        new Date(firstDate.getTime() + 100),
+        new Date(secondDate.getTime() + 100),
         "B"
       );
-      const unitC = new TaskUnit([], thirdStartDate, thirdEndDate, "C");
-      const unitD = new TaskUnit([unitC], fourthStartDate, fourthEndDate, "D");
+      const unitC = new TaskUnit([], fifthDate, sixthDate, "C");
+      const unitD = new TaskUnit([unitC], seventhDate, eighthDate, "D");
 
-      const unitE = new TaskUnit([], firstStartDate, firstEndDate, "E");
-      const unitF = new TaskUnit(
-        [unitA, unitE],
-        secondStartDate,
-        secondEndDate,
-        "F"
-      );
-      const unitG = new TaskUnit([unitF], thirdStartDate, thirdEndDate, "G");
-      const unitH = new TaskUnit(
-        [unitC, unitG],
-        fourthStartDate,
-        fourthEndDate,
-        "H"
-      );
-      const unitI = new TaskUnit([], firstStartDate, firstEndDate, "I");
-      const unitJ = new TaskUnit(
-        [unitA, unitI],
-        secondStartDate,
-        secondEndDate,
-        "J"
-      );
-      const unitK = new TaskUnit([unitJ], thirdStartDate, thirdEndDate, "K");
-      const unitL = new TaskUnit(
-        [unitC, unitK],
-        fourthStartDate,
-        fourthEndDate,
-        "L"
-      );
+      const unitE = new TaskUnit([], firstDate, secondDate, "E");
+      const unitF = new TaskUnit([unitA, unitE], thirdDate, fourthDate, "F");
+      const unitG = new TaskUnit([unitF], fifthDate, sixthDate, "G");
+      const unitH = new TaskUnit([unitC, unitG], seventhDate, eighthDate, "H");
+      const unitI = new TaskUnit([], firstDate, secondDate, "I");
+      const unitJ = new TaskUnit([unitA, unitI], thirdDate, fourthDate, "J");
+      const unitK = new TaskUnit([unitJ], fifthDate, sixthDate, "K");
+      const unitL = new TaskUnit([unitC, unitK], seventhDate, eighthDate, "L");
 
       const cluster = new TaskUnitCluster([unitB, unitD, unitH, unitL]);
 
@@ -632,85 +607,75 @@ describe("React Integration: Poster", () => {
     let unitL: TaskUnit;
 
     before(function () {
-      const firstStartDate = new Date();
-      const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-      const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-      const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      const fourthStartDate = new Date(thirdEndDate.getTime() + 1000);
-      const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
-      const fifthStartDate = new Date(fourthEndDate.getTime() + 1000);
-      const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate, "A", [
+      unitA = new TaskUnit([], firstDate, secondDate, "A", [
         {
           type: EventType.TaskIterationStarted,
-          date: firstStartDate,
+          date: firstDate,
         },
         {
           type: EventType.ReviewedAndAccepted,
-          date: secondStartDate,
+          date: thirdDate,
         },
       ]);
       unitB = new TaskUnit(
         [unitA],
-        new Date(firstStartDate.getTime() + 100),
-        new Date(firstEndDate.getTime() + 100),
+        new Date(firstDate.getTime() + 100),
+        new Date(secondDate.getTime() + 100),
         "B",
         [
           {
             type: EventType.TaskIterationStarted,
-            date: secondStartDate,
+            date: thirdDate,
           },
           {
             type: EventType.ReviewedAndNeedsMinorRevision,
-            date: new Date(secondEndDate.getTime() - 100),
+            date: new Date(fourthDate.getTime() - 100),
           },
         ]
       );
-      unitC = new TaskUnit([], thirdStartDate, thirdEndDate, "C", [
+      unitC = new TaskUnit([], fifthDate, sixthDate, "C", [
         {
           type: EventType.TaskIterationStarted,
-          date: thirdStartDate,
+          date: fifthDate,
         },
         {
           type: EventType.ReviewedAndAccepted,
-          date: thirdEndDate,
+          date: sixthDate,
         },
       ]);
       unitD = new TaskUnit(
         [unitC],
-        new Date(thirdStartDate.getTime() + 100),
-        new Date(thirdEndDate.getTime() + 100),
+        new Date(fifthDate.getTime() + 100),
+        new Date(sixthDate.getTime() + 100),
         "D",
         [
           {
             type: EventType.TaskIterationStarted,
-            date: fourthStartDate,
+            date: seventhDate,
           },
           {
             type: EventType.ReviewedAndNeedsRebuild,
-            date: fourthEndDate,
+            date: eighthDate,
           },
           {
             type: EventType.TaskIterationStarted,
-            date: fifthStartDate,
+            date: ninthDate,
           },
           {
             type: EventType.ReviewedAndNeedsMajorRevision,
-            date: fifthEndDate,
+            date: tenthDate,
           },
         ]
       );
 
-      unitE = new TaskUnit([], firstStartDate, firstEndDate, "E");
-      unitF = new TaskUnit([unitA, unitE], secondStartDate, secondEndDate, "F");
-      unitG = new TaskUnit([unitF], thirdStartDate, thirdEndDate, "G");
-      unitH = new TaskUnit([unitC, unitG], fourthStartDate, fourthEndDate, "H");
-      unitI = new TaskUnit([], firstStartDate, firstEndDate, "I");
-      unitJ = new TaskUnit([unitA, unitI], secondStartDate, secondEndDate, "J");
-      unitK = new TaskUnit([unitJ], thirdStartDate, thirdEndDate, "K");
-      unitL = new TaskUnit([unitC, unitK], fourthStartDate, fourthEndDate, "L");
+      unitE = new TaskUnit([], firstDate, secondDate, "E");
+      unitF = new TaskUnit([unitA, unitE], thirdDate, fourthDate, "F");
+      unitG = new TaskUnit([unitF], fifthDate, sixthDate, "G");
+      unitH = new TaskUnit([unitC, unitG], seventhDate, eighthDate, "H");
+      unitI = new TaskUnit([], firstDate, secondDate, "I");
+      unitJ = new TaskUnit([unitA, unitI], thirdDate, fourthDate, "J");
+      unitK = new TaskUnit([unitJ], fifthDate, sixthDate, "K");
+      unitL = new TaskUnit([unitC, unitK], seventhDate, eighthDate, "L");
       const cluster = new TaskUnitCluster([unitB, unitD, unitH, unitL]);
 
       initialState = turnClusterIntoState(cluster);
