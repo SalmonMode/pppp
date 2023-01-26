@@ -1,11 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
-import { PrematureTaskStartError } from "../Error";
+import { EventHistoryInvalidError, PrematureTaskStartError } from "../Error";
 import { assertIsObject } from "../typePredicates";
 import {
   EventType,
   InterpolatedTaskEvent,
   RelationshipMapping,
-  TaskEvent
+  TaskEvent,
 } from "../types";
 import { assumedReqTime } from "./constants";
 
@@ -20,6 +20,11 @@ export default class TaskUnit {
   private _attachmentMap: RelationshipMapping;
   private _attachmentToDependencies: number;
   private _presenceTime: number;
+  /**
+   * The earliest possible time (in milliseconds since epoch) this task is allowed to start according to when its
+   * dependencies are pressumed to be finished by. This is the earliest the apparent start time could possibly be.
+   */
+  private _earliestPossibleStartTime: number;
   private _apparentStartDate: Date;
   private _apparentEndDate: Date;
   public projectedHistory: TaskEvent[] = [];
@@ -34,31 +39,26 @@ export default class TaskUnit {
     this.id = uuidv4();
     this._providedDirectDependencies = parentUnits;
     this._directDependencies = this._getTrueDirectDependencies();
-    const earliestPossibleTime = this._getEarliestPossibleStartTime();
-    // If the first event exists and is not EventType.TaskStarted, throw an Error. If it exists but is
-    // EventType.TaskStarted, use it as the apparent start date. Otherwise, stick with the initial start date.
+    this._earliestPossibleStartTime = this._getEarliestPossibleStartTime();
+    this._validateEventHistory();
+    // Figure out the apparent start date
+
+    // If the first event exists it must be TaskIterationStarted. If that's the case, use that date for the apparent
+    // start date. If not, base it off of either the latest dependency apparent end date, or this unit's anticipated
+    // start date. Whichever is later.
     const firstEvent = this.eventHistory[0];
     if (firstEvent) {
-      if (firstEvent.type !== EventType.TaskIterationStarted) {
-        throw new Error(
-          `The first event is always TaskStarted (${EventType.TaskIterationStarted}), not ${firstEvent.type}`
-        );
-      }
-      if (
-        !this._shouldBeAbleToStart() ||
-        firstEvent.date.getTime() < earliestPossibleTime
-      ) {
-        throw new PrematureTaskStartError(
-          "Task was started before it should have been allowed to."
-        );
-      }
       this._apparentStartDate = firstEvent.date;
     } else {
       const latestRequiredDate = new Date(
-        Math.max(earliestPossibleTime, this.anticipatedStartDate.getTime())
+        Math.max(
+          this._earliestPossibleStartTime,
+          this.anticipatedStartDate.getTime()
+        )
       );
       this._apparentStartDate = latestRequiredDate;
     }
+
     this._buildProjectedHistory();
     this.interpolatedEventHistory = [
       ...this.eventHistory.map((e) => ({
@@ -106,6 +106,121 @@ export default class TaskUnit {
    */
   get presenceTime(): number {
     return this._presenceTime;
+  }
+  /**
+   * Validate that the event history makes sense.
+   *
+   * The rules for provided events are as follows:
+   *
+   * 1. Provided events should not be able to be in the future.
+   * 2. The first event, if provided, should be a TaskIterationStarted event.
+   * 3. Any TaskIterationStarted should only be preceded by nothing (meaning it's the first event), or a
+   *    ReviewedAndNeedsRebuild event.
+   * 4. Any TaskIterationStarted event should be followed by either nothing (meaning the task is still in progress) or a
+   *    review event of some sort.
+   * 5. The only review result that is not allowed to have any other event after it is ReviewedAndAccepted (because it
+   *    means there should be nothing left to do).
+   * 6. The only review result that can have at most one event after it is ReviewedAndNeedsMinorRevision (because the
+   *    only possible event).
+   * 7. Any ReviewedAndNeedsMinorRevision event should be followed by either nothing (meaning the task is still in
+   *    progress) or a MinorRevisionComplete event.
+   * 8. Any ReviewedAndNeedsMajorRevision event should be followed by either nothing (meaning the task is still in
+   *    progress) or another review result (and possibly other events after that depending on the result).
+   * 9. Any ReviewedAndNeedsRebuild event should be followed by either nothing (meaning the new requirements haven't
+   *    been accepted yet) or a TaskIterationStarted event (and possibly other events according to the other rules).
+   */
+  private _validateEventHistory(): void {
+    const firstEvent = this.eventHistory[0];
+    if (firstEvent) {
+      if (
+        !this._shouldBeAbleToStart() ||
+        firstEvent.date.getTime() < this._earliestPossibleStartTime
+      ) {
+        throw new PrematureTaskStartError(
+          "Task was started before it should have been allowed to."
+        );
+      } else {
+        // It's allowed to start and the first event's date is on or after the earliest possible time it's allowed to
+        // start.
+      }
+    } else {
+      // This task hasn't been started yet, so there's no need to check if it was started before it should have.
+    }
+    this.eventHistory.forEach((event, index) => {
+      // Don't check the next event if it can be helped, because if there is a next event, it'll have its turn to check
+      // previous events, and that presents much narrower criteria to check.
+      const prevEvent = this.eventHistory[index - 1];
+      switch (event.type) {
+        case EventType.TaskIterationStarted:
+          if (prevEvent) {
+            if (prevEvent.type !== EventType.ReviewedAndNeedsRebuild) {
+              // The previous event was not a ReviewedAndNeedsRebuild event, so this event doesn't make sense.
+              throw new EventHistoryInvalidError(
+                "TaskIterationStarted event can only be the first event or follow a ReviewedAndNeedsRebuild event."
+              );
+            } else {
+              // This event follows a ReviewedAndNeedsRebuild event, which means the updated prereqs were accepted and
+              // the task has started again, so it's all good.
+            }
+          } else {
+            // Nothing was before this event, so it's all good, since this means the task has only started for the first
+            // time.
+          }
+          break;
+        case EventType.MinorRevisionComplete:
+          if (prevEvent) {
+            if (prevEvent.type === EventType.ReviewedAndNeedsMinorRevision) {
+              // The previous event was a ReviewedAndNeedsMinorRevision event, so this event means the task should be
+              // completely finished.
+              break;
+            }
+          }
+          // There either was no previous event, or the previous event was not a ReviewedAndNeedsMinorRevision event, so
+          // a MinorRevisionComplete event here doesn't make any sense.
+          throw new EventHistoryInvalidError(
+            "MinorRevisionComplete event can only be after a ReviewedAndNeedsMinorRevision event."
+          );
+        case EventType.ReviewedAndAccepted:
+        case EventType.ReviewedAndNeedsMajorRevision:
+        case EventType.ReviewedAndNeedsMinorRevision:
+        case EventType.ReviewedAndNeedsRebuild:
+          // Review results events
+          if (prevEvent) {
+            if (
+              prevEvent.type === EventType.ReviewedAndNeedsMajorRevision ||
+              prevEvent.type === EventType.TaskIterationStarted
+            ) {
+              // The previous event was either a TaskIterationStarted or ReviewedAndNeedsMajorRevision event, so this is
+              // all good.
+              break;
+            }
+          }
+          // There either was no previous event, or the previous event was not a TaskIterationStarted event nor a
+          // ReviewedAndNeedsMajorRevision event, so a review event here doesn't make any sense.
+          throw new EventHistoryInvalidError(
+            "Review events can only be after a TaskIterationStarted or ReviewedAndNeedsMajorRevision event."
+          );
+      }
+      if (
+        event.type === EventType.MinorRevisionComplete ||
+        event.type === EventType.ReviewedAndAccepted
+      ) {
+        // These events signal the absolute end of all work for this task. It should have no events after either of
+        // these events if they are present.
+        const nextEvent = this.eventHistory[index + 1];
+        if (nextEvent) {
+          // An event was found after the review was accepted.
+          throw new EventHistoryInvalidError(
+            "Once the review has been accepted or the minor revision completed, nothing else can happen."
+          );
+        } else {
+          // Nothing exists after this event so it's all good, since this means all work is done with this task.
+        }
+      } else {
+        // There's still more work to be done after this event, so if there are other events, it's sometimes ok, and
+        // they'll be evaluated in the next iteration of this loop.
+      }
+    });
   }
   /**
    * Sometimes, provided dependencies may be redundant. This can occur if a provided direct dependency is provided by
@@ -157,6 +272,11 @@ export default class TaskUnit {
     const earliestTime = Math.max(...depApparentEndDates);
     return earliestTime;
   }
+  /**
+   * Create a simple, projected history of what the task could be based on the last event provided for it.
+   *
+   * This is to help make both rendering and reasoning about the unit times easier.
+   */
   private _buildProjectedHistory() {
     const estimatedTaskDuration =
       this.anticipatedEndDate.getTime() - this.anticipatedStartDate.getTime();

@@ -54,3 +54,14 @@ export class PrematureTaskStartError extends Error {
     this.name = new.target.name;
   }
 }
+/**
+ * This is thrown when a task's eventHistory doesn't make sense.
+ */
+export class EventHistoryInvalidError extends Error {
+  constructor(message?: string) {
+    super(message);
+
+    Object.setPrototypeOf(this, EventHistoryInvalidError.prototype);
+    this.name = new.target.name;
+  }
+}

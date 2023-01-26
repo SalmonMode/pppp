@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { PrematureTaskStartError } from "../Error";
+import { EventHistoryInvalidError, PrematureTaskStartError } from "../Error";
 import { EventType } from "../types";
 import { TaskUnit } from "./";
 import { assumedReqTime } from "./constants";
@@ -45,474 +45,695 @@ describe("TaskUnit", function () {
       ]);
     });
   });
-  describe("ReviewedAndAccepted Event Provided", function () {
-    let unit: TaskUnit;
-    let startDate: Date;
-    let actualEndDate: Date;
-    let endDate: Date;
-    before(function () {
-      startDate = new Date();
-      endDate = new Date(startDate.getTime() + 1000);
-      actualEndDate = new Date(endDate.getTime() + 1000);
-      unit = new TaskUnit([], startDate, endDate, undefined, [
-        { type: EventType.TaskIterationStarted, date: startDate },
-        { type: EventType.ReviewedAndAccepted, date: actualEndDate },
-      ]);
+  describe("Projected History", function () {
+    describe("ReviewedAndAccepted Event Provided", function () {
+      let unit: TaskUnit;
+      let startDate: Date;
+      let actualEndDate: Date;
+      let endDate: Date;
+      before(function () {
+        startDate = new Date();
+        endDate = new Date(startDate.getTime() + 1000);
+        actualEndDate = new Date(endDate.getTime() + 1000);
+        unit = new TaskUnit([], startDate, endDate, undefined, [
+          { type: EventType.TaskIterationStarted, date: startDate },
+          { type: EventType.ReviewedAndAccepted, date: actualEndDate },
+        ]);
+      });
+      it("should have correct presence", function () {
+        expect(unit.presenceTime).to.equal(
+          actualEndDate.getTime() - startDate.getTime()
+        );
+      });
+      it("should have correct anticipated start date", function () {
+        expect(unit.anticipatedStartDate).to.deep.equal(startDate);
+      });
+      it("should have correct anticipated end date", function () {
+        expect(unit.anticipatedEndDate).to.deep.equal(endDate);
+      });
+      it("should have correct apparent start date", function () {
+        expect(unit.apparentStartDate).to.deep.equal(startDate);
+      });
+      it("should have correct apparent end date", function () {
+        expect(unit.apparentEndDate).to.deep.equal(actualEndDate);
+      });
+      it("should have no projected history", function () {
+        expect(unit.projectedHistory).to.deep.equal([]);
+      });
     });
-    it("should have correct presence", function () {
-      expect(unit.presenceTime).to.equal(
-        actualEndDate.getTime() - startDate.getTime()
-      );
+    describe("Ends With TaskIterationStarted Event", function () {
+      let unit: TaskUnit;
+      let startDate: Date;
+      let actualEndDate: Date;
+      let endDate: Date;
+      before(function () {
+        startDate = new Date();
+        endDate = new Date(startDate.getTime() + 1000);
+        actualEndDate = new Date(endDate.getTime() + 1000);
+        unit = new TaskUnit([], startDate, endDate, undefined, [
+          { type: EventType.TaskIterationStarted, date: startDate },
+        ]);
+      });
+      it("should have correct presence", function () {
+        expect(unit.presenceTime).to.equal(
+          endDate.getTime() - startDate.getTime()
+        );
+      });
+      it("should have correct anticipated start date", function () {
+        expect(unit.anticipatedStartDate).to.deep.equal(startDate);
+      });
+      it("should have correct anticipated end date", function () {
+        expect(unit.anticipatedEndDate).to.deep.equal(endDate);
+      });
+      it("should have correct apparent start date", function () {
+        expect(unit.apparentStartDate).to.deep.equal(startDate);
+      });
+      it("should have correct apparent end date", function () {
+        expect(unit.apparentEndDate).to.deep.equal(endDate);
+      });
+      it("should have projected history", function () {
+        expect(unit.projectedHistory).to.deep.equal([
+          {
+            type: EventType.ReviewedAndAccepted,
+            date: new Date(endDate.getTime()),
+          },
+        ]);
+      });
     });
-    it("should have correct anticipated start date", function () {
-      expect(unit.anticipatedStartDate).to.deep.equal(startDate);
+    describe("Ends With Delayed TaskIterationStarted Event", function () {
+      let unit: TaskUnit;
+      let startDate: Date;
+      let actualStartDate: Date;
+      let endDate: Date;
+      before(function () {
+        startDate = new Date();
+        endDate = new Date(startDate.getTime() + 1000);
+        actualStartDate = new Date(endDate.getTime() + 1000);
+        unit = new TaskUnit([], startDate, endDate, undefined, [
+          { type: EventType.TaskIterationStarted, date: actualStartDate },
+        ]);
+      });
+      it("should have correct presence", function () {
+        expect(unit.presenceTime).to.equal(
+          actualStartDate.getTime() - startDate.getTime() + 1000
+        );
+      });
+      it("should have correct anticipated start date", function () {
+        expect(unit.anticipatedStartDate).to.deep.equal(startDate);
+      });
+      it("should have correct anticipated end date", function () {
+        expect(unit.anticipatedEndDate).to.deep.equal(endDate);
+      });
+      it("should have correct apparent start date", function () {
+        expect(unit.apparentStartDate).to.deep.equal(actualStartDate);
+      });
+      it("should have correct apparent end date", function () {
+        expect(unit.apparentEndDate).to.deep.equal(
+          new Date(actualStartDate.getTime() + 1000)
+        );
+      });
+      it("should have projected history", function () {
+        expect(unit.projectedHistory).to.deep.equal([
+          {
+            type: EventType.ReviewedAndAccepted,
+            date: new Date(actualStartDate.getTime() + 1000),
+          },
+        ]);
+      });
     });
-    it("should have correct anticipated end date", function () {
-      expect(unit.anticipatedEndDate).to.deep.equal(endDate);
+    describe("Ends With MinorRevisionComplete Event", function () {
+      let unit: TaskUnit;
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+          { type: EventType.TaskIterationStarted, date: firstDate },
+          { type: EventType.ReviewedAndNeedsMinorRevision, date: secondDate },
+          { type: EventType.MinorRevisionComplete, date: thirdDate },
+        ]);
+      });
+      it("should have correct presence", function () {
+        expect(unit.presenceTime).to.equal(
+          thirdDate.getTime() - firstDate.getTime()
+        );
+      });
+      it("should have correct anticipated start date", function () {
+        expect(unit.anticipatedStartDate).to.deep.equal(firstDate);
+      });
+      it("should have correct anticipated end date", function () {
+        expect(unit.anticipatedEndDate).to.deep.equal(secondDate);
+      });
+      it("should have correct apparent start date", function () {
+        expect(unit.apparentStartDate).to.deep.equal(firstDate);
+      });
+      it("should have correct apparent end date", function () {
+        expect(unit.apparentEndDate).to.deep.equal(thirdDate);
+      });
+      it("should have no projected history", function () {
+        expect(unit.projectedHistory).to.deep.equal([]);
+      });
     });
-    it("should have correct apparent start date", function () {
-      expect(unit.apparentStartDate).to.deep.equal(startDate);
+    describe("Ends With Delayed MinorRevisionComplete Event", function () {
+      let unit: TaskUnit;
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      let fourthDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+        fourthDate = new Date(thirdDate.getTime() + 1000);
+        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+          { type: EventType.TaskIterationStarted, date: secondDate },
+          { type: EventType.ReviewedAndNeedsMinorRevision, date: thirdDate },
+          { type: EventType.MinorRevisionComplete, date: fourthDate },
+        ]);
+      });
+      it("should have correct presence", function () {
+        expect(unit.presenceTime).to.equal(
+          fourthDate.getTime() - firstDate.getTime()
+        );
+      });
+      it("should have correct anticipated start date", function () {
+        expect(unit.anticipatedStartDate).to.deep.equal(firstDate);
+      });
+      it("should have correct anticipated end date", function () {
+        expect(unit.anticipatedEndDate).to.deep.equal(secondDate);
+      });
+      it("should have correct apparent start date", function () {
+        expect(unit.apparentStartDate).to.deep.equal(secondDate);
+      });
+      it("should have correct apparent end date", function () {
+        expect(unit.apparentEndDate).to.deep.equal(fourthDate);
+      });
+      it("should have no projected history", function () {
+        expect(unit.projectedHistory).to.deep.equal([]);
+      });
     });
-    it("should have correct apparent end date", function () {
-      expect(unit.apparentEndDate).to.deep.equal(actualEndDate);
+    describe("Ends With ReviewedAndNeedsMajorRevision Event", function () {
+      let unit: TaskUnit;
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      let fourthDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+        fourthDate = new Date(thirdDate.getTime() + 1000);
+        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+          { type: EventType.TaskIterationStarted, date: firstDate },
+          { type: EventType.ReviewedAndNeedsMajorRevision, date: secondDate },
+        ]);
+      });
+      it("should have correct presence", function () {
+        expect(unit.presenceTime).to.equal(
+          thirdDate.getTime() - firstDate.getTime()
+        );
+      });
+      it("should have correct anticipated start date", function () {
+        expect(unit.anticipatedStartDate).to.deep.equal(firstDate);
+      });
+      it("should have correct anticipated end date", function () {
+        expect(unit.anticipatedEndDate).to.deep.equal(secondDate);
+      });
+      it("should have correct apparent start date", function () {
+        expect(unit.apparentStartDate).to.deep.equal(firstDate);
+      });
+      it("should have correct apparent end date", function () {
+        expect(unit.apparentEndDate).to.deep.equal(thirdDate);
+      });
+      it("should have no projected history", function () {
+        expect(unit.projectedHistory).to.deep.equal([
+          { type: EventType.ReviewedAndAccepted, date: thirdDate },
+        ]);
+      });
     });
-    it("should have no projected history", function () {
-      expect(unit.projectedHistory).to.deep.equal([]);
+    describe("Ends With Delayed ReviewedAndNeedsMajorRevision Event", function () {
+      let unit: TaskUnit;
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      let fourthDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+        fourthDate = new Date(thirdDate.getTime() + 1000);
+        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+          { type: EventType.TaskIterationStarted, date: secondDate },
+          { type: EventType.ReviewedAndNeedsMajorRevision, date: thirdDate },
+        ]);
+      });
+      it("should have correct presence", function () {
+        expect(unit.presenceTime).to.equal(
+          fourthDate.getTime() - firstDate.getTime()
+        );
+      });
+      it("should have correct anticipated start date", function () {
+        expect(unit.anticipatedStartDate).to.deep.equal(firstDate);
+      });
+      it("should have correct anticipated end date", function () {
+        expect(unit.anticipatedEndDate).to.deep.equal(secondDate);
+      });
+      it("should have correct apparent start date", function () {
+        expect(unit.apparentStartDate).to.deep.equal(secondDate);
+      });
+      it("should have correct apparent end date", function () {
+        expect(unit.apparentEndDate).to.deep.equal(fourthDate);
+      });
+      it("should have no projected history", function () {
+        expect(unit.projectedHistory).to.deep.equal([
+          { type: EventType.ReviewedAndAccepted, date: fourthDate },
+        ]);
+      });
+    });
+    describe("Ends With ReviewedAndNeedsMinorRevision Event", function () {
+      let unit: TaskUnit;
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      let fourthDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+        fourthDate = new Date(thirdDate.getTime() + 1000);
+        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+          { type: EventType.TaskIterationStarted, date: firstDate },
+          { type: EventType.ReviewedAndNeedsMinorRevision, date: secondDate },
+        ]);
+      });
+      it("should have correct presence", function () {
+        expect(unit.presenceTime).to.equal(
+          thirdDate.getTime() - firstDate.getTime()
+        );
+      });
+      it("should have correct anticipated start date", function () {
+        expect(unit.anticipatedStartDate).to.deep.equal(firstDate);
+      });
+      it("should have correct anticipated end date", function () {
+        expect(unit.anticipatedEndDate).to.deep.equal(secondDate);
+      });
+      it("should have correct apparent start date", function () {
+        expect(unit.apparentStartDate).to.deep.equal(firstDate);
+      });
+      it("should have correct apparent end date", function () {
+        expect(unit.apparentEndDate).to.deep.equal(thirdDate);
+      });
+      it("should have no projected history", function () {
+        expect(unit.projectedHistory).to.deep.equal([
+          { type: EventType.MinorRevisionComplete, date: thirdDate },
+        ]);
+      });
+    });
+    describe("Ends With Delayed ReviewedAndNeedsMinorRevision Event", function () {
+      let unit: TaskUnit;
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      let fourthDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+        fourthDate = new Date(thirdDate.getTime() + 1000);
+        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+          { type: EventType.TaskIterationStarted, date: secondDate },
+          { type: EventType.ReviewedAndNeedsMinorRevision, date: thirdDate },
+        ]);
+      });
+      it("should have correct presence", function () {
+        expect(unit.presenceTime).to.equal(
+          fourthDate.getTime() - firstDate.getTime()
+        );
+      });
+      it("should have correct anticipated start date", function () {
+        expect(unit.anticipatedStartDate).to.deep.equal(firstDate);
+      });
+      it("should have correct anticipated end date", function () {
+        expect(unit.anticipatedEndDate).to.deep.equal(secondDate);
+      });
+      it("should have correct apparent start date", function () {
+        expect(unit.apparentStartDate).to.deep.equal(secondDate);
+      });
+      it("should have correct apparent end date", function () {
+        expect(unit.apparentEndDate).to.deep.equal(fourthDate);
+      });
+      it("should have no projected history", function () {
+        expect(unit.projectedHistory).to.deep.equal([
+          { type: EventType.MinorRevisionComplete, date: fourthDate },
+        ]);
+      });
+    });
+    describe("Ends With ReviewedAndNeedsRebuild Event", function () {
+      let unit: TaskUnit;
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      let fourthDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + assumedReqTime);
+        fourthDate = new Date(thirdDate.getTime() + 1000);
+        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+          { type: EventType.TaskIterationStarted, date: firstDate },
+          { type: EventType.ReviewedAndNeedsRebuild, date: secondDate },
+        ]);
+      });
+      it("should have correct presence", function () {
+        expect(unit.presenceTime).to.equal(
+          fourthDate.getTime() - firstDate.getTime()
+        );
+      });
+      it("should have correct anticipated start date", function () {
+        expect(unit.anticipatedStartDate).to.deep.equal(firstDate);
+      });
+      it("should have correct anticipated end date", function () {
+        expect(unit.anticipatedEndDate).to.deep.equal(secondDate);
+      });
+      it("should have correct apparent start date", function () {
+        expect(unit.apparentStartDate).to.deep.equal(firstDate);
+      });
+      it("should have correct apparent end date", function () {
+        expect(unit.apparentEndDate).to.deep.equal(fourthDate);
+      });
+      it("should have no projected history", function () {
+        expect(unit.projectedHistory).to.deep.equal([
+          { type: EventType.TaskIterationStarted, date: thirdDate },
+          { type: EventType.ReviewedAndAccepted, date: fourthDate },
+        ]);
+      });
+    });
+    describe("Ends With Delayed ReviewedAndNeedsRebuild Event", function () {
+      let unit: TaskUnit;
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      let fourthDate: Date;
+      let fifthDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+        fourthDate = new Date(thirdDate.getTime() + assumedReqTime);
+        fifthDate = new Date(fourthDate.getTime() + 1000);
+        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+          { type: EventType.TaskIterationStarted, date: secondDate },
+          { type: EventType.ReviewedAndNeedsRebuild, date: thirdDate },
+        ]);
+      });
+      it("should have correct presence", function () {
+        expect(unit.presenceTime).to.equal(
+          fifthDate.getTime() - firstDate.getTime()
+        );
+      });
+      it("should have correct anticipated start date", function () {
+        expect(unit.anticipatedStartDate).to.deep.equal(firstDate);
+      });
+      it("should have correct anticipated end date", function () {
+        expect(unit.anticipatedEndDate).to.deep.equal(secondDate);
+      });
+      it("should have correct apparent start date", function () {
+        expect(unit.apparentStartDate).to.deep.equal(secondDate);
+      });
+      it("should have correct apparent end date", function () {
+        expect(unit.apparentEndDate).to.deep.equal(fifthDate);
+      });
+      it("should have no projected history", function () {
+        expect(unit.projectedHistory).to.deep.equal([
+          { type: EventType.TaskIterationStarted, date: fourthDate },
+          { type: EventType.ReviewedAndAccepted, date: fifthDate },
+        ]);
+      });
+    });
+    describe("Non TaskStarted Event Provided First", function () {
+      describe("ReviewedAndAccepted", function () {
+        let startDate: Date;
+        let endDate: Date;
+        before(function () {
+          startDate = new Date();
+          endDate = new Date(startDate.getTime() + 1000);
+        });
+        it("should throw Error", function () {
+          expect(
+            () =>
+              new TaskUnit([], startDate, endDate, undefined, [
+                { type: EventType.ReviewedAndAccepted, date: startDate },
+              ])
+          ).to.throw(Error);
+        });
+      });
+      describe("MinorRevisionComplete", function () {
+        let startDate: Date;
+        let endDate: Date;
+        before(function () {
+          startDate = new Date();
+          endDate = new Date(startDate.getTime() + 1000);
+        });
+        it("should throw Error", function () {
+          expect(
+            () =>
+              new TaskUnit([], startDate, endDate, undefined, [
+                { type: EventType.MinorRevisionComplete, date: startDate },
+              ])
+          ).to.throw(Error);
+        });
+      });
+      describe("ReviewedAndNeedsMajorRevision", function () {
+        let startDate: Date;
+        let endDate: Date;
+        before(function () {
+          startDate = new Date();
+          endDate = new Date(startDate.getTime() + 1000);
+        });
+        it("should throw Error", function () {
+          expect(
+            () =>
+              new TaskUnit([], startDate, endDate, undefined, [
+                {
+                  type: EventType.ReviewedAndNeedsMajorRevision,
+                  date: startDate,
+                },
+              ])
+          ).to.throw(Error);
+        });
+      });
+      describe("ReviewedAndNeedsMinorRevision", function () {
+        let startDate: Date;
+        let endDate: Date;
+        before(function () {
+          startDate = new Date();
+          endDate = new Date(startDate.getTime() + 1000);
+        });
+        it("should throw Error", function () {
+          expect(
+            () =>
+              new TaskUnit([], startDate, endDate, undefined, [
+                {
+                  type: EventType.ReviewedAndNeedsMinorRevision,
+                  date: startDate,
+                },
+              ])
+          ).to.throw(Error);
+        });
+      });
+      describe("ReviewedAndNeedsRebuild", function () {
+        let startDate: Date;
+        let endDate: Date;
+        before(function () {
+          startDate = new Date();
+          endDate = new Date(startDate.getTime() + 1000);
+        });
+        it("should throw Error", function () {
+          expect(
+            () =>
+              new TaskUnit([], startDate, endDate, undefined, [
+                { type: EventType.ReviewedAndNeedsRebuild, date: startDate },
+              ])
+          ).to.throw(Error);
+        });
+      });
     });
   });
-  describe("Ends With TaskIterationStarted Event", function () {
-    let unit: TaskUnit;
-    let startDate: Date;
-    let actualEndDate: Date;
-    let endDate: Date;
-    before(function () {
-      startDate = new Date();
-      endDate = new Date(startDate.getTime() + 1000);
-      actualEndDate = new Date(endDate.getTime() + 1000);
-      unit = new TaskUnit([], startDate, endDate, undefined, [
-        { type: EventType.TaskIterationStarted, date: startDate },
-      ]);
-    });
-    it("should have correct presence", function () {
-      expect(unit.presenceTime).to.equal(
-        endDate.getTime() - startDate.getTime()
-      );
-    });
-    it("should have correct anticipated start date", function () {
-      expect(unit.anticipatedStartDate).to.deep.equal(startDate);
-    });
-    it("should have correct anticipated end date", function () {
-      expect(unit.anticipatedEndDate).to.deep.equal(endDate);
-    });
-    it("should have correct apparent start date", function () {
-      expect(unit.apparentStartDate).to.deep.equal(startDate);
-    });
-    it("should have correct apparent end date", function () {
-      expect(unit.apparentEndDate).to.deep.equal(endDate);
-    });
-    it("should have projected history", function () {
-      expect(unit.projectedHistory).to.deep.equal([
-        {
-          type: EventType.ReviewedAndAccepted,
-          date: new Date(endDate.getTime()),
-        },
-      ]);
-    });
-  });
-  describe("Ends With Delayed TaskIterationStarted Event", function () {
-    let unit: TaskUnit;
-    let startDate: Date;
-    let actualStartDate: Date;
-    let endDate: Date;
-    before(function () {
-      startDate = new Date();
-      endDate = new Date(startDate.getTime() + 1000);
-      actualStartDate = new Date(endDate.getTime() + 1000);
-      unit = new TaskUnit([], startDate, endDate, undefined, [
-        { type: EventType.TaskIterationStarted, date: actualStartDate },
-      ]);
-    });
-    it("should have correct presence", function () {
-      expect(unit.presenceTime).to.equal(
-        actualStartDate.getTime() - startDate.getTime() + 1000
-      );
-    });
-    it("should have correct anticipated start date", function () {
-      expect(unit.anticipatedStartDate).to.deep.equal(startDate);
-    });
-    it("should have correct anticipated end date", function () {
-      expect(unit.anticipatedEndDate).to.deep.equal(endDate);
-    });
-    it("should have correct apparent start date", function () {
-      expect(unit.apparentStartDate).to.deep.equal(actualStartDate);
-    });
-    it("should have correct apparent end date", function () {
-      expect(unit.apparentEndDate).to.deep.equal(
-        new Date(actualStartDate.getTime() + 1000)
-      );
-    });
-    it("should have projected history", function () {
-      expect(unit.projectedHistory).to.deep.equal([
-        {
-          type: EventType.ReviewedAndAccepted,
-          date: new Date(actualStartDate.getTime() + 1000),
-        },
-      ]);
-    });
-  });
-  describe("Ends With MinorRevisionComplete Event", function () {
-    let unit: TaskUnit;
-    let firstDate: Date;
-    let secondDate: Date;
-    let thirdDate: Date;
-    before(function () {
-      firstDate = new Date();
-      secondDate = new Date(firstDate.getTime() + 1000);
-      thirdDate = new Date(secondDate.getTime() + 1000);
-      unit = new TaskUnit([], firstDate, secondDate, undefined, [
-        { type: EventType.TaskIterationStarted, date: firstDate },
-        { type: EventType.ReviewedAndNeedsMinorRevision, date: secondDate },
-        { type: EventType.MinorRevisionComplete, date: thirdDate },
-      ]);
-    });
-    it("should have correct presence", function () {
-      expect(unit.presenceTime).to.equal(
-        thirdDate.getTime() - firstDate.getTime()
-      );
-    });
-    it("should have correct anticipated start date", function () {
-      expect(unit.anticipatedStartDate).to.deep.equal(firstDate);
-    });
-    it("should have correct anticipated end date", function () {
-      expect(unit.anticipatedEndDate).to.deep.equal(secondDate);
-    });
-    it("should have correct apparent start date", function () {
-      expect(unit.apparentStartDate).to.deep.equal(firstDate);
-    });
-    it("should have correct apparent end date", function () {
-      expect(unit.apparentEndDate).to.deep.equal(thirdDate);
-    });
-    it("should have no projected history", function () {
-      expect(unit.projectedHistory).to.deep.equal([]);
-    });
-  });
-  describe("Ends With Delayed MinorRevisionComplete Event", function () {
-    let unit: TaskUnit;
-    let firstDate: Date;
-    let secondDate: Date;
-    let thirdDate: Date;
-    let fourthDate: Date;
-    before(function () {
-      firstDate = new Date();
-      secondDate = new Date(firstDate.getTime() + 1000);
-      thirdDate = new Date(secondDate.getTime() + 1000);
-      fourthDate = new Date(thirdDate.getTime() + 1000);
-      unit = new TaskUnit([], firstDate, secondDate, undefined, [
-        { type: EventType.TaskIterationStarted, date: secondDate },
-        { type: EventType.ReviewedAndNeedsMinorRevision, date: thirdDate },
-        { type: EventType.MinorRevisionComplete, date: fourthDate },
-      ]);
-    });
-    it("should have correct presence", function () {
-      expect(unit.presenceTime).to.equal(
-        fourthDate.getTime() - firstDate.getTime()
-      );
-    });
-    it("should have correct anticipated start date", function () {
-      expect(unit.anticipatedStartDate).to.deep.equal(firstDate);
-    });
-    it("should have correct anticipated end date", function () {
-      expect(unit.anticipatedEndDate).to.deep.equal(secondDate);
-    });
-    it("should have correct apparent start date", function () {
-      expect(unit.apparentStartDate).to.deep.equal(secondDate);
-    });
-    it("should have correct apparent end date", function () {
-      expect(unit.apparentEndDate).to.deep.equal(fourthDate);
-    });
-    it("should have no projected history", function () {
-      expect(unit.projectedHistory).to.deep.equal([]);
-    });
-  });
-  describe("Ends With ReviewedAndNeedsMajorRevision Event", function () {
-    let unit: TaskUnit;
-    let firstDate: Date;
-    let secondDate: Date;
-    let thirdDate: Date;
-    let fourthDate: Date;
-    before(function () {
-      firstDate = new Date();
-      secondDate = new Date(firstDate.getTime() + 1000);
-      thirdDate = new Date(secondDate.getTime() + 1000);
-      fourthDate = new Date(thirdDate.getTime() + 1000);
-      unit = new TaskUnit([], firstDate, secondDate, undefined, [
-        { type: EventType.TaskIterationStarted, date: firstDate },
-        { type: EventType.ReviewedAndNeedsMajorRevision, date: secondDate },
-      ]);
-    });
-    it("should have correct presence", function () {
-      expect(unit.presenceTime).to.equal(
-        thirdDate.getTime() - firstDate.getTime()
-      );
-    });
-    it("should have correct anticipated start date", function () {
-      expect(unit.anticipatedStartDate).to.deep.equal(firstDate);
-    });
-    it("should have correct anticipated end date", function () {
-      expect(unit.anticipatedEndDate).to.deep.equal(secondDate);
-    });
-    it("should have correct apparent start date", function () {
-      expect(unit.apparentStartDate).to.deep.equal(firstDate);
-    });
-    it("should have correct apparent end date", function () {
-      expect(unit.apparentEndDate).to.deep.equal(thirdDate);
-    });
-    it("should have no projected history", function () {
-      expect(unit.projectedHistory).to.deep.equal([
-        { type: EventType.ReviewedAndAccepted, date: thirdDate },
-      ]);
-    });
-  });
-  describe("Ends With Delayed ReviewedAndNeedsMajorRevision Event", function () {
-    let unit: TaskUnit;
-    let firstDate: Date;
-    let secondDate: Date;
-    let thirdDate: Date;
-    let fourthDate: Date;
-    before(function () {
-      firstDate = new Date();
-      secondDate = new Date(firstDate.getTime() + 1000);
-      thirdDate = new Date(secondDate.getTime() + 1000);
-      fourthDate = new Date(thirdDate.getTime() + 1000);
-      unit = new TaskUnit([], firstDate, secondDate, undefined, [
-        { type: EventType.TaskIterationStarted, date: secondDate },
-        { type: EventType.ReviewedAndNeedsMajorRevision, date: thirdDate },
-      ]);
-    });
-    it("should have correct presence", function () {
-      expect(unit.presenceTime).to.equal(
-        fourthDate.getTime() - firstDate.getTime()
-      );
-    });
-    it("should have correct anticipated start date", function () {
-      expect(unit.anticipatedStartDate).to.deep.equal(firstDate);
-    });
-    it("should have correct anticipated end date", function () {
-      expect(unit.anticipatedEndDate).to.deep.equal(secondDate);
-    });
-    it("should have correct apparent start date", function () {
-      expect(unit.apparentStartDate).to.deep.equal(secondDate);
-    });
-    it("should have correct apparent end date", function () {
-      expect(unit.apparentEndDate).to.deep.equal(fourthDate);
-    });
-    it("should have no projected history", function () {
-      expect(unit.projectedHistory).to.deep.equal([
-        { type: EventType.ReviewedAndAccepted, date: fourthDate },
-      ]);
-    });
-  });
-  describe("Ends With ReviewedAndNeedsMinorRevision Event", function () {
-    let unit: TaskUnit;
-    let firstDate: Date;
-    let secondDate: Date;
-    let thirdDate: Date;
-    let fourthDate: Date;
-    before(function () {
-      firstDate = new Date();
-      secondDate = new Date(firstDate.getTime() + 1000);
-      thirdDate = new Date(secondDate.getTime() + 1000);
-      fourthDate = new Date(thirdDate.getTime() + 1000);
-      unit = new TaskUnit([], firstDate, secondDate, undefined, [
-        { type: EventType.TaskIterationStarted, date: firstDate },
-        { type: EventType.ReviewedAndNeedsMinorRevision, date: secondDate },
-      ]);
-    });
-    it("should have correct presence", function () {
-      expect(unit.presenceTime).to.equal(
-        thirdDate.getTime() - firstDate.getTime()
-      );
-    });
-    it("should have correct anticipated start date", function () {
-      expect(unit.anticipatedStartDate).to.deep.equal(firstDate);
-    });
-    it("should have correct anticipated end date", function () {
-      expect(unit.anticipatedEndDate).to.deep.equal(secondDate);
-    });
-    it("should have correct apparent start date", function () {
-      expect(unit.apparentStartDate).to.deep.equal(firstDate);
-    });
-    it("should have correct apparent end date", function () {
-      expect(unit.apparentEndDate).to.deep.equal(thirdDate);
-    });
-    it("should have no projected history", function () {
-      expect(unit.projectedHistory).to.deep.equal([
-        { type: EventType.MinorRevisionComplete, date: thirdDate },
-      ]);
-    });
-  });
-  describe("Ends With Delayed ReviewedAndNeedsMinorRevision Event", function () {
-    let unit: TaskUnit;
-    let firstDate: Date;
-    let secondDate: Date;
-    let thirdDate: Date;
-    let fourthDate: Date;
-    before(function () {
-      firstDate = new Date();
-      secondDate = new Date(firstDate.getTime() + 1000);
-      thirdDate = new Date(secondDate.getTime() + 1000);
-      fourthDate = new Date(thirdDate.getTime() + 1000);
-      unit = new TaskUnit([], firstDate, secondDate, undefined, [
-        { type: EventType.TaskIterationStarted, date: secondDate },
-        { type: EventType.ReviewedAndNeedsMinorRevision, date: thirdDate },
-      ]);
-    });
-    it("should have correct presence", function () {
-      expect(unit.presenceTime).to.equal(
-        fourthDate.getTime() - firstDate.getTime()
-      );
-    });
-    it("should have correct anticipated start date", function () {
-      expect(unit.anticipatedStartDate).to.deep.equal(firstDate);
-    });
-    it("should have correct anticipated end date", function () {
-      expect(unit.anticipatedEndDate).to.deep.equal(secondDate);
-    });
-    it("should have correct apparent start date", function () {
-      expect(unit.apparentStartDate).to.deep.equal(secondDate);
-    });
-    it("should have correct apparent end date", function () {
-      expect(unit.apparentEndDate).to.deep.equal(fourthDate);
-    });
-    it("should have no projected history", function () {
-      expect(unit.projectedHistory).to.deep.equal([
-        { type: EventType.MinorRevisionComplete, date: fourthDate },
-      ]);
-    });
-  });
-  describe("Ends With ReviewedAndNeedsRebuild Event", function () {
-    let unit: TaskUnit;
-    let firstDate: Date;
-    let secondDate: Date;
-    let thirdDate: Date;
-    let fourthDate: Date;
-    before(function () {
-      firstDate = new Date();
-      secondDate = new Date(firstDate.getTime() + 1000);
-      thirdDate = new Date(secondDate.getTime() + assumedReqTime);
-      fourthDate = new Date(thirdDate.getTime() + 1000);
-      unit = new TaskUnit([], firstDate, secondDate, undefined, [
-        { type: EventType.TaskIterationStarted, date: firstDate },
-        { type: EventType.ReviewedAndNeedsRebuild, date: secondDate },
-      ]);
-    });
-    it("should have correct presence", function () {
-      expect(unit.presenceTime).to.equal(
-        fourthDate.getTime() - firstDate.getTime()
-      );
-    });
-    it("should have correct anticipated start date", function () {
-      expect(unit.anticipatedStartDate).to.deep.equal(firstDate);
-    });
-    it("should have correct anticipated end date", function () {
-      expect(unit.anticipatedEndDate).to.deep.equal(secondDate);
-    });
-    it("should have correct apparent start date", function () {
-      expect(unit.apparentStartDate).to.deep.equal(firstDate);
-    });
-    it("should have correct apparent end date", function () {
-      expect(unit.apparentEndDate).to.deep.equal(fourthDate);
-    });
-    it("should have no projected history", function () {
-      expect(unit.projectedHistory).to.deep.equal([
-        { type: EventType.TaskIterationStarted, date: thirdDate },
-        { type: EventType.ReviewedAndAccepted, date: fourthDate },
-      ]);
-    });
-  });
-  describe("Ends With Delayed ReviewedAndNeedsRebuild Event", function () {
-    let unit: TaskUnit;
-    let firstDate: Date;
-    let secondDate: Date;
-    let thirdDate: Date;
-    let fourthDate: Date;
-    let fifthDate: Date;
-    before(function () {
-      firstDate = new Date();
-      secondDate = new Date(firstDate.getTime() + 1000);
-      thirdDate = new Date(secondDate.getTime() + 1000);
-      fourthDate = new Date(thirdDate.getTime() + assumedReqTime);
-      fifthDate = new Date(fourthDate.getTime() + 1000);
-      unit = new TaskUnit([], firstDate, secondDate, undefined, [
-        { type: EventType.TaskIterationStarted, date: secondDate },
-        { type: EventType.ReviewedAndNeedsRebuild, date: thirdDate },
-      ]);
-    });
-    it("should have correct presence", function () {
-      expect(unit.presenceTime).to.equal(
-        fifthDate.getTime() - firstDate.getTime()
-      );
-    });
-    it("should have correct anticipated start date", function () {
-      expect(unit.anticipatedStartDate).to.deep.equal(firstDate);
-    });
-    it("should have correct anticipated end date", function () {
-      expect(unit.anticipatedEndDate).to.deep.equal(secondDate);
-    });
-    it("should have correct apparent start date", function () {
-      expect(unit.apparentStartDate).to.deep.equal(secondDate);
-    });
-    it("should have correct apparent end date", function () {
-      expect(unit.apparentEndDate).to.deep.equal(fifthDate);
-    });
-    it("should have no projected history", function () {
-      expect(unit.projectedHistory).to.deep.equal([
-        { type: EventType.TaskIterationStarted, date: fourthDate },
-        { type: EventType.ReviewedAndAccepted, date: fifthDate },
-      ]);
-    });
-  });
-  describe("Non TaskStarted Event Provided First", function () {
-    describe("ReviewedAndAccepted", function () {
+
+  describe("History Validation", function () {
+    describe("Task Started Before Dependency Finished (First Task Was Started)", function () {
+      let unitA: TaskUnit;
+      let firstStartDate: Date;
+      let firstEndDate: Date;
+      let secondStartDate: Date;
+      let secondEndDate: Date;
+      before(function () {
+        firstStartDate = new Date();
+        firstEndDate = new Date(firstStartDate.getTime() + 1000);
+        secondStartDate = new Date(firstEndDate.getTime());
+        secondEndDate = new Date(secondStartDate.getTime() + 1000);
+        unitA = new TaskUnit([], firstStartDate, firstEndDate, undefined, [
+          { type: EventType.TaskIterationStarted, date: firstStartDate },
+        ]);
+      });
+      it("should throw PrematureTaskStartError when instantiating unit B", function () {
+        expect(
+          () =>
+            new TaskUnit([unitA], secondStartDate, secondEndDate, undefined, [
+              { type: EventType.TaskIterationStarted, date: secondStartDate },
+            ])
+        ).to.throw(PrematureTaskStartError);
+      });
+    });
+    describe("Task Started Before Dependency Finished (First Task Was Not Started)", function () {
+      let unitA: TaskUnit;
+      let firstStartDate: Date;
+      let firstEndDate: Date;
+      let secondStartDate: Date;
+      let secondEndDate: Date;
+      before(function () {
+        firstStartDate = new Date();
+        firstEndDate = new Date(firstStartDate.getTime() + 1000);
+        secondStartDate = new Date(firstEndDate.getTime());
+        secondEndDate = new Date(secondStartDate.getTime() + 1000);
+        unitA = new TaskUnit([], firstStartDate, firstEndDate);
+      });
+      it("should throw PrematureTaskStartError when instantiating unit B", function () {
+        expect(
+          () =>
+            new TaskUnit([unitA], secondStartDate, secondEndDate, undefined, [
+              { type: EventType.TaskIterationStarted, date: secondStartDate },
+            ])
+        ).to.throw(PrematureTaskStartError);
+      });
+    });
+    describe("Task Started Before Dependency Finished (But Dependency Was Finished)", function () {
+      let unitA: TaskUnit;
+      let firstStartDate: Date;
+      let firstEndDate: Date;
+      let secondStartDate: Date;
+      let secondEndDate: Date;
+      before(function () {
+        firstStartDate = new Date();
+        firstEndDate = new Date(firstStartDate.getTime() + 1000);
+        secondStartDate = new Date(firstStartDate.getTime() + 500);
+        secondEndDate = new Date(secondStartDate.getTime() + 1000);
+        unitA = new TaskUnit([], firstStartDate, firstEndDate, undefined, [
+          {
+            type: EventType.TaskIterationStarted,
+            date: firstStartDate,
+          },
+          {
+            type: EventType.ReviewedAndAccepted,
+            date: firstEndDate,
+          },
+        ]);
+      });
+      it("should throw PrematureTaskStartError when instantiating unit B", function () {
+        expect(
+          () =>
+            new TaskUnit([unitA], secondStartDate, secondEndDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: secondStartDate,
+              },
+            ])
+        ).to.throw(PrematureTaskStartError);
+      });
+    });
+    describe("Task Started After Dependency Finished (But Dependency Was Finished)", function () {
+      let unitA: TaskUnit;
+      let firstStartDate: Date;
+      let firstEndDate: Date;
+      let secondStartDate: Date;
+      let secondEndDate: Date;
+      before(function () {
+        firstStartDate = new Date();
+        firstEndDate = new Date(firstStartDate.getTime() + 1000);
+        secondStartDate = new Date(firstStartDate.getTime() + 1500);
+        secondEndDate = new Date(secondStartDate.getTime() + 1000);
+        unitA = new TaskUnit([], firstStartDate, firstEndDate, undefined, [
+          {
+            type: EventType.TaskIterationStarted,
+            date: firstStartDate,
+          },
+          {
+            type: EventType.ReviewedAndAccepted,
+            date: firstEndDate,
+          },
+        ]);
+      });
+      it("should not throw Error when instantiating unit B", function () {
+        expect(
+          () =>
+            new TaskUnit([unitA], secondStartDate, secondEndDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: secondStartDate,
+              },
+            ])
+        ).to.not.throw(Error);
+      });
+    });
+    describe("Starts With TaskIterationStarted", function () {
       let startDate: Date;
       let endDate: Date;
       before(function () {
         startDate = new Date();
         endDate = new Date(startDate.getTime() + 1000);
       });
-      it("should throw Error", function () {
+      it("should not throw error", function () {
+        expect(
+          () =>
+            new TaskUnit([], startDate, endDate, undefined, [
+              { type: EventType.TaskIterationStarted, date: startDate },
+            ])
+        ).to.not.throw(Error);
+      });
+    });
+    describe("Starts With ReviewedAndAccepted", function () {
+      let startDate: Date;
+      let endDate: Date;
+      before(function () {
+        startDate = new Date();
+        endDate = new Date(startDate.getTime() + 1000);
+      });
+      it("should throw EventHistoryInvalidError", function () {
         expect(
           () =>
             new TaskUnit([], startDate, endDate, undefined, [
               { type: EventType.ReviewedAndAccepted, date: startDate },
             ])
-        ).to.throw(Error);
+        ).to.throw(EventHistoryInvalidError);
       });
     });
-    describe("MinorRevisionComplete", function () {
+    describe("Starts With MinorRevisionComplete", function () {
       let startDate: Date;
       let endDate: Date;
       before(function () {
         startDate = new Date();
         endDate = new Date(startDate.getTime() + 1000);
       });
-      it("should throw Error", function () {
+      it("should throw EventHistoryInvalidError", function () {
         expect(
           () =>
             new TaskUnit([], startDate, endDate, undefined, [
               { type: EventType.MinorRevisionComplete, date: startDate },
             ])
-        ).to.throw(Error);
+        ).to.throw(EventHistoryInvalidError);
       });
     });
-    describe("ReviewedAndNeedsMajorRevision", function () {
+    describe("Starts With ReviewedAndNeedsMajorRevision", function () {
       let startDate: Date;
       let endDate: Date;
       before(function () {
         startDate = new Date();
         endDate = new Date(startDate.getTime() + 1000);
       });
-      it("should throw Error", function () {
+      it("should throw EventHistoryInvalidError", function () {
         expect(
           () =>
             new TaskUnit([], startDate, endDate, undefined, [
@@ -521,17 +742,17 @@ describe("TaskUnit", function () {
                 date: startDate,
               },
             ])
-        ).to.throw(Error);
+        ).to.throw(EventHistoryInvalidError);
       });
     });
-    describe("ReviewedAndNeedsMinorRevision", function () {
+    describe("Starts With ReviewedAndNeedsMinorRevision", function () {
       let startDate: Date;
       let endDate: Date;
       before(function () {
         startDate = new Date();
         endDate = new Date(startDate.getTime() + 1000);
       });
-      it("should throw Error", function () {
+      it("should throw EventHistoryInvalidError", function () {
         expect(
           () =>
             new TaskUnit([], startDate, endDate, undefined, [
@@ -540,138 +761,1071 @@ describe("TaskUnit", function () {
                 date: startDate,
               },
             ])
-        ).to.throw(Error);
+        ).to.throw(EventHistoryInvalidError);
       });
     });
-    describe("ReviewedAndNeedsRebuild", function () {
+    describe("Starts With ReviewedAndNeedsRebuild", function () {
       let startDate: Date;
       let endDate: Date;
       before(function () {
         startDate = new Date();
         endDate = new Date(startDate.getTime() + 1000);
       });
-      it("should throw Error", function () {
+      it("should throw EventHistoryInvalidError", function () {
         expect(
           () =>
             new TaskUnit([], startDate, endDate, undefined, [
-              { type: EventType.ReviewedAndNeedsRebuild, date: startDate },
+              {
+                type: EventType.ReviewedAndNeedsRebuild,
+                date: startDate,
+              },
             ])
-        ).to.throw(Error);
+        ).to.throw(EventHistoryInvalidError);
       });
     });
-  });
-  describe("Task Started Before Dependency Finished (First Task Was Started)", function () {
-    let unitA: TaskUnit;
-    let firstStartDate: Date;
-    let firstEndDate: Date;
-    let secondStartDate: Date;
-    let secondEndDate: Date;
-    before(function () {
-      firstStartDate = new Date();
-      firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      secondStartDate = new Date(firstEndDate.getTime());
-      secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate, undefined, [
-        { type: EventType.TaskIterationStarted, date: firstStartDate },
-      ]);
+    describe("Starts With TaskIterationStarted, ReviewedAndAccepted", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndAccepted,
+                date: secondDate,
+              },
+            ])
+        ).to.not.throw(Error);
+      });
     });
-    it("should throw PrematureTaskStartError when instantiating unit B", function () {
-      expect(
-        () =>
-          new TaskUnit([unitA], secondStartDate, secondEndDate, undefined, [
-            { type: EventType.TaskIterationStarted, date: secondStartDate },
-          ])
-      ).to.throw(PrematureTaskStartError);
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMajorRevision,
+                date: secondDate,
+              },
+            ])
+        ).to.not.throw(Error);
+      });
     });
-  });
-  describe("Task Started Before Dependency Finished (First Task Was Not Started)", function () {
-    let unitA: TaskUnit;
-    let firstStartDate: Date;
-    let firstEndDate: Date;
-    let secondStartDate: Date;
-    let secondEndDate: Date;
-    before(function () {
-      firstStartDate = new Date();
-      firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      secondStartDate = new Date(firstEndDate.getTime());
-      secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate);
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: secondDate,
+              },
+            ])
+        ).to.not.throw(Error);
+      });
     });
-    it("should throw PrematureTaskStartError when instantiating unit B", function () {
-      expect(
-        () =>
-          new TaskUnit([unitA], secondStartDate, secondEndDate, undefined, [
-            { type: EventType.TaskIterationStarted, date: secondStartDate },
-          ])
-      ).to.throw(PrematureTaskStartError);
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsRebuild,
+                date: secondDate,
+              },
+            ])
+        ).to.not.throw(Error);
+      });
     });
-  });
-  describe("Task Started Before Dependency Finished (But Dependency Was Finished)", function () {
-    let unitA: TaskUnit;
-    let firstStartDate: Date;
-    let firstEndDate: Date;
-    let secondStartDate: Date;
-    let secondEndDate: Date;
-    before(function () {
-      firstStartDate = new Date();
-      firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      secondStartDate = new Date(firstStartDate.getTime() + 500);
-      secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate, undefined, [
-        {
-          type: EventType.TaskIterationStarted,
-          date: firstStartDate,
-        },
-        {
-          type: EventType.ReviewedAndAccepted,
-          date: firstEndDate,
-        },
-      ]);
+    describe("Starts With TaskIterationStarted, TaskIterationStarted", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+      });
+      it("should throw EventHistoryInvalidError", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.TaskIterationStarted,
+                date: secondDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
     });
-    it("should throw PrematureTaskStartError when instantiating unit B", function () {
-      expect(
-        () =>
-          new TaskUnit([unitA], secondStartDate, secondEndDate, undefined, [
-            {
-              type: EventType.TaskIterationStarted,
-              date: secondStartDate,
-            },
-          ])
-      ).to.throw(PrematureTaskStartError);
+    describe("Starts With TaskIterationStarted, MinorRevisionComplete", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+      });
+      it("should throw EventHistoryInvalidError", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.MinorRevisionComplete,
+                date: secondDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
     });
-  });
-  describe("Task Started After Dependency Finished (But Dependency Was Finished)", function () {
-    let unitA: TaskUnit;
-    let firstStartDate: Date;
-    let firstEndDate: Date;
-    let secondStartDate: Date;
-    let secondEndDate: Date;
-    before(function () {
-      firstStartDate = new Date();
-      firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      secondStartDate = new Date(firstStartDate.getTime() + 1500);
-      secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      unitA = new TaskUnit([], firstStartDate, firstEndDate, undefined, [
-        {
-          type: EventType.TaskIterationStarted,
-          date: firstStartDate,
-        },
-        {
-          type: EventType.ReviewedAndAccepted,
-          date: firstEndDate,
-        },
-      ]);
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, ReviewedAndAccepted", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMajorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndAccepted,
+                date: thirdDate,
+              },
+            ])
+        ).to.not.throw(Error);
+      });
     });
-    it("should not throw Error when instantiating unit B", function () {
-      expect(
-        () =>
-          new TaskUnit([unitA], secondStartDate, secondEndDate, undefined, [
-            {
-              type: EventType.TaskIterationStarted,
-              date: secondStartDate,
-            },
-          ])
-      ).to.not.throw(Error);
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, ReviewedAndNeedsMajorRevision", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMajorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMajorRevision,
+                date: thirdDate,
+              },
+            ])
+        ).to.not.throw(Error);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, ReviewedAndNeedsMinorRevision", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMajorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: thirdDate,
+              },
+            ])
+        ).to.not.throw(Error);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, ReviewedAndNeedsRebuild", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMajorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsRebuild,
+                date: thirdDate,
+              },
+            ])
+        ).to.not.throw(Error);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, TaskIterationStarted", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMajorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.TaskIterationStarted,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, MinorRevisionComplete", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMajorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.MinorRevisionComplete,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.MinorRevisionComplete,
+                date: thirdDate,
+              },
+            ])
+        ).to.not.throw(Error);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, ReviewedAndNeedsMinorRevision", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, ReviewedAndNeedsMajorRevision", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMajorRevision,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, ReviewedAndNeedsRebuild", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsRebuild,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, ReviewedAndAccepted", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndAccepted,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, TaskIterationStarted", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.TaskIterationStarted,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, TaskIterationStarted", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsRebuild,
+                date: secondDate,
+              },
+              {
+                type: EventType.TaskIterationStarted,
+                date: thirdDate,
+              },
+            ])
+        ).to.not.throw(Error);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, MinorRevisionComplete", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsRebuild,
+                date: secondDate,
+              },
+              {
+                type: EventType.MinorRevisionComplete,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, ReviewedAndNeedsMinorRevision", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsRebuild,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, ReviewedAndNeedsMajorRevision", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsRebuild,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMajorRevision,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, ReviewedAndNeedsRebuild", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsRebuild,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsRebuild,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, ReviewedAndAccepted", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsRebuild,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndAccepted,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndAccepted, ReviewedAndAccepted", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndAccepted,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndAccepted,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndAccepted, MinorRevisionComplete", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndAccepted,
+                date: secondDate,
+              },
+              {
+                type: EventType.MinorRevisionComplete,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndAccepted, ReviewedAndNeedsMajorRevision", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndAccepted,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMajorRevision,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndAccepted, ReviewedAndNeedsMinorRevision", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndAccepted,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndAccepted, ReviewedAndNeedsRebuild", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndAccepted,
+                date: secondDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsRebuild,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndAccepted, TaskIterationStarted", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndAccepted,
+                date: secondDate,
+              },
+              {
+                type: EventType.TaskIterationStarted,
+                date: thirdDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, ReviewedAndAccepted", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      let fourthDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+        fourthDate = new Date(thirdDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.MinorRevisionComplete,
+                date: thirdDate,
+              },
+              {
+                type: EventType.ReviewedAndAccepted,
+                date: fourthDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, MinorRevisionComplete", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      let fourthDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+        fourthDate = new Date(thirdDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.MinorRevisionComplete,
+                date: thirdDate,
+              },
+              {
+                type: EventType.MinorRevisionComplete,
+                date: fourthDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, ReviewedAndNeedsMajorRevision", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      let fourthDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+        fourthDate = new Date(thirdDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.MinorRevisionComplete,
+                date: thirdDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMajorRevision,
+                date: fourthDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, ReviewedAndNeedsMinorRevision", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      let fourthDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+        fourthDate = new Date(thirdDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.MinorRevisionComplete,
+                date: thirdDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: fourthDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, ReviewedAndNeedsRebuild", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      let fourthDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+        fourthDate = new Date(thirdDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.MinorRevisionComplete,
+                date: thirdDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsRebuild,
+                date: fourthDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, TaskIterationStarted", function () {
+      let firstDate: Date;
+      let secondDate: Date;
+      let thirdDate: Date;
+      let fourthDate: Date;
+      before(function () {
+        firstDate = new Date();
+        secondDate = new Date(firstDate.getTime() + 1000);
+        thirdDate = new Date(secondDate.getTime() + 1000);
+        fourthDate = new Date(thirdDate.getTime() + 1000);
+      });
+      it("should not throw Error", function () {
+        expect(
+          () =>
+            new TaskUnit([], firstDate, secondDate, undefined, [
+              {
+                type: EventType.TaskIterationStarted,
+                date: firstDate,
+              },
+              {
+                type: EventType.ReviewedAndNeedsMinorRevision,
+                date: secondDate,
+              },
+              {
+                type: EventType.MinorRevisionComplete,
+                date: thirdDate,
+              },
+              {
+                type: EventType.TaskIterationStarted,
+                date: fourthDate,
+              },
+            ])
+        ).to.throw(EventHistoryInvalidError);
+      });
     });
   });
   describe("Complex Interconnections", function () {
