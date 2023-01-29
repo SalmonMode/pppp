@@ -7,6 +7,7 @@ import {
   TaskUnitDetails,
 } from "../../../types";
 import {
+  borderSize,
   prerequisitesBoxWidth,
   reviewBoxWidth,
   snailTrailColor,
@@ -25,10 +26,18 @@ export default function TaskUnitCard({
   unit: TaskUnitDetails;
   position: Coordinate;
 }) {
-  const cardWidth =
-    (unit.apparentEndTime - unit.apparentStartTime) / unitTaskTimeConversion;
-  const presenceWidth =
-    (unit.apparentEndTime - unit.anticipatedStartTime) / unitTaskTimeConversion;
+  let cardWidth = Math.round(
+    (unit.apparentEndTime - unit.apparentStartTime) / unitTaskTimeConversion
+  );
+  // Compensate for the border pixels to make sure adjacent tasks don't overlap
+  cardWidth -= borderSize * 2;
+  let presenceWidth = Math.round(
+    (unit.apparentEndTime - unit.anticipatedStartTime) / unitTaskTimeConversion
+  );
+  // Compensate for the border pixels to make sure adjacent tasks don't overlap
+  presenceWidth -= borderSize * 2;
+  // Compensate for the border pixels to make sure the card lines up with the background of the box
+  const cardHeight = trackHeight - borderSize * 2;
   const expectedDurationOfFirst =
     unit.anticipatedEndTime - unit.anticipatedStartTime;
   const firstEvent = unit.eventHistory[0];
@@ -43,6 +52,7 @@ export default function TaskUnitCard({
         left: position.x,
         top: position.y,
         backgroundColor: presenceWidth === cardWidth ? "none" : snailTrailColor,
+        borderRadius: 4,
       }}
     >
       <Card
@@ -51,7 +61,7 @@ export default function TaskUnitCard({
         style={{
           zIndex: 20,
           width: cardWidth,
-          height: "100%",
+          height: cardHeight,
           position: "absolute",
           left: presenceWidth - cardWidth,
           top: 0,
@@ -88,10 +98,20 @@ export default function TaskUnitCard({
                     // be sure that since the last event was some sort of review, we can be sure there must have been an
                     // earlier TaskBox already included in this card, so we don't need to label this one.
                     var actualDuration = event.time - prevEvent.time;
-                    var expectedDurationWidth =
-                      expectedDurationOfFirst / unitTaskTimeConversion;
-                    var actualDurationWidth =
-                      actualDuration / unitTaskTimeConversion;
+                    var expectedDurationWidth = Math.round(
+                      expectedDurationOfFirst / unitTaskTimeConversion
+                    );
+                    var actualDurationWidth = Math.round(
+                      actualDuration / unitTaskTimeConversion
+                    );
+                    if (index === unit.eventHistory.length - 1) {
+                      // last box, so we need to compensate for the border pixels to make sure adjacent tasks don't
+                      // overlap. It's impossible to reach here if this is the review for the first TaskIterationStarted
+                      // so we don't need to compensate for the left border width. That will be taken care of for the
+                      // first TaskIterationStarted event.
+                      actualDurationWidth -= borderSize;
+                      expectedDurationWidth -= borderSize;
+                    }
                     if (event.type !== EventType.MinorRevisionComplete) {
                       // The only times the review box is not included is if it's a minor revision.
                       actualDurationWidth -= reviewBoxWidth;
@@ -153,8 +173,9 @@ export default function TaskUnitCard({
                       // TaskIterationStarted, which means we know that when that event is placed, the prereqs box will
                       // be handled by it.
                       assertIsObject(nextEvent);
-                      var trailWidth =
-                        (nextEvent.time - event.time) / unitTaskTimeConversion;
+                      var trailWidth = Math.round(
+                        (nextEvent.time - event.time) / unitTaskTimeConversion
+                      );
                       comps.push(
                         <ExtensionTrailFixedSize
                           key={index + 0.25}
@@ -171,13 +192,27 @@ export default function TaskUnitCard({
                   assertIsObject(nextEvent);
                   var actualDuration = nextEvent.time - event.time;
                   var expectedDurationWidth =
-                    expectedDurationOfFirst / unitTaskTimeConversion -
+                    Math.round(
+                      expectedDurationOfFirst / unitTaskTimeConversion
+                    ) -
                     prerequisitesBoxWidth -
                     reviewBoxWidth;
                   var actualDurationWidth =
-                    actualDuration / unitTaskTimeConversion -
+                    Math.round(actualDuration / unitTaskTimeConversion) -
                     prerequisitesBoxWidth -
                     reviewBoxWidth;
+                  if (index === 0) {
+                    // First box, so we need to compensate for the border pixels to make sure adjacent tasks don't
+                    // overlap
+                    actualDurationWidth -= borderSize;
+                    expectedDurationWidth -= borderSize;
+                  }
+                  if (index === unit.eventHistory.length - 2) {
+                    // last box, so we need to compensate for the border pixels to make sure adjacent tasks don't
+                    // overlap.
+                    actualDurationWidth -= borderSize;
+                    expectedDurationWidth -= borderSize;
+                  }
                   var label = prevEvent ? undefined : unit.name;
                   return [
                     <PrerequisitesBox

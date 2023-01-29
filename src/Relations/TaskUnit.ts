@@ -50,9 +50,11 @@ export default class TaskUnit {
     if (firstEvent) {
       this._apparentStartDate = firstEvent.date;
     } else {
+      const now = new Date();
       const latestRequiredDate = new Date(
         Math.max(
           this._earliestPossibleStartTime,
+          now.getTime(),
           this.anticipatedStartDate.getTime()
         )
       );
@@ -83,11 +85,6 @@ export default class TaskUnit {
   }
   get apparentEndDate(): Date {
     return this._apparentEndDate;
-  }
-  set apparentEndDate(date: Date) {
-    this._apparentEndDate = date;
-    this._presenceTime =
-      this._apparentEndDate.getTime() - this.anticipatedStartDate.getTime();
   }
   get apparentStartDate(): Date {
     return this._apparentStartDate;
@@ -159,9 +156,9 @@ export default class TaskUnit {
           );
         }
       }
-      // if (event.date > now) {
-      //   throw new EventHistoryInvalidError("Events cannot be in the future.");
-      // }
+      if (event.date > now) {
+        throw new EventHistoryInvalidError("Events cannot be in the future.");
+      }
       switch (event.type) {
         case EventType.TaskIterationStarted:
           if (prevEvent) {
@@ -275,13 +272,13 @@ export default class TaskUnit {
    * @returns the time in ms of the apparent end time of the last apparently finished direct dependency
    */
   private _getEarliestPossibleStartTime(): number {
-    const depApparentEndDates = [...this.directDependencies].map((unit) =>
+    const depApparentEndTimes = [...this.directDependencies].map((unit) =>
       unit.apparentEndDate.getTime()
     );
     // There may be no deps here, and the unit's apparent start date may have been set explicitely. If the apparent
     // start date wasn't set explicitely, it would be the anticipated start date, which also works. We'll consider both
     // to find out how far the unit was pushed into the future.
-    const earliestTime = Math.max(...depApparentEndDates);
+    const earliestTime = Math.max(...depApparentEndTimes);
     return earliestTime;
   }
   /**
@@ -296,14 +293,19 @@ export default class TaskUnit {
     // estimate the apparent end date relative to the apparent start date.
     const lastEvent = this.eventHistory[this.eventHistory.length - 1];
     if (lastEvent) {
+      const now = new Date();
       switch (lastEvent.type) {
+        case EventType.MinorRevisionComplete:
         case EventType.ReviewedAndAccepted:
           // nothing to project
           break;
         case EventType.ReviewedAndNeedsRebuild:
           // needs to start the task (which implies getting new reqs) and then pass review
+          var lastEventTimePlusBuffer =
+            lastEvent.date.getTime() + assumedReqTime;
+
           var reqFinishedDate = new Date(
-            lastEvent.date.getTime() + assumedReqTime
+            Math.max(now.getTime(), lastEventTimePlusBuffer)
           );
           this.projectedHistory.push({
             type: EventType.TaskIterationStarted,
@@ -320,8 +322,10 @@ export default class TaskUnit {
         case EventType.ReviewedAndNeedsMajorRevision:
           // needs to start the task (which can be assumed to have started as soon as the review was done) and then pass
           // review
+          var lastEventTimePlusBuffer =
+            lastEvent.date.getTime() + estimatedTaskDuration;
           var taskEndDate = new Date(
-            lastEvent.date.getTime() + estimatedTaskDuration
+            Math.max(now.getTime(), lastEventTimePlusBuffer)
           );
           this.projectedHistory.push({
             type: EventType.ReviewedAndAccepted,
@@ -330,8 +334,10 @@ export default class TaskUnit {
           break;
         case EventType.ReviewedAndNeedsMinorRevision:
           // needs to start the task (which can be assumed to have started as soon as the review was done)
+          var lastEventTimePlusBuffer =
+            lastEvent.date.getTime() + estimatedTaskDuration;
           var taskEndDate = new Date(
-            lastEvent.date.getTime() + estimatedTaskDuration
+            Math.max(now.getTime(), lastEventTimePlusBuffer)
           );
           this.projectedHistory.push({
             type: EventType.MinorRevisionComplete,
@@ -340,8 +346,10 @@ export default class TaskUnit {
           break;
         case EventType.TaskIterationStarted:
           // needs time to complete the task
+          var lastEventTimePlusBuffer =
+            lastEvent.date.getTime() + estimatedTaskDuration;
           var taskEndDate = new Date(
-            lastEvent.date.getTime() + estimatedTaskDuration
+            Math.max(now.getTime(), lastEventTimePlusBuffer)
           );
           this.projectedHistory.push({
             type: EventType.ReviewedAndAccepted,

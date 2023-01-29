@@ -171,8 +171,8 @@ export default class ChainPath {
   }
   overlapsWithPath(otherPath: ChainPath): boolean {
     if (
-      this.anticipatedStartDate <= otherPath.endDate &&
-      this.endDate >= otherPath.anticipatedStartDate
+      this.anticipatedStartDate < otherPath.endDate &&
+      this.endDate > otherPath.anticipatedStartDate
     ) {
       return true;
     }
@@ -202,7 +202,7 @@ export default class ChainPath {
           nextTask = tasks.pop();
           break;
         } else if (
-          lastItemInTrack.anticipatedEndDate <= currentTask.anticipatedStartDate
+          lastItemInTrack.apparentEndDate <= currentTask.anticipatedStartDate
         ) {
           // It can fit in this track, so add it here and move on to the next track.
           track.push(currentTask);

@@ -28,7 +28,7 @@ export default function Poster() {
     Math.max(...Object.values(taskUnits.units).map((u) => u.trackIndex)) + 1;
   const svgHeight = trackCount * trackHeight + trackCount * trackGapHeight;
   const timespan = latestTime - earliestStartTime;
-  const svgWidth = timespan / unitTaskTimeConversion;
+  const svgWidth = Math.round(timespan / unitTaskTimeConversion);
   return (
     <div
       data-testid={"poster-container"}
@@ -51,15 +51,17 @@ export default function Poster() {
               assertIsObject(depUnitData);
               const connection = new ConnectedPoints(
                 {
-                  x:
+                  x: Math.round(
                     (depUnitData.apparentEndTime - earliestStartTime) /
-                    unitTaskTimeConversion,
+                      unitTaskTimeConversion
+                  ),
                   y: getYOfTrackTop(depUnitData.trackIndex) + trackHeight / 2,
                 },
                 {
-                  x:
+                  x: Math.round(
                     (unit.apparentStartTime - earliestStartTime) /
-                    unitTaskTimeConversion,
+                      unitTaskTimeConversion
+                  ),
                   y: getYOfTrackTop(unit.trackIndex) + trackHeight / 2,
                 }
               );

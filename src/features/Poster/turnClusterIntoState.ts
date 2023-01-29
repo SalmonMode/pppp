@@ -39,22 +39,22 @@ export function turnClusterIntoState(cluster: TaskUnitCluster): TaskUnitsState {
 
   const unitCoords: TaskUnitMap = {};
   for (let track of pathTracks) {
-    const pathsHeights = track.map((path) => path.tracks.length);
+    const pathsHeights = track.map((path) => path.path.tracks.length);
 
     const tallestPathHeight = Math.max(...pathsHeights);
     const beforeHalfwayPoint = presenceSoFar < halfwayPresencePoint;
     track.forEach((path) => {
-      while (path.tracks.length < tallestPathHeight) {
+      while (path.path.tracks.length < tallestPathHeight) {
         // fill with empty arrays to make positioning and determining coordinates easier when above the center point.
         // Otherwise, tracks won't be positioned towards the bottom, and we'd have to do more expensive calculations to
         // find the positions of each unit.
-        path.tracks.push([]);
+        path.path.tracks.push([]);
       }
       if (beforeHalfwayPoint) {
         // flip them around because we're above the center point
-        path.tracks.reverse();
+        path.path.tracks.reverse();
       }
-      path.tracks.forEach((track, unitTrackIndex) => {
+      path.path.tracks.forEach((track, unitTrackIndex) => {
         for (let unit of track) {
           unitCoords[unit.id] = {
             anticipatedStartTime: unit.anticipatedStartDate.getTime(),

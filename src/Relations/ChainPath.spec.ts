@@ -4,7 +4,8 @@ import ChainPath from "./ChainPath";
 import IsolatedDependencyChain from "./IsolatedDependencyChain";
 import TaskUnit from "./TaskUnit";
 
-const firstDate = new Date();
+const now = new Date();
+const firstDate = new Date(now.getTime() + 100000);
 const secondDate = new Date(firstDate.getTime() + 1000);
 const thirdDate = new Date(secondDate.getTime() + 1000);
 const fourthDate = new Date(thirdDate.getTime() + 1000);
