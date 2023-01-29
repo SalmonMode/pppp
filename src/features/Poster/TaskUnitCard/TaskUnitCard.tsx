@@ -69,6 +69,7 @@ export default function TaskUnitCard({
       >
         <CardContent style={{ padding: 0, height: "100%" }}>
           <div
+            className="cardContentDiv"
             style={{
               display: "flex",
               flexDirection: "row",

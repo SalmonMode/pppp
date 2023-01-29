@@ -119,12 +119,8 @@ export function getSeedData(): TaskUnitCluster {
       date: add(seventhDate, { hours: 4 }),
     },
     {
-      type: EventType.ReviewedAndNeedsMajorRevision,
+      type: EventType.ReviewedAndNeedsRebuild,
       date: eighthDate,
-    },
-    {
-      type: EventType.ReviewedAndAccepted,
-      date: add(eighthDate, { hours: 4 }),
     },
   ]);
 

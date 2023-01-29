@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
 import { expect } from "chai";
-import { sub, add } from "date-fns";
+import { add, sub } from "date-fns";
 import ConnectedPoints from "../../Graphing/ConnectedPoints";
 import { TaskUnit, TaskUnitCluster } from "../../Relations";
 import { assertIsObject, assertIsString } from "../../typePredicates";
@@ -9,8 +9,8 @@ import { renderWithProvider } from "../../Utility/TestRenderers";
 import {
   borderSize,
   extensionColor,
-  prereqsAcceptedColor,
   prereqsPendingColor,
+  prereqsAcceptedColor,
   prerequisitesBoxWidth,
   reviewAcceptedColor,
   reviewBoxWidth,
@@ -659,19 +659,6 @@ describe("React Integration: Poster", () => {
       const seventhDate = add(sixthDate, { days: 1 });
       const eighthDate = add(seventhDate, { days: 1 });
       const ninthDate = add(eighthDate, { days: 1 });
-      // const tenthDate = add(ninthDate, { days: 1 });
-      // const eleventhDate = add(tenthDate, { days: 1 });
-      // const twelfthDate = add(eleventhDate, { days: 1 });
-      // const firstStartDate = sub(new Date(now.getTime() - 4000);
-      // const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-      // const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-      // const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-      // const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-      // const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-      // const fourthStartDate = new Date(thirdEndDate.getTime() + 1000);
-      // const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
-      // const fifthStartDate = new Date(fourthEndDate.getTime() + 1000);
-      // const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
       unitA = new TaskUnit([], firstDate, secondDate, "A", [
         {
           type: EventType.TaskIterationStarted,
@@ -765,12 +752,8 @@ describe("React Integration: Poster", () => {
           date: add(seventhDate, { hours: 4 }),
         },
         {
-          type: EventType.ReviewedAndNeedsMajorRevision,
+          type: EventType.ReviewedAndNeedsRebuild,
           date: eighthDate,
-        },
-        {
-          type: EventType.ReviewedAndAccepted,
-          date: add(eighthDate, { hours: 4 }),
         },
       ]);
 
@@ -2310,11 +2293,11 @@ describe("React Integration: Poster", () => {
           assertIsObject(trail);
           expect(taskBoxWrapper.lastChild).to.equal(trail);
         });
-        it("should have red review box as second review box", function () {
+        it("should have black review box as second review box", function () {
           const reviewBox = card.querySelectorAll(".reviewBox")[1];
           assertIsObject(reviewBox);
           expect(getComputedStyle(reviewBox).backgroundColor).to.equal(
-            reviewMajorColor
+            reviewRebuildColor
           );
         });
         it("should have review box as fifth item", function () {
@@ -2330,7 +2313,78 @@ describe("React Integration: Poster", () => {
           }
           expect(parentChildren.indexOf(reviewBox)).to.equal(4);
         });
-        it("should have third task box wrapper as the sixth item", function () {
+        it("should have extension trail as second review box", function () {
+          const reviewBox = card.querySelectorAll(".reviewBox")[1];
+          assertIsObject(reviewBox);
+          expect(getComputedStyle(reviewBox).backgroundColor).to.equal(
+            reviewRebuildColor
+          );
+        });
+        it("should have extension trail as sixth item", function () {
+          const extensionTrail = card.querySelectorAll(
+            ".cardContentDiv > .extensionTrail"
+          )[0];
+          assertIsObject(extensionTrail);
+          const parent = extensionTrail.parentElement;
+          assertIsObject(parent);
+          const parentChildren: Element[] = [];
+          for (let i = 0; i < parent.children.length; i++) {
+            const child = parent.children[i];
+            assertIsObject(child);
+            parentChildren.push(child);
+          }
+          expect(parentChildren.indexOf(extensionTrail)).to.equal(5);
+        });
+        it("should have extension trail with pink background", function () {
+          const extensionTrail = card.querySelectorAll(
+            ".cardContentDiv > .extensionTrail"
+          )[0];
+          assertIsObject(extensionTrail);
+          expect(getComputedStyle(extensionTrail).backgroundColor).to.equal(
+            extensionColor
+          );
+        });
+        it("should have extension trail with a width according to review time, and current time", function () {
+          const extensionTrail = card.querySelectorAll(
+            ".cardContentDiv > .extensionTrail"
+          )[0];
+          assertIsObject(extensionTrail);
+          const reviewEvent = relevantUnit.eventHistory[2];
+          assertIsObject(reviewEvent);
+          expect(
+            Number(getComputedStyle(extensionTrail).flexBasis.slice(0, -2))
+          ).to.equal(
+            Math.round(
+              (now.getTime() - reviewEvent.date.getTime()) /
+                unitTaskTimeConversion
+            )
+          );
+          expect(Number(getComputedStyle(extensionTrail).flexGrow)).to.equal(0);
+          expect(Number(getComputedStyle(extensionTrail).flexShrink)).to.equal(
+            0
+          );
+        });
+        it("should have prerequisites box as seventh item", function () {
+          const prereqBox = card.querySelectorAll(".prerequisiteBox")[1];
+          assertIsObject(prereqBox);
+          const parent = prereqBox.parentElement;
+          assertIsObject(parent);
+          const parentChildren: Element[] = [];
+          for (let i = 0; i < parent.children.length; i++) {
+            const child = parent.children[i];
+            assertIsObject(child);
+            parentChildren.push(child);
+          }
+          expect(parentChildren.indexOf(prereqBox)).to.equal(6);
+        });
+        it("should have white prerequisites box", function () {
+          const prereqBox = card.querySelectorAll(".prerequisiteBox")[1];
+          assertIsObject(prereqBox);
+          expect(getComputedStyle(prereqBox).backgroundColor).to.equal(
+            prereqsPendingColor
+          );
+        });
+        it("should have third task box wrapper as the eighth item", function () {
           const taskBoxWrapper = card.querySelectorAll(".taskBoxWrapper")[2];
           assertIsObject(taskBoxWrapper);
           const parent = taskBoxWrapper.parentElement;
@@ -2341,22 +2395,20 @@ describe("React Integration: Poster", () => {
             assertIsObject(child);
             parentChildren.push(child);
           }
-          expect(parentChildren.indexOf(taskBoxWrapper)).to.equal(5);
+          expect(parentChildren.indexOf(taskBoxWrapper)).to.equal(7);
         });
-        it("should have third task box wrapper with a width according to actual duration, review box width, and border", function () {
+        it("should have third task box wrapper with a width according to anticipated duration, prereqs and review box widths, and border", function () {
           const taskBoxWrapper = card.querySelectorAll(".taskBoxWrapper")[2];
           assertIsObject(taskBoxWrapper);
-          const precedingEvent = relevantUnit.eventHistory[2];
-          const reviewEvent = relevantUnit.eventHistory[3];
-          assertIsObject(precedingEvent);
-          assertIsObject(reviewEvent);
           expect(
             Number(getComputedStyle(taskBoxWrapper).width.slice(0, -2))
           ).to.equal(
             Math.round(
-              (reviewEvent.date.getTime() - precedingEvent.date.getTime()) /
+              (relevantUnit.anticipatedEndDate.getTime() -
+                relevantUnit.anticipatedStartDate.getTime()) /
                 unitTaskTimeConversion
             ) -
+              prerequisitesBoxWidth -
               reviewBoxWidth -
               borderSize
           );
@@ -2368,20 +2420,18 @@ describe("React Integration: Poster", () => {
           assertIsObject(taskBox);
           expect(taskBox.textContent).to.equal("");
         });
-        it("should have task box with a width according to actual duration, review box width, and border in third task box wrapper", function () {
+        it("should have task box with a width according to anticipated duration, prereqs and review box widths, and border in third task box wrapper", function () {
           const taskBoxWrapper = card.querySelectorAll(".taskBoxWrapper")[2];
           assertIsObject(taskBoxWrapper);
-          const precedingEvent = relevantUnit.eventHistory[2];
-          const reviewEvent = relevantUnit.eventHistory[3];
-          assertIsObject(precedingEvent);
-          assertIsObject(reviewEvent);
           expect(
             Number(getComputedStyle(taskBoxWrapper).width.slice(0, -2))
           ).to.equal(
             Math.round(
-              (reviewEvent.date.getTime() - precedingEvent.date.getTime()) /
+              (relevantUnit.anticipatedEndDate.getTime() -
+                relevantUnit.anticipatedStartDate.getTime()) /
                 unitTaskTimeConversion
             ) -
+              prerequisitesBoxWidth -
               reviewBoxWidth -
               borderSize
           );
@@ -2416,11 +2466,11 @@ describe("React Integration: Poster", () => {
           assertIsObject(trail);
           expect(taskBoxWrapper.lastChild).to.equal(trail);
         });
-        it("should have green review box", function () {
+        it("should have white review box", function () {
           const reviewBox = card.querySelectorAll(".reviewBox")[2];
           assertIsObject(reviewBox);
           expect(getComputedStyle(reviewBox).backgroundColor).to.equal(
-            reviewAcceptedColor
+            reviewPendingColor
           );
         });
         it("should have review box at the end", function () {
