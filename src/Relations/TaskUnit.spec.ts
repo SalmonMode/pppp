@@ -3,7 +3,6 @@ import { EventHistoryInvalidError, PrematureTaskStartError } from "../Error";
 import { assertIsObject } from "../typePredicates";
 import { EventType } from "../types";
 import { TaskUnit } from "./";
-import { assumedReqTime } from "./constants";
 
 const now = new Date();
 const firstDate = new Date(now.getTime() - 100000);
