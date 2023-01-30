@@ -33,6 +33,8 @@ export default function ReviewBox({ variant }: { variant: ReviewType }) {
       className={`reviewBox ${classMap[variant]}`}
       style={{
         width: reviewBoxWidth,
+        flexShrink: 0,
+        flexGrow: 0,
         height: "100%",
         backgroundColor: colorMap[variant],
       }}

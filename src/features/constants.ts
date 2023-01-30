@@ -2,8 +2,6 @@ export const trackHeight = 60;
 export const trackGapHeight = 10;
 export const unitTaskTimeConversion = 500000;
 
-export const borderSize = 1;
-
 export const prerequisitesBoxWidth = 25;
 export const reviewBoxWidth = 25;
 export const snailTrailColor = "red";

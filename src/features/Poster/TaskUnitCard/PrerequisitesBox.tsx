@@ -1,7 +1,7 @@
 import {
   prereqsAcceptedColor,
   prereqsPendingColor,
-  prerequisitesBoxWidth,
+  prerequisitesBoxWidth
 } from "../../constants";
 
 export default function PrerequisitesBox({ started }: { started: boolean }) {
@@ -11,6 +11,8 @@ export default function PrerequisitesBox({ started }: { started: boolean }) {
       className="prerequisiteBox"
       style={{
         width: prerequisitesBoxWidth,
+        flexShrink: 0,
+        flexGrow: 0,
         height: "100%",
         backgroundColor,
       }}

@@ -7,7 +7,6 @@ import {
   TaskUnitDetails,
 } from "../../../types";
 import {
-  borderSize,
   prerequisitesBoxWidth,
   reviewBoxWidth,
   snailTrailColor,
@@ -29,15 +28,10 @@ export default function TaskUnitCard({
   let cardWidth = Math.round(
     (unit.apparentEndTime - unit.apparentStartTime) / unitTaskTimeConversion
   );
-  // Compensate for the border pixels to make sure adjacent tasks don't overlap
-  cardWidth -= borderSize * 2;
   let presenceWidth = Math.round(
     (unit.apparentEndTime - unit.anticipatedStartTime) / unitTaskTimeConversion
   );
-  // Compensate for the border pixels to make sure adjacent tasks don't overlap
-  presenceWidth -= borderSize * 2;
-  // Compensate for the border pixels to make sure the card lines up with the background of the box
-  const cardHeight = trackHeight - borderSize * 2;
+  const cardHeight = trackHeight;
   const expectedDurationOfFirst =
     unit.anticipatedEndTime - unit.anticipatedStartTime;
   const firstEvent = unit.eventHistory[0];
@@ -51,7 +45,7 @@ export default function TaskUnitCard({
         position: "absolute",
         left: position.x,
         top: position.y,
-        backgroundColor: presenceWidth === cardWidth ? "none" : snailTrailColor,
+        backgroundColor: snailTrailColor,
         borderRadius: 4,
       }}
     >
@@ -64,6 +58,7 @@ export default function TaskUnitCard({
           height: cardHeight,
           position: "absolute",
           left: presenceWidth - cardWidth,
+          boxSizing: "border-box",
           top: 0,
         }}
       >
@@ -105,14 +100,6 @@ export default function TaskUnitCard({
                     var actualDurationWidth = Math.round(
                       actualDuration / unitTaskTimeConversion
                     );
-                    if (index === unit.eventHistory.length - 1) {
-                      // last box, so we need to compensate for the border pixels to make sure adjacent tasks don't
-                      // overlap. It's impossible to reach here if this is the review for the first TaskIterationStarted
-                      // so we don't need to compensate for the left border width. That will be taken care of for the
-                      // first TaskIterationStarted event.
-                      actualDurationWidth -= borderSize;
-                      expectedDurationWidth -= borderSize;
-                    }
                     if (event.type !== EventType.MinorRevisionComplete) {
                       // The only times the review box is not included is if it's a minor revision.
                       actualDurationWidth -= reviewBoxWidth;
@@ -202,18 +189,6 @@ export default function TaskUnitCard({
                     Math.round(actualDuration / unitTaskTimeConversion) -
                     prerequisitesBoxWidth -
                     reviewBoxWidth;
-                  if (index === 0) {
-                    // First box, so we need to compensate for the border pixels to make sure adjacent tasks don't
-                    // overlap
-                    actualDurationWidth -= borderSize;
-                    expectedDurationWidth -= borderSize;
-                  }
-                  if (index === unit.eventHistory.length - 2) {
-                    // last box, so we need to compensate for the border pixels to make sure adjacent tasks don't
-                    // overlap.
-                    actualDurationWidth -= borderSize;
-                    expectedDurationWidth -= borderSize;
-                  }
                   var label = prevEvent ? undefined : unit.name;
                   return [
                     <PrerequisitesBox
