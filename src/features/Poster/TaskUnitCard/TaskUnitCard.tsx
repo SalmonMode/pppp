@@ -79,6 +79,7 @@ export default function TaskUnitCard({
               const prevEvent = unit.eventHistory[index - 1];
 
               switch (event.type) {
+                case EventType.MinorRevisionComplete:
                 case EventType.ReviewedAndAccepted:
                 case EventType.ReviewedAndNeedsMinorRevision:
                 case EventType.ReviewedAndNeedsMajorRevision:
@@ -99,15 +100,12 @@ export default function TaskUnitCard({
                       event.time,
                       prevEvent.time
                     );
-                    if (event.type !== EventType.MinorRevisionComplete) {
-                      // The only times the review box is not included is if it's a minor revision.
-                      actualDurationWidth -= reviewBoxWidth;
-                      adjustableExpectedDurationWidth -= reviewBoxWidth;
-                      // Prereq width is only relevant if we need to compensate for the width of the prereq box. That
-                      // only happens if it's the first iteration, or there was a rebuild. But both of these also would
-                      // have an associated TaskIterationStarted event, which is why that switch case handles it and
-                      // controls for the width of the prereq box.
-                    }
+                    actualDurationWidth -= reviewBoxWidth;
+                    adjustableExpectedDurationWidth -= reviewBoxWidth;
+                    // Prereq width is only relevant if we need to compensate for the width of the prereq box. That
+                    // only happens if it's the first iteration, or there was a rebuild. But both of these also would
+                    // have an associated TaskIterationStarted event, which is why that switch case handles it and
+                    // controls for the width of the prereq box.
                     const taskBox = (
                       <TaskBox
                         key={index - 0.5}
@@ -118,6 +116,7 @@ export default function TaskUnitCard({
                     comps.push(taskBox);
                   }
                   switch (event.type) {
+                    case EventType.MinorRevisionComplete:
                     case EventType.ReviewedAndAccepted:
                       comps.push(
                         <ReviewBox

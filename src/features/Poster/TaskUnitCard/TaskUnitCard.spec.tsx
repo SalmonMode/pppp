@@ -361,6 +361,7 @@ describe("React Integration: TaskUnitCard", () => {
         let firstExtensionTrailComputedStyles: CSSStyleDeclaration;
         let secondExtensionTrailComputedStyles: CSSStyleDeclaration;
         let firstReviewBoxComputedStyles: CSSStyleDeclaration;
+        let secondReviewBoxComputedStyles: CSSStyleDeclaration;
         let firstPrereqBoxIndex: number;
         let firstTaskBoxWrapperIndex: number;
         let secondTaskBoxWrapperIndex: number;
@@ -369,6 +370,7 @@ describe("React Integration: TaskUnitCard", () => {
         let firstExtensionalTrailIndex: number;
         let secondExtensionalTrailIndex: number;
         let firstReviewBoxIndex: number;
+        let secondReviewBoxIndex: number;
         before(async function () {
           relevantUnit = unitB;
           const unitDetails = initialState.units[relevantUnit.id];
@@ -399,9 +401,9 @@ describe("React Integration: TaskUnitCard", () => {
             firstTaskBoxWrapper.querySelector(".extensionTrail");
           assertIsObject(firstTrail);
           firstExtensionTrailComputedStyles = getComputedStyle(firstTrail);
-          const reviewBox = card.querySelector(".reviewBox");
-          assertIsObject(reviewBox);
-          firstReviewBoxComputedStyles = getComputedStyle(reviewBox);
+          const firstReviewBox = card.querySelector(".reviewBox");
+          assertIsObject(firstReviewBox);
+          firstReviewBoxComputedStyles = getComputedStyle(firstReviewBox);
           const secondTaskBoxWrapper =
             card.querySelectorAll(".taskBoxWrapper")[1];
           assertIsObject(secondTaskBoxWrapper);
@@ -417,6 +419,9 @@ describe("React Integration: TaskUnitCard", () => {
             secondTaskBoxWrapper.querySelector(".extensionTrail");
           assertIsObject(secondTrail);
           secondExtensionTrailComputedStyles = getComputedStyle(secondTrail);
+          const secondReviewBox = card.querySelectorAll(".reviewBox")[1];
+          assertIsObject(secondReviewBox);
+          secondReviewBoxComputedStyles = getComputedStyle(secondReviewBox);
           const flexParent = card.querySelector(".cardContentDiv");
           assertIsObject(flexParent);
           const parentChildren: Element[] = [];
@@ -440,7 +445,7 @@ describe("React Integration: TaskUnitCard", () => {
           firstPrereqBoxIndex = parentChildren.indexOf(firstPrereqBox);
           firstTaskBoxWrapperIndex =
             parentChildren.indexOf(firstTaskBoxWrapper);
-          firstReviewBoxIndex = parentChildren.indexOf(reviewBox);
+          firstReviewBoxIndex = parentChildren.indexOf(firstReviewBox);
           firstTaskBoxIndex = firstWrapperChildren.indexOf(firstTaskBox);
           firstExtensionalTrailIndex = firstWrapperChildren.indexOf(firstTrail);
           secondTaskBoxWrapperIndex =
@@ -448,6 +453,7 @@ describe("React Integration: TaskUnitCard", () => {
           secondTaskBoxIndex = secondWrapperChildren.indexOf(secondTaskBox);
           secondExtensionalTrailIndex =
             secondWrapperChildren.indexOf(secondTrail);
+          secondReviewBoxIndex = parentChildren.indexOf(secondReviewBox);
         });
         it("should have box with a width according to actual duration, and anticipated start", function () {
           expect(Number(boxComputedStyles.width.slice(0, -2))).to.equal(
@@ -535,27 +541,27 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have second task box wrapper as the last item", function () {
             expect(secondTaskBoxWrapperIndex).to.equal(3);
           });
-          it("should have second task box wrapper with a width according to anticipated duration", function () {
+          it("should have second task box wrapper with a width according to anticipated duration and review box width", function () {
             expect(
               Number(secondTaskBoxWrapperComputedStyles.width.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.anticipatedEndDate.getTime(),
                 relevantUnit.anticipatedStartDate.getTime()
-              )
+              ) - reviewBoxWidth
             );
           });
           it("should have non labeled task box in second task box wrapper", function () {
             expect(secondLabelText).to.equal("");
           });
-          it("should have task box with a width according to anticipated duration in second task box wrapper", function () {
+          it("should have task box with a width according to anticipated duration and review box width in second task box wrapper", function () {
             expect(
               Number(secondTaskBoxComputedStyles.width.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.anticipatedEndDate.getTime(),
                 relevantUnit.anticipatedStartDate.getTime()
-              )
+              ) - reviewBoxWidth
             );
           });
           it("should have extension trail with pink background color in second task box wrapper", function () {
@@ -571,6 +577,16 @@ describe("React Integration: TaskUnitCard", () => {
           });
           it("should have extension trail as last child in second task box wrapper", function () {
             expect(secondExtensionalTrailIndex).to.equal(1);
+          });
+        });
+        describe("Fifth Item", function () {
+          it("should have green review box", function () {
+            expect(secondReviewBoxComputedStyles.backgroundColor).to.equal(
+              reviewAcceptedColor
+            );
+          });
+          it("should have review box as fifth item", function () {
+            expect(secondReviewBoxIndex).to.equal(4);
           });
         });
       });
