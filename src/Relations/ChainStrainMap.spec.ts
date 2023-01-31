@@ -14,10 +14,6 @@ const thirdDate = new Date(secondDate.getTime() + 1000);
 const fourthDate = new Date(thirdDate.getTime() + 1000);
 const fifthDate = new Date(fourthDate.getTime() + 1000);
 const sixthDate = new Date(fifthDate.getTime() + 1000);
-const seventhDate = new Date(sixthDate.getTime() + 1000);
-const eighthDate = new Date(seventhDate.getTime() + 1000);
-const ninthDate = new Date(eighthDate.getTime() + 1000);
-const tenthDate = new Date(ninthDate.getTime() + 1000);
 
 describe("ChainStrainMap", function () {
   describe("One Unit", function () {
@@ -25,7 +21,7 @@ describe("ChainStrainMap", function () {
     let strainMap: ChainStrainMap;
     let unit: TaskUnit;
     before(function () {
-      unit = new TaskUnit([], new Date(), new Date());
+      unit = new TaskUnit(now, [], new Date(), new Date());
       chainMap = new SimpleChainMap([unit]);
       strainMap = new ChainStrainMap(chainMap);
     });
@@ -33,7 +29,7 @@ describe("ChainStrainMap", function () {
       expect(() =>
         strainMap.getStrainOfChain(
           new IsolatedDependencyChain([
-            new TaskUnit([], new Date(), new Date()),
+            new TaskUnit(now, [], new Date(), new Date()),
           ])
         )
       ).to.throw(NoSuchChainError);
@@ -52,10 +48,10 @@ describe("ChainStrainMap", function () {
     let chainMap: SimpleChainMap;
     let strainMap: ChainStrainMap;
     before(function () {
-      unitA = new TaskUnit([], firstDate, secondDate);
-      unitB = new TaskUnit([unitA], secondDate, thirdDate);
-      unitC = new TaskUnit([unitA], secondDate, thirdDate);
-      unitD = new TaskUnit([unitB, unitC], thirdDate, fourthDate);
+      unitA = new TaskUnit(now, [], firstDate, secondDate);
+      unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
+      unitC = new TaskUnit(now, [unitA], secondDate, thirdDate);
+      unitD = new TaskUnit(now, [unitB, unitC], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitD]);
       strainMap = new ChainStrainMap(chainMap);
     });
@@ -101,15 +97,15 @@ describe("ChainStrainMap", function () {
     let chainMap: SimpleChainMap;
     let strainMap: ChainStrainMap;
     before(function () {
-      const unitA = new TaskUnit([], firstDate, secondDate);
+      const unitA = new TaskUnit(now, [], firstDate, secondDate);
 
-      const unitB = new TaskUnit([unitA], thirdDate, fourthDate);
-      const unitC = new TaskUnit([unitA], thirdDate, fourthDate);
+      const unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
+      const unitC = new TaskUnit(now, [unitA], thirdDate, fourthDate);
 
-      const unitD = new TaskUnit([unitB], fifthDate, sixthDate);
-      const unitE = new TaskUnit([unitB], fifthDate, sixthDate);
-      const unitF = new TaskUnit([unitB, unitC], fifthDate, sixthDate);
-      const unitG = new TaskUnit([unitC], fifthDate, sixthDate);
+      const unitD = new TaskUnit(now, [unitB], fifthDate, sixthDate);
+      const unitE = new TaskUnit(now, [unitB], fifthDate, sixthDate);
+      const unitF = new TaskUnit(now, [unitB, unitC], fifthDate, sixthDate);
+      const unitG = new TaskUnit(now, [unitC], fifthDate, sixthDate);
 
       chainMap = new SimpleChainMap([unitD, unitE, unitF, unitG]);
       chainB = chainMap.getChainOfUnit(unitB);

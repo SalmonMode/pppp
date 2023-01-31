@@ -38,7 +38,7 @@ describe("React Integration: TaskUnitCard", () => {
   describe("Chaotic Tracks", () => {
     let initialState: TaskUnitsState;
 
-    const unitA = new TaskUnit([], firstDate, secondDate, "A", [
+    const unitA = new TaskUnit(now, [], firstDate, secondDate, "A", [
       {
         type: EventType.TaskIterationStarted,
         date: firstDate,
@@ -48,7 +48,7 @@ describe("React Integration: TaskUnitCard", () => {
         date: thirdDate,
       },
     ]);
-    const unitB = new TaskUnit([unitA], secondDate, thirdDate, "B", [
+    const unitB = new TaskUnit(now, [unitA], secondDate, thirdDate, "B", [
       {
         type: EventType.TaskIterationStarted,
         date: thirdDate,
@@ -62,7 +62,7 @@ describe("React Integration: TaskUnitCard", () => {
         date: fifthDate,
       },
     ]);
-    const unitC = new TaskUnit([], fifthDate, sixthDate, "C", [
+    const unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C", [
       {
         type: EventType.TaskIterationStarted,
         date: fifthDate,
@@ -72,7 +72,7 @@ describe("React Integration: TaskUnitCard", () => {
         date: add(sixthDate, { hours: 4 }),
       },
     ]);
-    const unitD = new TaskUnit([unitC], sixthDate, seventhDate, "D", [
+    const unitD = new TaskUnit(now, [unitC], sixthDate, seventhDate, "D", [
       {
         type: EventType.TaskIterationStarted,
         date: add(sixthDate, { hours: 4 }),
@@ -91,7 +91,7 @@ describe("React Integration: TaskUnitCard", () => {
       },
     ]);
 
-    const unitE = new TaskUnit([], firstDate, secondDate, "E", [
+    const unitE = new TaskUnit(now, [], firstDate, secondDate, "E", [
       {
         type: EventType.TaskIterationStarted,
         date: firstDate,
@@ -101,17 +101,24 @@ describe("React Integration: TaskUnitCard", () => {
         date: secondDate,
       },
     ]);
-    const unitF = new TaskUnit([unitA, unitE], secondDate, thirdDate, "F", [
-      {
-        type: EventType.TaskIterationStarted,
-        date: thirdDate,
-      },
-      {
-        type: EventType.ReviewedAndAccepted,
-        date: fourthDate,
-      },
-    ]);
-    const unitG = new TaskUnit([unitF], fourthDate, fifthDate, "G", [
+    const unitF = new TaskUnit(
+      now,
+      [unitA, unitE],
+      secondDate,
+      thirdDate,
+      "F",
+      [
+        {
+          type: EventType.TaskIterationStarted,
+          date: thirdDate,
+        },
+        {
+          type: EventType.ReviewedAndAccepted,
+          date: fourthDate,
+        },
+      ]
+    );
+    const unitG = new TaskUnit(now, [unitF], fourthDate, fifthDate, "G", [
       {
         type: EventType.TaskIterationStarted,
         date: fourthDate,
@@ -121,7 +128,7 @@ describe("React Integration: TaskUnitCard", () => {
         date: fifthDate,
       },
     ]);
-    const unitH = new TaskUnit([unitC, unitG], fifthDate, sixthDate, "H", [
+    const unitH = new TaskUnit(now, [unitC, unitG], fifthDate, sixthDate, "H", [
       {
         type: EventType.TaskIterationStarted,
         date: add(sixthDate, { hours: 4 }),
@@ -136,7 +143,7 @@ describe("React Integration: TaskUnitCard", () => {
       },
     ]);
 
-    const unitI = new TaskUnit([], firstDate, secondDate, "I", [
+    const unitI = new TaskUnit(now, [], firstDate, secondDate, "I", [
       {
         type: EventType.TaskIterationStarted,
         date: firstDate,
@@ -146,17 +153,24 @@ describe("React Integration: TaskUnitCard", () => {
         date: secondDate,
       },
     ]);
-    const unitJ = new TaskUnit([unitA, unitI], secondDate, thirdDate, "J", [
-      {
-        type: EventType.TaskIterationStarted,
-        date: thirdDate,
-      },
-      {
-        type: EventType.ReviewedAndAccepted,
-        date: fourthDate,
-      },
-    ]);
-    const unitK = new TaskUnit([unitJ], fourthDate, fifthDate, "K", [
+    const unitJ = new TaskUnit(
+      now,
+      [unitA, unitI],
+      secondDate,
+      thirdDate,
+      "J",
+      [
+        {
+          type: EventType.TaskIterationStarted,
+          date: thirdDate,
+        },
+        {
+          type: EventType.ReviewedAndAccepted,
+          date: fourthDate,
+        },
+      ]
+    );
+    const unitK = new TaskUnit(now, [unitJ], fourthDate, fifthDate, "K", [
       {
         type: EventType.TaskIterationStarted,
         date: fourthDate,
@@ -166,7 +180,7 @@ describe("React Integration: TaskUnitCard", () => {
         date: fifthDate,
       },
     ]);
-    const unitL = new TaskUnit([unitC, unitK], fifthDate, sixthDate, "L", [
+    const unitL = new TaskUnit(now, [unitC, unitK], fifthDate, sixthDate, "L", [
       {
         type: EventType.TaskIterationStarted,
         date: add(sixthDate, { hours: 4 }),
@@ -944,17 +958,14 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have third task box wrapper as eighth item", function () {
             expect(thirdTaskBoxWrapperIndex).to.equal(7);
           });
-          it("should have third task box wrapper with a width according to start time, current time, and review box width", function () {
+          it("should have third task box wrapper with a width according to start time, and current time", function () {
             // doesn't need to compensate for prereq box
             const reviewEvent = relevantUnit.eventHistory[3];
             assertIsObject(reviewEvent);
             expect(
               Number(thirdTaskBoxWrapperComputedStyles.width.slice(0, -2))
             ).to.equal(
-              getPixelGapBetweenTimes(
-                now.getTime(),
-                reviewEvent.date.getTime()
-              ) - reviewBoxWidth
+              getPixelGapBetweenTimes(now.getTime(), reviewEvent.date.getTime())
             );
           });
           it("should have non labeled task box in third task box wrapper", function () {
@@ -1527,16 +1538,14 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have extension trail as last child in task box wrapper", function () {
             expect(firstExtensionalTrailIndex).to.equal(1);
           });
-          it("should have task box wrapper with a width according to start time, current time, and review and prereq box widths", function () {
+          it("should have task box wrapper with a width according to start time, current time, and prereq box width", function () {
             expect(
               Number(firstTaskBoxWrapperComputedStyles.width.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 now.getTime(),
                 relevantUnit.apparentStartDate.getTime()
-              ) -
-                reviewBoxWidth -
-                prerequisitesBoxWidth
+              ) - prerequisitesBoxWidth
             );
           });
           it("should have task box wrapper as the second item", function () {

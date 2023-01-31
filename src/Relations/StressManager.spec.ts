@@ -25,39 +25,50 @@ describe("StressManager", function () {
     let stressTracker: StressTracker;
     let originalDistance: number;
     before(function () {
-      const unitA = new TaskUnit([], firstDate, secondDate, "A");
-      const unitB = new TaskUnit([], firstDate, secondDate, "B");
-      const unitC = new TaskUnit([], firstDate, secondDate, "C");
-      const unitD = new TaskUnit([], firstDate, secondDate, "D");
-      const unitE = new TaskUnit([], firstDate, secondDate, "E");
-      const unitF = new TaskUnit([], firstDate, secondDate, "F");
+      const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
+      const unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
+      const unitC = new TaskUnit(now, [], firstDate, secondDate, "C");
+      const unitD = new TaskUnit(now, [], firstDate, secondDate, "D");
+      const unitE = new TaskUnit(now, [], firstDate, secondDate, "E");
+      const unitF = new TaskUnit(now, [], firstDate, secondDate, "F");
 
       const unitG = new TaskUnit(
+        now,
         [unitA, unitC, unitF],
         thirdDate,
         fourthDate,
         "G"
       );
-      const unitH = new TaskUnit([unitB, unitD], thirdDate, fourthDate, "H");
+      const unitH = new TaskUnit(
+        now,
+        [unitB, unitD],
+        thirdDate,
+        fourthDate,
+        "H"
+      );
       const unitI = new TaskUnit(
+        now,
         [unitB, unitC, unitE],
         thirdDate,
         fourthDate,
         "I"
       );
       const unitJ = new TaskUnit(
+        now,
         [unitA, unitB, unitD, unitE],
         thirdDate,
         fourthDate,
         "J"
       );
       const unitK = new TaskUnit(
+        now,
         [unitC, unitD, unitE],
         thirdDate,
         fourthDate,
         "K"
       );
       const unitL = new TaskUnit(
+        now,
         [unitA, unitC, unitF],
         thirdDate,
         fourthDate,
@@ -65,31 +76,47 @@ describe("StressManager", function () {
       );
 
       const unitM = new TaskUnit(
+        now,
         [unitG, unitI, unitL],
         fifthDate,
         sixthDate,
         "M"
       );
       const unitN = new TaskUnit(
+        now,
         [unitH, unitI, unitJ],
         fifthDate,
         sixthDate,
         "N"
       );
-      const unitO = new TaskUnit([unitH, unitI], fifthDate, sixthDate, "O");
+      const unitO = new TaskUnit(
+        now,
+        [unitH, unitI],
+        fifthDate,
+        sixthDate,
+        "O"
+      );
       const unitP = new TaskUnit(
+        now,
         [unitH, unitJ, unitK, unitL],
         fifthDate,
         sixthDate,
         "P"
       );
       const unitQ = new TaskUnit(
+        now,
         [unitF, unitI, unitK],
         fifthDate,
         sixthDate,
         "Q"
       );
-      const unitR = new TaskUnit([unitG, unitL], fifthDate, sixthDate, "R");
+      const unitR = new TaskUnit(
+        now,
+        [unitG, unitL],
+        fifthDate,
+        sixthDate,
+        "R"
+      );
 
       const chainMap = new SimpleChainMap([
         unitM,
@@ -164,31 +191,40 @@ describe("StressManager", function () {
     let pathE: ChainPath;
     let originalDistance: number;
     before(function () {
-      const unitA = new TaskUnit([], firstDate, secondDate, "A");
-      const unitB = new TaskUnit([], firstDate, secondDate, "B");
-      const unitC = new TaskUnit([], firstDate, secondDate, "C");
-      const unitD = new TaskUnit([], firstDate, secondDate, "D");
-      const unitE = new TaskUnit([], firstDate, secondDate, "E");
+      const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
+      const unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
+      const unitC = new TaskUnit(now, [], firstDate, secondDate, "C");
+      const unitD = new TaskUnit(now, [], firstDate, secondDate, "D");
+      const unitE = new TaskUnit(now, [], firstDate, secondDate, "E");
 
       const unitF = new TaskUnit(
+        now,
         [unitA, unitB, unitE],
         thirdDate,
         fourthDate,
         "F"
       );
       const unitG = new TaskUnit(
+        now,
         [unitA, unitB, unitC],
         thirdDate,
         fourthDate,
         "G"
       );
       const unitH = new TaskUnit(
+        now,
         [unitB, unitC, unitD],
         thirdDate,
         fourthDate,
         "H"
       );
-      const unitI = new TaskUnit([unitC, unitD], thirdDate, fourthDate, "I");
+      const unitI = new TaskUnit(
+        now,
+        [unitC, unitD],
+        thirdDate,
+        fourthDate,
+        "I"
+      );
 
       const chainMap = new SimpleChainMap([unitF, unitG, unitH, unitI]);
       pathA = new ChainPath([
@@ -253,48 +289,65 @@ describe("StressManager", function () {
     let pathH: ChainPath;
     let originalDistance: number;
     before(function () {
-      const unitA = new TaskUnit([], firstDate, secondDate, "A");
-      const unitB = new TaskUnit([], firstDate, secondDate, "B");
-      const unitC = new TaskUnit([], firstDate, secondDate, "C");
-      const unitD = new TaskUnit([], firstDate, secondDate, "D");
-      const unitE = new TaskUnit([], firstDate, secondDate, "E");
-      const unitF = new TaskUnit([], firstDate, secondDate, "F");
-      const unitG = new TaskUnit([], firstDate, secondDate, "G");
-      const unitH = new TaskUnit([], firstDate, secondDate, "H");
+      const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
+      const unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
+      const unitC = new TaskUnit(now, [], firstDate, secondDate, "C");
+      const unitD = new TaskUnit(now, [], firstDate, secondDate, "D");
+      const unitE = new TaskUnit(now, [], firstDate, secondDate, "E");
+      const unitF = new TaskUnit(now, [], firstDate, secondDate, "F");
+      const unitG = new TaskUnit(now, [], firstDate, secondDate, "G");
+      const unitH = new TaskUnit(now, [], firstDate, secondDate, "H");
 
-      const unitI = new TaskUnit([unitA, unitB], thirdDate, fourthDate, "I");
+      const unitI = new TaskUnit(
+        now,
+        [unitA, unitB],
+        thirdDate,
+        fourthDate,
+        "I"
+      );
       const unitJ = new TaskUnit(
+        now,
         [unitA, unitB, unitC],
         thirdDate,
         fourthDate,
         "J"
       );
       const unitK = new TaskUnit(
+        now,
         [unitB, unitC, unitD, unitH],
         thirdDate,
         fourthDate,
         "K"
       );
       const unitL = new TaskUnit(
+        now,
         [unitC, unitD, unitE],
         thirdDate,
         fourthDate,
         "L"
       );
       const unitM = new TaskUnit(
+        now,
         [unitD, unitE, unitF],
         thirdDate,
         fourthDate,
         "M"
       );
       const unitN = new TaskUnit(
+        now,
         [unitE, unitF, unitG],
         thirdDate,
         fourthDate,
         "N"
       );
-      const unitO = new TaskUnit([unitF, unitG], thirdDate, fourthDate, "O");
-      const unitP = new TaskUnit([unitH], thirdDate, fourthDate, "P");
+      const unitO = new TaskUnit(
+        now,
+        [unitF, unitG],
+        thirdDate,
+        fourthDate,
+        "O"
+      );
+      const unitP = new TaskUnit(now, [unitH], thirdDate, fourthDate, "P");
 
       const chainMap = new SimpleChainMap([
         unitI,
@@ -388,29 +441,55 @@ describe("StressManager", function () {
     let pathI: ChainPath;
     let originalDistance: number;
     before(function () {
-      const unitA = new TaskUnit([], firstDate, secondDate, "A");
+      const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(
+        now,
         [unitA],
         new Date(firstDate.getTime() + 100),
         new Date(secondDate.getTime() + 100),
         "B"
       );
-      const unitC = new TaskUnit([], fifthDate, sixthDate, "C");
+      const unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C");
       const unitD = new TaskUnit(
+        now,
         [unitC],
         new Date(fifthDate.getTime() + 100),
         new Date(sixthDate.getTime() + 100),
         "D"
       );
 
-      const unitE = new TaskUnit([], firstDate, secondDate, "E");
-      const unitF = new TaskUnit([unitA, unitE], thirdDate, fourthDate, "F");
-      const unitG = new TaskUnit([unitF], fifthDate, sixthDate, "G");
-      const unitH = new TaskUnit([unitC, unitG], seventhDate, eighthDate, "H");
-      const unitI = new TaskUnit([], firstDate, secondDate, "I");
-      const unitJ = new TaskUnit([unitA, unitI], thirdDate, fourthDate, "J");
-      const unitK = new TaskUnit([unitJ], fifthDate, sixthDate, "K");
-      const unitL = new TaskUnit([unitC, unitK], seventhDate, eighthDate, "L");
+      const unitE = new TaskUnit(now, [], firstDate, secondDate, "E");
+      const unitF = new TaskUnit(
+        now,
+        [unitA, unitE],
+        thirdDate,
+        fourthDate,
+        "F"
+      );
+      const unitG = new TaskUnit(now, [unitF], fifthDate, sixthDate, "G");
+      const unitH = new TaskUnit(
+        now,
+        [unitC, unitG],
+        seventhDate,
+        eighthDate,
+        "H"
+      );
+      const unitI = new TaskUnit(now, [], firstDate, secondDate, "I");
+      const unitJ = new TaskUnit(
+        now,
+        [unitA, unitI],
+        thirdDate,
+        fourthDate,
+        "J"
+      );
+      const unitK = new TaskUnit(now, [unitJ], fifthDate, sixthDate, "K");
+      const unitL = new TaskUnit(
+        now,
+        [unitC, unitK],
+        seventhDate,
+        eighthDate,
+        "L"
+      );
       const chainMap = new SimpleChainMap([unitB, unitD, unitH, unitL]);
       pathE = new ChainPath([
         chainMap.getChainOfUnit(unitH),
@@ -470,21 +549,33 @@ describe("StressManager", function () {
     let pathH: ChainPath;
     let originalDistance: number;
     before(function () {
-      const unitA = new TaskUnit([], firstDate, secondDate, "A");
-      const unitB = new TaskUnit([], firstDate, secondDate, "B");
-      const unitC = new TaskUnit([], firstDate, secondDate, "C");
+      const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
+      const unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
+      const unitC = new TaskUnit(now, [], firstDate, secondDate, "C");
 
-      const unitD = new TaskUnit([unitA], thirdDate, fourthDate, "D");
-      const unitE = new TaskUnit([unitA, unitB], thirdDate, fourthDate, "E");
-      const unitF = new TaskUnit([unitC], thirdDate, fourthDate, "F");
+      const unitD = new TaskUnit(now, [unitA], thirdDate, fourthDate, "D");
+      const unitE = new TaskUnit(
+        now,
+        [unitA, unitB],
+        thirdDate,
+        fourthDate,
+        "E"
+      );
+      const unitF = new TaskUnit(now, [unitC], thirdDate, fourthDate, "F");
 
-      const unitG = new TaskUnit([unitE], fifthDate, sixthDate, "G");
-      const unitH = new TaskUnit([], fifthDate, sixthDate, "H");
-      const unitI = new TaskUnit([unitF], fifthDate, sixthDate, "I");
+      const unitG = new TaskUnit(now, [unitE], fifthDate, sixthDate, "G");
+      const unitH = new TaskUnit(now, [], fifthDate, sixthDate, "H");
+      const unitI = new TaskUnit(now, [unitF], fifthDate, sixthDate, "I");
 
-      const unitJ = new TaskUnit([unitG], seventhDate, eighthDate, "J");
-      const unitK = new TaskUnit([unitH], seventhDate, eighthDate, "K");
-      const unitL = new TaskUnit([unitH, unitI], seventhDate, eighthDate, "L");
+      const unitJ = new TaskUnit(now, [unitG], seventhDate, eighthDate, "J");
+      const unitK = new TaskUnit(now, [unitH], seventhDate, eighthDate, "K");
+      const unitL = new TaskUnit(
+        now,
+        [unitH, unitI],
+        seventhDate,
+        eighthDate,
+        "L"
+      );
 
       const chainMap = new SimpleChainMap([unitD, unitJ, unitK, unitL]);
       pathA = new ChainPath([
@@ -545,24 +636,49 @@ describe("StressManager", function () {
     let pathI: ChainPath;
     let originalDistance: number;
     before(function () {
-      const unitA = new TaskUnit([], firstDate, secondDate, "A");
+      const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(
+        now,
         [unitA],
         new Date(firstDate.getTime() + 100),
         new Date(secondDate.getTime() + 100),
         "B"
       );
-      const unitC = new TaskUnit([], fifthDate, sixthDate, "C");
-      const unitD = new TaskUnit([unitC], seventhDate, eighthDate, "D");
+      const unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C");
+      const unitD = new TaskUnit(now, [unitC], seventhDate, eighthDate, "D");
 
-      const unitE = new TaskUnit([], firstDate, secondDate, "E");
-      const unitF = new TaskUnit([unitA, unitE], thirdDate, fourthDate, "F");
-      const unitG = new TaskUnit([unitF], fifthDate, sixthDate, "G");
-      const unitH = new TaskUnit([unitC, unitG], seventhDate, eighthDate, "H");
-      const unitI = new TaskUnit([], firstDate, secondDate, "I");
-      const unitJ = new TaskUnit([unitA, unitI], thirdDate, fourthDate, "J");
-      const unitK = new TaskUnit([unitJ], fifthDate, sixthDate, "K");
-      const unitL = new TaskUnit([unitC, unitK], seventhDate, eighthDate, "L");
+      const unitE = new TaskUnit(now, [], firstDate, secondDate, "E");
+      const unitF = new TaskUnit(
+        now,
+        [unitA, unitE],
+        thirdDate,
+        fourthDate,
+        "F"
+      );
+      const unitG = new TaskUnit(now, [unitF], fifthDate, sixthDate, "G");
+      const unitH = new TaskUnit(
+        now,
+        [unitC, unitG],
+        seventhDate,
+        eighthDate,
+        "H"
+      );
+      const unitI = new TaskUnit(now, [], firstDate, secondDate, "I");
+      const unitJ = new TaskUnit(
+        now,
+        [unitA, unitI],
+        thirdDate,
+        fourthDate,
+        "J"
+      );
+      const unitK = new TaskUnit(now, [unitJ], fifthDate, sixthDate, "K");
+      const unitL = new TaskUnit(
+        now,
+        [unitC, unitK],
+        seventhDate,
+        eighthDate,
+        "L"
+      );
 
       const chainMap = new SimpleChainMap([unitB, unitD, unitH, unitL]);
       pathA = new ChainPath([
@@ -626,24 +742,49 @@ describe("StressManager", function () {
     let pathI: ChainPath;
     let originalDistance: number;
     before(function () {
-      const unitA = new TaskUnit([], firstDate, secondDate, "A");
-      const unitB = new TaskUnit([unitA], thirdDate, fourthDate, "B");
-      const unitC = new TaskUnit([], fifthDate, sixthDate, "C");
+      const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
+      const unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate, "B");
+      const unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C");
       const unitD = new TaskUnit(
+        now,
         [unitC],
         new Date(fifthDate.getTime() + 100),
         new Date(sixthDate.getTime() + 100),
         "D"
       );
 
-      const unitE = new TaskUnit([], firstDate, secondDate, "E");
-      const unitF = new TaskUnit([unitA, unitE], thirdDate, fourthDate, "F");
-      const unitG = new TaskUnit([unitF], fifthDate, sixthDate, "G");
-      const unitH = new TaskUnit([unitC, unitG], seventhDate, eighthDate, "H");
-      const unitI = new TaskUnit([], firstDate, secondDate, "I");
-      const unitJ = new TaskUnit([unitA, unitI], thirdDate, fourthDate, "J");
-      const unitK = new TaskUnit([unitJ], fifthDate, sixthDate, "K");
-      const unitL = new TaskUnit([unitC, unitK], seventhDate, eighthDate, "L");
+      const unitE = new TaskUnit(now, [], firstDate, secondDate, "E");
+      const unitF = new TaskUnit(
+        now,
+        [unitA, unitE],
+        thirdDate,
+        fourthDate,
+        "F"
+      );
+      const unitG = new TaskUnit(now, [unitF], fifthDate, sixthDate, "G");
+      const unitH = new TaskUnit(
+        now,
+        [unitC, unitG],
+        seventhDate,
+        eighthDate,
+        "H"
+      );
+      const unitI = new TaskUnit(now, [], firstDate, secondDate, "I");
+      const unitJ = new TaskUnit(
+        now,
+        [unitA, unitI],
+        thirdDate,
+        fourthDate,
+        "J"
+      );
+      const unitK = new TaskUnit(now, [unitJ], fifthDate, sixthDate, "K");
+      const unitL = new TaskUnit(
+        now,
+        [unitC, unitK],
+        seventhDate,
+        eighthDate,
+        "L"
+      );
 
       const chainMap = new SimpleChainMap([unitB, unitD, unitH, unitL]);
       pathA = new ChainPath([
@@ -711,29 +852,55 @@ describe("StressManager", function () {
       sandbox = createSandbox();
       moveBelowStub = sandbox.stub(StressTracker.prototype, "swapPathsById");
       moveBelowStub.throws(RangeError);
-      const unitA = new TaskUnit([], firstDate, secondDate, "A");
+      const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(
+        now,
         [unitA],
         new Date(firstDate.getTime() + 100),
         new Date(secondDate.getTime() + 100),
         "B"
       );
-      const unitC = new TaskUnit([], fifthDate, sixthDate, "C");
+      const unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C");
       const unitD = new TaskUnit(
+        now,
         [unitC],
         new Date(fifthDate.getTime() + 100),
         new Date(sixthDate.getTime() + 100),
         "D"
       );
 
-      const unitE = new TaskUnit([], firstDate, secondDate, "E");
-      const unitF = new TaskUnit([unitA, unitE], thirdDate, fourthDate, "F");
-      const unitG = new TaskUnit([unitF], fifthDate, sixthDate, "G");
-      const unitH = new TaskUnit([unitC, unitG], seventhDate, eighthDate, "H");
-      const unitI = new TaskUnit([], firstDate, secondDate, "I");
-      const unitJ = new TaskUnit([unitA, unitI], thirdDate, fourthDate, "J");
-      const unitK = new TaskUnit([unitJ], fifthDate, sixthDate, "K");
-      const unitL = new TaskUnit([unitC, unitK], seventhDate, eighthDate, "L");
+      const unitE = new TaskUnit(now, [], firstDate, secondDate, "E");
+      const unitF = new TaskUnit(
+        now,
+        [unitA, unitE],
+        thirdDate,
+        fourthDate,
+        "F"
+      );
+      const unitG = new TaskUnit(now, [unitF], fifthDate, sixthDate, "G");
+      const unitH = new TaskUnit(
+        now,
+        [unitC, unitG],
+        seventhDate,
+        eighthDate,
+        "H"
+      );
+      const unitI = new TaskUnit(now, [], firstDate, secondDate, "I");
+      const unitJ = new TaskUnit(
+        now,
+        [unitA, unitI],
+        thirdDate,
+        fourthDate,
+        "J"
+      );
+      const unitK = new TaskUnit(now, [unitJ], fifthDate, sixthDate, "K");
+      const unitL = new TaskUnit(
+        now,
+        [unitC, unitK],
+        seventhDate,
+        eighthDate,
+        "L"
+      );
       const chainMap = new SimpleChainMap([unitB, unitD, unitH, unitL]);
       pathE = new ChainPath([
         chainMap.getChainOfUnit(unitH),

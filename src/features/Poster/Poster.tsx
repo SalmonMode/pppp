@@ -192,7 +192,7 @@ export default function Poster() {
                 <line
                   x1={left}
                   x2={left}
-                  y1={Math.round(svgDateTopPadding / 2)}
+                  y1={svgDateTopPadding / 2}
                   y2={svgHeight}
                   style={{
                     stroke: "lightgrey",
@@ -218,9 +218,7 @@ export default function Poster() {
               Now
             </text>
             <path
-              d={`M${nowLeft},${Math.round(
-                svgDateTopPadding / 2
-              )} V ${svgHeight}`}
+              d={`M${nowLeft},${svgDateTopPadding / 2} V ${svgHeight}`}
               style={{
                 stroke: "lightgrey",
                 strokeWidth: "1px",

@@ -25,39 +25,50 @@ describe("SimpleChainPathMap", function () {
       const fourthDate = new Date(thirdDate.getTime() + 1000);
       const fifthDate = new Date(fourthDate.getTime() + 1000);
       const sixthDate = new Date(fifthDate.getTime() + 1000);
-      const unitA = new TaskUnit([], firstDate, secondDate, "A");
-      const unitB = new TaskUnit([], firstDate, secondDate, "B");
-      const unitC = new TaskUnit([], firstDate, secondDate, "C");
-      const unitD = new TaskUnit([], firstDate, secondDate, "D");
-      const unitE = new TaskUnit([], firstDate, secondDate, "E");
-      const unitF = new TaskUnit([], firstDate, secondDate, "F");
+      const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
+      const unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
+      const unitC = new TaskUnit(now, [], firstDate, secondDate, "C");
+      const unitD = new TaskUnit(now, [], firstDate, secondDate, "D");
+      const unitE = new TaskUnit(now, [], firstDate, secondDate, "E");
+      const unitF = new TaskUnit(now, [], firstDate, secondDate, "F");
 
       const unitG = new TaskUnit(
+        now,
         [unitA, unitC, unitF],
         thirdDate,
         fourthDate,
         "G"
       );
-      const unitH = new TaskUnit([unitB, unitD], thirdDate, fourthDate, "H");
+      const unitH = new TaskUnit(
+        now,
+        [unitB, unitD],
+        thirdDate,
+        fourthDate,
+        "H"
+      );
       const unitI = new TaskUnit(
+        now,
         [unitB, unitC, unitE],
         thirdDate,
         fourthDate,
         "I"
       );
       const unitJ = new TaskUnit(
+        now,
         [unitA, unitB, unitD, unitE],
         thirdDate,
         fourthDate,
         "J"
       );
       const unitK = new TaskUnit(
+        now,
         [unitC, unitD, unitE],
         thirdDate,
         fourthDate,
         "K"
       );
       const unitL = new TaskUnit(
+        now,
         [unitA, unitC, unitF],
         thirdDate,
         fourthDate,
@@ -65,31 +76,47 @@ describe("SimpleChainPathMap", function () {
       );
 
       const unitM = new TaskUnit(
+        now,
         [unitG, unitI, unitL],
         fifthDate,
         sixthDate,
         "M"
       );
       const unitN = new TaskUnit(
+        now,
         [unitH, unitI, unitJ],
         fifthDate,
         sixthDate,
         "N"
       );
-      const unitO = new TaskUnit([unitH, unitI], fifthDate, sixthDate, "O");
+      const unitO = new TaskUnit(
+        now,
+        [unitH, unitI],
+        fifthDate,
+        sixthDate,
+        "O"
+      );
       const unitP = new TaskUnit(
+        now,
         [unitH, unitJ, unitK, unitL],
         fifthDate,
         sixthDate,
         "P"
       );
       const unitQ = new TaskUnit(
+        now,
         [unitF, unitI, unitK],
         fifthDate,
         sixthDate,
         "Q"
       );
-      const unitR = new TaskUnit([unitG, unitL], fifthDate, sixthDate, "R");
+      const unitR = new TaskUnit(
+        now,
+        [unitG, unitL],
+        fifthDate,
+        sixthDate,
+        "R"
+      );
 
       const chainMap = new SimpleChainMap([
         unitM,

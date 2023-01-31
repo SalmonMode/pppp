@@ -9,7 +9,5 @@ export default function getPixelGapBetweenTimes(
    * number to get the appropriate pixel count.
    */
   const timeAheadOfLeftBoundInMilliseconds = laterTime - earlierTime;
-  return Math.round(
-    timeAheadOfLeftBoundInMilliseconds / unitTaskTimeConversion
-  );
+  return timeAheadOfLeftBoundInMilliseconds / unitTaskTimeConversion;
 }

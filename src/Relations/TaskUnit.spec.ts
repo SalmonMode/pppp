@@ -1,7 +1,8 @@
 import { expect } from "chai";
+import { sub, add } from "date-fns";
 import { EventHistoryInvalidError, PrematureTaskStartError } from "../Error";
 import { assertIsObject } from "../typePredicates";
-import { EventType } from "../types";
+import { EventType, TaskEvent } from "../types";
 import { TaskUnit } from "./";
 
 const now = new Date();
@@ -10,17 +11,11 @@ const lateFirstDate = new Date(firstDate.getTime() + 500);
 const secondDate = new Date(firstDate.getTime() + 1000);
 const lateSecondDate = new Date(secondDate.getTime() + 500);
 const thirdDate = new Date(secondDate.getTime() + 1000);
-const lateThirdDate = new Date(thirdDate.getTime() + 500);
 const fourthDate = new Date(thirdDate.getTime() + 1000);
-const lateFourthDate = new Date(fourthDate.getTime() + 500);
 const fifthDate = new Date(fourthDate.getTime() + 1000);
-const lateFifthDate = new Date(fifthDate.getTime() + 500);
 const sixthDate = new Date(fifthDate.getTime() + 1000);
-const lateSixthDate = new Date(sixthDate.getTime() + 500);
 const seventhDate = new Date(sixthDate.getTime() + 1000);
-const lateSeventhDate = new Date(seventhDate.getTime() + 500);
 const eighthDate = new Date(seventhDate.getTime() + 1000);
-const lateEighthDate = new Date(eighthDate.getTime() + 500);
 const ninthDate = new Date(eighthDate.getTime() + 1000);
 const tenthDate = new Date(ninthDate.getTime() + 1000);
 const eleventhDate = new Date(tenthDate.getTime() + 1000);
@@ -34,7 +29,7 @@ describe("TaskUnit", function () {
     const secondDate = new Date(firstDate.getTime() + 1000);
     let unit: TaskUnit;
     before(function () {
-      unit = new TaskUnit([], firstDate, secondDate);
+      unit = new TaskUnit(now, [], firstDate, secondDate);
     });
     it("should have correct presence", function () {
       expect(unit.presenceTime).to.equal(
@@ -51,8 +46,8 @@ describe("TaskUnit", function () {
       expect(unit.isDependentOn(unit)).to.be.false;
     });
     it("should not be dependent on unit that isn't its parent", function () {
-      expect(unit.isDependentOn(new TaskUnit([], firstDate, secondDate))).to.be
-        .false;
+      expect(unit.isDependentOn(new TaskUnit(now, [], firstDate, secondDate)))
+        .to.be.false;
     });
     it("should have no direct dependencies", function () {
       expect(unit.directDependencies).to.be.empty;
@@ -72,12 +67,12 @@ describe("TaskUnit", function () {
     const secondDate = new Date(firstDate.getTime() + 1000);
     let unit: TaskUnit;
     before(function () {
-      unit = new TaskUnit([], firstDate, secondDate);
+      unit = new TaskUnit(now, [], firstDate, secondDate);
     });
     it("should throw EventHistoryInvalidError", function () {
       expect(
         () =>
-          new TaskUnit([], firstDate, secondDate, undefined, [
+          new TaskUnit(now, [], firstDate, secondDate, undefined, [
             {
               type: EventType.TaskIterationStarted,
               date: firstDate,
@@ -95,8 +90,8 @@ describe("TaskUnit", function () {
       expect(unit.isDependentOn(unit)).to.be.false;
     });
     it("should not be dependent on unit that isn't its parent", function () {
-      expect(unit.isDependentOn(new TaskUnit([], firstDate, secondDate))).to.be
-        .false;
+      expect(unit.isDependentOn(new TaskUnit(now, [], firstDate, secondDate)))
+        .to.be.false;
     });
     it("should have no direct dependencies", function () {
       expect(unit.directDependencies).to.be.empty;
@@ -115,7 +110,7 @@ describe("TaskUnit", function () {
     describe("ReviewedAndAccepted Event Provided", function () {
       let unit: TaskUnit;
       before(function () {
-        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+        unit = new TaskUnit(now, [], firstDate, secondDate, undefined, [
           { type: EventType.TaskIterationStarted, date: firstDate },
           { type: EventType.ReviewedAndAccepted, date: thirdDate },
         ]);
@@ -144,7 +139,7 @@ describe("TaskUnit", function () {
     describe("Ends With TaskIterationStarted Event", function () {
       let unit: TaskUnit;
       before(function () {
-        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+        unit = new TaskUnit(now, [], firstDate, secondDate, undefined, [
           { type: EventType.TaskIterationStarted, date: firstDate },
         ]);
       });
@@ -184,7 +179,7 @@ describe("TaskUnit", function () {
     describe("Ends With Delayed TaskIterationStarted Event", function () {
       let unit: TaskUnit;
       before(function () {
-        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+        unit = new TaskUnit(now, [], firstDate, secondDate, undefined, [
           { type: EventType.TaskIterationStarted, date: thirdDate },
         ]);
       });
@@ -224,7 +219,7 @@ describe("TaskUnit", function () {
     describe("Ends With MinorRevisionComplete Event", function () {
       let unit: TaskUnit;
       before(function () {
-        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+        unit = new TaskUnit(now, [], firstDate, secondDate, undefined, [
           { type: EventType.TaskIterationStarted, date: firstDate },
           { type: EventType.ReviewedAndNeedsMinorRevision, date: secondDate },
           { type: EventType.MinorRevisionComplete, date: thirdDate },
@@ -254,7 +249,7 @@ describe("TaskUnit", function () {
     describe("Ends With Delayed MinorRevisionComplete Event", function () {
       let unit: TaskUnit;
       before(function () {
-        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+        unit = new TaskUnit(now, [], firstDate, secondDate, undefined, [
           { type: EventType.TaskIterationStarted, date: secondDate },
           { type: EventType.ReviewedAndNeedsMinorRevision, date: thirdDate },
           { type: EventType.MinorRevisionComplete, date: fourthDate },
@@ -284,7 +279,7 @@ describe("TaskUnit", function () {
     describe("Ends With ReviewedAndNeedsMajorRevision Event", function () {
       let unit: TaskUnit;
       before(function () {
-        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+        unit = new TaskUnit(now, [], firstDate, secondDate, undefined, [
           { type: EventType.TaskIterationStarted, date: firstDate },
           { type: EventType.ReviewedAndNeedsMajorRevision, date: secondDate },
         ]);
@@ -325,7 +320,7 @@ describe("TaskUnit", function () {
     describe("Ends With Delayed ReviewedAndNeedsMajorRevision Event", function () {
       let unit: TaskUnit;
       before(function () {
-        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+        unit = new TaskUnit(now, [], firstDate, secondDate, undefined, [
           { type: EventType.TaskIterationStarted, date: secondDate },
           { type: EventType.ReviewedAndNeedsMajorRevision, date: thirdDate },
         ]);
@@ -366,7 +361,7 @@ describe("TaskUnit", function () {
     describe("Ends With ReviewedAndNeedsMinorRevision Event", function () {
       let unit: TaskUnit;
       before(function () {
-        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+        unit = new TaskUnit(now, [], firstDate, secondDate, undefined, [
           { type: EventType.TaskIterationStarted, date: firstDate },
           { type: EventType.ReviewedAndNeedsMinorRevision, date: secondDate },
         ]);
@@ -407,7 +402,7 @@ describe("TaskUnit", function () {
     describe("Ends With Delayed ReviewedAndNeedsMinorRevision Event", function () {
       let unit: TaskUnit;
       before(function () {
-        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+        unit = new TaskUnit(now, [], firstDate, secondDate, undefined, [
           { type: EventType.TaskIterationStarted, date: secondDate },
           { type: EventType.ReviewedAndNeedsMinorRevision, date: thirdDate },
         ]);
@@ -448,7 +443,7 @@ describe("TaskUnit", function () {
     describe("Ends With ReviewedAndNeedsRebuild Event", function () {
       let unit: TaskUnit;
       before(function () {
-        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+        unit = new TaskUnit(now, [], firstDate, secondDate, undefined, [
           { type: EventType.TaskIterationStarted, date: firstDate },
           { type: EventType.ReviewedAndNeedsRebuild, date: secondDate },
         ]);
@@ -498,7 +493,7 @@ describe("TaskUnit", function () {
     describe("Ends With Delayed ReviewedAndNeedsRebuild Event", function () {
       let unit: TaskUnit;
       before(function () {
-        unit = new TaskUnit([], firstDate, secondDate, undefined, [
+        unit = new TaskUnit(now, [], firstDate, secondDate, undefined, [
           { type: EventType.TaskIterationStarted, date: secondDate },
           { type: EventType.ReviewedAndNeedsRebuild, date: thirdDate },
         ]);
@@ -556,7 +551,7 @@ describe("TaskUnit", function () {
         it("should throw Error", function () {
           expect(
             () =>
-              new TaskUnit([], firstDate, secondDate, undefined, [
+              new TaskUnit(now, [], firstDate, secondDate, undefined, [
                 { type: EventType.ReviewedAndAccepted, date: firstDate },
               ])
           ).to.throw(Error);
@@ -572,7 +567,7 @@ describe("TaskUnit", function () {
         it("should throw Error", function () {
           expect(
             () =>
-              new TaskUnit([], firstDate, secondDate, undefined, [
+              new TaskUnit(now, [], firstDate, secondDate, undefined, [
                 { type: EventType.MinorRevisionComplete, date: firstDate },
               ])
           ).to.throw(Error);
@@ -588,7 +583,7 @@ describe("TaskUnit", function () {
         it("should throw Error", function () {
           expect(
             () =>
-              new TaskUnit([], firstDate, secondDate, undefined, [
+              new TaskUnit(now, [], firstDate, secondDate, undefined, [
                 {
                   type: EventType.ReviewedAndNeedsMajorRevision,
                   date: firstDate,
@@ -607,7 +602,7 @@ describe("TaskUnit", function () {
         it("should throw Error", function () {
           expect(
             () =>
-              new TaskUnit([], firstDate, secondDate, undefined, [
+              new TaskUnit(now, [], firstDate, secondDate, undefined, [
                 {
                   type: EventType.ReviewedAndNeedsMinorRevision,
                   date: firstDate,
@@ -626,7 +621,7 @@ describe("TaskUnit", function () {
         it("should throw Error", function () {
           expect(
             () =>
-              new TaskUnit([], firstDate, secondDate, undefined, [
+              new TaskUnit(now, [], firstDate, secondDate, undefined, [
                 { type: EventType.ReviewedAndNeedsRebuild, date: firstDate },
               ])
           ).to.throw(Error);
@@ -638,14 +633,14 @@ describe("TaskUnit", function () {
     describe("Task Started Before Dependency Finished (First Task Was Started)", function () {
       let unitA: TaskUnit;
       before(function () {
-        unitA = new TaskUnit([], firstDate, secondDate, undefined, [
+        unitA = new TaskUnit(now, [], firstDate, secondDate, undefined, [
           { type: EventType.TaskIterationStarted, date: firstDate },
         ]);
       });
       it("should throw PrematureTaskStartError when instantiating unit B", function () {
         expect(
           () =>
-            new TaskUnit([unitA], secondDate, thirdDate, undefined, [
+            new TaskUnit(now, [unitA], secondDate, thirdDate, undefined, [
               { type: EventType.TaskIterationStarted, date: secondDate },
             ])
         ).to.throw(PrematureTaskStartError);
@@ -654,12 +649,12 @@ describe("TaskUnit", function () {
     describe("Task Started Before Dependency Finished (First Task Was Not Started)", function () {
       let unitA: TaskUnit;
       before(function () {
-        unitA = new TaskUnit([], firstDate, secondDate);
+        unitA = new TaskUnit(now, [], firstDate, secondDate);
       });
       it("should throw PrematureTaskStartError when instantiating unit B", function () {
         expect(
           () =>
-            new TaskUnit([unitA], secondDate, thirdDate, undefined, [
+            new TaskUnit(now, [unitA], secondDate, thirdDate, undefined, [
               { type: EventType.TaskIterationStarted, date: secondDate },
             ])
         ).to.throw(PrematureTaskStartError);
@@ -668,7 +663,7 @@ describe("TaskUnit", function () {
     describe("Task Started Before Dependency Finished (But Dependency Was Finished)", function () {
       let unitA: TaskUnit;
       before(function () {
-        unitA = new TaskUnit([], firstDate, secondDate, undefined, [
+        unitA = new TaskUnit(now, [], firstDate, secondDate, undefined, [
           {
             type: EventType.TaskIterationStarted,
             date: firstDate,
@@ -682,19 +677,26 @@ describe("TaskUnit", function () {
       it("should throw PrematureTaskStartError when instantiating unit B", function () {
         expect(
           () =>
-            new TaskUnit([unitA], lateFirstDate, lateSecondDate, undefined, [
-              {
-                type: EventType.TaskIterationStarted,
-                date: lateFirstDate,
-              },
-            ])
+            new TaskUnit(
+              now,
+              [unitA],
+              lateFirstDate,
+              lateSecondDate,
+              undefined,
+              [
+                {
+                  type: EventType.TaskIterationStarted,
+                  date: lateFirstDate,
+                },
+              ]
+            )
         ).to.throw(PrematureTaskStartError);
       });
     });
     describe("Task Started After Dependency Finished (But Dependency Was Finished)", function () {
       let unitA: TaskUnit;
       before(function () {
-        unitA = new TaskUnit([], firstDate, secondDate, undefined, [
+        unitA = new TaskUnit(now, [], firstDate, secondDate, undefined, [
           {
             type: EventType.TaskIterationStarted,
             date: firstDate,
@@ -708,12 +710,19 @@ describe("TaskUnit", function () {
       it("should not throw Error when instantiating unit B", function () {
         expect(
           () =>
-            new TaskUnit([unitA], lateFirstDate, lateSecondDate, undefined, [
-              {
-                type: EventType.TaskIterationStarted,
-                date: secondDate,
-              },
-            ])
+            new TaskUnit(
+              now,
+              [unitA],
+              lateFirstDate,
+              lateSecondDate,
+              undefined,
+              [
+                {
+                  type: EventType.TaskIterationStarted,
+                  date: secondDate,
+                },
+              ]
+            )
         ).to.not.throw(Error);
       });
     });
@@ -721,7 +730,7 @@ describe("TaskUnit", function () {
       it("should not throw error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               { type: EventType.TaskIterationStarted, date: firstDate },
             ])
         ).to.not.throw(Error);
@@ -731,7 +740,7 @@ describe("TaskUnit", function () {
       it("should throw EventHistoryInvalidError", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               { type: EventType.ReviewedAndAccepted, date: firstDate },
             ])
         ).to.throw(EventHistoryInvalidError);
@@ -741,7 +750,7 @@ describe("TaskUnit", function () {
       it("should throw EventHistoryInvalidError", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               { type: EventType.MinorRevisionComplete, date: firstDate },
             ])
         ).to.throw(EventHistoryInvalidError);
@@ -751,7 +760,7 @@ describe("TaskUnit", function () {
       it("should throw EventHistoryInvalidError", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.ReviewedAndNeedsMajorRevision,
                 date: firstDate,
@@ -764,7 +773,7 @@ describe("TaskUnit", function () {
       it("should throw EventHistoryInvalidError", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.ReviewedAndNeedsMinorRevision,
                 date: firstDate,
@@ -777,7 +786,7 @@ describe("TaskUnit", function () {
       it("should throw EventHistoryInvalidError", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.ReviewedAndNeedsRebuild,
                 date: firstDate,
@@ -790,7 +799,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -807,7 +816,7 @@ describe("TaskUnit", function () {
       it("should throw EventHistoryInvalidError", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: secondDate,
@@ -824,7 +833,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -841,7 +850,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -858,7 +867,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -875,7 +884,7 @@ describe("TaskUnit", function () {
       it("should throw EventHistoryInvalidError", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -892,7 +901,7 @@ describe("TaskUnit", function () {
       it("should throw EventHistoryInvalidError", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -909,7 +918,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -930,7 +939,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -951,7 +960,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -972,7 +981,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -993,7 +1002,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1014,7 +1023,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1035,7 +1044,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1056,7 +1065,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1077,7 +1086,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1098,7 +1107,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1119,7 +1128,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1140,7 +1149,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1161,7 +1170,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1182,7 +1191,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1203,7 +1212,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1224,7 +1233,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1245,7 +1254,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1266,7 +1275,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1287,7 +1296,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1308,7 +1317,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1329,7 +1338,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1350,7 +1359,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1371,7 +1380,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1392,7 +1401,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1413,7 +1422,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1438,7 +1447,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1463,7 +1472,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1488,7 +1497,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1513,7 +1522,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1538,7 +1547,7 @@ describe("TaskUnit", function () {
       it("should not throw Error", function () {
         expect(
           () =>
-            new TaskUnit([], firstDate, secondDate, undefined, [
+            new TaskUnit(now, [], firstDate, secondDate, undefined, [
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
@@ -1582,16 +1591,16 @@ describe("TaskUnit", function () {
     let unitG: TaskUnit;
     let unitH: TaskUnit;
     before(function () {
-      unitA = new TaskUnit([], firstDate, secondDate);
-      unitC = new TaskUnit([], firstDate, secondDate);
-      unitF = new TaskUnit([], firstDate, secondDate);
+      unitA = new TaskUnit(now, [], firstDate, secondDate);
+      unitC = new TaskUnit(now, [], firstDate, secondDate);
+      unitF = new TaskUnit(now, [], firstDate, secondDate);
 
-      unitB = new TaskUnit([unitA, unitC], thirdDate, fourthDate);
-      unitD = new TaskUnit([unitA, unitC, unitF], thirdDate, fourthDate);
-      unitG = new TaskUnit([unitC, unitF], thirdDate, fourthDate);
+      unitB = new TaskUnit(now, [unitA, unitC], thirdDate, fourthDate);
+      unitD = new TaskUnit(now, [unitA, unitC, unitF], thirdDate, fourthDate);
+      unitG = new TaskUnit(now, [unitC, unitF], thirdDate, fourthDate);
 
-      unitE = new TaskUnit([unitB, unitD, unitG], fifthDate, sixthDate);
-      unitH = new TaskUnit([unitD, unitG], fifthDate, sixthDate);
+      unitE = new TaskUnit(now, [unitB, unitD, unitG], fifthDate, sixthDate);
+      unitH = new TaskUnit(now, [unitD, unitG], fifthDate, sixthDate);
     });
     describe("From A", function () {
       let sourceUnit: TaskUnit;
@@ -1856,10 +1865,10 @@ describe("TaskUnit", function () {
     let unitC: TaskUnit;
     let unitD: TaskUnit;
     before(function () {
-      unitA = new TaskUnit([], firstDate, secondDate);
-      unitB = new TaskUnit([unitA], thirdDate, fourthDate);
-      unitC = new TaskUnit([unitA, unitB], fifthDate, sixthDate);
-      unitD = new TaskUnit([unitA, unitB, unitC], seventhDate, eighthDate);
+      unitA = new TaskUnit(now, [], firstDate, secondDate);
+      unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
+      unitC = new TaskUnit(now, [unitA, unitB], fifthDate, sixthDate);
+      unitD = new TaskUnit(now, [unitA, unitB, unitC], seventhDate, eighthDate);
     });
     describe("From A", function () {
       let sourceUnit: TaskUnit;
@@ -1956,18 +1965,18 @@ describe("TaskUnit", function () {
     let unitG: TaskUnit;
     let unitH: TaskUnit;
     before(function () {
-      unitA = new TaskUnit([], firstDate, secondDate);
+      unitA = new TaskUnit(now, [], firstDate, secondDate);
 
-      unitB = new TaskUnit([unitA], thirdDate, fourthDate);
-      unitF = new TaskUnit([unitA], thirdDate, fourthDate);
+      unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
+      unitF = new TaskUnit(now, [unitA], thirdDate, fourthDate);
 
-      unitC = new TaskUnit([unitB, unitF], fifthDate, sixthDate);
-      unitG = new TaskUnit([unitB, unitF], fifthDate, sixthDate);
+      unitC = new TaskUnit(now, [unitB, unitF], fifthDate, sixthDate);
+      unitG = new TaskUnit(now, [unitB, unitF], fifthDate, sixthDate);
 
-      unitD = new TaskUnit([unitC, unitG], seventhDate, eighthDate);
-      unitH = new TaskUnit([unitC, unitG], seventhDate, eighthDate);
+      unitD = new TaskUnit(now, [unitC, unitG], seventhDate, eighthDate);
+      unitH = new TaskUnit(now, [unitC, unitG], seventhDate, eighthDate);
 
-      unitE = new TaskUnit([unitD, unitH], ninthDate, tenthDate);
+      unitE = new TaskUnit(now, [unitD, unitH], ninthDate, tenthDate);
     });
     describe("From A", function () {
       let sourceUnit: TaskUnit;
@@ -2232,18 +2241,18 @@ describe("TaskUnit", function () {
     let unitG: TaskUnit;
     let unitH: TaskUnit;
     before(function () {
-      unitA = new TaskUnit([], firstDate, secondDate);
+      unitA = new TaskUnit(now, [], firstDate, secondDate);
 
-      unitB = new TaskUnit([unitA], thirdDate, fourthDate);
-      unitF = new TaskUnit([unitA], thirdDate, fourthDate);
+      unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
+      unitF = new TaskUnit(now, [unitA], thirdDate, fourthDate);
 
-      unitC = new TaskUnit([unitB, unitF], fifthDate, sixthDate);
-      unitG = new TaskUnit([unitB, unitF], fifthDate, sixthDate);
+      unitC = new TaskUnit(now, [unitB, unitF], fifthDate, sixthDate);
+      unitG = new TaskUnit(now, [unitB, unitF], fifthDate, sixthDate);
 
-      unitD = new TaskUnit([unitC, unitG], seventhDate, eighthDate);
-      unitH = new TaskUnit([unitC, unitG], seventhDate, eighthDate);
+      unitD = new TaskUnit(now, [unitC, unitG], seventhDate, eighthDate);
+      unitH = new TaskUnit(now, [unitC, unitG], seventhDate, eighthDate);
 
-      unitE = new TaskUnit([unitD, unitH], ninthDate, tenthDate);
+      unitE = new TaskUnit(now, [unitD, unitH], ninthDate, tenthDate);
     });
     describe("From A", function () {
       let sourceUnit: TaskUnit;
@@ -2556,37 +2565,55 @@ describe("TaskUnit", function () {
     let unitX: TaskUnit;
     let unitY: TaskUnit;
     before(function () {
-      unitA = new TaskUnit([], firstDate, secondDate, "A");
-      unitB = new TaskUnit([], firstDate, secondDate, "B");
+      unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
+      unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
 
-      unitC = new TaskUnit([unitA], thirdDate, fourthDate, "C");
-      unitD = new TaskUnit([unitA, unitB], thirdDate, fourthDate, "D");
-      unitE = new TaskUnit([unitB], thirdDate, fourthDate, "E");
+      unitC = new TaskUnit(now, [unitA], thirdDate, fourthDate, "C");
+      unitD = new TaskUnit(now, [unitA, unitB], thirdDate, fourthDate, "D");
+      unitE = new TaskUnit(now, [unitB], thirdDate, fourthDate, "E");
 
-      unitF = new TaskUnit([unitC], fifthDate, sixthDate, "F");
-      unitG = new TaskUnit([unitC, unitD], fifthDate, sixthDate, "G");
-      unitH = new TaskUnit([unitD, unitE], fifthDate, sixthDate, "H");
-      unitI = new TaskUnit([unitE], fifthDate, sixthDate, "I");
+      unitF = new TaskUnit(now, [unitC], fifthDate, sixthDate, "F");
+      unitG = new TaskUnit(now, [unitC, unitD], fifthDate, sixthDate, "G");
+      unitH = new TaskUnit(now, [unitD, unitE], fifthDate, sixthDate, "H");
+      unitI = new TaskUnit(now, [unitE], fifthDate, sixthDate, "I");
 
-      unitJ = new TaskUnit([unitF], seventhDate, eighthDate, "J");
-      unitK = new TaskUnit([unitF, unitG], seventhDate, eighthDate, "K");
-      unitL = new TaskUnit([unitG, unitH], seventhDate, eighthDate, "L");
-      unitM = new TaskUnit([unitH, unitI], seventhDate, eighthDate, "M");
-      unitN = new TaskUnit([unitI], seventhDate, eighthDate, "N");
+      unitJ = new TaskUnit(now, [unitF], seventhDate, eighthDate, "J");
+      unitK = new TaskUnit(now, [unitF, unitG], seventhDate, eighthDate, "K");
+      unitL = new TaskUnit(now, [unitG, unitH], seventhDate, eighthDate, "L");
+      unitM = new TaskUnit(now, [unitH, unitI], seventhDate, eighthDate, "M");
+      unitN = new TaskUnit(now, [unitI], seventhDate, eighthDate, "N");
 
-      unitO = new TaskUnit([unitJ, unitK], ninthDate, tenthDate, "O");
-      unitP = new TaskUnit([unitK, unitL], ninthDate, tenthDate, "P");
-      unitQ = new TaskUnit([unitL, unitM], ninthDate, tenthDate, "Q");
-      unitR = new TaskUnit([unitM, unitN], ninthDate, tenthDate, "R");
+      unitO = new TaskUnit(now, [unitJ, unitK], ninthDate, tenthDate, "O");
+      unitP = new TaskUnit(now, [unitK, unitL], ninthDate, tenthDate, "P");
+      unitQ = new TaskUnit(now, [unitL, unitM], ninthDate, tenthDate, "Q");
+      unitR = new TaskUnit(now, [unitM, unitN], ninthDate, tenthDate, "R");
 
-      unitS = new TaskUnit([unitO, unitP], eleventhDate, twelfthDate, "S");
-      unitT = new TaskUnit([unitP, unitQ], eleventhDate, twelfthDate, "T");
-      unitU = new TaskUnit([unitQ, unitR], eleventhDate, twelfthDate, "U");
-      unitV = new TaskUnit([unitR], eleventhDate, twelfthDate, "V");
+      unitS = new TaskUnit(now, [unitO, unitP], eleventhDate, twelfthDate, "S");
+      unitT = new TaskUnit(now, [unitP, unitQ], eleventhDate, twelfthDate, "T");
+      unitU = new TaskUnit(now, [unitQ, unitR], eleventhDate, twelfthDate, "U");
+      unitV = new TaskUnit(now, [unitR], eleventhDate, twelfthDate, "V");
 
-      unitW = new TaskUnit([unitS, unitT], thirteenthDate, fourteenthDate, "W");
-      unitX = new TaskUnit([unitT, unitU], thirteenthDate, fourteenthDate, "X");
-      unitY = new TaskUnit([unitU, unitV], thirteenthDate, fourteenthDate, "Y");
+      unitW = new TaskUnit(
+        now,
+        [unitS, unitT],
+        thirteenthDate,
+        fourteenthDate,
+        "W"
+      );
+      unitX = new TaskUnit(
+        now,
+        [unitT, unitU],
+        thirteenthDate,
+        fourteenthDate,
+        "X"
+      );
+      unitY = new TaskUnit(
+        now,
+        [unitU, unitV],
+        thirteenthDate,
+        fourteenthDate,
+        "Y"
+      );
     });
     describe("W", function () {
       it("should have 20 paths to A", function () {
@@ -2821,16 +2848,16 @@ describe("TaskUnit", function () {
     });
   });
   describe("Cascading Date Influence", function () {
-    const now = new Date();
-    const firstDate = new Date(now.getTime() - 150000);
-    const secondDate = new Date(firstDate.getTime() + 50000);
-    const thirdDate = new Date(secondDate.getTime() + 50000);
+    const innerNow = new Date();
+    const firstDate = sub(innerNow, { days: 3 });
+    const secondDate = sub(innerNow, { days: 2 });
+    const thirdDate = sub(innerNow, { days: 1 });
     // should roughly be now
-    const fourthDate = new Date(thirdDate.getTime() + 50000);
-    const fifthDate = new Date(fourthDate.getTime() + 50000);
-    const sixthDate = new Date(fifthDate.getTime() + 50000);
-    const seventhDate = new Date(sixthDate.getTime() + 50000);
-    const eighthDate = new Date(seventhDate.getTime() + 50000);
+    const fourthDate = sub(innerNow, { days: 0 });
+    const fifthDate = add(innerNow, { days: 1 });
+    const sixthDate = add(innerNow, { days: 2 });
+    const seventhDate = add(innerNow, { days: 3 });
+    const eighthDate = add(innerNow, { days: 4 });
     describe("Delay Cascades", function () {
       /**
        * ```text
@@ -2858,11 +2885,11 @@ describe("TaskUnit", function () {
       let unitB: TaskUnit;
       let unitC: TaskUnit;
       before(function () {
-        unitA = new TaskUnit([], firstDate, fifthDate, "A", [
+        unitA = new TaskUnit(innerNow, [], firstDate, fifthDate, "A", [
           { type: EventType.TaskIterationStarted, date: thirdDate },
         ]);
-        unitB = new TaskUnit([unitA], secondDate, thirdDate, "B");
-        unitC = new TaskUnit([unitA], seventhDate, eighthDate, "C");
+        unitB = new TaskUnit(innerNow, [unitA], secondDate, thirdDate, "B");
+        unitC = new TaskUnit(innerNow, [unitA], seventhDate, eighthDate, "C");
       });
       it("should have A anticipated to start at first date", function () {
         expect(unitA.anticipatedStartDate).to.deep.equal(firstDate);
@@ -2928,12 +2955,12 @@ describe("TaskUnit", function () {
       let unitB: TaskUnit;
       let unitC: TaskUnit;
       before(function () {
-        unitA = new TaskUnit([], firstDate, fifthDate, "A", [
+        unitA = new TaskUnit(innerNow, [], firstDate, fifthDate, "A", [
           { type: EventType.TaskIterationStarted, date: firstDate },
           { type: EventType.ReviewedAndNeedsMajorRevision, date: thirdDate },
         ]);
-        unitB = new TaskUnit([unitA], secondDate, thirdDate, "B");
-        unitC = new TaskUnit([unitA], seventhDate, eighthDate, "C");
+        unitB = new TaskUnit(innerNow, [unitA], secondDate, thirdDate, "B");
+        unitC = new TaskUnit(innerNow, [unitA], seventhDate, eighthDate, "C");
       });
       it("should have A anticipated to start at first date", function () {
         expect(unitA.anticipatedStartDate).to.deep.equal(firstDate);

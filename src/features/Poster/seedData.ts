@@ -1,6 +1,6 @@
+import { add, sub } from "date-fns";
 import { TaskUnit, TaskUnitCluster } from "../../Relations";
 import { EventType } from "../../types";
-import { sub, add } from "date-fns";
 
 export function getSeedData(): TaskUnitCluster {
   const now = new Date();
@@ -13,20 +13,7 @@ export function getSeedData(): TaskUnitCluster {
   const seventhDate = add(sixthDate, { days: 1 });
   const eighthDate = add(seventhDate, { days: 1 });
   const ninthDate = add(eighthDate, { days: 1 });
-  // const tenthDate = add(ninthDate, { days: 1 });
-  // const eleventhDate = add(tenthDate, { days: 1 });
-  // const twelfthDate = add(eleventhDate, { days: 1 });
-  // const firstStartDate = sub(new Date(now.getTime() - 4000);
-  // const firstEndDate = new Date(firstStartDate.getTime() + 1000);
-  // const secondStartDate = new Date(firstEndDate.getTime() + 1000);
-  // const secondEndDate = new Date(secondStartDate.getTime() + 1000);
-  // const thirdStartDate = new Date(secondEndDate.getTime() + 1000);
-  // const thirdEndDate = new Date(thirdStartDate.getTime() + 1000);
-  // const fourthStartDate = new Date(thirdEndDate.getTime() + 1000);
-  // const fourthEndDate = new Date(fourthStartDate.getTime() + 1000);
-  // const fifthStartDate = new Date(fourthEndDate.getTime() + 1000);
-  // const fifthEndDate = new Date(fifthStartDate.getTime() + 1000);
-  const unitA = new TaskUnit([], firstDate, secondDate, "A", [
+  const unitA = new TaskUnit(now, [], firstDate, secondDate, "A", [
     {
       type: EventType.TaskIterationStarted,
       date: firstDate,
@@ -36,7 +23,7 @@ export function getSeedData(): TaskUnitCluster {
       date: thirdDate,
     },
   ]);
-  const unitB = new TaskUnit([unitA], secondDate, thirdDate, "B", [
+  const unitB = new TaskUnit(now, [unitA], secondDate, thirdDate, "B", [
     {
       type: EventType.TaskIterationStarted,
       date: thirdDate,
@@ -50,7 +37,7 @@ export function getSeedData(): TaskUnitCluster {
       date: fifthDate,
     },
   ]);
-  const unitC = new TaskUnit([], fifthDate, sixthDate, "C", [
+  const unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C", [
     {
       type: EventType.TaskIterationStarted,
       date: fifthDate,
@@ -60,7 +47,7 @@ export function getSeedData(): TaskUnitCluster {
       date: add(sixthDate, { hours: 4 }),
     },
   ]);
-  const unitD = new TaskUnit([unitC], sixthDate, seventhDate, "D", [
+  const unitD = new TaskUnit(now, [unitC], sixthDate, seventhDate, "D", [
     {
       type: EventType.TaskIterationStarted,
       date: add(sixthDate, { hours: 4 }),
@@ -79,7 +66,7 @@ export function getSeedData(): TaskUnitCluster {
     },
   ]);
 
-  const unitE = new TaskUnit([], firstDate, secondDate, "E", [
+  const unitE = new TaskUnit(now, [], firstDate, secondDate, "E", [
     {
       type: EventType.TaskIterationStarted,
       date: firstDate,
@@ -89,7 +76,7 @@ export function getSeedData(): TaskUnitCluster {
       date: secondDate,
     },
   ]);
-  const unitF = new TaskUnit([unitA, unitE], secondDate, thirdDate, "F", [
+  const unitF = new TaskUnit(now, [unitA, unitE], secondDate, thirdDate, "F", [
     {
       type: EventType.TaskIterationStarted,
       date: thirdDate,
@@ -99,7 +86,7 @@ export function getSeedData(): TaskUnitCluster {
       date: fourthDate,
     },
   ]);
-  const unitG = new TaskUnit([unitF], fourthDate, fifthDate, "G", [
+  const unitG = new TaskUnit(now, [unitF], fourthDate, fifthDate, "G", [
     {
       type: EventType.TaskIterationStarted,
       date: fourthDate,
@@ -109,7 +96,7 @@ export function getSeedData(): TaskUnitCluster {
       date: fifthDate,
     },
   ]);
-  const unitH = new TaskUnit([unitC, unitG], fifthDate, sixthDate, "H", [
+  const unitH = new TaskUnit(now, [unitC, unitG], fifthDate, sixthDate, "H", [
     {
       type: EventType.TaskIterationStarted,
       date: add(sixthDate, { hours: 4 }),
@@ -124,7 +111,7 @@ export function getSeedData(): TaskUnitCluster {
     },
   ]);
 
-  const unitI = new TaskUnit([], firstDate, secondDate, "I", [
+  const unitI = new TaskUnit(now, [], firstDate, secondDate, "I", [
     {
       type: EventType.TaskIterationStarted,
       date: firstDate,
@@ -134,7 +121,7 @@ export function getSeedData(): TaskUnitCluster {
       date: secondDate,
     },
   ]);
-  const unitJ = new TaskUnit([unitA, unitI], secondDate, thirdDate, "J", [
+  const unitJ = new TaskUnit(now, [unitA, unitI], secondDate, thirdDate, "J", [
     {
       type: EventType.TaskIterationStarted,
       date: thirdDate,
@@ -144,7 +131,7 @@ export function getSeedData(): TaskUnitCluster {
       date: fourthDate,
     },
   ]);
-  const unitK = new TaskUnit([unitJ], fourthDate, fifthDate, "K", [
+  const unitK = new TaskUnit(now, [unitJ], fourthDate, fifthDate, "K", [
     {
       type: EventType.TaskIterationStarted,
       date: fourthDate,
@@ -154,7 +141,7 @@ export function getSeedData(): TaskUnitCluster {
       date: fifthDate,
     },
   ]);
-  const unitL = new TaskUnit([unitC, unitK], fifthDate, sixthDate, "L", [
+  const unitL = new TaskUnit(now, [unitC, unitK], fifthDate, sixthDate, "L", [
     {
       type: EventType.TaskIterationStarted,
       date: add(sixthDate, { hours: 4 }),

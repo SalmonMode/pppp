@@ -178,7 +178,7 @@ describe("React Integration: Poster", () => {
       const seventhDate = add(sixthDate, { days: 1 });
       const eighthDate = add(seventhDate, { days: 1 });
       const ninthDate = add(eighthDate, { days: 1 });
-      unitA = new TaskUnit([], firstDate, secondDate, "A", [
+      unitA = new TaskUnit(now, [], firstDate, secondDate, "A", [
         {
           type: EventType.TaskIterationStarted,
           date: firstDate,
@@ -188,7 +188,7 @@ describe("React Integration: Poster", () => {
           date: thirdDate,
         },
       ]);
-      unitB = new TaskUnit([unitA], secondDate, thirdDate, "B", [
+      unitB = new TaskUnit(now, [unitA], secondDate, thirdDate, "B", [
         {
           type: EventType.TaskIterationStarted,
           date: thirdDate,
@@ -202,7 +202,7 @@ describe("React Integration: Poster", () => {
           date: fifthDate,
         },
       ]);
-      unitC = new TaskUnit([], fifthDate, sixthDate, "C", [
+      unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C", [
         {
           type: EventType.TaskIterationStarted,
           date: fifthDate,
@@ -212,7 +212,7 @@ describe("React Integration: Poster", () => {
           date: add(sixthDate, { hours: 4 }),
         },
       ]);
-      unitD = new TaskUnit([unitC], sixthDate, seventhDate, "D", [
+      unitD = new TaskUnit(now, [unitC], sixthDate, seventhDate, "D", [
         {
           type: EventType.TaskIterationStarted,
           date: add(sixthDate, { hours: 4 }),
@@ -231,7 +231,7 @@ describe("React Integration: Poster", () => {
         },
       ]);
 
-      unitE = new TaskUnit([], firstDate, secondDate, "E", [
+      unitE = new TaskUnit(now, [], firstDate, secondDate, "E", [
         {
           type: EventType.TaskIterationStarted,
           date: firstDate,
@@ -241,7 +241,7 @@ describe("React Integration: Poster", () => {
           date: secondDate,
         },
       ]);
-      unitF = new TaskUnit([unitA, unitE], secondDate, thirdDate, "F", [
+      unitF = new TaskUnit(now, [unitA, unitE], secondDate, thirdDate, "F", [
         {
           type: EventType.TaskIterationStarted,
           date: thirdDate,
@@ -251,7 +251,7 @@ describe("React Integration: Poster", () => {
           date: fourthDate,
         },
       ]);
-      unitG = new TaskUnit([unitF], fourthDate, fifthDate, "G", [
+      unitG = new TaskUnit(now, [unitF], fourthDate, fifthDate, "G", [
         {
           type: EventType.TaskIterationStarted,
           date: fourthDate,
@@ -261,7 +261,7 @@ describe("React Integration: Poster", () => {
           date: fifthDate,
         },
       ]);
-      unitH = new TaskUnit([unitC, unitG], fifthDate, sixthDate, "H", [
+      unitH = new TaskUnit(now, [unitC, unitG], fifthDate, sixthDate, "H", [
         {
           type: EventType.TaskIterationStarted,
           date: add(sixthDate, { hours: 4 }),
@@ -276,7 +276,7 @@ describe("React Integration: Poster", () => {
         },
       ]);
 
-      unitI = new TaskUnit([], firstDate, secondDate, "I", [
+      unitI = new TaskUnit(now, [], firstDate, secondDate, "I", [
         {
           type: EventType.TaskIterationStarted,
           date: firstDate,
@@ -286,7 +286,7 @@ describe("React Integration: Poster", () => {
           date: secondDate,
         },
       ]);
-      unitJ = new TaskUnit([unitA, unitI], secondDate, thirdDate, "J", [
+      unitJ = new TaskUnit(now, [unitA, unitI], secondDate, thirdDate, "J", [
         {
           type: EventType.TaskIterationStarted,
           date: thirdDate,
@@ -296,7 +296,7 @@ describe("React Integration: Poster", () => {
           date: fourthDate,
         },
       ]);
-      unitK = new TaskUnit([unitJ], fourthDate, fifthDate, "K", [
+      unitK = new TaskUnit(now, [unitJ], fourthDate, fifthDate, "K", [
         {
           type: EventType.TaskIterationStarted,
           date: fourthDate,
@@ -306,7 +306,7 @@ describe("React Integration: Poster", () => {
           date: fifthDate,
         },
       ]);
-      unitL = new TaskUnit([unitC, unitK], fifthDate, sixthDate, "L", [
+      unitL = new TaskUnit(now, [unitC, unitK], fifthDate, sixthDate, "L", [
         {
           type: EventType.TaskIterationStarted,
           date: add(sixthDate, { hours: 4 }),
@@ -1904,9 +1904,7 @@ describe("React Integration: Poster", () => {
           expect(twelfthDateLineX).to.be.greaterThan(eleventhDateLineX);
         });
         it("should have twelfth date line half a day's worth of width from the end of the SVG", function () {
-          expect(svgWidth - twelfthDateLineX).to.greaterThanOrEqual(
-            halfDayWidth
-          );
+          expect(twelfthDateLabelX + halfDayWidth).to.lessThanOrEqual(svgWidth);
         });
       });
       describe("Labels", function () {
@@ -2103,9 +2101,7 @@ describe("React Integration: Poster", () => {
           expect(twelfthDateLabelX).to.be.greaterThan(eleventhDateLabelX);
         });
         it("should have twelfth date label half a day's worth of width from the end of the SVG", function () {
-          expect(svgWidth - twelfthDateLabelX).to.greaterThanOrEqual(
-            halfDayWidth
-          );
+          expect(twelfthDateLabelX + halfDayWidth).to.lessThanOrEqual(svgWidth);
         });
       });
     });
@@ -2124,19 +2120,43 @@ describe("React Integration: Poster", () => {
     let thirdTrackText: string;
 
     before(async function () {
-      const unitA = new TaskUnit([], firstDate, thirdDate, "A");
-      const unitB = new TaskUnit([unitA], secondDate, fourthDate, "B");
-      const unitC = new TaskUnit([], fifthDate, sixthDate, "C");
-      const unitD = new TaskUnit([unitC], seventhDate, eighthDate, "D");
+      const unitA = new TaskUnit(now, [], firstDate, thirdDate, "A");
+      const unitB = new TaskUnit(now, [unitA], secondDate, fourthDate, "B");
+      const unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C");
+      const unitD = new TaskUnit(now, [unitC], seventhDate, eighthDate, "D");
 
-      const unitE = new TaskUnit([], firstDate, secondDate, "E");
-      const unitF = new TaskUnit([unitA, unitE], thirdDate, fourthDate, "F");
-      const unitG = new TaskUnit([unitF], fifthDate, sixthDate, "G");
-      const unitH = new TaskUnit([unitC, unitG], seventhDate, eighthDate, "H");
-      const unitI = new TaskUnit([], firstDate, secondDate, "I");
-      const unitJ = new TaskUnit([unitA, unitI], thirdDate, fourthDate, "J");
-      const unitK = new TaskUnit([unitJ], fifthDate, sixthDate, "K");
-      const unitL = new TaskUnit([unitC, unitK], seventhDate, eighthDate, "L");
+      const unitE = new TaskUnit(now, [], firstDate, secondDate, "E");
+      const unitF = new TaskUnit(
+        now,
+        [unitA, unitE],
+        thirdDate,
+        fourthDate,
+        "F"
+      );
+      const unitG = new TaskUnit(now, [unitF], fifthDate, sixthDate, "G");
+      const unitH = new TaskUnit(
+        now,
+        [unitC, unitG],
+        seventhDate,
+        eighthDate,
+        "H"
+      );
+      const unitI = new TaskUnit(now, [], firstDate, secondDate, "I");
+      const unitJ = new TaskUnit(
+        now,
+        [unitA, unitI],
+        thirdDate,
+        fourthDate,
+        "J"
+      );
+      const unitK = new TaskUnit(now, [unitJ], fifthDate, sixthDate, "K");
+      const unitL = new TaskUnit(
+        now,
+        [unitC, unitK],
+        seventhDate,
+        eighthDate,
+        "L"
+      );
 
       const cluster = new TaskUnitCluster([unitB, unitD, unitH, unitL]);
 

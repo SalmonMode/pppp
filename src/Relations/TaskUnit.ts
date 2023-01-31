@@ -1,14 +1,14 @@
 import { add, differenceInSeconds, max } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 import { EventHistoryInvalidError, PrematureTaskStartError } from "../Error";
+import { reviewBoxWidth, unitTaskTimeConversion } from "../features/constants";
 import { assertIsObject } from "../typePredicates";
 import {
   EventType,
   InterpolatedTaskEvent,
   RelationshipMapping,
-  TaskEvent,
+  TaskEvent
 } from "../types";
-import { assumedReqTime } from "./constants";
 
 export default class TaskUnit {
   public readonly id: string;
@@ -31,6 +31,7 @@ export default class TaskUnit {
   public projectedHistory: TaskEvent[] = [];
   public interpolatedEventHistory: InterpolatedTaskEvent[];
   constructor(
+    now: Date,
     parentUnits: TaskUnit[],
     public readonly anticipatedStartDate: Date,
     public readonly anticipatedEndDate: Date,
@@ -62,7 +63,7 @@ export default class TaskUnit {
       this._apparentStartDate = latestRequiredDate;
     }
 
-    this._buildProjectedHistory();
+    this._buildProjectedHistory(now);
     this.interpolatedEventHistory = [
       ...this.eventHistory.map((e) => ({
         ...e,
@@ -287,7 +288,7 @@ export default class TaskUnit {
    *
    * This is to help make both rendering and reasoning about the unit times easier.
    */
-  private _buildProjectedHistory() {
+  private _buildProjectedHistory(now: Date) {
     /**
      * The anticipated duration of the task
      */
@@ -297,11 +298,16 @@ export default class TaskUnit {
         this.anticipatedStartDate
       ),
     };
+    // To aid with visualization, the pending review box should always be after the now line, as this makes it clearer
+    // that it's being pushed forward by the flow of time. To accomplish this, the projected time for a pending review
+    // may need to be pushed out enough to cover the timespan covered by the review box's width.
+    const reviewBoxBufferDuration: Duration = {
+      seconds: (reviewBoxWidth * unitTaskTimeConversion) / 1000,
+    };
     // If the last event is EventType.ReviewedAndAccepted, then update the apparent end date to that date. Otherwise,
     // estimate the apparent end date relative to the apparent start date.
     const lastEvent = this.eventHistory[this.eventHistory.length - 1];
     if (lastEvent) {
-      const now = new Date();
       switch (lastEvent.type) {
         case EventType.MinorRevisionComplete:
         case EventType.ReviewedAndAccepted:
@@ -309,9 +315,8 @@ export default class TaskUnit {
           break;
         case EventType.ReviewedAndNeedsRebuild:
           // needs to start the task (which implies getting new reqs) and then pass review
-          var lastEventTimePlusBuffer = add(lastEvent.date, assumedReqTime);
 
-          var reqFinishedDate = max([now, lastEventTimePlusBuffer]);
+          var reqFinishedDate = max([now, lastEvent.date]);
           this.projectedHistory.push({
             type: EventType.TaskIterationStarted,
             date: reqFinishedDate,
@@ -329,7 +334,10 @@ export default class TaskUnit {
             lastEvent.date,
             estimatedTaskDuration
           );
-          var taskEndDate = max([now, lastEventTimePlusBuffer]);
+          var taskEndDate = max([
+            add(now, reviewBoxBufferDuration),
+            lastEventTimePlusBuffer,
+          ]);
           this.projectedHistory.push({
             type: EventType.ReviewedAndAccepted,
             date: taskEndDate,
@@ -341,7 +349,10 @@ export default class TaskUnit {
             lastEvent.date,
             estimatedTaskDuration
           );
-          var taskEndDate = max([now, lastEventTimePlusBuffer]);
+          var taskEndDate = max([
+            add(now, reviewBoxBufferDuration),
+            lastEventTimePlusBuffer,
+          ]);
           this.projectedHistory.push({
             type: EventType.MinorRevisionComplete,
             date: taskEndDate,
@@ -353,7 +364,10 @@ export default class TaskUnit {
             lastEvent.date,
             estimatedTaskDuration
           );
-          var taskEndDate = max([now, lastEventTimePlusBuffer]);
+          var taskEndDate = max([
+            add(now, reviewBoxBufferDuration),
+            lastEventTimePlusBuffer,
+          ]);
           this.projectedHistory.push({
             type: EventType.ReviewedAndAccepted,
             date: taskEndDate,

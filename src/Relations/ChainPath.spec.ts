@@ -21,8 +21,8 @@ describe("ChainPath", function () {
     let chainB: IsolatedDependencyChain;
     let path: ChainPath;
     before(function () {
-      const unitA = new TaskUnit([], firstDate, secondDate);
-      const unitB = new TaskUnit([unitA], thirdDate, fourthDate);
+      const unitA = new TaskUnit(now, [], firstDate, secondDate);
+      const unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
       chainA = new IsolatedDependencyChain([unitA]);
       chainB = new IsolatedDependencyChain([unitB]);
       path = new ChainPath([chainB, chainA]);
@@ -54,8 +54,8 @@ describe("ChainPath", function () {
     let chainA: IsolatedDependencyChain;
     let chainB: IsolatedDependencyChain;
     before(function () {
-      const unitA = new TaskUnit([], firstDate, secondDate);
-      const unitB = new TaskUnit([], secondDate, thirdDate);
+      const unitA = new TaskUnit(now, [], firstDate, secondDate);
+      const unitB = new TaskUnit(now, [], secondDate, thirdDate);
       chainA = new IsolatedDependencyChain([unitA]);
       chainB = new IsolatedDependencyChain([unitB]);
     });
@@ -69,8 +69,8 @@ describe("ChainPath", function () {
     let chainA: IsolatedDependencyChain;
     let chainB: IsolatedDependencyChain;
     before(function () {
-      const unitA = new TaskUnit([], firstDate, secondDate);
-      const unitB = new TaskUnit([unitA], secondDate, thirdDate);
+      const unitA = new TaskUnit(now, [], firstDate, secondDate);
+      const unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
       chainA = new IsolatedDependencyChain([unitA]);
       chainB = new IsolatedDependencyChain([unitB]);
     });

@@ -24,6 +24,7 @@ export default function TaskBox({
         display: "flex",
         height: "100%",
         flexDirection: "row",
+        flexShrink: 0,
         width: actualDurationWidth,
       }}
     >
