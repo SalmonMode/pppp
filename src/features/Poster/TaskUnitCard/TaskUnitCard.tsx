@@ -49,8 +49,6 @@ export default function TaskUnitCard({
         position: "absolute",
         left: position.x,
         top: position.y,
-        // backgroundColor: snailTrailColor,
-        // borderRadius: 5,
       }}
     >
       <Card
