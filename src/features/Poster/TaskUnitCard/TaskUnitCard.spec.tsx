@@ -17,8 +17,8 @@ import {
   reviewMinorColor,
   reviewPendingColor,
   reviewRebuildColor,
-  unitTaskTimeConversion,
 } from "../../constants";
+import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 import { TaskUnitsState } from "../taskUnitsSlice";
 import { turnClusterIntoState } from "../turnClusterIntoState";
 import TaskUnitCard from "./TaskUnitCard";
@@ -261,19 +261,17 @@ describe("React Integration: TaskUnitCard", () => {
           });
           it("should have box with a width according to actual duration and anticipated start", function () {
             expect(Number(boxComputedStyles.width.slice(0, -2))).to.equal(
-              Math.round(
-                (relevantUnit.apparentEndDate.getTime() -
-                  relevantUnit.anticipatedStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                relevantUnit.apparentEndDate.getTime(),
+                relevantUnit.anticipatedStartDate.getTime()
               )
             );
           });
           it("should have card with a width according to actual duration", function () {
             expect(Number(cardComputedStyles.width.slice(0, -2))).to.equal(
-              Math.round(
-                (relevantUnit.apparentEndDate.getTime() -
-                  relevantUnit.apparentStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                relevantUnit.apparentEndDate.getTime(),
+                relevantUnit.apparentStartDate.getTime()
               )
             );
           });
@@ -295,10 +293,9 @@ describe("React Integration: TaskUnitCard", () => {
               expect(
                 Number(firstTaskBoxComputedStyles.width.slice(0, -2))
               ).to.equal(
-                Math.round(
-                  (relevantUnit.anticipatedEndDate.getTime() -
-                    relevantUnit.anticipatedStartDate.getTime()) /
-                    unitTaskTimeConversion
+                getPixelGapBetweenTimes(
+                  relevantUnit.anticipatedEndDate.getTime(),
+                  relevantUnit.anticipatedStartDate.getTime()
                 ) -
                   reviewBoxWidth -
                   prerequisitesBoxWidth
@@ -326,9 +323,9 @@ describe("React Integration: TaskUnitCard", () => {
               expect(
                 Number(firstTaskBoxWrapperComputedStyles.width.slice(0, -2))
               ).to.equal(
-                Math.round(
-                  (reviewEvent.date.getTime() - precedingEvent.date.getTime()) /
-                    unitTaskTimeConversion
+                getPixelGapBetweenTimes(
+                  reviewEvent.date.getTime(),
+                  precedingEvent.date.getTime()
                 ) -
                   reviewBoxWidth -
                   prerequisitesBoxWidth
@@ -454,19 +451,17 @@ describe("React Integration: TaskUnitCard", () => {
         });
         it("should have box with a width according to actual duration, and anticipated start", function () {
           expect(Number(boxComputedStyles.width.slice(0, -2))).to.equal(
-            Math.round(
-              (relevantUnit.apparentEndDate.getTime() -
-                relevantUnit.anticipatedStartDate.getTime()) /
-                unitTaskTimeConversion
+            getPixelGapBetweenTimes(
+              relevantUnit.apparentEndDate.getTime(),
+              relevantUnit.anticipatedStartDate.getTime()
             )
           );
         });
         it("should have card with a width according to actual duration", function () {
           expect(Number(cardComputedStyles.width.slice(0, -2))).to.equal(
-            Math.round(
-              (relevantUnit.apparentEndDate.getTime() -
-                relevantUnit.apparentStartDate.getTime()) /
-                unitTaskTimeConversion
+            getPixelGapBetweenTimes(
+              relevantUnit.apparentEndDate.getTime(),
+              relevantUnit.apparentStartDate.getTime()
             )
           );
         });
@@ -488,10 +483,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(firstTaskBoxComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (relevantUnit.anticipatedEndDate.getTime() -
-                  relevantUnit.anticipatedStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                relevantUnit.anticipatedEndDate.getTime(),
+                relevantUnit.anticipatedStartDate.getTime()
               ) -
                 reviewBoxWidth -
                 prerequisitesBoxWidth
@@ -515,10 +509,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(firstTaskBoxWrapperComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (relevantUnit.anticipatedEndDate.getTime() -
-                  relevantUnit.anticipatedStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                relevantUnit.anticipatedEndDate.getTime(),
+                relevantUnit.anticipatedStartDate.getTime()
               ) -
                 reviewBoxWidth -
                 prerequisitesBoxWidth
@@ -546,10 +539,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(secondTaskBoxWrapperComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (relevantUnit.anticipatedEndDate.getTime() -
-                  relevantUnit.anticipatedStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                relevantUnit.anticipatedEndDate.getTime(),
+                relevantUnit.anticipatedStartDate.getTime()
               )
             );
           });
@@ -560,10 +552,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(secondTaskBoxComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (relevantUnit.anticipatedEndDate.getTime() -
-                  relevantUnit.anticipatedStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                relevantUnit.anticipatedEndDate.getTime(),
+                relevantUnit.anticipatedStartDate.getTime()
               )
             );
           });
@@ -757,19 +748,17 @@ describe("React Integration: TaskUnitCard", () => {
         });
         it("should have box with a width according to actual duration and anticipated start", function () {
           expect(Number(boxComputedStyles.width.slice(0, -2))).to.equal(
-            Math.round(
-              (relevantUnit.apparentEndDate.getTime() -
-                relevantUnit.anticipatedStartDate.getTime()) /
-                unitTaskTimeConversion
+            getPixelGapBetweenTimes(
+              relevantUnit.apparentEndDate.getTime(),
+              relevantUnit.anticipatedStartDate.getTime()
             )
           );
         });
         it("should have card with a width according to actual duration", function () {
           expect(Number(cardComputedStyles.width.slice(0, -2))).to.equal(
-            Math.round(
-              (relevantUnit.apparentEndDate.getTime() -
-                relevantUnit.apparentStartDate.getTime()) /
-                unitTaskTimeConversion
+            getPixelGapBetweenTimes(
+              relevantUnit.apparentEndDate.getTime(),
+              relevantUnit.apparentStartDate.getTime()
             )
           );
         });
@@ -791,10 +780,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(firstTaskBoxComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (relevantUnit.anticipatedEndDate.getTime() -
-                  relevantUnit.anticipatedStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                relevantUnit.anticipatedEndDate.getTime(),
+                relevantUnit.anticipatedStartDate.getTime()
               ) -
                 reviewBoxWidth -
                 prerequisitesBoxWidth
@@ -818,10 +806,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(firstTaskBoxWrapperComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (relevantUnit.anticipatedEndDate.getTime() -
-                  relevantUnit.anticipatedStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                relevantUnit.anticipatedEndDate.getTime(),
+                relevantUnit.anticipatedStartDate.getTime()
               ) -
                 reviewBoxWidth -
                 prerequisitesBoxWidth
@@ -858,9 +845,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(secondExtensionTrailComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (startedEvent.date.getTime() - reviewEvent.date.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                startedEvent.date.getTime(),
+                reviewEvent.date.getTime()
               )
             );
             expect(
@@ -889,10 +876,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(secondTaskBoxWrapperComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (relevantUnit.anticipatedEndDate.getTime() -
-                  relevantUnit.anticipatedStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                relevantUnit.anticipatedEndDate.getTime(),
+                relevantUnit.anticipatedStartDate.getTime()
               ) -
                 reviewBoxWidth -
                 prerequisitesBoxWidth
@@ -905,10 +891,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(secondTaskBoxComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (relevantUnit.anticipatedEndDate.getTime() -
-                  relevantUnit.anticipatedStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                relevantUnit.anticipatedEndDate.getTime(),
+                relevantUnit.anticipatedStartDate.getTime()
               ) -
                 reviewBoxWidth -
                 prerequisitesBoxWidth
@@ -950,9 +935,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(thirdTaskBoxWrapperComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (now.getTime() - reviewEvent.date.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                now.getTime(),
+                reviewEvent.date.getTime()
               ) - reviewBoxWidth
             );
           });
@@ -968,9 +953,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(thirdTaskBoxComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (reviewEvent.date.getTime() - precedingEvent.date.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                reviewEvent.date.getTime(),
+                precedingEvent.date.getTime()
               ) - reviewBoxWidth
             );
           });
@@ -1174,19 +1159,17 @@ describe("React Integration: TaskUnitCard", () => {
         });
         it("should have box with a width according to actual duration and anticipated start", function () {
           expect(Number(boxComputedStyles.width.slice(0, -2))).to.equal(
-            Math.round(
-              (relevantUnit.apparentEndDate.getTime() -
-                relevantUnit.anticipatedStartDate.getTime()) /
-                unitTaskTimeConversion
+            getPixelGapBetweenTimes(
+              relevantUnit.apparentEndDate.getTime(),
+              relevantUnit.anticipatedStartDate.getTime()
             )
           );
         });
         it("should have card with a width according to actual duration", function () {
           expect(Number(cardComputedStyles.width.slice(0, -2))).to.equal(
-            Math.round(
-              (relevantUnit.apparentEndDate.getTime() -
-                relevantUnit.apparentStartDate.getTime()) /
-                unitTaskTimeConversion
+            getPixelGapBetweenTimes(
+              relevantUnit.apparentEndDate.getTime(),
+              relevantUnit.apparentStartDate.getTime()
             )
           );
         });
@@ -1208,10 +1191,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(firstTaskBoxComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (relevantUnit.anticipatedEndDate.getTime() -
-                  relevantUnit.anticipatedStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                relevantUnit.anticipatedEndDate.getTime(),
+                relevantUnit.anticipatedStartDate.getTime()
               ) -
                 reviewBoxWidth -
                 prerequisitesBoxWidth
@@ -1235,10 +1217,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(firstTaskBoxWrapperComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (relevantUnit.anticipatedEndDate.getTime() -
-                  relevantUnit.anticipatedStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                relevantUnit.anticipatedEndDate.getTime(),
+                relevantUnit.anticipatedStartDate.getTime()
               ) -
                 reviewBoxWidth -
                 prerequisitesBoxWidth
@@ -1270,9 +1251,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(secondTaskBoxWrapperComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (reviewEvent.date.getTime() - precedingEvent.date.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                reviewEvent.date.getTime(),
+                precedingEvent.date.getTime()
               ) - reviewBoxWidth
             );
           });
@@ -1283,10 +1264,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(secondTaskBoxComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (relevantUnit.anticipatedEndDate.getTime() -
-                  relevantUnit.anticipatedStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                relevantUnit.anticipatedEndDate.getTime(),
+                relevantUnit.anticipatedStartDate.getTime()
               ) - reviewBoxWidth
             );
           });
@@ -1330,10 +1310,7 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(thirdExtensionTrailComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (now.getTime() - reviewEvent.date.getTime()) /
-                  unitTaskTimeConversion
-              )
+              getPixelGapBetweenTimes(now.getTime(), reviewEvent.date.getTime())
             );
             expect(Number(thirdExtensionTrailComputedStyles.flexGrow)).to.equal(
               0
@@ -1362,10 +1339,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(thirdTaskBoxWrapperComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (relevantUnit.anticipatedEndDate.getTime() -
-                  relevantUnit.anticipatedStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                relevantUnit.anticipatedEndDate.getTime(),
+                relevantUnit.anticipatedStartDate.getTime()
               ) -
                 reviewBoxWidth -
                 prerequisitesBoxWidth
@@ -1379,10 +1355,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(thirdTaskBoxComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (relevantUnit.anticipatedEndDate.getTime() -
-                  relevantUnit.anticipatedStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                relevantUnit.anticipatedEndDate.getTime(),
+                relevantUnit.anticipatedStartDate.getTime()
               ) -
                 reviewBoxWidth -
                 prerequisitesBoxWidth
@@ -1482,19 +1457,17 @@ describe("React Integration: TaskUnitCard", () => {
         });
         it("should have box with a width according to actual duration and anticipated start", function () {
           expect(Number(boxComputedStyles.width.slice(0, -2))).to.equal(
-            Math.round(
-              (relevantUnit.apparentEndDate.getTime() -
-                relevantUnit.anticipatedStartDate.getTime()) /
-                unitTaskTimeConversion
+            getPixelGapBetweenTimes(
+              relevantUnit.apparentEndDate.getTime(),
+              relevantUnit.anticipatedStartDate.getTime()
             )
           );
         });
         it("should have card with a width according to actual duration", function () {
           expect(Number(cardComputedStyles.width.slice(0, -2))).to.equal(
-            Math.round(
-              (relevantUnit.apparentEndDate.getTime() -
-                relevantUnit.apparentStartDate.getTime()) /
-                unitTaskTimeConversion
+            getPixelGapBetweenTimes(
+              relevantUnit.apparentEndDate.getTime(),
+              relevantUnit.apparentStartDate.getTime()
             )
           );
         });
@@ -1516,10 +1489,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(firstTaskBoxComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (relevantUnit.anticipatedEndDate.getTime() -
-                  relevantUnit.anticipatedStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                relevantUnit.anticipatedEndDate.getTime(),
+                relevantUnit.anticipatedStartDate.getTime()
               ) -
                 reviewBoxWidth -
                 prerequisitesBoxWidth
@@ -1543,9 +1515,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(
               Number(firstTaskBoxWrapperComputedStyles.width.slice(0, -2))
             ).to.equal(
-              Math.round(
-                (now.getTime() - relevantUnit.apparentStartDate.getTime()) /
-                  unitTaskTimeConversion
+              getPixelGapBetweenTimes(
+                now.getTime(),
+                relevantUnit.apparentStartDate.getTime()
               ) -
                 reviewBoxWidth -
                 prerequisitesBoxWidth

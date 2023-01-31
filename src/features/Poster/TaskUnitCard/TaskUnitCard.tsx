@@ -11,8 +11,8 @@ import {
   reviewBoxWidth,
   snailTrailColor,
   trackHeight,
-  unitTaskTimeConversion,
 } from "../../constants";
+import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 import ExtensionTrailFixedSize from "./ExtensionTrailFixedSize";
 import PrerequisitesBox from "./PrerequisitesBox";
 import ReviewBox from "./ReviewBox";
@@ -25,15 +25,19 @@ export default function TaskUnitCard({
   unit: TaskUnitDetails;
   position: Coordinate;
 }) {
-  let cardWidth = Math.round(
-    (unit.apparentEndTime - unit.apparentStartTime) / unitTaskTimeConversion
+  let cardWidth = getPixelGapBetweenTimes(
+    unit.apparentEndTime,
+    unit.apparentStartTime
   );
-  let presenceWidth = Math.round(
-    (unit.apparentEndTime - unit.anticipatedStartTime) / unitTaskTimeConversion
+  let presenceWidth = getPixelGapBetweenTimes(
+    unit.apparentEndTime,
+    unit.anticipatedStartTime
   );
   const cardHeight = trackHeight;
-  const expectedDurationOfFirst =
-    unit.anticipatedEndTime - unit.anticipatedStartTime;
+  const expectedDurationWidth = getPixelGapBetweenTimes(
+    unit.anticipatedEndTime,
+    unit.anticipatedStartTime
+  );
   const firstEvent = unit.eventHistory[0];
   assertIsObject(firstEvent);
   return (
@@ -45,15 +49,14 @@ export default function TaskUnitCard({
         position: "absolute",
         left: position.x,
         top: position.y,
-        backgroundColor: snailTrailColor,
-        borderRadius: 4,
+        // backgroundColor: snailTrailColor,
+        // borderRadius: 5,
       }}
     >
       <Card
         variant="outlined"
         className={`taskUnit`}
         style={{
-          zIndex: 20,
           width: cardWidth,
           height: cardHeight,
           position: "absolute",
@@ -93,17 +96,15 @@ export default function TaskUnitCard({
                     // previous TaskBox (since there is no TaskIterationStarted event for these situations). We can also
                     // be sure that since the last event was some sort of review, we can be sure there must have been an
                     // earlier TaskBox already included in this card, so we don't need to label this one.
-                    var actualDuration = event.time - prevEvent.time;
-                    var expectedDurationWidth = Math.round(
-                      expectedDurationOfFirst / unitTaskTimeConversion
-                    );
-                    var actualDurationWidth = Math.round(
-                      actualDuration / unitTaskTimeConversion
+                    var adjustableExpectedDurationWidth = expectedDurationWidth;
+                    var actualDurationWidth = getPixelGapBetweenTimes(
+                      event.time,
+                      prevEvent.time
                     );
                     if (event.type !== EventType.MinorRevisionComplete) {
                       // The only times the review box is not included is if it's a minor revision.
                       actualDurationWidth -= reviewBoxWidth;
-                      expectedDurationWidth -= reviewBoxWidth;
+                      adjustableExpectedDurationWidth -= reviewBoxWidth;
                       // Prereq width is only relevant if we need to compensate for the width of the prereq box. That
                       // only happens if it's the first iteration, or there was a rebuild. But both of these also would
                       // have an associated TaskIterationStarted event, which is why that switch case handles it and
@@ -112,7 +113,7 @@ export default function TaskUnitCard({
                     const taskBox = (
                       <TaskBox
                         key={index - 0.5}
-                        expectedDurationWidth={expectedDurationWidth}
+                        expectedDurationWidth={adjustableExpectedDurationWidth}
                         actualDurationWidth={actualDurationWidth}
                       />
                     );
@@ -161,8 +162,9 @@ export default function TaskUnitCard({
                       // TaskIterationStarted, which means we know that when that event is placed, the prereqs box will
                       // be handled by it.
                       assertIsObject(nextEvent);
-                      var trailWidth = Math.round(
-                        (nextEvent.time - event.time) / unitTaskTimeConversion
+                      var trailWidth = getPixelGapBetweenTimes(
+                        nextEvent.time,
+                        event.time
                       );
                       comps.push(
                         <ExtensionTrailFixedSize
@@ -178,15 +180,12 @@ export default function TaskUnitCard({
                   // Must be following a rebuild
                   // next event must be a review, and prereqs must be provided
                   assertIsObject(nextEvent);
-                  var actualDuration = nextEvent.time - event.time;
-                  var expectedDurationWidth =
-                    Math.round(
-                      expectedDurationOfFirst / unitTaskTimeConversion
-                    ) -
+                  var adjustableExpectedDurationWidth =
+                    expectedDurationWidth -
                     prerequisitesBoxWidth -
                     reviewBoxWidth;
                   var actualDurationWidth =
-                    Math.round(actualDuration / unitTaskTimeConversion) -
+                    getPixelGapBetweenTimes(nextEvent.time, event.time) -
                     prerequisitesBoxWidth -
                     reviewBoxWidth;
                   var label = prevEvent ? undefined : unit.name;
@@ -197,7 +196,7 @@ export default function TaskUnitCard({
                     />,
                     <TaskBox
                       key={index}
-                      expectedDurationWidth={expectedDurationWidth}
+                      expectedDurationWidth={adjustableExpectedDurationWidth}
                       actualDurationWidth={actualDurationWidth}
                       label={label}
                     />,

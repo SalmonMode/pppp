@@ -3,9 +3,9 @@ import type { TaskUnitDetails } from "../../../types";
 import { trackHeight } from "../../constants";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 import getYOfTrackTop from "../getYOfTrackTop";
-import TaskUnitCard from "./TaskUnitCard";
+import TaskUnitSnailTrail from "./TaskUnitSnailTrail";
 
-export default function TaskTrack({
+export default function SnailTrailTrack({
   units,
   trackIndex,
   pathStartDate,
@@ -16,14 +16,14 @@ export default function TaskTrack({
 }) {
   return (
     <Box
-      className={`taskTrack`}
+      className={`snailTrailTrack`}
       style={{
         height: trackHeight,
         position: "absolute",
         left: 0,
         top: getYOfTrackTop(trackIndex),
       }}
-      data-testid={`taskTrack-${trackIndex}`}
+      data-testid={`snailTrailTrack-${trackIndex}`}
     >
       {units.map((unit, index) => {
         const adjustedX = getPixelGapBetweenTimes(
@@ -31,7 +31,7 @@ export default function TaskTrack({
           pathStartDate.getTime()
         );
         return (
-          <TaskUnitCard
+          <TaskUnitSnailTrail
             key={index}
             unit={unit}
             position={{ x: adjustedX, y: 0 }}
