@@ -1,5 +1,6 @@
 import { screen } from "@testing-library/react";
 import * as chai from "chai";
+import { createSandbox, SinonSandbox } from "sinon";
 import { default as chaiAsPromised } from "chai-as-promised";
 import { renderWithProvider } from "../Utility/TestRenderers";
 import LandingPage from "./Landing";
@@ -10,8 +11,14 @@ var expect = chai.expect;
 
 describe("React Integration: Landing Page", function () {
   describe("Success", function () {
+    let sandbox: SinonSandbox;
     beforeEach(function () {
+      sandbox = createSandbox();
+      sandbox.stub(Element.prototype, "scrollIntoView");
       renderWithProvider(<LandingPage />);
+    });
+    afterEach(function () {
+      sandbox.restore();
     });
     it('should initially say "loading..."', async function () {
       let poster = await screen.findByTestId(`poster-loading`);

@@ -1,5 +1,6 @@
 import { screen } from "@testing-library/react";
 import { expect } from "chai";
+import { createSandbox, SinonSandbox, SinonStub } from "sinon";
 import { add, startOfDay, sub } from "date-fns";
 import ConnectedPoints from "../../Graphing/ConnectedPoints";
 import { TaskUnit, TaskUnitCluster } from "../../Relations";
@@ -33,6 +34,8 @@ describe("React Integration: Poster", () => {
   });
 
   describe("Chaotic Tracks", () => {
+    let sandbox: SinonSandbox;
+    let scrollStub: SinonStub;
     let initialState: TaskUnitsState;
     let poster: HTMLElement;
     let tracks: NodeListOf<Element>;
@@ -169,6 +172,8 @@ describe("React Integration: Poster", () => {
     const startOfTwelfthDate = startOfDay(add(now, { days: 2 }));
 
     before(async function () {
+      sandbox = createSandbox();
+      scrollStub = sandbox.stub(Element.prototype, "scrollIntoView");
       const firstDate = sub(now, { days: 9 });
       const secondDate = add(firstDate, { days: 1 });
       const thirdDate = add(secondDate, { days: 1 });
@@ -676,7 +681,13 @@ describe("React Integration: Poster", () => {
       assertIsObject(twelfthDateLine);
       twelfthDateLineX = Number(twelfthDateLine.getAttribute("x1"));
     });
+    after(function () {
+      sandbox.restore();
+    });
 
+    it("should have tried to scroll", function () {
+      expect(scrollStub.called).to.be.true;
+    });
     it("should have 4 task tracks", function () {
       expect(trackCount).to.equal(4);
     });

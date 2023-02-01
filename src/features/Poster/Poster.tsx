@@ -4,6 +4,7 @@ import ConnectedPoints from "../../Graphing/ConnectedPoints";
 import { assertIsObject } from "../../typePredicates";
 import type { TaskUnitDetails } from "../../types";
 import { svgDateTopPadding, trackGapHeight, trackHeight } from "../constants";
+import DateLinesSvg from "./DateLinesSvg";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
 import getYOfTrackTop from "./getYOfTrackTop";
 import SnailTrailTrack from "./TaskUnitCard/SnailTrailTrack";
@@ -43,7 +44,6 @@ export default function Poster() {
     earliestStartTime
   );
   const now = new Date();
-  const nowLeft = getPixelGapBetweenTimes(now.getTime(), earliestStartTime);
   return (
     <div
       data-testid={"poster-container"}
@@ -149,85 +149,11 @@ export default function Poster() {
           );
         })}
       </div>
-      <svg
-        data-testid="dateLinesSvg"
-        style={{
-          position: "absolute",
-          width: svgWidth,
-          height: svgHeight,
-          left: 0,
-          top: 0,
-          pointerEvents: "none",
-        }}
-      >
-        <g
-          className="dateLines"
-          data-testid="dateLinesGroup"
-          style={{
-            position: "absolute",
-            width: svgWidth,
-            height: svgHeight,
-            left: 0,
-            top: 0,
-          }}
-        >
-          {dateIntervals.map((date, index) => {
-            const left = getPixelGapBetweenTimes(
-              date.getTime(),
-              earliestStartTime
-            );
-            return (
-              <g key={index} className="singleDateLineGroup">
-                <text
-                  x={left}
-                  y={"1em"}
-                  style={{
-                    fill: "black",
-                    fontSize: 20,
-                    textAnchor: "middle",
-                  }}
-                >
-                  {date.toLocaleDateString()}
-                </text>
-                <line
-                  x1={left}
-                  x2={left}
-                  y1={svgDateTopPadding / 2}
-                  y2={svgHeight}
-                  style={{
-                    stroke: "lightgrey",
-                    strokeWidth: "1px",
-                    fill: "none",
-                    strokeDasharray: "10,10",
-                  }}
-                ></line>
-              </g>
-            );
-          })}
-          <g>
-            <text
-              x={nowLeft}
-              y={"3em"}
-              style={{
-                fill: "black",
-                fontSize: 15,
-                textAnchor: "middle",
-                pointerEvents: "all",
-              }}
-            >
-              Now
-            </text>
-            <path
-              d={`M${nowLeft},${svgDateTopPadding / 2} V ${svgHeight}`}
-              style={{
-                stroke: "lightgrey",
-                strokeWidth: "1px",
-                fill: "none",
-              }}
-            ></path>
-          </g>
-        </g>
-      </svg>
+      <DateLinesSvg
+        now={now}
+        dateIntervals={dateIntervals}
+        height={svgHeight}
+      />
     </div>
   );
 }

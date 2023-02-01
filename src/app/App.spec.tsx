@@ -12,6 +12,7 @@ var expect = chai.expect;
 describe("React Integration: App landing", function () {
   describe("Success", function () {
     beforeEach(function () {
+      Element.prototype.scrollIntoView = () => {};
       render(
         App({
           Component: LandingPage,
