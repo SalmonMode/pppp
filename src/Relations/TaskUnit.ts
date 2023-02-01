@@ -7,7 +7,7 @@ import {
   EventType,
   InterpolatedTaskEvent,
   RelationshipMapping,
-  TaskEvent
+  TaskEvent,
 } from "../types";
 
 export default class TaskUnit {
