@@ -1,4 +1,4 @@
-import { Box, Card, CardContent } from "@material-ui/core";
+import { Box, Card, CardContent } from "@mui/material";
 import { assertIsObject } from "../../../typePredicates";
 import {
   Coordinate,

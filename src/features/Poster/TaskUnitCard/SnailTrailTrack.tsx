@@ -1,4 +1,4 @@
-import { Box } from "@material-ui/core";
+import { Box } from "@mui/material";
 import type { TaskUnitDetails } from "../../../types";
 import { trackHeight } from "../../constants";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
