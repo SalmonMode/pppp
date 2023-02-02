@@ -9,7 +9,6 @@ import {
 import {
   prerequisitesBoxWidth,
   reviewBoxWidth,
-  snailTrailColor,
   trackHeight,
 } from "../../constants";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";

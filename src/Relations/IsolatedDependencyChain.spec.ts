@@ -12,7 +12,6 @@ const sixthDate = new Date(fifthDate.getTime() + 1000);
 const seventhDate = new Date(sixthDate.getTime() + 1000);
 const eighthDate = new Date(seventhDate.getTime() + 1000);
 const ninthDate = new Date(eighthDate.getTime() + 1000);
-const tenthDate = new Date(ninthDate.getTime() + 1000);
 
 describe("IsolatedDependencyChain", function () {
   describe("No Units", function () {
