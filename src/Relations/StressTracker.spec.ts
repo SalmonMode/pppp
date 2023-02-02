@@ -1,12 +1,12 @@
 import { expect } from "chai";
 import { NoSuchChainPathError } from "../Error";
-import { ResourceMap } from "../types";
+import type { ResourceMap } from "../types";
 import {
   ChainPath,
   SimpleChainMap,
   SimpleChainPathMap,
   StressTracker,
-  TaskUnit
+  TaskUnit,
 } from "./";
 
 const now = new Date();

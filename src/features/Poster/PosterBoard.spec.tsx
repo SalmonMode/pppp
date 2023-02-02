@@ -9,7 +9,11 @@ describe("React Integration: PosterBoard", () => {
     let sandbox: SinonSandbox;
     beforeEach(function () {
       sandbox = createSandbox();
-      Element.prototype.scrollIntoView = () => {};
+      Element.prototype.scrollIntoView = function (): void {
+        // Purely exists because jsdom does not actually support this method so it cannot be stubbed without something
+        // here.
+        return;
+      };
       sandbox.stub(Element.prototype, "scrollIntoView");
       renderWithProvider(<PosterBoard />);
     });

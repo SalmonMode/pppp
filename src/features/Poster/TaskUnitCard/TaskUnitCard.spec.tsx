@@ -19,7 +19,7 @@ import {
   reviewRebuildColor,
 } from "../../constants";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
-import { TaskUnitsState } from "../taskUnitsSlice";
+import type { TaskUnitsState } from "../taskUnitsSlice";
 import { turnClusterIntoState } from "../turnClusterIntoState";
 import TaskUnitCard from "./TaskUnitCard";
 

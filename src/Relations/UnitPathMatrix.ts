@@ -87,11 +87,11 @@ export default class UnitPathMatrix {
    */
   private _buildSingleStepMatrix(): Matrix {
     const pathMatrixData: number[][] = [];
-    for (let unit of this._unitsSortedById) {
+    for (const unit of this._unitsSortedById) {
       const rowData: number[] = new Array(this._unitsSortedById.length);
       // fill with 0s by default, since we'll only be replacing the relevant places with 1s.
       rowData.fill(0);
-      for (let dep of unit.directDependencies) {
+      for (const dep of unit.directDependencies) {
         const depIndex = this.getMatrixIndexForUnit(dep);
         rowData[depIndex] = 1;
       }
@@ -121,9 +121,9 @@ export default class UnitPathMatrix {
     const sliceIndexes = sortedUnits.map((unit) =>
       this.getMatrixIndexForUnit(unit)
     );
-    for (let row of sliceIndexes) {
+    for (const row of sliceIndexes) {
       const rowData: number[] = [];
-      for (let column of sliceIndexes) {
+      for (const column of sliceIndexes) {
         rowData.push(this._singleStepMatrix.getElementAtPosition(row, column));
       }
       matrixData.push(rowData);
@@ -161,8 +161,8 @@ export default class UnitPathMatrix {
     matrix: Matrix
   ): TaskUnit[] {
     const headUnits: TaskUnit[] = [];
-    for (let [indexAsString, unit] of Object.entries(sortedAllowedUnits)) {
-      const index: number = Number(indexAsString);
+    for (const [indexAsString, unit] of Object.entries(sortedAllowedUnits)) {
+      const index = Number(indexAsString);
       // get the index associated with
       const column = matrix.getColumn(index);
       if (column.some((pathCountToUnit) => pathCountToUnit)) {
@@ -194,7 +194,7 @@ export default class UnitPathMatrix {
     const unitIndex = this.getMatrixIndexForUnit(unit);
     const connectionsRow = this.taskUnitInterconnections.getRow(unitIndex);
     connectionsRow.forEach((walks, connectionIndex) => {
-      if (!!walks) {
+      if (walks) {
         connectedUnits.add(this.getUnitForMatrixIndex(connectionIndex));
       }
     });

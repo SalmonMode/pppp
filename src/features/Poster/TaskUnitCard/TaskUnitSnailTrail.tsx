@@ -1,5 +1,5 @@
 import { Box } from "@material-ui/core";
-import { Coordinate, TaskUnitDetails } from "../../../types";
+import type { Coordinate, TaskUnitDetails } from "../../../types";
 import { snailTrailColor, trackHeight } from "../../constants";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 
@@ -10,7 +10,7 @@ export default function TaskUnitSnailTrail({
   unit: TaskUnitDetails;
   position: Coordinate;
 }) {
-  let presenceWidth = getPixelGapBetweenTimes(
+  const presenceWidth = getPixelGapBetweenTimes(
     unit.apparentEndTime,
     unit.anticipatedStartTime
   );

@@ -1,7 +1,5 @@
-import * as chai from "chai";
+import { expect } from "chai";
 import { assertIsString } from "./String";
-
-var expect = chai.expect;
 
 describe("String type assertion funtion", function () {
   describe("Valid String", function () {

@@ -1,8 +1,8 @@
 import { expect } from "chai";
-import { sub, add } from "date-fns";
+import { add, sub } from "date-fns";
 import { EventHistoryInvalidError, PrematureTaskStartError } from "../Error";
 import { assertIsObject } from "../typePredicates";
-import { EventType, TaskEvent } from "../types";
+import { EventType } from "../types";
 import { TaskUnit } from "./";
 
 const now = new Date();
@@ -2852,10 +2852,9 @@ describe("TaskUnit", function () {
     const firstDate = sub(innerNow, { days: 3 });
     const secondDate = sub(innerNow, { days: 2 });
     const thirdDate = sub(innerNow, { days: 1 });
-    // should roughly be now
-    const fourthDate = sub(innerNow, { days: 0 });
+    // fourth date is now, but is skipped because we don't reference it
     const fifthDate = add(innerNow, { days: 1 });
-    const sixthDate = add(innerNow, { days: 2 });
+    // sixth date is skipped because we don't reference it
     const seventhDate = add(innerNow, { days: 3 });
     const eighthDate = add(innerNow, { days: 4 });
     describe("Delay Cascades", function () {

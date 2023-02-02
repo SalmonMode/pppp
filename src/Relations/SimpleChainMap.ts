@@ -37,8 +37,8 @@ export default class SimpleChainMap {
    * Heads cannot be dependencies of other heads. Make sure this is the case.
    */
   private _verifyAreTrueHeads(): void {
-    for (let head of this.heads) {
-      for (let otherHead of this.heads) {
+    for (const head of this.heads) {
+      for (const otherHead of this.heads) {
         if (head === otherHead) {
           // same head, so irrelevant
           continue;
@@ -71,9 +71,9 @@ export default class SimpleChainMap {
    */
   private _getAllUnits(): Set<TaskUnit> {
     const allUnits = new Set<TaskUnit>();
-    for (let head of this.heads) {
+    for (const head of this.heads) {
       allUnits.add(head);
-      for (let dep of head.getAllDependencies()) {
+      for (const dep of head.getAllDependencies()) {
         allUnits.add(dep);
       }
     }
@@ -83,11 +83,11 @@ export default class SimpleChainMap {
    * Iterate through all the units building out the chains.
    */
   private _buildChains() {
-    for (let head of this.getHeadUnits()) {
+    for (const head of this.getHeadUnits()) {
       this._buildForklessChains(head, []);
     }
     this._chains = [...new Set(Object.values(this._unitToChainMap))];
-    for (let chain of this._chains) {
+    for (const chain of this._chains) {
       this._chainMap[chain.id] = chain;
     }
   }
@@ -237,7 +237,7 @@ export default class SimpleChainMap {
      *  B┗━━━┛
      * ```
      */
-    let isMergingPoint: boolean = false;
+    let isMergingPoint = false;
     /**
      * When this unit is a direct dependency of more than one other unit.
      *
@@ -313,7 +313,7 @@ export default class SimpleChainMap {
       ]);
     }
 
-    for (let dep of possibleTail.directDependencies) {
+    for (const dep of possibleTail.directDependencies) {
       // will not reach inside of this loop if there were zero dependencies. If there was only one dep, the possibleTail
       // must've been a forking point, so its dependencies won't be in the same chain as it.
       this._buildForklessChains(dep, [], possibleTail);
@@ -387,10 +387,10 @@ export default class SimpleChainMap {
    * connected to B and B is connected to A.
    */
   private _buildChainConnections(): void {
-    for (let chain of this.chains) {
+    for (const chain of this.chains) {
       const mappingForChain = (this._chainConnections[chain.id] ??=
         new Set<IsolatedDependencyChain>());
-      for (let dep of this.getDirectDependenciesOfChain(chain)) {
+      for (const dep of this.getDirectDependenciesOfChain(chain)) {
         const mappingForDepChain = (this._chainConnections[dep.id] ??=
           new Set<IsolatedDependencyChain>());
         mappingForChain.add(dep);

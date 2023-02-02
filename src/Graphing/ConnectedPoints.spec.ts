@@ -1,7 +1,5 @@
-import * as chai from "chai";
+import { expect } from "chai";
 import ConnectedPoints from "./ConnectedPoints";
-
-var expect = chai.expect;
 
 describe("ConnectedPoints", function () {
   describe("Normal", function () {

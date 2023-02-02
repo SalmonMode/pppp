@@ -23,8 +23,19 @@ const halfDayWidth = getPixelGapBetweenTimes(
 
 describe("React Integration: Poster", () => {
   describe("Initial State", () => {
+    let sandbox: SinonSandbox;
     beforeEach(function () {
+      sandbox = createSandbox();
+      Element.prototype.scrollIntoView = function (): void {
+        // Purely exists because jsdom does not actually support this method so it cannot be stubbed without something
+        // here.
+        return;
+      };
+      sandbox.stub(Element.prototype, "scrollIntoView");
       renderWithProvider(<Poster />);
+    });
+    afterEach(function () {
+      sandbox.restore();
     });
 
     it('should say "loading..."', async function () {
@@ -39,18 +50,163 @@ describe("React Integration: Poster", () => {
     let initialState: TaskUnitsState;
     let poster: HTMLElement;
     let tracks: NodeListOf<Element>;
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let unitC: TaskUnit;
-    let unitD: TaskUnit;
-    let unitE: TaskUnit;
-    let unitF: TaskUnit;
-    let unitG: TaskUnit;
-    let unitH: TaskUnit;
-    let unitI: TaskUnit;
-    let unitJ: TaskUnit;
-    let unitK: TaskUnit;
-    let unitL: TaskUnit;
+    const firstDate = sub(now, { days: 9 });
+    const secondDate = add(firstDate, { days: 1 });
+    const thirdDate = add(secondDate, { days: 1 });
+    const fourthDate = add(thirdDate, { days: 1 });
+    const fifthDate = add(fourthDate, { days: 1 });
+    const sixthDate = add(fifthDate, { days: 1 });
+    const seventhDate = add(sixthDate, { days: 1 });
+    const eighthDate = add(seventhDate, { days: 1 });
+    const ninthDate = add(eighthDate, { days: 1 });
+    const unitA = new TaskUnit(now, [], firstDate, secondDate, "A", [
+      {
+        type: EventType.TaskIterationStarted,
+        date: firstDate,
+      },
+      {
+        type: EventType.ReviewedAndAccepted,
+        date: thirdDate,
+      },
+    ]);
+    const unitB = new TaskUnit(now, [unitA], secondDate, thirdDate, "B", [
+      {
+        type: EventType.TaskIterationStarted,
+        date: thirdDate,
+      },
+      {
+        type: EventType.ReviewedAndNeedsMinorRevision,
+        date: fourthDate,
+      },
+      {
+        type: EventType.MinorRevisionComplete,
+        date: fifthDate,
+      },
+    ]);
+    const unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C", [
+      {
+        type: EventType.TaskIterationStarted,
+        date: fifthDate,
+      },
+      {
+        type: EventType.ReviewedAndAccepted,
+        date: add(sixthDate, { hours: 4 }),
+      },
+    ]);
+    const unitD = new TaskUnit(now, [unitC], sixthDate, seventhDate, "D", [
+      {
+        type: EventType.TaskIterationStarted,
+        date: add(sixthDate, { hours: 4 }),
+      },
+      {
+        type: EventType.ReviewedAndNeedsRebuild,
+        date: add(seventhDate, { hours: 4 }),
+      },
+      {
+        type: EventType.TaskIterationStarted,
+        date: eighthDate,
+      },
+      {
+        type: EventType.ReviewedAndNeedsMajorRevision,
+        date: ninthDate,
+      },
+    ]);
+
+    const unitE = new TaskUnit(now, [], firstDate, secondDate, "E", [
+      {
+        type: EventType.TaskIterationStarted,
+        date: firstDate,
+      },
+      {
+        type: EventType.ReviewedAndAccepted,
+        date: secondDate,
+      },
+    ]);
+    const unitF = new TaskUnit(
+      now,
+      [unitA, unitE],
+      secondDate,
+      thirdDate,
+      "F",
+      [
+        {
+          type: EventType.TaskIterationStarted,
+          date: thirdDate,
+        },
+        {
+          type: EventType.ReviewedAndAccepted,
+          date: fourthDate,
+        },
+      ]
+    );
+    const unitG = new TaskUnit(now, [unitF], fourthDate, fifthDate, "G", [
+      {
+        type: EventType.TaskIterationStarted,
+        date: fourthDate,
+      },
+      {
+        type: EventType.ReviewedAndAccepted,
+        date: fifthDate,
+      },
+    ]);
+    const unitH = new TaskUnit(now, [unitC, unitG], fifthDate, sixthDate, "H", [
+      {
+        type: EventType.TaskIterationStarted,
+        date: add(sixthDate, { hours: 4 }),
+      },
+      {
+        type: EventType.ReviewedAndNeedsMajorRevision,
+        date: add(seventhDate, { hours: 4 }),
+      },
+      {
+        type: EventType.ReviewedAndNeedsRebuild,
+        date: eighthDate,
+      },
+    ]);
+
+    const unitI = new TaskUnit(now, [], firstDate, secondDate, "I", [
+      {
+        type: EventType.TaskIterationStarted,
+        date: firstDate,
+      },
+      {
+        type: EventType.ReviewedAndAccepted,
+        date: secondDate,
+      },
+    ]);
+    const unitJ = new TaskUnit(
+      now,
+      [unitA, unitI],
+      secondDate,
+      thirdDate,
+      "J",
+      [
+        {
+          type: EventType.TaskIterationStarted,
+          date: thirdDate,
+        },
+        {
+          type: EventType.ReviewedAndAccepted,
+          date: fourthDate,
+        },
+      ]
+    );
+    const unitK = new TaskUnit(now, [unitJ], fourthDate, fifthDate, "K", [
+      {
+        type: EventType.TaskIterationStarted,
+        date: fourthDate,
+      },
+      {
+        type: EventType.ReviewedAndAccepted,
+        date: fifthDate,
+      },
+    ]);
+    const unitL = new TaskUnit(now, [unitC, unitK], fifthDate, sixthDate, "L", [
+      {
+        type: EventType.TaskIterationStarted,
+        date: add(sixthDate, { hours: 4 }),
+      },
+    ]);
 
     let trackCount: number;
     let secondTrackText: string;
@@ -173,151 +329,13 @@ describe("React Integration: Poster", () => {
 
     before(async function () {
       sandbox = createSandbox();
-      Element.prototype.scrollIntoView = () => {};
+      Element.prototype.scrollIntoView = function (): void {
+        // Purely exists because jsdom does not actually support this method so it cannot be stubbed without something
+        // here.
+        return;
+      };
       scrollStub = sandbox.stub(Element.prototype, "scrollIntoView");
-      const firstDate = sub(now, { days: 9 });
-      const secondDate = add(firstDate, { days: 1 });
-      const thirdDate = add(secondDate, { days: 1 });
-      const fourthDate = add(thirdDate, { days: 1 });
-      const fifthDate = add(fourthDate, { days: 1 });
-      const sixthDate = add(fifthDate, { days: 1 });
-      const seventhDate = add(sixthDate, { days: 1 });
-      const eighthDate = add(seventhDate, { days: 1 });
-      const ninthDate = add(eighthDate, { days: 1 });
-      unitA = new TaskUnit(now, [], firstDate, secondDate, "A", [
-        {
-          type: EventType.TaskIterationStarted,
-          date: firstDate,
-        },
-        {
-          type: EventType.ReviewedAndAccepted,
-          date: thirdDate,
-        },
-      ]);
-      unitB = new TaskUnit(now, [unitA], secondDate, thirdDate, "B", [
-        {
-          type: EventType.TaskIterationStarted,
-          date: thirdDate,
-        },
-        {
-          type: EventType.ReviewedAndNeedsMinorRevision,
-          date: fourthDate,
-        },
-        {
-          type: EventType.MinorRevisionComplete,
-          date: fifthDate,
-        },
-      ]);
-      unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C", [
-        {
-          type: EventType.TaskIterationStarted,
-          date: fifthDate,
-        },
-        {
-          type: EventType.ReviewedAndAccepted,
-          date: add(sixthDate, { hours: 4 }),
-        },
-      ]);
-      unitD = new TaskUnit(now, [unitC], sixthDate, seventhDate, "D", [
-        {
-          type: EventType.TaskIterationStarted,
-          date: add(sixthDate, { hours: 4 }),
-        },
-        {
-          type: EventType.ReviewedAndNeedsRebuild,
-          date: add(seventhDate, { hours: 4 }),
-        },
-        {
-          type: EventType.TaskIterationStarted,
-          date: eighthDate,
-        },
-        {
-          type: EventType.ReviewedAndNeedsMajorRevision,
-          date: ninthDate,
-        },
-      ]);
 
-      unitE = new TaskUnit(now, [], firstDate, secondDate, "E", [
-        {
-          type: EventType.TaskIterationStarted,
-          date: firstDate,
-        },
-        {
-          type: EventType.ReviewedAndAccepted,
-          date: secondDate,
-        },
-      ]);
-      unitF = new TaskUnit(now, [unitA, unitE], secondDate, thirdDate, "F", [
-        {
-          type: EventType.TaskIterationStarted,
-          date: thirdDate,
-        },
-        {
-          type: EventType.ReviewedAndAccepted,
-          date: fourthDate,
-        },
-      ]);
-      unitG = new TaskUnit(now, [unitF], fourthDate, fifthDate, "G", [
-        {
-          type: EventType.TaskIterationStarted,
-          date: fourthDate,
-        },
-        {
-          type: EventType.ReviewedAndAccepted,
-          date: fifthDate,
-        },
-      ]);
-      unitH = new TaskUnit(now, [unitC, unitG], fifthDate, sixthDate, "H", [
-        {
-          type: EventType.TaskIterationStarted,
-          date: add(sixthDate, { hours: 4 }),
-        },
-        {
-          type: EventType.ReviewedAndNeedsMajorRevision,
-          date: add(seventhDate, { hours: 4 }),
-        },
-        {
-          type: EventType.ReviewedAndNeedsRebuild,
-          date: eighthDate,
-        },
-      ]);
-
-      unitI = new TaskUnit(now, [], firstDate, secondDate, "I", [
-        {
-          type: EventType.TaskIterationStarted,
-          date: firstDate,
-        },
-        {
-          type: EventType.ReviewedAndAccepted,
-          date: secondDate,
-        },
-      ]);
-      unitJ = new TaskUnit(now, [unitA, unitI], secondDate, thirdDate, "J", [
-        {
-          type: EventType.TaskIterationStarted,
-          date: thirdDate,
-        },
-        {
-          type: EventType.ReviewedAndAccepted,
-          date: fourthDate,
-        },
-      ]);
-      unitK = new TaskUnit(now, [unitJ], fourthDate, fifthDate, "K", [
-        {
-          type: EventType.TaskIterationStarted,
-          date: fourthDate,
-        },
-        {
-          type: EventType.ReviewedAndAccepted,
-          date: fifthDate,
-        },
-      ]);
-      unitL = new TaskUnit(now, [unitC, unitK], fifthDate, sixthDate, "L", [
-        {
-          type: EventType.TaskIterationStarted,
-          date: add(sixthDate, { hours: 4 }),
-        },
-      ]);
       const cluster = new TaskUnitCluster([unitB, unitD, unitH, unitL]);
       earliestStartTime = startOfDay(unitI.anticipatedStartDate).getTime();
       earliestTimePoint = sub(earliestStartTime, halfDayDuration).getTime();
@@ -1504,282 +1522,322 @@ describe("React Integration: Poster", () => {
       });
     });
     describe("Paths", function () {
-      it("should have path from B to A", function () {
-        const expectedPoints = new ConnectedPoints(
-          {
-            x: getPixelGapBetweenTimes(
-              unitA.apparentEndDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitA.id]!.trackIndex) +
-              trackHeight / 2,
-          },
-          {
-            x: getPixelGapBetweenTimes(
-              unitB.apparentStartDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitB.id]!.trackIndex) +
-              trackHeight / 2,
-          }
-        );
-        expect(pathPointsForBA).to.deep.equal(expectedPoints);
+      const pathDetails: {
+        rightTask: TaskUnit;
+        leftTask: TaskUnit;
+      }[] = [
+        { rightTask: unitB, leftTask: unitA },
+        { rightTask: unitD, leftTask: unitC },
+        { rightTask: unitL, leftTask: unitK },
+        { rightTask: unitL, leftTask: unitC },
+        { rightTask: unitK, leftTask: unitJ },
+        { rightTask: unitJ, leftTask: unitI },
+        { rightTask: unitJ, leftTask: unitA },
+        { rightTask: unitH, leftTask: unitG },
+        { rightTask: unitH, leftTask: unitC },
+        { rightTask: unitG, leftTask: unitF },
+        { rightTask: unitF, leftTask: unitE },
+        { rightTask: unitF, leftTask: unitA },
+      ];
+      let processedPoints: ConnectedPoints[];
+      before(function () {
+        processedPoints = [
+          pathPointsForBA,
+          pathPointsForDC,
+          pathPointsForLK,
+          pathPointsForLC,
+          pathPointsForKJ,
+          pathPointsForJI,
+          pathPointsForJA,
+          pathPointsForHG,
+          pathPointsForHC,
+          pathPointsForGF,
+          pathPointsForFE,
+          pathPointsForFA,
+        ];
       });
-      it("should have path from D to C", function () {
-        const expectedPoints = new ConnectedPoints(
-          {
-            x: getPixelGapBetweenTimes(
-              unitC.apparentEndDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitC.id]!.trackIndex) +
-              trackHeight / 2,
-          },
-          {
-            x: getPixelGapBetweenTimes(
-              unitD.apparentStartDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitD.id]!.trackIndex) +
-              trackHeight / 2,
-          }
-        );
-        expect(pathPointsForDC).to.deep.equal(expectedPoints);
-      });
-      it("should have path from L to K", function () {
-        const expectedPoints = new ConnectedPoints(
-          {
-            x: getPixelGapBetweenTimes(
-              unitK.apparentEndDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitK.id]!.trackIndex) +
-              trackHeight / 2,
-          },
-          {
-            x: getPixelGapBetweenTimes(
-              unitL.apparentStartDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitL.id]!.trackIndex) +
-              trackHeight / 2,
-          }
-        );
-        expect(pathPointsForLK).to.deep.equal(expectedPoints);
-      });
-      it("should have path from L to C", function () {
-        const expectedPoints = new ConnectedPoints(
-          {
-            x: getPixelGapBetweenTimes(
-              unitC.apparentEndDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitC.id]!.trackIndex) +
-              trackHeight / 2,
-          },
-          {
-            x: getPixelGapBetweenTimes(
-              unitL.apparentStartDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitL.id]!.trackIndex) +
-              trackHeight / 2,
-          }
-        );
-        expect(pathPointsForLC).to.deep.equal(expectedPoints);
-      });
-      it("should have path from K to J", function () {
-        const expectedPoints = new ConnectedPoints(
-          {
-            x: getPixelGapBetweenTimes(
-              unitJ.apparentEndDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitJ.id]!.trackIndex) +
-              trackHeight / 2,
-          },
-          {
-            x: getPixelGapBetweenTimes(
-              unitK.apparentStartDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitK.id]!.trackIndex) +
-              trackHeight / 2,
-          }
-        );
-        expect(pathPointsForKJ).to.deep.equal(expectedPoints);
-      });
-      it("should have path from J to I", function () {
-        const expectedPoints = new ConnectedPoints(
-          {
-            x: getPixelGapBetweenTimes(
-              unitI.apparentEndDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitI.id]!.trackIndex) +
-              trackHeight / 2,
-          },
-          {
-            x: getPixelGapBetweenTimes(
-              unitJ.apparentStartDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitJ.id]!.trackIndex) +
-              trackHeight / 2,
-          }
-        );
-        expect(pathPointsForJI).to.deep.equal(expectedPoints);
-      });
-      it("should have path from J to A", function () {
-        const expectedPoints = new ConnectedPoints(
-          {
-            x: getPixelGapBetweenTimes(
-              unitA.apparentEndDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitA.id]!.trackIndex) +
-              trackHeight / 2,
-          },
-          {
-            x: getPixelGapBetweenTimes(
-              unitJ.apparentStartDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitJ.id]!.trackIndex) +
-              trackHeight / 2,
-          }
-        );
-        expect(pathPointsForJA).to.deep.equal(expectedPoints);
-      });
-      it("should have path from H to G", function () {
-        const expectedPoints = new ConnectedPoints(
-          {
-            x: getPixelGapBetweenTimes(
-              unitG.apparentEndDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitG.id]!.trackIndex) +
-              trackHeight / 2,
-          },
-          {
-            x: getPixelGapBetweenTimes(
-              unitH.apparentStartDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitH.id]!.trackIndex) +
-              trackHeight / 2,
-          }
-        );
-        expect(pathPointsForHG).to.deep.equal(expectedPoints);
-      });
-      it("should have path from H to C", function () {
-        const expectedPoints = new ConnectedPoints(
-          {
-            x: getPixelGapBetweenTimes(
-              unitC.apparentEndDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitC.id]!.trackIndex) +
-              trackHeight / 2,
-          },
-          {
-            x: getPixelGapBetweenTimes(
-              unitH.apparentStartDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitH.id]!.trackIndex) +
-              trackHeight / 2,
-          }
-        );
-        expect(pathPointsForHC).to.deep.equal(expectedPoints);
-      });
-      it("should have path from G to F", function () {
-        const expectedPoints = new ConnectedPoints(
-          {
-            x: getPixelGapBetweenTimes(
-              unitF.apparentEndDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitF.id]!.trackIndex) +
-              trackHeight / 2,
-          },
-          {
-            x: getPixelGapBetweenTimes(
-              unitG.apparentStartDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitG.id]!.trackIndex) +
-              trackHeight / 2,
-          }
-        );
-        expect(pathPointsForGF).to.deep.equal(expectedPoints);
-      });
-      it("should have path from F to E", function () {
-        const expectedPoints = new ConnectedPoints(
-          {
-            x: getPixelGapBetweenTimes(
-              unitE.apparentEndDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitE.id]!.trackIndex) +
-              trackHeight / 2,
-          },
-          {
-            x: getPixelGapBetweenTimes(
-              unitF.apparentStartDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitF.id]!.trackIndex) +
-              trackHeight / 2,
-          }
-        );
-        expect(pathPointsForFE).to.deep.equal(expectedPoints);
-      });
-      it("should have path from F to A", function () {
-        const expectedPoints = new ConnectedPoints(
-          {
-            x: getPixelGapBetweenTimes(
-              unitA.apparentEndDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitA.id]!.trackIndex) +
-              trackHeight / 2,
-          },
-          {
-            x: getPixelGapBetweenTimes(
-              unitF.apparentStartDate.getTime(),
-              earliestTimePoint
-            ),
-            y:
-              getYOfTrackTop(initialState.units[unitF.id]!.trackIndex) +
-              trackHeight / 2,
-          }
-        );
-        expect(pathPointsForFA).to.deep.equal(expectedPoints);
-      });
+      for (const pd of pathDetails) {
+        it(`should have path from ${pd.rightTask.name} to ${pd.leftTask.name}`, function () {
+          const leftTaskDetails = initialState.units[pd.leftTask.id];
+          assertIsObject(leftTaskDetails);
+          const rightTaskDetails = initialState.units[pd.rightTask.id];
+          assertIsObject(rightTaskDetails);
+          const index = pathDetails.indexOf(pd);
+          const actualConnectedPoints = processedPoints[index];
+          assertIsObject(actualConnectedPoints);
+          const expectedPoints = new ConnectedPoints(
+            {
+              x: getPixelGapBetweenTimes(
+                pd.leftTask.apparentEndDate.getTime(),
+                earliestTimePoint
+              ),
+              y: getYOfTrackTop(leftTaskDetails.trackIndex) + trackHeight / 2,
+            },
+            {
+              x: getPixelGapBetweenTimes(
+                pd.rightTask.apparentStartDate.getTime(),
+                earliestTimePoint
+              ),
+              y: getYOfTrackTop(rightTaskDetails.trackIndex) + trackHeight / 2,
+            }
+          );
+          expect(actualConnectedPoints).to.deep.equal(expectedPoints);
+        });
+      }
+      // }
+      // it("should have path from D to C", function () {
+      //   const leftTaskDetails = initialState.units[unitC.id];
+      //   assertIsObject(leftTaskDetails);
+      //   const rightTaskDetails = initialState.units[unitD.id];
+      //   assertIsObject(rightTaskDetails);
+      //   const expectedPoints = new ConnectedPoints(
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitC.apparentEndDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y: getYOfTrackTop(leftTaskDetails.trackIndex) + trackHeight / 2,
+      //     },
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitD.apparentStartDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y: getYOfTrackTop(rightTaskDetails.trackIndex) + trackHeight / 2,
+      //     }
+      //   );
+      //   expect(pathPointsForDC).to.deep.equal(expectedPoints);
+      // });
+      // it("should have path from L to K", function () {
+      //   const expectedPoints = new ConnectedPoints(
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitK.apparentEndDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitK.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     },
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitL.apparentStartDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitL.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     }
+      //   );
+      //   expect(pathPointsForLK).to.deep.equal(expectedPoints);
+      // });
+      // it("should have path from L to C", function () {
+      //   const expectedPoints = new ConnectedPoints(
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitC.apparentEndDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitC.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     },
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitL.apparentStartDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitL.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     }
+      //   );
+      //   expect(pathPointsForLC).to.deep.equal(expectedPoints);
+      // });
+      // it("should have path from K to J", function () {
+      //   const expectedPoints = new ConnectedPoints(
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitJ.apparentEndDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitJ.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     },
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitK.apparentStartDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitK.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     }
+      //   );
+      //   expect(pathPointsForKJ).to.deep.equal(expectedPoints);
+      // });
+      // it("should have path from J to I", function () {
+      //   const expectedPoints = new ConnectedPoints(
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitI.apparentEndDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitI.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     },
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitJ.apparentStartDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitJ.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     }
+      //   );
+      //   expect(pathPointsForJI).to.deep.equal(expectedPoints);
+      // });
+      // it("should have path from J to A", function () {
+      //   const expectedPoints = new ConnectedPoints(
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitA.apparentEndDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitA.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     },
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitJ.apparentStartDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitJ.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     }
+      //   );
+      //   expect(pathPointsForJA).to.deep.equal(expectedPoints);
+      // });
+      // it("should have path from H to G", function () {
+      //   const expectedPoints = new ConnectedPoints(
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitG.apparentEndDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitG.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     },
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitH.apparentStartDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitH.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     }
+      //   );
+      //   expect(pathPointsForHG).to.deep.equal(expectedPoints);
+      // });
+      // it("should have path from H to C", function () {
+      //   const expectedPoints = new ConnectedPoints(
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitC.apparentEndDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitC.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     },
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitH.apparentStartDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitH.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     }
+      //   );
+      //   expect(pathPointsForHC).to.deep.equal(expectedPoints);
+      // });
+      // it("should have path from G to F", function () {
+      //   const expectedPoints = new ConnectedPoints(
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitF.apparentEndDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitF.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     },
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitG.apparentStartDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitG.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     }
+      //   );
+      //   expect(pathPointsForGF).to.deep.equal(expectedPoints);
+      // });
+      // it("should have path from F to E", function () {
+      //   const expectedPoints = new ConnectedPoints(
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitE.apparentEndDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitE.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     },
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitF.apparentStartDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitF.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     }
+      //   );
+      //   expect(pathPointsForFE).to.deep.equal(expectedPoints);
+      // });
+      // it("should have path from F to A", function () {
+      //   const expectedPoints = new ConnectedPoints(
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitA.apparentEndDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitA.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     },
+      //     {
+      //       x: getPixelGapBetweenTimes(
+      //         unitF.apparentStartDate.getTime(),
+      //         earliestTimePoint
+      //       ),
+      //       y:
+      //         getYOfTrackTop(initialState.units[unitF.id]!.trackIndex) +
+      //         trackHeight / 2,
+      //     }
+      //   );
+      //   expect(pathPointsForFA).to.deep.equal(expectedPoints);
+      // });
     });
     describe("Date Lines", function () {
       describe("Lines", function () {

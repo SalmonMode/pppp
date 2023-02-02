@@ -25,7 +25,7 @@ export default class GraphableChainPath {
     while (nextTask) {
       // nextTask is used for loop logic, so track the current task for easier type safety
       const currentTask: TaskUnit = nextTask;
-      for (let track of tracks) {
+      for (const track of tracks) {
         // check if this can squeeze in after the last task on this track
         const lastItemInTrack = track[track.length - 1];
         if (!lastItemInTrack) {

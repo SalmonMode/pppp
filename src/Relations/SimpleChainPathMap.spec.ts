@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { NoSuchChainPathError } from "../Error";
-import { InterconnectionStrengthMapping, ResourceMap } from "../types";
+import type { InterconnectionStrengthMapping, ResourceMap } from "../types";
 import { ChainPath, SimpleChainMap, SimpleChainPathMap, TaskUnit } from "./";
 
 describe("SimpleChainPathMap", function () {

@@ -49,7 +49,7 @@ export default class SimpleChainPathMap {
    * Build a map showing which paths are connected to which paths.
    */
   private _buildPathInterconnections() {
-    for (let path of this.paths) {
+    for (const path of this.paths) {
       // Get the units that the units in this path have a connection to. This will tell us which other paths this path
       // is connected to, and in how many ways. The number of units it's connected to in another path is equal to the
       // amount of connections, and thus, the amount of edges we'd need to draw between the two paths.
@@ -59,7 +59,7 @@ export default class SimpleChainPathMap {
       const mapping: RelationshipMapping = (this.connectionStrengthMapping[
         path.id
       ] = {});
-      for (let otherPath of this.paths) {
+      for (const otherPath of this.paths) {
         if (path === otherPath) {
           // same path so don't need to do anything
           continue;
@@ -88,11 +88,11 @@ export default class SimpleChainPathMap {
           // otherPath has not been iterated over yet, so we have to figure out the relationship.
           const otherPathsUnits = this._getUnitsInPath(otherPath);
           // Use a copy of the connected units set to avoid issues with modification while iterating
-          for (let connectedUnit of [...unitsConnectedToUnitsInPath]) {
+          for (const connectedUnit of [...unitsConnectedToUnitsInPath]) {
             if (otherPathsUnits.has(connectedUnit)) {
               // Found a connection, so check how many connections there are before removing the unit from the set to
               // speed up the next iterations.
-              for (let unit of pathsUnits) {
+              for (const unit of pathsUnits) {
                 if (unit.directDependencies.has(connectedUnit)) {
                   connections += 1;
                 } else if (connectedUnit.directDependencies.has(unit)) {
@@ -126,10 +126,10 @@ export default class SimpleChainPathMap {
   private _getUnitsConnectedToPath(path: ChainPath): Set<TaskUnit> {
     const unitsInPath = this._getUnitsInPath(path);
     const unitsConnectedToUnitsInPath = new Set<TaskUnit>();
-    for (let unit of unitsInPath) {
+    for (const unit of unitsInPath) {
       const connectedUnitsOfUnit =
         this.chainMap.unitPathMatrix.getUnitsConnectedToUnit(unit);
-      for (let connectedUnit of connectedUnitsOfUnit) {
+      for (const connectedUnit of connectedUnitsOfUnit) {
         if (unitsInPath.has(connectedUnit)) {
           // Filtering out units already in the path
           continue;

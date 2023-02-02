@@ -52,7 +52,7 @@ export default class IsolatedDependencyChain {
     this.id = uuidv4();
     this._verifyUnitsAreUnbrokenChain();
     const copyOfUnits = [...this.units];
-    let unit = copyOfUnits.shift();
+    const unit = copyOfUnits.shift();
     if (unit === undefined) {
       throw new RangeError("Must provide at least 1 TaskUnit");
     }
@@ -182,9 +182,9 @@ export default class IsolatedDependencyChain {
    */
   private _getExternalDependencies(): Set<TaskUnit> {
     const dependencies: Set<TaskUnit> = new Set<TaskUnit>();
-    for (let unit of this.units) {
+    for (const unit of this.units) {
       const unitParents = unit.directDependencies;
-      for (let parentalUnit of unitParents) {
+      for (const parentalUnit of unitParents) {
         if (!this.units.includes(parentalUnit)) {
           dependencies.add(parentalUnit);
         }

@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { createSandbox, SinonSandbox, SinonStub } from "sinon";
-import { ResourceMap } from "../types";
+import type { ResourceMap } from "../types";
 import {
   ChainPath,
   SimpleChainMap,

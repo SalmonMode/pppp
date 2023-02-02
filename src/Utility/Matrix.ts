@@ -195,8 +195,8 @@ export default class Matrix {
   transpose(): Matrix {
     const newData: number[][] = [];
     // Each row needs to become each column in the transposed matrix.
-    for (let row of this.data) {
-      for (let [columnIndexAsString, sourceNumber] of Object.entries(row)) {
+    for (const row of this.data) {
+      for (const [columnIndexAsString, sourceNumber] of Object.entries(row)) {
         const newRowIndex = Number(columnIndexAsString);
         // Make sure there's an array started for the new row in the transposed matrix. This both makes sure the array
         // exists, and satisfied TypeScript's noUncheckedIndexAccess.

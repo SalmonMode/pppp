@@ -14,11 +14,11 @@ export function turnClusterIntoState(cluster: TaskUnitCluster): TaskUnitsState {
   const halfwayPresencePoint = totalPresence / 2;
 
   let trackCurrentlyBeingBuilt: GraphableChainPath[] = [];
-  let pathTracks: GraphableChainPath[][] = [trackCurrentlyBeingBuilt];
-  for (let path of cluster.pathsSortedByRanking) {
+  const pathTracks: GraphableChainPath[][] = [trackCurrentlyBeingBuilt];
+  for (const path of cluster.pathsSortedByRanking) {
     const graphablePath = new GraphableChainPath(path);
     let overlapFound = false;
-    for (let trackedPath of trackCurrentlyBeingBuilt) {
+    for (const trackedPath of trackCurrentlyBeingBuilt) {
       if (path.overlapsWithPath(trackedPath.path)) {
         // Overlap found, meaning it cannot fit on the same track, so track and break from the innermost loop.
         overlapFound = true;
@@ -38,7 +38,7 @@ export function turnClusterIntoState(cluster: TaskUnitCluster): TaskUnitsState {
   let unitTracksSoFar = 0;
 
   const unitCoords: TaskUnitMap = {};
-  for (let track of pathTracks) {
+  for (const track of pathTracks) {
     const pathsHeights = track.map((path) => path.path.tracks.length);
 
     const tallestPathHeight = Math.max(...pathsHeights);
@@ -55,7 +55,7 @@ export function turnClusterIntoState(cluster: TaskUnitCluster): TaskUnitsState {
         path.path.tracks.reverse();
       }
       path.path.tracks.forEach((track, unitTrackIndex) => {
-        for (let unit of track) {
+        for (const unit of track) {
           unitCoords[unit.id] = {
             anticipatedStartTime: unit.anticipatedStartDate.getTime(),
             anticipatedEndTime: unit.anticipatedEndDate.getTime(),
@@ -80,7 +80,7 @@ export function turnClusterIntoState(cluster: TaskUnitCluster): TaskUnitsState {
   }
 
   const trackMap: TrackToUnitMap = [];
-  for (let unit of Object.values(unitCoords)) {
+  for (const unit of Object.values(unitCoords)) {
     const track = (trackMap[unit.trackIndex] ??= []);
     track.push(unit.id);
   }

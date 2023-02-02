@@ -64,7 +64,8 @@
     "resolveJsonModule": true,
     "allowJs": true,
     "noEmit": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "importsNotUsedAsValues": "error"
   },
   "include": ["./src"],
   "exclude": ["node_modules"]

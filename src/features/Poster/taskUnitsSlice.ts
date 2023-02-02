@@ -26,7 +26,11 @@ export const generateCluster = createAsyncThunk("tasks/generate", async () => {
   return turnClusterIntoState(seedData);
 });
 
-export const taskUnitsSlice = createSlice<TaskUnitsState, {}, "tasks">({
+export const taskUnitsSlice = createSlice<
+  TaskUnitsState,
+  Record<string, never>,
+  "tasks"
+>({
   name: "tasks",
   initialState,
   reducers: {},

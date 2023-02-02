@@ -7,13 +7,17 @@ import { renderWithProvider } from "../Utility/TestRenderers";
 
 chai.use(chaiAsPromised);
 
-var expect = chai.expect;
+const expect = chai.expect;
 describe("React Integration: Index Page", function () {
   describe("Success", function () {
     let sandbox: SinonSandbox;
     beforeEach(function () {
       sandbox = createSandbox();
-      Element.prototype.scrollIntoView = () => {};
+      Element.prototype.scrollIntoView = function (): void {
+        // Purely exists because jsdom does not actually support this method so it cannot be stubbed without something
+        // here.
+        return;
+      };
       sandbox.stub(Element.prototype, "scrollIntoView");
       renderWithProvider(<IndexPage />);
     });

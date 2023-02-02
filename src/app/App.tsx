@@ -5,7 +5,7 @@ import store from "./store";
 
 export default function App({
   Component,
-  pageProps: { session, ...pageProps },
+  pageProps: { ...pageProps },
 }: AppProps) {
   return (
     <Provider store={store}>

@@ -53,7 +53,7 @@ export default class ChainPath {
     this.id = uuidv4();
     this._verifyUnitsAreUnbrokenChain();
     const copyOfChains = [...this.chains];
-    let chain = copyOfChains.shift();
+    const chain = copyOfChains.shift();
     if (chain === undefined) {
       throw new RangeError("Must provide at least 1 IsolatedDependencyChain");
     }
@@ -69,8 +69,8 @@ export default class ChainPath {
       0
     );
     this._units = new Set<TaskUnit>();
-    for (let chain of this.chains) {
-      for (let unit of chain.units) {
+    for (const chain of this.chains) {
+      for (const unit of chain.units) {
         this._units.add(unit);
       }
     }
@@ -193,7 +193,7 @@ export default class ChainPath {
     while (nextTask) {
       // nextTask is used for loop logic, so track the current task for easier type safety
       const currentTask: TaskUnit = nextTask;
-      for (let track of tracks) {
+      for (const track of tracks) {
         // check if this can squeeze in after the last task on this track
         const lastItemInTrack = track[track.length - 1];
         if (!lastItemInTrack) {

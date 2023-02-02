@@ -81,7 +81,7 @@ export default class StressTracker {
     let distance = 0;
     const pathMatrixIndex = this.getMatrixIndexForPathId(pathId);
     const pathConns = this.pathMap.getConnectionsForPathById(pathId);
-    for (let [otherPathId, numberOfConnections] of Object.entries(pathConns)) {
+    for (const [otherPathId, numberOfConnections] of Object.entries(pathConns)) {
       const otherPathMatrixIndex = this.getMatrixIndexForPathId(otherPathId);
 
       const distanceBetween = distances.getElementAtPosition(
@@ -214,12 +214,12 @@ export default class StressTracker {
     const updatedPositionData: number[][] = [];
     this.pathMatrixKeys.forEach((key, index) => {
       const oldRow = [...this.positionsMatrix.getRow(index)];
-      if (!!diff[index]) {
+      if (diff[index]) {
         // this row was affected so update it
         if (index === matrixIndexOfPath || index === matrixIndexOfOtherPath) {
           // The row for one of the swapping paths. All truthy indexes in the diff need to be updated
           const updatedRow = oldRow.map((value, columnIndex) => {
-            if (!!diff[columnIndex]) {
+            if (diff[columnIndex]) {
               // The value for one of the impacted paths
               return value * -1;
             }
@@ -261,7 +261,7 @@ export default class StressTracker {
     pathId: ChainPath["id"],
     otherPathId: ChainPath["id"]
   ): Matrix {
-    let pathsBetween = this.getPathsBetweenPathsWithPositionsById(
+    const pathsBetween = this.getPathsBetweenPathsWithPositionsById(
       this.positionsMatrix,
       pathId,
       otherPathId
@@ -568,8 +568,8 @@ export default class StressTracker {
       },
       {}
     );
-    for (let pathId of this.pathMatrixKeys) {
-      for (let otherPathId of this.pathMatrixKeys) {
+    for (const pathId of this.pathMatrixKeys) {
+      for (const otherPathId of this.pathMatrixKeys) {
         const matrixIndex = this.getMatrixIndexForPathId(pathId);
         const pathRow: number[] = (distanceData[matrixIndex] ??= []);
         if (pathId === otherPathId) {
@@ -584,7 +584,7 @@ export default class StressTracker {
         );
         const trackIndexesInvolved = new Set<number>();
         inBetweens.forEach((value, index) => {
-          if (!!value) {
+          if (value) {
             // is in between
             const pathId = this.getPathIdForMatrixIndex(index);
             const trackIndex = pathTrackMap[pathId];
@@ -597,7 +597,7 @@ export default class StressTracker {
         assertIsNumber(pathTrackIndex);
         trackIndexesInvolved.delete(pathTrackIndex);
         let distanceBetween = 0;
-        for (let trackIndex of trackIndexesInvolved) {
+        for (const trackIndex of trackIndexesInvolved) {
           const trackDetails = allTracksDetails[trackIndex];
           assertIsObject(trackDetails);
           distanceBetween += trackDetails.height;
@@ -614,7 +614,7 @@ export default class StressTracker {
    */
   getTotalDistanceWithDistances(distances: Matrix): number {
     let distance = 0;
-    for (let pathId of this.pathMatrixKeys) {
+    for (const pathId of this.pathMatrixKeys) {
       distance += this.getTotalConnectionDistanceForPathWithDistancesById(
         distances,
         pathId
@@ -633,11 +633,11 @@ export default class StressTracker {
     const rankings = this.getRankingsUsingPositions(positions);
     // First figure out the tracks
     let trackCurrentlyBeingBuilt: ChainPath[] = [];
-    let pathTracks: ChainPath[][] = [trackCurrentlyBeingBuilt];
-    for (let pathId of rankings) {
+    const pathTracks: ChainPath[][] = [trackCurrentlyBeingBuilt];
+    for (const pathId of rankings) {
       const path = this.pathMap.getPathById(pathId);
       let overlapFound = false;
-      for (let trackedPath of trackCurrentlyBeingBuilt) {
+      for (const trackedPath of trackCurrentlyBeingBuilt) {
         if (path.overlapsWithPath(trackedPath)) {
           // Overlap found, meaning it cannot fit on the same track, so track and break from the innermost loop.
           overlapFound = true;
@@ -657,7 +657,7 @@ export default class StressTracker {
   }
   private _getPathTrackDetails(tracks: ChainPath[][]): TrackDetails[] {
     const trackDetails: TrackDetails[] = [];
-    for (let track of tracks) {
+    for (const track of tracks) {
       const height = track.reduce(
         (acc, path) => Math.max(acc, path.tracks.length),
         0
@@ -702,7 +702,7 @@ export default class StressTracker {
     );
     const pathIdsInvolved: ChainPath["id"][] = [];
     inBetweens.forEach((value, index) => {
-      if (!!value) {
+      if (value) {
         // is in between
         const inBetweenPathId = this.pathMatrixKeys[index];
         if (
@@ -728,7 +728,7 @@ export default class StressTracker {
    */
   getRankingsUsingPositions(positions: Matrix): ChainPath["id"][] {
     const rankings: RelationshipMapping = {};
-    for (let id of this.pathMatrixKeys) {
+    for (const id of this.pathMatrixKeys) {
       const matrixIndex = this.getMatrixIndexForPathId(id);
       const positionRow = positions.getRow(matrixIndex);
       const rank = positionRow.reduce((acc, curr) => acc + curr, 0);

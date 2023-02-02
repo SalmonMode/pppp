@@ -129,14 +129,14 @@ export default class ChainStrainMap {
    * This is more concerned with where the "meat" of the dependencies is.
    */
   private _buildStrainMap(): void {
-    for (let head of this.chainMap.getHeadChains()) {
+    for (const head of this.chainMap.getHeadChains()) {
       // Set head's strain to its attachment to its dependencies. This is the number of paths it can take. Since its a
       // head, there are no paths that lead to, so there's nothing else to add.
       this._chainStrainMap[head.id] = head.lastUnit.attachmentToDependencies;
       // Get all dependencies of this head. Since we know all the units are interconnected, we'll eventually hit all the
       // units that were provided.
       const deps = this.chainMap.getAllDependenciesOfChain(head);
-      for (let chain of deps) {
+      for (const chain of deps) {
         const numOfPathsFromUnit = chain.attachmentToDependencies;
         // Only include the number of paths from unit if this is the first time hitting this unit. Otherwise, it'll add
         // again if a future head hits it, and we only want to add it once.
@@ -328,13 +328,13 @@ export default class ChainStrainMap {
     head: IsolatedDependencyChain
   ): ChainPath[] {
     const potentialPaths: ChainPath[] = [];
-    for (let dep of leastDiscouragedHeads) {
+    for (const dep of leastDiscouragedHeads) {
       const potentialDepPaths = this.getPathsMostFamiliarWithChainWithoutChains(
         dep,
         unavailableChains,
         [...pathSoFar, head]
       );
-      for (let path of potentialDepPaths) {
+      for (const path of potentialDepPaths) {
         potentialPaths.push(path);
       }
     }
@@ -365,7 +365,7 @@ export default class ChainStrainMap {
     const leastDiscouragedHeads: IsolatedDependencyChain[] = [];
     let highestRelativeFamiliarity: number | undefined;
     let firstDep: IsolatedDependencyChain | undefined;
-    for (let dep of sortedAvailableDeps) {
+    for (const dep of sortedAvailableDeps) {
       if (!firstDep) {
         // first iteration, so grab a reference to it in order to be able to consistently compare against the most
         // preferred chain.
@@ -411,7 +411,7 @@ export default class ChainStrainMap {
     let highestPathStrain: number | undefined;
     const mostPreferredPaths: ChainPath[] = [];
     let firstPath: ChainPath | undefined;
-    for (let path of potentialPaths) {
+    for (const path of potentialPaths) {
       if (!firstPath) {
         // first iteration, so grab a reference to it in order to be able to consistently compare against the most
         // preferred path.

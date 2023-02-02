@@ -46,7 +46,7 @@ export default class ConnectedPoints {
     assertIsNumber(startPointY);
     assertIsNumber(endPointX);
     assertIsNumber(endPointY);
-    for (let num of [startPointX, startPointY, endPointX, endPointY]) {
+    for (const num of [startPointX, startPointY, endPointX, endPointY]) {
       if (Number.isNaN(num)) {
         throw TypeError(
           `Coordinates found were: ${coords.join(

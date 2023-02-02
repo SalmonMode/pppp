@@ -310,31 +310,33 @@ export default class TaskUnit {
     if (lastEvent) {
       switch (lastEvent.type) {
         case EventType.MinorRevisionComplete:
-        case EventType.ReviewedAndAccepted:
+        case EventType.ReviewedAndAccepted: {
           // nothing to project
           break;
-        case EventType.ReviewedAndNeedsRebuild:
+        }
+        case EventType.ReviewedAndNeedsRebuild: {
           // needs to start the task (which implies getting new reqs) and then pass review
 
-          var reqFinishedDate = max([now, lastEvent.date]);
+          const reqFinishedDate = max([now, lastEvent.date]);
           this.projectedHistory.push({
             type: EventType.TaskIterationStarted,
             date: reqFinishedDate,
           });
-          var taskEndDate = add(reqFinishedDate, estimatedTaskDuration);
+          const taskEndDate = add(reqFinishedDate, estimatedTaskDuration);
           this.projectedHistory.push({
             type: EventType.ReviewedAndAccepted,
             date: taskEndDate,
           });
           break;
-        case EventType.ReviewedAndNeedsMajorRevision:
+        }
+        case EventType.ReviewedAndNeedsMajorRevision: {
           // needs to start the task (which can be assumed to have started as soon as the review was done) and then pass
           // review
-          var lastEventTimePlusBuffer = add(
+          const lastEventTimePlusBuffer = add(
             lastEvent.date,
             estimatedTaskDuration
           );
-          var taskEndDate = max([
+          const taskEndDate = max([
             add(now, reviewBoxBufferDuration),
             lastEventTimePlusBuffer,
           ]);
@@ -343,13 +345,14 @@ export default class TaskUnit {
             date: taskEndDate,
           });
           break;
-        case EventType.ReviewedAndNeedsMinorRevision:
+        }
+        case EventType.ReviewedAndNeedsMinorRevision: {
           // needs to start the task (which can be assumed to have started as soon as the review was done)
-          var lastEventTimePlusBuffer = add(
+          const lastEventTimePlusBuffer = add(
             lastEvent.date,
             estimatedTaskDuration
           );
-          var taskEndDate = max([
+          const taskEndDate = max([
             add(now, reviewBoxBufferDuration),
             lastEventTimePlusBuffer,
           ]);
@@ -358,13 +361,14 @@ export default class TaskUnit {
             date: taskEndDate,
           });
           break;
-        case EventType.TaskIterationStarted:
+        }
+        case EventType.TaskIterationStarted: {
           // needs time to complete the task
-          var lastEventTimePlusBuffer = add(
+          const lastEventTimePlusBuffer = add(
             lastEvent.date,
             estimatedTaskDuration
           );
-          var taskEndDate = max([
+          const taskEndDate = max([
             add(now, reviewBoxBufferDuration),
             lastEventTimePlusBuffer,
           ]);
@@ -373,6 +377,7 @@ export default class TaskUnit {
             date: taskEndDate,
           });
           break;
+        }
       }
     } else {
       // literally no history
@@ -458,13 +463,13 @@ export default class TaskUnit {
    */
   private _buildAttachmentMap(): RelationshipMapping {
     const mapping: RelationshipMapping = {};
-    for (let dep of this.directDependencies) {
+    for (const dep of this.directDependencies) {
       // This must be the earliest point in the chain that this unit is a direct dependency, so there is only 1 path
       // to this unit from here.
       mapping[dep.id] = 1;
       // Additionally, any paths to its dependencies can be reached from here, so lets add its total paths to those
       // depencies to any other paths to them that we've seen from other dependencies.
-      for (let [key, value] of Object.entries(dep.attachmentMap)) {
+      for (const [key, value] of Object.entries(dep.attachmentMap)) {
         // assign it to 0 if it's not already set
         mapping[key] ??= 0;
         mapping[key] += value;

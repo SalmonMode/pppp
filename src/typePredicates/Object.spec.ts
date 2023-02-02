@@ -1,7 +1,5 @@
-import * as chai from "chai";
+import { expect } from "chai";
 import { isObject } from "./Object";
-
-var expect = chai.expect;
 
 describe("Object type predicate", function () {
   describe("Valid Object", function () {
@@ -12,7 +10,7 @@ describe("Object type predicate", function () {
     });
     describe("Object With Content", function () {
       it("should be true", function () {
-        expect(isObject({a: "apple"})).to.be.true;
+        expect(isObject({ a: "apple" })).to.be.true;
       });
     });
     describe("Array", function () {

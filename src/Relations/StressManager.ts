@@ -33,7 +33,7 @@ export default class StressManager {
    */
   private _organizePathsByStress() {
     try {
-      while (true) {
+      for (;;) {
         const chosenMove = this._getNextBestMove();
         // We found a viable move!
         switch (chosenMove.type) {
@@ -88,8 +88,8 @@ export default class StressManager {
       totalDistance: currentTotalDistance,
       totalTracks: currentTracks,
     };
-    for (let pathId of this.stressTracker.pathMatrixKeys) {
-      for (let otherPathId of this.stressTracker.pathMatrixKeys) {
+    for (const pathId of this.stressTracker.pathMatrixKeys) {
+      for (const otherPathId of this.stressTracker.pathMatrixKeys) {
         let possibleMove: NextMove;
         if (pathId === otherPathId) {
           // Consider moving the path to the top. We figure out the move to the top individually because moving below

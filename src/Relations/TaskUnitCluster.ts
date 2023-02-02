@@ -50,7 +50,7 @@ export default class TaskUnitCluster {
   get pathsSortedByRanking(): ChainPath[] {
     const rankings = this.stressManager.getRankings();
     const paths: ChainPath[] = [];
-    for (let rankedId of rankings) {
+    for (const rankedId of rankings) {
       const path = this._pathMap[rankedId];
       assertIsObject(path);
       paths.push(path);
@@ -108,7 +108,7 @@ export default class TaskUnitCluster {
    */
   private _buildPaths(isolatedChains: IsolatedDependencyChain[]): void {
     // start by getting the available heads.
-    let heads = this.getHeadsWithoutChains(isolatedChains);
+    const heads = this.getHeadsWithoutChains(isolatedChains);
     // Rely on the strain map to figure out the preffered path for that given head. The best path for each head will
     // be compared against the others, finding the most preferred out of all of them. It will then be stored, its chains
     // marked as off limits, and this function will be called again with the updated list of off limits chains.
