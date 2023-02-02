@@ -28,7 +28,7 @@ describe("React Integration: Poster", () => {
     });
 
     it('should say "loading..."', async function () {
-      let poster = await screen.findByTestId(`poster-loading`);
+      const poster = await screen.findByTestId(`poster-loading`);
       expect(poster.textContent).to.equal("loading...");
     });
   });
@@ -173,6 +173,7 @@ describe("React Integration: Poster", () => {
 
     before(async function () {
       sandbox = createSandbox();
+      Element.prototype.scrollIntoView = () => {};
       scrollStub = sandbox.stub(Element.prototype, "scrollIntoView");
       const firstDate = sub(now, { days: 9 });
       const secondDate = add(firstDate, { days: 1 });

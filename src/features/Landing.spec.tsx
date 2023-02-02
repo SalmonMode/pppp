@@ -14,6 +14,7 @@ describe("React Integration: Landing Page", function () {
     let sandbox: SinonSandbox;
     beforeEach(function () {
       sandbox = createSandbox();
+      Element.prototype.scrollIntoView = () => {};
       sandbox.stub(Element.prototype, "scrollIntoView");
       renderWithProvider(<LandingPage />);
     });
