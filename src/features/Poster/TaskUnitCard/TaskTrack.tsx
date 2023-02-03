@@ -1,6 +1,7 @@
+import { css } from "@emotion/react";
 import Box from "@mui/material/Box";
+import { theme } from "../../../app/theme";
 import type { TaskUnitDetails } from "../../../types";
-import { trackHeight } from "../../constants";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 import getYOfTrackTop from "../getYOfTrackTop";
 import TaskUnitCard from "./TaskUnitCard";
@@ -16,14 +17,10 @@ export default function TaskTrack({
 }) {
   return (
     <Box
-      className={`taskTrack`}
-      style={{
-        height: trackHeight,
-        position: "absolute",
-        left: 0,
-        top: getYOfTrackTop(trackIndex),
-      }}
+      css={styles}
+      className={"taskTrack"}
       data-testid={`taskTrack-${trackIndex}`}
+      style={{ top: getYOfTrackTop(trackIndex) }}
     >
       {units.map((unit, index) => {
         const adjustedX = getPixelGapBetweenTimes(
@@ -41,3 +38,9 @@ export default function TaskTrack({
     </Box>
   );
 }
+
+const styles = css({
+  height: theme.trackHeight,
+  left: 0,
+  position: "absolute",
+});

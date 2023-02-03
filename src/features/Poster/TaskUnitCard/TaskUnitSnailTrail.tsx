@@ -1,6 +1,7 @@
+import { css } from "@emotion/react";
 import Box from "@mui/material/Box";
+import { theme } from "../../../app/theme";
 import type { Coordinate, TaskUnitDetails } from "../../../types";
-import { snailTrailColor, trackHeight } from "../../constants";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 
 export default function TaskUnitSnailTrail({
@@ -17,15 +18,19 @@ export default function TaskUnitSnailTrail({
   return (
     <Box
       data-testid={`snailTrail-${unit.id}`}
+      css={styles}
       style={{
         width: presenceWidth,
-        height: trackHeight,
-        position: "absolute",
         left: position.x,
         top: position.y,
-        backgroundColor: snailTrailColor,
-        borderRadius: 5,
       }}
     ></Box>
   );
 }
+
+const styles = css({
+  height: theme.trackHeight,
+  position: "absolute",
+  backgroundColor: theme.snailTrailColor,
+  borderRadius: 5,
+});

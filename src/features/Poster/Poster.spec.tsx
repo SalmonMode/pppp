@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react";
 import { expect } from "chai";
-import { createSandbox, SinonSandbox, SinonStub } from "sinon";
 import { add, startOfDay, sub } from "date-fns";
+import { createSandbox, SinonSandbox, SinonStub } from "sinon";
 import ConnectedPoints from "../../Graphing/ConnectedPoints";
 import { TaskUnit, TaskUnitCluster } from "../../Relations";
 import { assertIsObject, assertIsString } from "../../typePredicates";
@@ -538,7 +538,7 @@ describe("React Integration: Poster", () => {
       assertIsString(pathDForFA);
       pathPointsForFA = ConnectedPoints.fromCurve(pathDForFA);
 
-      const svg = screen.getByTestId("posterSVG");
+      const svg = screen.getByTestId("posterSvg");
       svgWidth = Number(getComputedStyle(svg).width.slice(0, -2));
 
       // Date Lines
@@ -2177,6 +2177,7 @@ describe("React Integration: Poster", () => {
     });
   });
   describe("Reusing Tracks (Different Path Heights)", () => {
+    let sandbox: SinonSandbox;
     const firstDate = add(now, { days: 1 });
     const secondDate = add(firstDate, { days: 1 });
     const thirdDate = add(secondDate, { days: 1 });
@@ -2190,6 +2191,13 @@ describe("React Integration: Poster", () => {
     let thirdTrackText: string;
 
     before(async function () {
+      sandbox = createSandbox();
+      Element.prototype.scrollIntoView = function (): void {
+        // Purely exists because jsdom does not actually support this method so it cannot be stubbed without something
+        // here.
+        return;
+      };
+      sandbox.stub(Element.prototype, "scrollIntoView");
       const unitA = new TaskUnit(now, [], firstDate, thirdDate, "A");
       const unitB = new TaskUnit(now, [unitA], secondDate, fourthDate, "B");
       const unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C");
@@ -2245,6 +2253,9 @@ describe("React Integration: Poster", () => {
       const thirdTrackContent = tracks[2]?.textContent;
       assertIsString(thirdTrackContent);
       thirdTrackText = thirdTrackContent;
+    });
+    after(function () {
+      sandbox.restore();
     });
 
     it("should have 4 task tracks", function () {

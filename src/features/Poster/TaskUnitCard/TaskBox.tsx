@@ -1,4 +1,5 @@
-import ExtensionTrail from "./ExtensionTrail";
+import { css } from "@emotion/react";
+import { ExtensionTrail } from "./ExtensionTrail";
 
 export default function TaskBox({
   expectedDurationWidth,
@@ -19,23 +20,17 @@ export default function TaskBox({
 }) {
   return (
     <div
-      className="taskBoxWrapper"
+      css={wrapperStyles}
+      className={"taskBoxWrapper"}
       style={{
-        display: "flex",
-        height: "100%",
-        flexDirection: "row",
-        flexShrink: 0,
         width: actualDurationWidth,
       }}
     >
       <div
-        className="taskBox"
+        css={boxStyles}
+        className={"taskBox"}
         style={{
-          display: "flex",
           width: expectedDurationWidth,
-          height: "100%",
-          justifyContent: "center",
-          alignItems: "center",
         }}
       >
         <div>{label}</div>
@@ -44,3 +39,16 @@ export default function TaskBox({
     </div>
   );
 }
+
+const wrapperStyles = css({
+  display: "flex",
+  height: "100%",
+  flexDirection: "row",
+  flexShrink: 0,
+});
+const boxStyles = css({
+  display: "flex",
+  height: "100%",
+  justifyContent: "center",
+  alignItems: "center",
+});

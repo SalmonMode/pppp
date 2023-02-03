@@ -1,6 +1,7 @@
+import { css } from "@emotion/react";
 import Box from "@mui/material/Box";
+import { theme } from "../../../app/theme";
 import type { TaskUnitDetails } from "../../../types";
-import { trackHeight } from "../../constants";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 import getYOfTrackTop from "../getYOfTrackTop";
 import TaskUnitSnailTrail from "./TaskUnitSnailTrail";
@@ -16,11 +17,9 @@ export default function SnailTrailTrack({
 }) {
   return (
     <Box
-      className={`snailTrailTrack`}
+      css={styles}
+      className={"snailTrailTrack"}
       style={{
-        height: trackHeight,
-        position: "absolute",
-        left: 0,
         top: getYOfTrackTop(trackIndex),
       }}
       data-testid={`snailTrailTrack-${trackIndex}`}
@@ -41,3 +40,9 @@ export default function SnailTrailTrack({
     </Box>
   );
 }
+
+const styles = css({
+  height: theme.trackHeight,
+  left: 0,
+  position: "absolute",
+});

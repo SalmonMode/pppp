@@ -1,6 +1,8 @@
+import { css } from "@emotion/react";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import { theme } from "../../../app/theme";
 import { assertIsObject } from "../../../typePredicates";
 import {
   Coordinate,
@@ -8,13 +10,9 @@ import {
   ReviewType,
   TaskUnitDetails,
 } from "../../../types";
-import {
-  prerequisitesBoxWidth,
-  reviewBoxWidth,
-  trackHeight,
-} from "../../constants";
+import { prerequisitesBoxWidth, reviewBoxWidth } from "../../constants";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
-import ExtensionTrailFixedSize from "./ExtensionTrailFixedSize";
+import { ExtensionTrailFixedSize } from "./ExtensionTrail";
 import PrerequisitesBox from "./PrerequisitesBox";
 import ReviewBox from "./ReviewBox";
 import TaskBox from "./TaskBox";
@@ -34,7 +32,6 @@ export default function TaskUnitCard({
     unit.apparentEndTime,
     unit.anticipatedStartTime
   );
-  const cardHeight = trackHeight;
   const expectedDurationWidth = getPixelGapBetweenTimes(
     unit.anticipatedEndTime,
     unit.anticipatedStartTime
@@ -44,37 +41,20 @@ export default function TaskUnitCard({
   return (
     <Box
       data-testid={`task-${unit.id}`}
-      style={{
-        width: presenceWidth,
-        height: trackHeight,
-        position: "absolute",
-        left: position.x,
-        top: position.y,
-      }}
+      css={boxStyles}
+      style={{ width: presenceWidth, left: position.x, top: position.y }}
     >
       <Card
         variant="outlined"
-        className={`taskUnit`}
+        className="taskUnit"
+        css={cardStyles}
         style={{
           width: cardWidth,
-          height: cardHeight,
-          position: "absolute",
           left: presenceWidth - cardWidth,
-          boxSizing: "border-box",
-          top: 0,
         }}
       >
-        <CardContent style={{ padding: 0, height: "100%" }}>
-          <div
-            className="cardContentDiv"
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              backgroundColor: "lightblue",
-              height: "100%",
-              alignItems: "center",
-            }}
-          >
+        <CardContent css={cardContentStyles}>
+          <div css={cardContentInnerStyles} className="cardContentDiv">
             {unit.eventHistory.map((event, index) => {
               const nextEvent = unit.eventHistory[index + 1];
               const prevEvent = unit.eventHistory[index - 1];
@@ -210,3 +190,44 @@ export default function TaskUnitCard({
     </Box>
   );
 }
+
+const boxStyles = css({
+  height: theme.trackHeight,
+  position: "absolute",
+});
+// const cardStyles = cx(
+//   css({
+//     height: theme.trackHeight,
+//     position: "absolute",
+//     boxSizing: "border-box",
+//     top: 0,
+//   }),
+//   "taskUnit"
+// );
+const cardStyles = css({
+  height: theme.trackHeight,
+  position: "absolute",
+  boxSizing: "border-box",
+  top: 0,
+});
+const cardContentStyles = css({
+  padding: 0,
+  height: "100%",
+});
+// const cardContentInnerStyles = cx(
+//   css({
+//     display: "flex",
+//     flexDirection: "row",
+//     backgroundColor: theme.taskCardBackgroundColor,
+//     height: "100%",
+//     alignItems: "center",
+//   }),
+//   "cardContentDiv"
+// );
+const cardContentInnerStyles = css({
+  display: "flex",
+  flexDirection: "row",
+  backgroundColor: theme.taskCardBackgroundColor,
+  height: "100%",
+  alignItems: "center",
+});

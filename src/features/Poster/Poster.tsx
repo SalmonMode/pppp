@@ -1,21 +1,19 @@
+import { css } from "@emotion/react";
 import { add, eachDayOfInterval, sub } from "date-fns";
 import { useAppSelector } from "../../app/hooks";
-import ConnectedPoints from "../../Graphing/ConnectedPoints";
 import { assertIsObject } from "../../typePredicates";
-import type { TaskUnitDetails } from "../../types";
 import { svgDateTopPadding, trackGapHeight, trackHeight } from "../constants";
 import DateLinesSvg from "./DateLinesSvg";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
-import getYOfTrackTop from "./getYOfTrackTop";
-import SnailTrailTrack from "./TaskUnitCard/SnailTrailTrack";
-import TaskTrack from "./TaskUnitCard/TaskTrack";
+import PosterContent from "./PosterContent";
+import PosterSvg from "./PosterSvg";
+import SnailTrailContainer from "./SnailTrailContainer";
 
 export default function Poster() {
   const taskUnits = useAppSelector((state) => state.taskUnits);
   if (taskUnits.loading) {
     return <div data-testid={"poster-loading"}>loading...</div>;
   }
-  const tracks = taskUnits.unitTrackMap;
   const unitStartTimes = Object.values(taskUnits.units).map(
     (unit) => unit.anticipatedStartTime
   );
@@ -45,110 +43,22 @@ export default function Poster() {
   );
   const now = new Date();
   return (
-    <div
-      data-testid={"poster-container"}
-      style={{ position: "relative", margin: 10 }}
-    >
-      <div
-        data-testid={"snailTrailContainer"}
-        style={{ position: "absolute", left: 0, top: 0 }}
-      >
-        {tracks.map((track, index) => {
-          return (
-            <SnailTrailTrack
-              key={index}
-              units={track.map<TaskUnitDetails>((id) => {
-                const unitDetails = taskUnits.units[id];
-                assertIsObject(unitDetails);
-                return unitDetails;
-              })}
-              trackIndex={index}
-              pathStartDate={new Date(earliestStartTime)}
-            />
-          );
-        })}
-      </div>
-      <svg
-        data-testid="posterSVG"
-        style={{
-          position: "absolute",
-          width: svgWidth,
-          height: svgHeight,
-          left: 0,
-          top: 0,
-          pointerEvents: "none",
-        }}
-      >
-        {Object.values(taskUnits.units).map((unit) => {
-          {
-            return [...unit.directDependencies].map((depUnitId) => {
-              const depUnitData = taskUnits.units[depUnitId];
-              assertIsObject(depUnitData);
-              const connection = new ConnectedPoints(
-                {
-                  x: getPixelGapBetweenTimes(
-                    depUnitData.apparentEndTime,
-                    earliestStartTime
-                  ),
-                  y: getYOfTrackTop(depUnitData.trackIndex) + trackHeight / 2,
-                },
-                {
-                  x: getPixelGapBetweenTimes(
-                    unit.apparentStartTime,
-                    earliestStartTime
-                  ),
-                  y: getYOfTrackTop(unit.trackIndex) + trackHeight / 2,
-                }
-              );
-              const curveAsPathString =
-                connection.getCubicBezierCurvePathShape();
-              return (
-                <g
-                  data-testid={`pathGroup-${unit.id}-${depUnitId}`}
-                  key={`${unit.id}-${depUnitId}`}
-                >
-                  <path
-                    d={curveAsPathString}
-                    style={{
-                      stroke: "white",
-                      strokeWidth: "6px",
-                      fill: "none",
-                    }}
-                  ></path>
-                  <path
-                    d={curveAsPathString}
-                    style={{
-                      stroke: "black",
-                      strokeWidth: "2px",
-                      fill: "none",
-                    }}
-                  ></path>
-                </g>
-              );
-            });
-          }
-        })}
-      </svg>
+    <div data-testid={"poster-container"} css={styles}>
+      <SnailTrailContainer
+        earliestStartTime={earliestStartTime}
+        taskUnits={taskUnits}
+      />
+      <PosterSvg
+        earliestStartTime={earliestStartTime}
+        height={svgHeight}
+        width={svgWidth}
+        taskUnits={taskUnits}
+      />
 
-      <div
-        data-testid={"poster"}
-        style={{ position: "absolute", left: 0, top: 0 }}
-      >
-        {tracks.map((track, index) => {
-          return (
-            <TaskTrack
-              key={index}
-              units={track.map<TaskUnitDetails>((id) => {
-                const unitDetails = taskUnits.units[id];
-                assertIsObject(unitDetails);
-                return unitDetails;
-              })}
-              trackIndex={index}
-              pathStartDate={new Date(earliestStartTime)}
-            />
-          );
-        })}
-      </div>
+      <PosterContent
+        earliestStartTime={earliestStartTime}
+        taskUnits={taskUnits}
+      />
       <DateLinesSvg
         now={now}
         dateIntervals={dateIntervals}
@@ -157,3 +67,4 @@ export default function Poster() {
     </div>
   );
 }
+const styles = css({ position: "relative", margin: 10 });

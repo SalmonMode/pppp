@@ -1,5 +1,7 @@
+import { css } from "@emotion/react";
 import { add, sub } from "date-fns";
 import { useEffect, useRef } from "react";
+import { theme } from "../../app/theme";
 import { assertIsObject } from "../../typePredicates";
 import { svgDateTopPadding } from "../constants";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
@@ -33,25 +35,14 @@ export default function DateLinesSvg({
   return (
     <svg
       data-testid="dateLinesSvg"
-      style={{
-        position: "absolute",
-        width: svgWidth,
-        height,
-        left: 0,
-        top: 0,
-        pointerEvents: "none",
-      }}
+      css={svgStyles}
+      style={{ width: svgWidth, height }}
     >
       <g
-        className="dateLines"
         data-testid="dateLinesGroup"
-        style={{
-          position: "absolute",
-          width: svgWidth,
-          height,
-          left: 0,
-          top: 0,
-        }}
+        css={dateLinesGroupStyles}
+        className={"dateLinesGroup"}
+        style={{ width: svgWidth, height }}
       >
         {dateIntervals.map((date, index) => {
           const left = getPixelGapBetweenTimes(
@@ -59,15 +50,16 @@ export default function DateLinesSvg({
             earliestStartTime
           );
           return (
-            <g key={index} className="singleDateLineGroup">
+            <g
+              key={index}
+              data-testid="singleDateLineGroup"
+              className="singleDateLineGroup"
+            >
               <text
                 x={left}
                 y={"1em"}
-                style={{
-                  fill: "black",
-                  fontSize: 20,
-                  textAnchor: "middle",
-                }}
+                css={singleDateLineLabelStyles}
+                className={"singleDateLineLabel"}
               >
                 {date.toLocaleDateString()}
               </text>
@@ -76,12 +68,7 @@ export default function DateLinesSvg({
                 x2={left}
                 y1={svgDateTopPadding / 2}
                 y2={height}
-                style={{
-                  stroke: "lightgrey",
-                  strokeWidth: "1px",
-                  fill: "none",
-                  strokeDasharray: "10,10",
-                }}
+                css={datedLineStyles}
               ></line>
             </g>
           );
@@ -92,25 +79,46 @@ export default function DateLinesSvg({
             ref={textNode}
             x={nowLeft}
             y={"3em"}
-            style={{
-              fill: "black",
-              fontSize: 15,
-              textAnchor: "middle",
-              pointerEvents: "all",
-            }}
+            css={nowDateLineLabelStyles}
           >
             Now
           </text>
-          <path
-            d={`M${nowLeft},${svgDateTopPadding / 2} V ${height}`}
-            style={{
-              stroke: "lightgrey",
-              strokeWidth: "1px",
-              fill: "none",
-            }}
-          ></path>
+          <line
+            x1={nowLeft}
+            x2={nowLeft}
+            y1={svgDateTopPadding / 2}
+            y2={height}
+            css={singleDateLineStyles}
+          ></line>
         </g>
       </g>
     </svg>
   );
 }
+
+const svgStyles = css({
+  position: "absolute",
+  left: 0,
+  top: 0,
+  pointerEvents: "none",
+});
+
+const dateLinesGroupStyles = css({ position: "absolute", left: 0, top: 0 });
+const singleDateLineLabelStyles = css({
+  fill: "black",
+  fontSize: 20,
+  textAnchor: "middle",
+  pointerEvents: "all",
+});
+const singleDateLineStyles = css({
+  stroke: theme.dateLineStrokeColor,
+  strokeWidth: "1px",
+  fill: "none",
+});
+const datedLineStyles = css(singleDateLineStyles, {
+  strokeDasharray: "10,10",
+});
+
+const nowDateLineLabelStyles = css(singleDateLineLabelStyles, {
+  fontSize: 15,
+});
