@@ -9,7 +9,7 @@ export default function PosterBoard() {
     dispatch(generateCluster());
   }, []);
   return (
-    <div>
+    <div style={{ position: "relative" }}>
       <Poster />
     </div>
   );

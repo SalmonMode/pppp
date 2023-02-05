@@ -66,17 +66,17 @@ export function getSeedData(): TaskUnitCluster {
     },
   ]);
 
-  const unitE = new TaskUnit(now, [], firstDate, secondDate, "E", [
+  const unitE = new TaskUnit(now, [], firstDate, thirdDate, "E", [
     {
       type: EventType.TaskIterationStarted,
       date: firstDate,
     },
     {
       type: EventType.ReviewedAndAccepted,
-      date: secondDate,
+      date: thirdDate,
     },
   ]);
-  const unitF = new TaskUnit(now, [unitA, unitE], secondDate, thirdDate, "F", [
+  const unitF = new TaskUnit(now, [unitA, unitE], thirdDate, fourthDate, "F", [
     {
       type: EventType.TaskIterationStarted,
       date: thirdDate,

@@ -1,12 +1,19 @@
 import GraphableChainPath from "../../Graphing/GraphableChainPath";
+import incrmpcorr from "@stdlib/stats-incr-mpcorr";
 import type { TaskUnitCluster } from "../../Relations";
 import type {
   TaskUnitsState,
   TaskUnitMap,
   TrackToUnitMap,
+  TaskUnitsLoadingCompleteState,
+  TaskMetrics,
 } from "./taskUnitsSlice";
+import { differenceInSeconds } from "date-fns";
+import { assertIsNumber } from "../../typePredicates";
 
-export function turnClusterIntoState(cluster: TaskUnitCluster): TaskUnitsState {
+export function turnClusterIntoState(
+  cluster: TaskUnitCluster
+): TaskUnitsLoadingCompleteState {
   const totalPresence = cluster.paths.reduce(
     (acc: number, path) => acc + path.presenceTime,
     0
@@ -84,11 +91,79 @@ export function turnClusterIntoState(cluster: TaskUnitCluster): TaskUnitsState {
     const track = (trackMap[unit.trackIndex] ??= []);
     track.push(unit.id);
   }
+  const metrics: TaskMetrics = {
+    cumulativeDelays: {},
+    cumulativeExtensions: {},
+    processTime: {},
+    estimatesCoefficient: 0,
+  };
+  const units = cluster.chainMap.units;
+  let totalDelaysInSeconds = 0;
+  let totalExtensionsInSeconds = 0;
+  let totalProcessTimeInSeconds = 0;
+  let coefficient: number | null = 0;
+  const window = 20;
+  const accumulator = incrmpcorr(window);
+  for (let unit of units) {
+    const currentDelayInSeconds = differenceInSeconds(
+      unit.apparentStartDate,
+      unit.anticipatedStartDate
+    );
+    totalDelaysInSeconds += currentDelayInSeconds;
+    // assumes that extensions cause by other events and reiterations are all still extensions, because the task still
+    // took longer than anticipated once it was started.
+    const anticipatedDurationInSeconds = differenceInSeconds(
+      unit.anticipatedEndDate,
+      unit.anticipatedStartDate
+    );
+    const apparentDurationInSeconds = differenceInSeconds(
+      unit.apparentEndDate,
+      unit.apparentStartDate
+    );
+    const currentExtensionInSeconds =
+      apparentDurationInSeconds - anticipatedDurationInSeconds;
+    totalExtensionsInSeconds += currentExtensionInSeconds;
+    totalProcessTimeInSeconds += apparentDurationInSeconds;
+    assertIsNumber(anticipatedDurationInSeconds);
+    assertIsNumber(apparentDurationInSeconds);
+    coefficient = accumulator(
+      anticipatedDurationInSeconds,
+      apparentDurationInSeconds
+    );
+  }
+  // Delays
+  metrics.cumulativeDelays.seconds = Math.round(totalDelaysInSeconds) % 60;
+  metrics.cumulativeDelays.minutes = Math.floor(totalDelaysInSeconds / 60) % 60;
+  metrics.cumulativeDelays.hours =
+    Math.floor(totalDelaysInSeconds / (60 * 60)) % 24;
+  metrics.cumulativeDelays.days =
+    Math.floor(totalDelaysInSeconds / (60 * 60 * 24)) % 365;
+  // Extensions
+  metrics.cumulativeExtensions.seconds =
+    Math.round(totalExtensionsInSeconds) % 60;
+  metrics.cumulativeExtensions.minutes =
+    Math.floor(totalExtensionsInSeconds / 60) % 60;
+  metrics.cumulativeExtensions.hours =
+    Math.floor(totalExtensionsInSeconds / (60 * 60)) % 24;
+  metrics.cumulativeExtensions.days =
+    Math.floor(totalExtensionsInSeconds / (60 * 60 * 24)) % 365;
+  // Process Time
+  const averageProcessTimeInSeconds = totalProcessTimeInSeconds / units.length;
+  metrics.processTime.seconds = Math.round(averageProcessTimeInSeconds) % 60;
+  metrics.processTime.minutes =
+    Math.floor(averageProcessTimeInSeconds / 60) % 60;
+  metrics.processTime.hours =
+    Math.floor(averageProcessTimeInSeconds / (60 * 60)) % 24;
+  metrics.processTime.days =
+    Math.floor(averageProcessTimeInSeconds / (60 * 60 * 24)) % 365;
+  assertIsNumber(coefficient);
+  metrics.estimatesCoefficient = coefficient;
 
   const initialState: TaskUnitsState = {
     loading: false,
     units: unitCoords,
     unitTrackMap: trackMap,
+    metrics,
   };
   return initialState;
 }

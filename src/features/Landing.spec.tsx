@@ -25,14 +25,17 @@ describe("React Integration: Landing Page", function () {
     afterEach(function () {
       sandbox.restore();
     });
-    it('should initially say "loading..."', async function () {
-      const poster = await screen.findByTestId(`poster-loading`);
-      expect(poster.textContent).to.equal("loading...");
+    describe("Poster Board", function () {
+      it("should have 4 tracks after loading", async function () {
+        const poster = await screen.findByTestId(`poster`);
+        const tracks = poster.querySelectorAll(".taskTrack");
+        expect(tracks.length).to.equal(4);
+      });
     });
-    it("should have 4 tracks after loading", async function () {
-      const poster = await screen.findByTestId(`poster`);
-      const tracks = poster.querySelectorAll(".taskTrack");
-      expect(tracks.length).to.equal(4);
+    describe("Metrics Panel", async function () {
+      it("should have metrics panel", async function () {
+        await screen.findByTestId(`metrics-panel`);
+      });
     });
   });
 });

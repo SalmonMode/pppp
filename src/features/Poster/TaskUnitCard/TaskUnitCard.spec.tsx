@@ -7,7 +7,7 @@ import { assertIsObject, assertIsString } from "../../../typePredicates";
 import { EventType } from "../../../types";
 import { renderWithProvider } from "../../../Utility/TestRenderers";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
-import type { TaskUnitsState } from "../taskUnitsSlice";
+import type { TaskUnitsLoadingCompleteState } from "../taskUnitsSlice";
 import { turnClusterIntoState } from "../turnClusterIntoState";
 import TaskUnitCard from "./TaskUnitCard";
 
@@ -24,7 +24,7 @@ const ninthDate = add(eighthDate, { days: 1 });
 
 describe("React Integration: TaskUnitCard", () => {
   describe("Chaotic Tracks", () => {
-    let initialState: TaskUnitsState;
+    let initialState: TaskUnitsLoadingCompleteState;
 
     const unitA = new TaskUnit(now, [], firstDate, secondDate, "A", [
       {

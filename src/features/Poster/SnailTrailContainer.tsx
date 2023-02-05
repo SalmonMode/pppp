@@ -2,13 +2,16 @@ import { css } from "@emotion/react";
 import { assertIsObject } from "../../typePredicates";
 import type { TaskUnitDetails } from "../../types";
 import SnailTrailTrack from "./TaskUnitCard/SnailTrailTrack";
-import type { TaskUnitsState } from "./taskUnitsSlice";
+import type {
+  TaskUnitsLoadingCompleteState,
+  TaskUnitsState,
+} from "./taskUnitsSlice";
 
 export default function SnailTrailContainer({
   taskUnits,
   earliestStartTime,
 }: {
-  taskUnits: TaskUnitsState;
+  taskUnits: TaskUnitsLoadingCompleteState;
   earliestStartTime: number;
 }) {
   const tracks = taskUnits.unitTrackMap;

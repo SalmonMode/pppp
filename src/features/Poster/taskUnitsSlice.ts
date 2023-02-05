@@ -7,18 +7,30 @@ import { turnClusterIntoState } from "./turnClusterIntoState";
 export interface TaskUnitMap {
   [key: TaskUnit["id"]]: TaskUnitDetails;
 }
+export interface TaskMetrics {
+  cumulativeDelays: Duration;
+  cumulativeExtensions: Duration;
+  processTime: Duration;
+  estimatesCoefficient: number;
+}
 export type TrackToUnitMap = TaskUnit["id"][][];
 
-export type TaskUnitsState = {
-  loading: boolean;
+export type TaskUnitsLoadingState = {
+  loading: true;
+};
+export type TaskUnitsLoadingCompleteState = {
+  loading: false;
   units: TaskUnitMap;
   unitTrackMap: TrackToUnitMap;
+  metrics: TaskMetrics;
 };
+
+export type TaskUnitsState =
+  | TaskUnitsLoadingState
+  | TaskUnitsLoadingCompleteState;
 
 const initialState: TaskUnitsState = {
   loading: true,
-  units: {},
-  unitTrackMap: [],
 };
 
 export const generateCluster = createAsyncThunk("tasks/generate", async () => {
@@ -38,14 +50,12 @@ export const taskUnitsSlice = createSlice<
     builder.addCase(generateCluster.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(
-      generateCluster.fulfilled,
-      (state, action: PayloadAction<TaskUnitsState>) => {
-        state.loading = false;
-        state.unitTrackMap = action.payload.unitTrackMap;
-        state.units = action.payload.units;
-      }
-    );
+    builder.addCase(generateCluster.fulfilled, (state, action) => {
+      return {
+        ...state,
+        ...action.payload,
+      };
+    });
   },
 });
 export default taskUnitsSlice;

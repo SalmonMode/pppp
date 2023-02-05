@@ -212,6 +212,9 @@ describe("SimpleChainMap", function () {
       unitD = new TaskUnit(now, [unitB], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitC, unitD]);
     });
+    it("should provide all units", function () {
+      expect(chainMap.units).to.have.members([unitA, unitB, unitC, unitD]);
+    });
     it("should have 4 chains", function () {
       expect(chainMap.chains.length).to.equal(4);
     });

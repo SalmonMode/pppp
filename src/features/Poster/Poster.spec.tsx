@@ -11,7 +11,7 @@ import { halfDayDuration, snailTrailColor, trackHeight } from "../constants";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
 import getYOfTrackTop from "./getYOfTrackTop";
 import Poster from "./Poster";
-import type { TaskUnitsState } from "./taskUnitsSlice";
+import type { TaskUnitsLoadingCompleteState } from "./taskUnitsSlice";
 import { turnClusterIntoState } from "./turnClusterIntoState";
 
 const now = new Date();
@@ -47,7 +47,7 @@ describe("React Integration: Poster", () => {
   describe("Chaotic Tracks", () => {
     let sandbox: SinonSandbox;
     let scrollStub: SinonStub;
-    let initialState: TaskUnitsState;
+    let initialState: TaskUnitsLoadingCompleteState;
     let poster: HTMLElement;
     let tracks: NodeListOf<Element>;
     const firstDate = sub(now, { days: 9 });

@@ -5,7 +5,7 @@ import { assertIsObject } from "../../typePredicates";
 import { trackHeight } from "../constants";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
 import getYOfTrackTop from "./getYOfTrackTop";
-import type { TaskUnitsState } from "./taskUnitsSlice";
+import type { TaskUnitsLoadingCompleteState } from "./taskUnitsSlice";
 
 export default function PosterSvg({
   taskUnits,
@@ -13,7 +13,7 @@ export default function PosterSvg({
   height,
   earliestStartTime,
 }: {
-  taskUnits: TaskUnitsState;
+  taskUnits: TaskUnitsLoadingCompleteState;
   width: number;
   height: number;
   earliestStartTime: number;

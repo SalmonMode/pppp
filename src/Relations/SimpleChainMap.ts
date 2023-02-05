@@ -33,6 +33,10 @@ export default class SimpleChainMap {
     this._headChains = this._getHeadChains();
     this._buildChainConnections();
   }
+
+  get units(): TaskUnit[] {
+    return [...this._units];
+  }
   /**
    * Heads cannot be dependencies of other heads. Make sure this is the case.
    */

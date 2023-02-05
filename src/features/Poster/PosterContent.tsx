@@ -2,13 +2,13 @@ import { css } from "@emotion/react";
 import { assertIsObject } from "../../typePredicates";
 import type { TaskUnitDetails } from "../../types";
 import TaskTrack from "./TaskUnitCard/TaskTrack";
-import type { TaskUnitsState } from "./taskUnitsSlice";
+import type { TaskUnitsLoadingCompleteState } from "./taskUnitsSlice";
 
 export default function PosterContent({
   taskUnits,
   earliestStartTime,
 }: {
-  taskUnits: TaskUnitsState;
+  taskUnits: TaskUnitsLoadingCompleteState;
   earliestStartTime: number;
 }) {
   const tracks = taskUnits.unitTrackMap;
