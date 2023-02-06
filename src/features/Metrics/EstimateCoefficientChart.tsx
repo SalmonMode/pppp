@@ -12,7 +12,7 @@ export default function EstimateCoefficientChart({
 
   return (
     <div data-testid="coefficient-chart" css={chartStyles}>
-      <div style={{ position: "relative", width: "100%" }}>
+      <div css={arrowContainerStyles}>
         <div
           data-testid="coefficient-arrow"
           css={arrowStyles}
@@ -38,6 +38,7 @@ const chartStyles = css({
   alignItems: "center",
   width: theme.gradientChartWidth,
 });
+const arrowContainerStyles = css({ position: "relative", width: "100%" });
 const arrowStyles = css({
   position: "relative",
   transform: "translateX(-50%)",

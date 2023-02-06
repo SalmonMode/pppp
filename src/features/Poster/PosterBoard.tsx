@@ -1,3 +1,4 @@
+import { css } from "@emotion/react";
 import { useEffect } from "react";
 import { useAppDispatch } from "../../app/hooks";
 import Poster from "./Poster";
@@ -9,8 +10,10 @@ export default function PosterBoard() {
     dispatch(generateCluster());
   }, []);
   return (
-    <div style={{ position: "relative" }}>
+    <div css={styles}>
       <Poster />
     </div>
   );
 }
+
+const styles = css({ position: "relative" });

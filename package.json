@@ -1,6 +1,6 @@
 {
   "name": "pppp",
-  "version": "0.13.4",
+  "version": "0.13.5",
   "description": "Gerald Weinberg's PPPP brought to life.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
