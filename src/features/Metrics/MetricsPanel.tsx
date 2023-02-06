@@ -1,10 +1,13 @@
+import Typography from "@mui/material/Typography";
 import { useAppSelector } from "../../app/hooks";
 import MetricsSummary from "./MetricsSummary";
 
 export default function MetricsPanel() {
   const taskUnits = useAppSelector((state) => state.taskUnits);
   if (taskUnits.loading) {
-    return <div data-testid={"metrics-panel-loading"}>loading...</div>;
+    return (
+      <Typography data-testid={"metrics-panel-loading"}>loading...</Typography>
+    );
   }
   const metrics = taskUnits.metrics;
 

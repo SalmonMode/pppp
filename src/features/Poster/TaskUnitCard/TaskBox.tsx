@@ -1,4 +1,5 @@
 import { css } from "@emotion/react";
+import Typography from "@mui/material/Typography";
 import { ExtensionTrail } from "./ExtensionTrail";
 
 export default function TaskBox({
@@ -33,7 +34,7 @@ export default function TaskBox({
           width: expectedDurationWidth,
         }}
       >
-        <div>{label}</div>
+        <Typography>{label}</Typography>
       </div>
       <ExtensionTrail />
     </div>

@@ -1,4 +1,5 @@
 import { css } from "@emotion/react";
+import Typography from "@mui/material/Typography";
 import { add, sub } from "date-fns";
 import { useEffect, useRef } from "react";
 import { theme } from "../../app/theme";
@@ -55,14 +56,15 @@ export default function DateLinesSvg({
               data-testid="singleDateLineGroup"
               className="singleDateLineGroup"
             >
-              <text
+              <Typography
+                component={"text"}
                 x={left}
                 y={"1em"}
                 css={singleDateLineLabelStyles}
                 className={"singleDateLineLabel"}
               >
                 {date.toLocaleDateString()}
-              </text>
+              </Typography>
               <line
                 x1={left}
                 x2={left}
@@ -74,7 +76,8 @@ export default function DateLinesSvg({
           );
         })}
         <g>
-          <text
+          <Typography
+            component={"text"}
             id="nowLineText"
             ref={textNode}
             x={nowLeft}
@@ -82,7 +85,7 @@ export default function DateLinesSvg({
             css={nowDateLineLabelStyles}
           >
             Now
-          </text>
+          </Typography>
           <line
             x1={nowLeft}
             x2={nowLeft}

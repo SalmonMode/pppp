@@ -1,4 +1,5 @@
 import { css } from "@emotion/react";
+import Typography from "@mui/material/Typography";
 import { formatDuration } from "date-fns";
 import type { TaskMetrics } from "../Poster/taskUnitsSlice";
 import colorScale from "./colorScale";
@@ -16,19 +17,22 @@ export default function MetricsSummary({ metrics }: { metrics: TaskMetrics }) {
 
   return (
     <div data-testid={"metrics-panel"} css={panelStyles}>
-      <div data-testid={"delays"}>
+      <Typography data-testid={"delays"}>
         Delays: {formatDuration(metrics.cumulativeDelays)}
-      </div>
-      <div data-testid={"extensions"}>
+      </Typography>
+      <Typography data-testid={"extensions"}>
         Extensions: {formatDuration(metrics.cumulativeExtensions)}
-      </div>
-      <div data-testid={"process-time"}>
+      </Typography>
+      <Typography data-testid={"process-time"}>
         Average Process Time: {formatDuration(metrics.processTime)}
-      </div>
+      </Typography>
       <div data-testid={"est-coefficient"} css={coefficientSummaryStyles}>
-        <div data-testid={"est-coefficient-label"} css={coefficientLabelStyles}>
+        <Typography
+          data-testid={"est-coefficient-label"}
+          css={coefficientLabelStyles}
+        >
           Estimates Coefficient: ~{coefficient.toPrecision(5)}
-        </div>
+        </Typography>
         <div
           data-testid={"est-coefficient-color"}
           css={coefficientColorStyles}

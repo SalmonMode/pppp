@@ -1,4 +1,5 @@
 import { css } from "@emotion/react";
+import Typography from "@mui/material/Typography";
 import { theme } from "../../app/theme";
 import colorScale from "./colorScale";
 
@@ -24,9 +25,9 @@ export default function EstimateCoefficientChart({
       </div>
       <div css={gradientStyles}></div>
       <div css={axisStyles}>
-        <div>-1</div>
-        <div>0</div>
-        <div>1</div>
+        <Typography>-1</Typography>
+        <Typography>0</Typography>
+        <Typography>1</Typography>
       </div>
     </div>
   );
