@@ -195,15 +195,6 @@ const boxStyles = css({
   height: theme.trackHeight,
   position: "absolute",
 });
-// const cardStyles = cx(
-//   css({
-//     height: theme.trackHeight,
-//     position: "absolute",
-//     boxSizing: "border-box",
-//     top: 0,
-//   }),
-//   "taskUnit"
-// );
 const cardStyles = css({
   height: theme.trackHeight,
   position: "absolute",
@@ -214,16 +205,6 @@ const cardContentStyles = css({
   padding: 0,
   height: "100%",
 });
-// const cardContentInnerStyles = cx(
-//   css({
-//     display: "flex",
-//     flexDirection: "row",
-//     backgroundColor: theme.taskCardBackgroundColor,
-//     height: "100%",
-//     alignItems: "center",
-//   }),
-//   "cardContentDiv"
-// );
 const cardContentInnerStyles = css({
   display: "flex",
   flexDirection: "row",
