@@ -34,7 +34,7 @@ export default function EstimateCoefficientChart({
       <div
         style={{
           backgroundImage: `linear-gradient(to right, ${colorScale
-            .colors(8)
+            .colors(4)
             .join(",")})`,
           width: 400,
           height: "1em",
