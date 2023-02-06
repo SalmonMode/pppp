@@ -1,4 +1,5 @@
 import { css } from "@emotion/react";
+import Typography from "@mui/material/Typography";
 import { add, eachDayOfInterval, sub } from "date-fns";
 import { useAppSelector } from "../../app/hooks";
 import { assertIsObject } from "../../typePredicates";
@@ -12,7 +13,7 @@ import SnailTrailContainer from "./SnailTrailContainer";
 export default function Poster() {
   const taskUnits = useAppSelector((state) => state.taskUnits);
   if (taskUnits.loading) {
-    return <div data-testid={"poster-loading"}>loading...</div>;
+    return <Typography data-testid={"poster-loading"}>loading...</Typography>;
   }
   const unitStartTimes = Object.values(taskUnits.units).map(
     (unit) => unit.anticipatedStartTime
