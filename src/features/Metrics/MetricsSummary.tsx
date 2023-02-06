@@ -1,6 +1,10 @@
 import { css } from "@emotion/react";
+import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { formatDuration } from "date-fns";
+import { useAppDispatch } from "../../app/hooks";
+import CoefficientHelpModal from "../CoefficientModal/CoefficientHelpModal";
+import { openCoefficientHelpModal } from "../CoefficientModal/coefficientHelpModalOpenSlice";
 import type { TaskMetrics } from "../Poster/taskUnitsSlice";
 import colorScale from "./colorScale";
 import EstimateCoefficientChart from "./EstimateCoefficientChart";
@@ -14,6 +18,7 @@ export default function MetricsSummary({ metrics }: { metrics: TaskMetrics }) {
     ? 0
     : metrics.estimatesCoefficient;
   const adjustedCoefficient = (coefficient + 1) / 2;
+  const dispatch = useAppDispatch();
 
   return (
     <div data-testid={"metrics-panel"} css={panelStyles}>
@@ -31,7 +36,8 @@ export default function MetricsSummary({ metrics }: { metrics: TaskMetrics }) {
           data-testid={"est-coefficient-label"}
           css={coefficientLabelStyles}
         >
-          Estimates Coefficient: ~{coefficient.toPrecision(5)}
+          Correlation of Estimated to Actual Times: ~
+          {coefficient.toPrecision(5)}
         </Typography>
         <div
           data-testid={"est-coefficient-color"}
@@ -40,8 +46,12 @@ export default function MetricsSummary({ metrics }: { metrics: TaskMetrics }) {
             backgroundColor: colorScale(adjustedCoefficient).css(),
           }}
         ></div>
+        <Button onClick={(event) => dispatch(openCoefficientHelpModal(event))}>
+          What's this?
+        </Button>
       </div>
       <EstimateCoefficientChart coefficient={coefficient} />
+      <CoefficientHelpModal />
     </div>
   );
 }

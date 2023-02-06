@@ -1,12 +1,14 @@
 import {
   combineReducers,
   configureStore,
-  PreloadedState,
+  PreloadedState
 } from "@reduxjs/toolkit";
+import coefficientHelpModalOpenSlice from "../features/CoefficientModal/coefficientHelpModalOpenSlice";
 import taskUnitsSlice from "../features/Poster/taskUnitsSlice";
 
 const rootReducer = combineReducers({
   taskUnits: taskUnitsSlice.reducer,
+  coefficientHelpModal: coefficientHelpModalOpenSlice.reducer,
 });
 
 export function makeStore(preloadedState?: PreloadedState<RootState>) {
