@@ -25,4 +25,5 @@ export const theme = {
   trackHeight: 60,
   trackGapHeight: 10,
   svgDateTopPadding: 100,
+  gradientChartWidth: 400,
 } as const;

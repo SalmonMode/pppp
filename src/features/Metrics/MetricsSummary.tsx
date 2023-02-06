@@ -15,7 +15,7 @@ export default function MetricsSummary({ metrics }: { metrics: TaskMetrics }) {
   const adjustedCoefficient = (coefficient + 1) / 2;
 
   return (
-    <div data-testid={"metrics-panel"} css={styles}>
+    <div data-testid={"metrics-panel"} css={panelStyles}>
       <div data-testid={"delays"}>
         Delays: {formatDuration(metrics.cumulativeDelays)}
       </div>
@@ -25,17 +25,15 @@ export default function MetricsSummary({ metrics }: { metrics: TaskMetrics }) {
       <div data-testid={"process-time"}>
         Average Process Time: {formatDuration(metrics.processTime)}
       </div>
-      <div data-testid={"est-coefficient"}>
-        <div data-testid={"est-coefficient-label"}>
+      <div data-testid={"est-coefficient"} css={coefficientSummaryStyles}>
+        <div data-testid={"est-coefficient-label"} css={coefficientLabelStyles}>
           Estimates Coefficient: ~{coefficient.toPrecision(5)}
         </div>
         <div
           data-testid={"est-coefficient-color"}
+          css={coefficientColorStyles}
           style={{
             backgroundColor: colorScale(adjustedCoefficient).css(),
-            width: 20,
-            height: "1em",
-            display: "inline-block",
           }}
         ></div>
       </div>
@@ -43,7 +41,19 @@ export default function MetricsSummary({ metrics }: { metrics: TaskMetrics }) {
     </div>
   );
 }
-const styles = css({
+const panelStyles = css({
   position: "relative",
   margin: 10,
+});
+const coefficientSummaryStyles = css({
+  display: "inline-block",
+});
+const coefficientLabelStyles = css({
+  display: "inline-block",
+});
+const coefficientColorStyles = css({
+  width: 20,
+  height: "1em",
+  display: "inline-block",
+  marginLeft: 10,
 });
