@@ -1,7 +1,9 @@
-import { trackHeight, trackGapHeight, svgDateTopPadding } from "../constants";
+import { theme } from "../../app/theme";
 
 export default function getYOfTrackTop(trackIndex: number): number {
   return (
-    trackIndex * trackHeight + trackIndex * trackGapHeight + svgDateTopPadding
+    trackIndex * theme.trackHeight +
+    trackIndex * theme.trackGapHeight +
+    theme.svgDateTopPadding
   );
 }

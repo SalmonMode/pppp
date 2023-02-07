@@ -4,7 +4,6 @@ import { add, sub } from "date-fns";
 import { useEffect, useRef } from "react";
 import { theme } from "../../app/theme";
 import { assertIsObject } from "../../typePredicates";
-import { svgDateTopPadding } from "../constants";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
 
 export default function DateLinesSvg({
@@ -68,7 +67,7 @@ export default function DateLinesSvg({
               <line
                 x1={left}
                 x2={left}
-                y1={svgDateTopPadding / 2}
+                y1={theme.svgDateTopPadding / 2}
                 y2={height}
                 css={datedLineStyles}
               ></line>
@@ -89,7 +88,7 @@ export default function DateLinesSvg({
           <line
             x1={nowLeft}
             x2={nowLeft}
-            y1={svgDateTopPadding / 2}
+            y1={theme.svgDateTopPadding / 2}
             y2={height}
             css={singleDateLineStyles}
           ></line>

@@ -1,7 +1,7 @@
 import { add, differenceInSeconds, max } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
+import { theme, unitTaskTimeConversion } from "../app/theme";
 import { EventHistoryInvalidError, PrematureTaskStartError } from "../Error";
-import { reviewBoxWidth, unitTaskTimeConversion } from "../features/constants";
 import { assertIsObject } from "../typePredicates";
 import {
   EventType,
@@ -302,7 +302,7 @@ export default class TaskUnit {
     // that it's being pushed forward by the flow of time. To accomplish this, the projected time for a pending review
     // may need to be pushed out enough to cover the timespan covered by the review box's width.
     const reviewBoxBufferDuration: Duration = {
-      seconds: (reviewBoxWidth * unitTaskTimeConversion) / 1000,
+      seconds: (theme.reviewBoxWidth * unitTaskTimeConversion) / 1000,
     };
     // If the last event is EventType.ReviewedAndAccepted, then update the apparent end date to that date. Otherwise,
     // estimate the apparent end date relative to the apparent start date.

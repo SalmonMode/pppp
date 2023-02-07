@@ -2,8 +2,8 @@ import { css } from "@emotion/react";
 import Typography from "@mui/material/Typography";
 import { add, eachDayOfInterval, sub } from "date-fns";
 import { useAppSelector } from "../../app/hooks";
+import { theme } from "../../app/theme";
 import { assertIsObject } from "../../typePredicates";
-import { svgDateTopPadding, trackGapHeight, trackHeight } from "../constants";
 import DateLinesSvg from "./DateLinesSvg";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
 import PosterContent from "./PosterContent";
@@ -37,7 +37,9 @@ export default function Poster() {
   const trackCount =
     Math.max(...Object.values(taskUnits.units).map((u) => u.trackIndex)) + 1;
   const svgHeight =
-    trackCount * trackHeight + trackCount * trackGapHeight + svgDateTopPadding;
+    trackCount * theme.trackHeight +
+    trackCount * theme.trackGapHeight +
+    theme.svgDateTopPadding;
   const svgWidth = getPixelGapBetweenTimes(
     add(lastDate, { hours: 12 }).getTime(),
     earliestStartTime

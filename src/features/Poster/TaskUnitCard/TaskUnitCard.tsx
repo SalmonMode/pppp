@@ -8,9 +8,8 @@ import {
   Coordinate,
   EventType,
   ReviewType,
-  TaskUnitDetails,
+  TaskUnitDetails
 } from "../../../types";
-import { prerequisitesBoxWidth, reviewBoxWidth } from "../../constants";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 import { ExtensionTrailFixedSize } from "./ExtensionTrail";
 import PrerequisitesBox from "./PrerequisitesBox";
@@ -76,10 +75,10 @@ export default function TaskUnitCard({
                     // be sure that since the last event was some sort of review, we can be sure there must have been an
                     // earlier TaskBox already included in this card, so we don't need to label this one.
                     const adjustableExpectedDurationWidth =
-                      expectedDurationWidth - reviewBoxWidth;
+                      expectedDurationWidth - theme.reviewBoxWidth;
                     const actualDurationWidth =
                       getPixelGapBetweenTimes(event.time, prevEvent.time) -
-                      reviewBoxWidth;
+                      theme.reviewBoxWidth;
                     // Prereq width is only relevant if we need to compensate for the width of the prereq box. That
                     // only happens if it's the first iteration, or there was a rebuild. But both of these also would
                     // have an associated TaskIterationStarted event, which is why that switch case handles it and
@@ -162,12 +161,12 @@ export default function TaskUnitCard({
                   assertIsObject(nextEvent);
                   const adjustableExpectedDurationWidth =
                     expectedDurationWidth -
-                    prerequisitesBoxWidth -
-                    reviewBoxWidth;
+                    theme.prerequisitesBoxWidth -
+                    theme.reviewBoxWidth;
                   const actualDurationWidth =
                     getPixelGapBetweenTimes(nextEvent.time, event.time) -
-                    prerequisitesBoxWidth -
-                    reviewBoxWidth;
+                    theme.prerequisitesBoxWidth -
+                    theme.reviewBoxWidth;
                   const label = prevEvent ? undefined : unit.name;
                   return [
                     <PrerequisitesBox

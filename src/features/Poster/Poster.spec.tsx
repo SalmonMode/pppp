@@ -9,7 +9,6 @@ import { TaskUnit, TaskUnitCluster } from "../../Relations";
 import { assertIsObject, assertIsString } from "../../typePredicates";
 import { EventType } from "../../types";
 import { renderWithProvider } from "../../Utility/TestRenderers";
-import { halfDayDuration, snailTrailColor, trackHeight } from "../constants";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
 import getYOfTrackTop from "./getYOfTrackTop";
 import Poster from "./Poster";
@@ -19,7 +18,7 @@ import { turnClusterIntoState } from "./turnClusterIntoState";
 const now = new Date();
 
 const halfDayWidth = getPixelGapBetweenTimes(
-  now.getTime() - sub(now, halfDayDuration).getTime(),
+  now.getTime() - sub(now, { hours: 12 }).getTime(),
   0
 );
 
@@ -340,7 +339,7 @@ describe("React Integration: Poster", () => {
 
       const cluster = new TaskUnitCluster([unitB, unitD, unitH, unitL]);
       earliestStartTime = startOfDay(unitI.anticipatedStartDate).getTime();
-      earliestTimePoint = sub(earliestStartTime, halfDayDuration).getTime();
+      earliestTimePoint = sub(earliestStartTime, { hours: 12 }).getTime();
 
       initialState = turnClusterIntoState(cluster);
       renderWithProvider(<Poster />, {
@@ -1573,14 +1572,18 @@ describe("React Integration: Poster", () => {
                 pd.leftTask.apparentEndDate.getTime(),
                 earliestTimePoint
               ),
-              y: getYOfTrackTop(leftTaskDetails.trackIndex) + trackHeight / 2,
+              y:
+                getYOfTrackTop(leftTaskDetails.trackIndex) +
+                theme.trackHeight / 2,
             },
             {
               x: getPixelGapBetweenTimes(
                 pd.rightTask.apparentStartDate.getTime(),
                 earliestTimePoint
               ),
-              y: getYOfTrackTop(rightTaskDetails.trackIndex) + trackHeight / 2,
+              y:
+                getYOfTrackTop(rightTaskDetails.trackIndex) +
+                theme.trackHeight / 2,
             }
           );
           expect(actualConnectedPoints).to.deep.equal(expectedPoints);

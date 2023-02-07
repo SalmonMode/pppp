@@ -2,7 +2,6 @@ import { css } from "@emotion/react";
 import { theme } from "../../app/theme";
 import ConnectedPoints from "../../Graphing/ConnectedPoints";
 import { assertIsObject } from "../../typePredicates";
-import { trackHeight } from "../constants";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
 import getYOfTrackTop from "./getYOfTrackTop";
 import type { TaskUnitsLoadingCompleteState } from "./taskUnitsSlice";
@@ -31,14 +30,16 @@ export default function PosterSvg({
                   depUnitData.apparentEndTime,
                   earliestStartTime
                 ),
-                y: getYOfTrackTop(depUnitData.trackIndex) + trackHeight / 2,
+                y:
+                  getYOfTrackTop(depUnitData.trackIndex) +
+                  theme.trackHeight / 2,
               },
               {
                 x: getPixelGapBetweenTimes(
                   unit.apparentStartTime,
                   earliestStartTime
                 ),
-                y: getYOfTrackTop(unit.trackIndex) + trackHeight / 2,
+                y: getYOfTrackTop(unit.trackIndex) + theme.trackHeight / 2,
               }
             );
             const curveAsPathString = connection.getCubicBezierCurvePathShape();
