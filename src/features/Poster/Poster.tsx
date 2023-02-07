@@ -56,14 +56,14 @@ export default function Poster() {
         taskUnits={taskUnits}
       />
 
-      <PosterContent
-        earliestStartTime={earliestStartTime}
-        taskUnits={taskUnits}
-      />
       <DateLinesSvg
         now={now}
         dateIntervals={dateIntervals}
         height={svgHeight}
+      />
+      <PosterContent
+        earliestStartTime={earliestStartTime}
+        taskUnits={taskUnits}
       />
     </div>
   );

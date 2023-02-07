@@ -1,7 +1,9 @@
 import { screen } from "@testing-library/react";
 import { expect } from "chai";
+import chroma from "chroma-js";
 import { add, startOfDay, sub } from "date-fns";
 import { createSandbox, SinonSandbox, SinonStub } from "sinon";
+import { theme } from "../../app/theme";
 import ConnectedPoints from "../../Graphing/ConnectedPoints";
 import { TaskUnit, TaskUnitCluster } from "../../Relations";
 import { assertIsObject, assertIsString } from "../../typePredicates";
@@ -720,8 +722,8 @@ describe("React Integration: Poster", () => {
     describe("Boxes", function () {
       describe("A", function () {
         it("should have red background for snail trail", function () {
-          expect(unitASnailTrailStyles.backgroundColor).to.equal(
-            snailTrailColor
+          expect(chroma(unitASnailTrailStyles.backgroundColor).hex()).to.equal(
+            chroma(theme.snailTrailColor).hex()
           );
         });
         it("should have snail trail width according to anticipated start date and apparent end date", function () {
@@ -836,8 +838,8 @@ describe("React Integration: Poster", () => {
       });
       describe("B", function () {
         it("should have red background for snail trail", function () {
-          expect(unitBSnailTrailStyles.backgroundColor).to.equal(
-            snailTrailColor
+          expect(chroma(unitBSnailTrailStyles.backgroundColor).hex()).to.equal(
+            chroma(theme.snailTrailColor).hex()
           );
         });
         it("should have snail trail width according to anticipated start date and apparent end date", function () {
@@ -957,8 +959,8 @@ describe("React Integration: Poster", () => {
       });
       describe("C", function () {
         it("should have red background for snail trail", function () {
-          expect(unitCSnailTrailStyles.backgroundColor).to.equal(
-            snailTrailColor
+          expect(chroma(unitCSnailTrailStyles.backgroundColor).hex()).to.equal(
+            chroma(theme.snailTrailColor).hex()
           );
         });
         it("should have snail trail width according to anticipated start date and apparent end date", function () {
@@ -1053,8 +1055,8 @@ describe("React Integration: Poster", () => {
       });
       describe("D", function () {
         it("should have red background for snail trail", function () {
-          expect(unitDSnailTrailStyles.backgroundColor).to.equal(
-            snailTrailColor
+          expect(chroma(unitDSnailTrailStyles.backgroundColor).hex()).to.equal(
+            chroma(theme.snailTrailColor).hex()
           );
         });
         it("should have snail trail width according to anticipated start date and apparent end date", function () {
@@ -1184,8 +1186,8 @@ describe("React Integration: Poster", () => {
       });
       describe("E", function () {
         it("should have red background for snail trail", function () {
-          expect(unitESnailTrailStyles.backgroundColor).to.equal(
-            snailTrailColor
+          expect(chroma(unitESnailTrailStyles.backgroundColor).hex()).to.equal(
+            chroma(theme.snailTrailColor).hex()
           );
         });
         it("should have snail trail width according to anticipated start date and apparent end date", function () {
@@ -1250,8 +1252,8 @@ describe("React Integration: Poster", () => {
       });
       describe("F", function () {
         it("should have red background for snail trail", function () {
-          expect(unitFSnailTrailStyles.backgroundColor).to.equal(
-            snailTrailColor
+          expect(chroma(unitFSnailTrailStyles.backgroundColor).hex()).to.equal(
+            chroma(theme.snailTrailColor).hex()
           );
         });
         it("should have snail trail width according to anticipated start date and apparent end date", function () {
@@ -1306,8 +1308,8 @@ describe("React Integration: Poster", () => {
       });
       describe("G", function () {
         it("should have red background for snail trail", function () {
-          expect(unitGSnailTrailStyles.backgroundColor).to.equal(
-            snailTrailColor
+          expect(chroma(unitGSnailTrailStyles.backgroundColor).hex()).to.equal(
+            chroma(theme.snailTrailColor).hex()
           );
         });
         it("should have snail trail width according to anticipated start date and apparent end date", function () {
@@ -1347,8 +1349,8 @@ describe("React Integration: Poster", () => {
       });
       describe("H", function () {
         it("should have red background for snail trail", function () {
-          expect(unitHSnailTrailStyles.backgroundColor).to.equal(
-            snailTrailColor
+          expect(chroma(unitHSnailTrailStyles.backgroundColor).hex()).to.equal(
+            chroma(theme.snailTrailColor).hex()
           );
         });
         it("should have snail trail width according to anticipated start date and apparent end date", function () {
@@ -1388,8 +1390,8 @@ describe("React Integration: Poster", () => {
       });
       describe("I", function () {
         it("should have red background for snail trail", function () {
-          expect(unitISnailTrailStyles.backgroundColor).to.equal(
-            snailTrailColor
+          expect(chroma(unitISnailTrailStyles.backgroundColor).hex()).to.equal(
+            chroma(theme.snailTrailColor).hex()
           );
         });
         it("should have snail trail width according to anticipated start date and apparent end date", function () {
@@ -1419,8 +1421,8 @@ describe("React Integration: Poster", () => {
       });
       describe("J", function () {
         it("should have red background for snail trail", function () {
-          expect(unitJSnailTrailStyles.backgroundColor).to.equal(
-            snailTrailColor
+          expect(chroma(unitJSnailTrailStyles.backgroundColor).hex()).to.equal(
+            chroma(theme.snailTrailColor).hex()
           );
         });
         it("should have snail trail width according to anticipated start date and apparent end date", function () {
@@ -1450,8 +1452,8 @@ describe("React Integration: Poster", () => {
       });
       describe("K", function () {
         it("should have red background for snail trail", function () {
-          expect(unitKSnailTrailStyles.backgroundColor).to.equal(
-            snailTrailColor
+          expect(chroma(unitKSnailTrailStyles.backgroundColor).hex()).to.equal(
+            chroma(theme.snailTrailColor).hex()
           );
         });
         it("should have snail trail width according to anticipated start date and apparent end date", function () {
@@ -1481,8 +1483,8 @@ describe("React Integration: Poster", () => {
       });
       describe("L", function () {
         it("should have red background for snail trail", function () {
-          expect(unitLSnailTrailStyles.backgroundColor).to.equal(
-            snailTrailColor
+          expect(chroma(unitLSnailTrailStyles.backgroundColor).hex()).to.equal(
+            chroma(theme.snailTrailColor).hex()
           );
         });
         it("should have snail trail width according to anticipated start date and apparent end date", function () {

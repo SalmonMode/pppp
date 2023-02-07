@@ -1,6 +1,6 @@
 export const trackHeight = 60;
 export const trackGapHeight = 10;
-export const svgDateTopPadding = 100;
+export const svgDateTopPadding = 80;
 export const unitTaskTimeConversion = 500000;
 export const halfDayDuration: Duration = {
   hours: 12,

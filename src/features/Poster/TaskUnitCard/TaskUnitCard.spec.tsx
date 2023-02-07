@@ -1,5 +1,6 @@
 import { screen } from "@testing-library/react";
 import { expect } from "chai";
+import chroma from "chroma-js";
 import { add, sub } from "date-fns";
 import { theme } from "../../../app/theme";
 import { TaskUnit, TaskUnitCluster } from "../../../Relations";
@@ -279,9 +280,9 @@ describe("React Integration: TaskUnitCard", () => {
           });
           describe("First Item", function () {
             it("should have green prerequisites box", function () {
-              expect(firstPrereqBoxComputedStyles.backgroundColor).to.equal(
-                theme.prereqsAcceptedColor
-              );
+              expect(
+                chroma(firstPrereqBoxComputedStyles.backgroundColor).hex()
+              ).to.equal(chroma(theme.prereqsAcceptedColor).hex());
             });
             it("should have prerequisites box in the beginning", function () {
               expect(firstPrereqBoxIndex).to.equal(0);
@@ -305,8 +306,8 @@ describe("React Integration: TaskUnitCard", () => {
             });
             it("should have extension trail with pink background color in task box wrapper", function () {
               expect(
-                firstExtensionTrailComputedStyles.backgroundColor
-              ).to.equal(theme.extensionColor);
+                chroma(firstExtensionTrailComputedStyles.backgroundColor).hex()
+              ).to.equal(chroma(theme.extensionColor).hex());
             });
             it("should have extension trail lined up to grow in space left behind in task box wrapper", function () {
               expect(firstExtensionTrailComputedStyles.flexGrow).to.equal("1");
@@ -339,9 +340,9 @@ describe("React Integration: TaskUnitCard", () => {
           });
           describe("Third Item", function () {
             it("should have green review box", function () {
-              expect(firstReviewBoxComputedStyles.backgroundColor).to.equal(
-                theme.reviewAcceptedColor
-              );
+              expect(
+                chroma(firstReviewBoxComputedStyles.backgroundColor).hex()
+              ).to.equal(chroma(theme.reviewAcceptedColor).hex());
             });
             it("should have review box at the end", function () {
               expect(firstReviewBoxIndex).to.equal(2);
@@ -475,9 +476,9 @@ describe("React Integration: TaskUnitCard", () => {
         });
         describe("First Item", function () {
           it("should have green prerequisites box", function () {
-            expect(firstPrereqBoxComputedStyles.backgroundColor).to.equal(
-              theme.prereqsAcceptedColor
-            );
+            expect(
+              chroma(firstPrereqBoxComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.prereqsAcceptedColor).hex());
           });
           it("should have prerequisites box in the beginning", function () {
             expect(firstPrereqBoxIndex).to.equal(0);
@@ -500,9 +501,9 @@ describe("React Integration: TaskUnitCard", () => {
             );
           });
           it("should have extension trail with pink background color in task box wrapper", function () {
-            expect(firstExtensionTrailComputedStyles.backgroundColor).to.equal(
-              theme.extensionColor
-            );
+            expect(
+              chroma(firstExtensionTrailComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.extensionColor).hex());
           });
           it("should have extension trail lined up to grow in space left behind in task box wrapper", function () {
             expect(firstExtensionTrailComputedStyles.flexGrow).to.equal("1");
@@ -531,9 +532,9 @@ describe("React Integration: TaskUnitCard", () => {
         });
         describe("Third Item", function () {
           it("should have yellow review box", function () {
-            expect(firstReviewBoxComputedStyles.backgroundColor).to.equal(
-              theme.reviewMinorColor
-            );
+            expect(
+              chroma(firstReviewBoxComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.reviewMinorColor).hex());
           });
           it("should have review box as third item", function () {
             expect(firstReviewBoxIndex).to.equal(2);
@@ -567,9 +568,9 @@ describe("React Integration: TaskUnitCard", () => {
             );
           });
           it("should have extension trail with pink background color in second task box wrapper", function () {
-            expect(secondExtensionTrailComputedStyles.backgroundColor).to.equal(
-              theme.extensionColor
-            );
+            expect(
+              chroma(secondExtensionTrailComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.extensionColor).hex());
           });
           it("should have extension trail lined up to grow in space left behind in second task box wrapper", function () {
             expect(secondExtensionTrailComputedStyles.flexGrow).to.equal("1");
@@ -583,9 +584,9 @@ describe("React Integration: TaskUnitCard", () => {
         });
         describe("Fifth Item", function () {
           it("should have green review box", function () {
-            expect(secondReviewBoxComputedStyles.backgroundColor).to.equal(
-              theme.reviewAcceptedColor
-            );
+            expect(
+              chroma(secondReviewBoxComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.reviewAcceptedColor).hex());
           });
           it("should have review box as fifth item", function () {
             expect(secondReviewBoxIndex).to.equal(4);
@@ -782,9 +783,9 @@ describe("React Integration: TaskUnitCard", () => {
         });
         describe("First Item", function () {
           it("should have green prerequisites box", function () {
-            expect(firstPrereqBoxComputedStyles.backgroundColor).to.equal(
-              theme.prereqsAcceptedColor
-            );
+            expect(
+              chroma(firstPrereqBoxComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.prereqsAcceptedColor).hex());
           });
           it("should have prerequisites box in the beginning", function () {
             expect(firstPrereqBoxIndex).to.equal(0);
@@ -807,9 +808,9 @@ describe("React Integration: TaskUnitCard", () => {
             );
           });
           it("should have extension trail with pink background color in task box wrapper", function () {
-            expect(firstExtensionTrailComputedStyles.backgroundColor).to.equal(
-              theme.extensionColor
-            );
+            expect(
+              chroma(firstExtensionTrailComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.extensionColor).hex());
           });
           it("should have extension trail lined up to grow in space left behind in task box wrapper", function () {
             expect(firstExtensionTrailComputedStyles.flexGrow).to.equal("1");
@@ -838,9 +839,9 @@ describe("React Integration: TaskUnitCard", () => {
         });
         describe("Third Item", function () {
           it("should have black review box", function () {
-            expect(firstReviewBoxComputedStyles.backgroundColor).to.equal(
-              theme.reviewRebuildColor
-            );
+            expect(
+              chroma(firstReviewBoxComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.reviewRebuildColor).hex());
           });
           it("should have review box as third item", function () {
             expect(firstReviewBoxIndex).to.equal(2);
@@ -851,9 +852,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(secondExtensionalTrailIndex).to.equal(3);
           });
           it("should have extension trail with pink background", function () {
-            expect(secondExtensionTrailComputedStyles.backgroundColor).to.equal(
-              theme.extensionColor
-            );
+            expect(
+              chroma(secondExtensionTrailComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.extensionColor).hex());
           });
           it("should have second extension trail with a width according to time between review and task started", function () {
             const reviewEvent = relevantUnit.eventHistory[1];
@@ -878,9 +879,9 @@ describe("React Integration: TaskUnitCard", () => {
         });
         describe("Fifth Item", function () {
           it("should have green prerequisites box", function () {
-            expect(secondPrereqBoxComputedStyles.backgroundColor).to.equal(
-              theme.prereqsAcceptedColor
-            );
+            expect(
+              chroma(secondPrereqBoxComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.prereqsAcceptedColor).hex());
           });
           it("should have second prereq box as fifth item", function () {
             expect(secondPrereqBoxIndex).to.equal(4);
@@ -918,9 +919,9 @@ describe("React Integration: TaskUnitCard", () => {
             );
           });
           it("should have extension trail with pink background color in second task box wrapper", function () {
-            expect(thirdExtensionTrailComputedStyles.backgroundColor).to.equal(
-              theme.extensionColor
-            );
+            expect(
+              chroma(thirdExtensionTrailComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.extensionColor).hex());
           });
           it("should have extension trail lined up to grow in space left behind in second task box wrapper", function () {
             expect(thirdExtensionTrailComputedStyles.flexGrow).to.equal("1");
@@ -934,9 +935,9 @@ describe("React Integration: TaskUnitCard", () => {
         });
         describe("Seventh Item", function () {
           it("should have red review box", function () {
-            expect(secondReviewBoxComputedStyles.backgroundColor).to.equal(
-              theme.reviewMajorColor
-            );
+            expect(
+              chroma(secondReviewBoxComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.reviewMajorColor).hex());
           });
           it("should have second review box as seventh item", function () {
             expect(secondReviewBoxIndex).to.equal(6);
@@ -975,9 +976,9 @@ describe("React Integration: TaskUnitCard", () => {
             );
           });
           it("should have extension trail with pink background color in third task box wrapper", function () {
-            expect(fourthExtensionTrailComputedStyles.backgroundColor).to.equal(
-              theme.extensionColor
-            );
+            expect(
+              chroma(fourthExtensionTrailComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.extensionColor).hex());
           });
           it("should have extension trail lined up to grow in space left behind in third task box wrapper", function () {
             expect(fourthExtensionTrailComputedStyles.flexGrow).to.equal("1");
@@ -991,9 +992,9 @@ describe("React Integration: TaskUnitCard", () => {
         });
         describe("Ninth Item", function () {
           it("should have white review box", function () {
-            expect(thirdReviewBoxComputedStyles.backgroundColor).to.equal(
-              theme.reviewPendingColor
-            );
+            expect(
+              chroma(thirdReviewBoxComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.reviewPendingColor).hex());
           });
           it("should have third review box at the end", function () {
             expect(thirdReviewBoxIndex).to.equal(8);
@@ -1190,9 +1191,9 @@ describe("React Integration: TaskUnitCard", () => {
         });
         describe("First Item", function () {
           it("should have green prerequisites box", function () {
-            expect(firstPrereqBoxComputedStyles.backgroundColor).to.equal(
-              theme.prereqsAcceptedColor
-            );
+            expect(
+              chroma(firstPrereqBoxComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.prereqsAcceptedColor).hex());
           });
           it("should have prerequisites box in the beginning", function () {
             expect(firstPrereqBoxIndex).to.equal(0);
@@ -1215,9 +1216,9 @@ describe("React Integration: TaskUnitCard", () => {
             );
           });
           it("should have extension trail with pink background color in task box wrapper", function () {
-            expect(firstExtensionTrailComputedStyles.backgroundColor).to.equal(
-              theme.extensionColor
-            );
+            expect(
+              chroma(firstExtensionTrailComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.extensionColor).hex());
           });
           it("should have extension trail lined up to grow in space left behind in task box wrapper", function () {
             expect(firstExtensionTrailComputedStyles.flexGrow).to.equal("1");
@@ -1246,9 +1247,9 @@ describe("React Integration: TaskUnitCard", () => {
         });
         describe("Third Item", function () {
           it("should have red review box", function () {
-            expect(firstReviewBoxComputedStyles.backgroundColor).to.equal(
-              theme.reviewMajorColor
-            );
+            expect(
+              chroma(firstReviewBoxComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.reviewMajorColor).hex());
           });
           it("should have review box as third item", function () {
             expect(firstReviewBoxIndex).to.equal(2);
@@ -1286,9 +1287,9 @@ describe("React Integration: TaskUnitCard", () => {
             );
           });
           it("should have extension trail with pink background color in second task box wrapper", function () {
-            expect(secondExtensionTrailComputedStyles.backgroundColor).to.equal(
-              theme.extensionColor
-            );
+            expect(
+              chroma(secondExtensionTrailComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.extensionColor).hex());
           });
           it("should have extension trail lined up to grow in space left behind in second task box wrapper", function () {
             expect(secondExtensionTrailComputedStyles.flexGrow).to.equal("1");
@@ -1302,9 +1303,9 @@ describe("React Integration: TaskUnitCard", () => {
         });
         describe("Fifth Item", function () {
           it("should have black review box", function () {
-            expect(secondReviewBoxComputedStyles.backgroundColor).to.equal(
-              theme.reviewRebuildColor
-            );
+            expect(
+              chroma(secondReviewBoxComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.reviewRebuildColor).hex());
           });
           it("should have review box as fifth item", function () {
             expect(secondReviewBoxIndex).to.equal(4);
@@ -1315,9 +1316,9 @@ describe("React Integration: TaskUnitCard", () => {
             expect(thirdExtensionalTrailIndex).to.equal(5);
           });
           it("should have extension trail with pink background", function () {
-            expect(thirdExtensionTrailComputedStyles.backgroundColor).to.equal(
-              theme.extensionColor
-            );
+            expect(
+              chroma(thirdExtensionTrailComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.extensionColor).hex());
           });
           it("should have third extension trail with a width according to time between review and current time", function () {
             const reviewEvent = relevantUnit.eventHistory[2];
@@ -1337,9 +1338,9 @@ describe("React Integration: TaskUnitCard", () => {
         });
         describe("Seventh Item", function () {
           it("should have white prerequisites box", function () {
-            expect(secondPrereqBoxComputedStyles.backgroundColor).to.equal(
-              theme.prereqsPendingColor
-            );
+            expect(
+              chroma(secondPrereqBoxComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.prereqsPendingColor).hex());
           });
           it("should have second prereq box as seventh item", function () {
             expect(secondPrereqBoxIndex).to.equal(6);
@@ -1379,9 +1380,9 @@ describe("React Integration: TaskUnitCard", () => {
             );
           });
           it("should have extension trail with pink background color in third task box wrapper", function () {
-            expect(fourthExtensionTrailComputedStyles.backgroundColor).to.equal(
-              theme.extensionColor
-            );
+            expect(
+              chroma(fourthExtensionTrailComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.extensionColor).hex());
           });
           it("should have extension trail lined up to grow in space left behind in third task box wrapper", function () {
             expect(fourthExtensionTrailComputedStyles.flexGrow).to.equal("1");
@@ -1395,9 +1396,9 @@ describe("React Integration: TaskUnitCard", () => {
         });
         describe("Eighth Item", function () {
           it("should have white review box", function () {
-            expect(thirdReviewBoxComputedStyles.backgroundColor).to.equal(
-              theme.reviewPendingColor
-            );
+            expect(
+              chroma(thirdReviewBoxComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.reviewPendingColor).hex());
           });
           it("should have third review box at the end", function () {
             expect(thirdReviewBoxIndex).to.equal(8);
@@ -1488,9 +1489,9 @@ describe("React Integration: TaskUnitCard", () => {
         });
         describe("First Item", function () {
           it("should have green prerequisites box", function () {
-            expect(firstPrereqBoxComputedStyles.backgroundColor).to.equal(
-              theme.prereqsAcceptedColor
-            );
+            expect(
+              chroma(firstPrereqBoxComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.prereqsAcceptedColor).hex());
           });
           it("should have prerequisites box in the beginning", function () {
             expect(firstPrereqBoxIndex).to.equal(0);
@@ -1513,9 +1514,9 @@ describe("React Integration: TaskUnitCard", () => {
             );
           });
           it("should have extension trail with pink background color in task box wrapper", function () {
-            expect(firstExtensionTrailComputedStyles.backgroundColor).to.equal(
-              theme.extensionColor
-            );
+            expect(
+              chroma(firstExtensionTrailComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.extensionColor).hex());
           });
           it("should have extension trail lined up to grow in space left behind in task box wrapper", function () {
             expect(firstExtensionTrailComputedStyles.flexGrow).to.equal("1");
@@ -1542,9 +1543,9 @@ describe("React Integration: TaskUnitCard", () => {
         });
         describe("Third Item", function () {
           it("should have white review box", function () {
-            expect(firstReviewBoxComputedStyles.backgroundColor).to.equal(
-              theme.reviewPendingColor
-            );
+            expect(
+              chroma(firstReviewBoxComputedStyles.backgroundColor).hex()
+            ).to.equal(chroma(theme.reviewPendingColor).hex());
           });
           it("should have review box at the end", function () {
             expect(firstReviewBoxIndex).to.equal(2);

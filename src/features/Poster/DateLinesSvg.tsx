@@ -81,7 +81,7 @@ export default function DateLinesSvg({
             id="nowLineText"
             ref={textNode}
             x={nowLeft}
-            y={"3em"}
+            y={"2.5em"}
             css={nowDateLineLabelStyles}
           >
             Now
@@ -109,7 +109,7 @@ const svgStyles = css({
 const dateLinesGroupStyles = css({ position: "absolute", left: 0, top: 0 });
 const singleDateLineLabelStyles = css({
   fill: "black",
-  fontSize: 20,
+  fontSize: 18,
   textAnchor: "middle",
   pointerEvents: "all",
 });
@@ -119,7 +119,7 @@ const singleDateLineStyles = css({
   fill: "none",
 });
 const datedLineStyles = css(singleDateLineStyles, {
-  strokeDasharray: "10,10",
+  strokeDasharray: "12,12",
 });
 
 const nowDateLineLabelStyles = css(singleDateLineLabelStyles, {
