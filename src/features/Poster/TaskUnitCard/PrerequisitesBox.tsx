@@ -2,18 +2,30 @@ import { css } from "@emotion/react";
 import { theme } from "../../../app/theme";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import PendingOutlinedIcon from "@mui/icons-material/PendingOutlined";
+import Tooltip from "@mui/material/Tooltip";
 
 export default function PrerequisitesBox({ started }: { started: boolean }) {
-  const wrapperStyles = started ? acceptedStyles : pendingStyles;
-  const [className, IconComponent] = started
-    ? ["acceptedPrerequisiteBox", FactCheckOutlinedIcon]
-    : ["pendingPrerequisiteBox", PendingOutlinedIcon];
+  const [wrapperStyles, className, IconComponent, tooltipText] = started
+    ? [
+        acceptedStyles,
+        "acceptedPrerequisiteBox",
+        FactCheckOutlinedIcon,
+        "This task's prerequisites have been signed off on",
+      ]
+    : [
+        pendingStyles,
+        "pendingPrerequisiteBox",
+        PendingOutlinedIcon,
+        "This task's prerequisites have not been signed off on",
+      ];
   return (
-    <div css={wrapperStyles} className={`prerequisiteBox ${className}`}>
-      <div css={iconBoxStyles}>
-        <IconComponent fontSize="small" />
+    <Tooltip describeChild title={tooltipText} arrow>
+      <div css={wrapperStyles} className={`prerequisiteBox ${className}`}>
+        <div css={iconBoxStyles}>
+          <IconComponent fontSize="small" />
+        </div>
       </div>
-    </div>
+    </Tooltip>
   );
 }
 
