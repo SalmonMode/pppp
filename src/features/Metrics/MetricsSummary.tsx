@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { formatDuration } from "date-fns";
 import { useAppDispatch } from "../../app/hooks";
+import { theme } from "../../app/theme";
 import CoefficientHelpModal from "../CoefficientModal/CoefficientHelpModal";
 import { openCoefficientHelpModal } from "../CoefficientModal/coefficientHelpModalOpenSlice";
 import type { TaskMetrics } from "../Poster/taskUnitsSlice";
@@ -22,30 +23,43 @@ export default function MetricsSummary({ metrics }: { metrics: TaskMetrics }) {
 
   return (
     <div data-testid={"metrics-panel"} css={panelStyles}>
-      <Typography data-testid={"delays"}>
-        Delays: {formatDuration(metrics.cumulativeDelays)}
-      </Typography>
-      <Typography data-testid={"extensions"}>
-        Extensions: {formatDuration(metrics.cumulativeExtensions)}
-      </Typography>
-      <Typography data-testid={"process-time"}>
-        Average Process Time: {formatDuration(metrics.processTime)}
-      </Typography>
-      <div data-testid={"est-coefficient"} css={coefficientSummaryStyles}>
-        <Typography
-          data-testid={"est-coefficient-label"}
-          css={coefficientLabelStyles}
-        >
-          Correlation of Estimated to Actual Times: ~
-          {coefficient.toPrecision(5)}
+      <div data-testid={"process-time-group"} css={colorGuidedSummaryStyles}>
+        <div data-testid={"process-time-color"} css={colorGuideStyles}></div>
+        <Typography data-testid={"process-time"} css={colorGuidedLabelStyles}>
+          Average Process Time: {formatDuration(metrics.processTime)}
         </Typography>
+      </div>
+      <div data-testid={"delays-group"} css={colorGuidedSummaryStyles}>
+        <div data-testid={"delays-color"} css={delaysColorGuideStyles}></div>
+        <Typography data-testid={"delays"} css={colorGuidedLabelStyles}>
+          Delays: {formatDuration(metrics.cumulativeDelays)}
+        </Typography>
+      </div>
+      <div data-testid={"extensions-group"} css={colorGuidedSummaryStyles}>
+        <div
+          data-testid={"extensions-color"}
+          css={extensionsColorGuideStyles}
+        ></div>
+        <Typography data-testid={"extensions"} css={colorGuidedLabelStyles}>
+          Extensions: {formatDuration(metrics.cumulativeExtensions)}
+        </Typography>
+      </div>
+      <div data-testid={"est-coefficient"} css={colorGuidedSummaryStyles}>
         <div
           data-testid={"est-coefficient-color"}
-          css={coefficientColorStyles}
+          css={colorGuideStyles}
           style={{
             backgroundColor: colorScale(adjustedCoefficient).css(),
           }}
         ></div>
+        <Typography
+          data-testid={"est-coefficient-label"}
+          css={colorGuidedLabelStyles}
+        >
+          Correlation of Estimated to Actual Times: ~
+          {coefficient.toPrecision(5)}
+        </Typography>
+
         <Button onClick={(event) => dispatch(openCoefficientHelpModal(event))}>
           What's this?
         </Button>
@@ -59,15 +73,29 @@ const panelStyles = css({
   position: "relative",
   margin: 10,
 });
-const coefficientSummaryStyles = css({
+const colorGuidedSummaryStyles = css({
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+});
+const colorGuidedLabelStyles = css({
   display: "inline-block",
 });
-const coefficientLabelStyles = css({
-  display: "inline-block",
-});
-const coefficientColorStyles = css({
+const colorGuideStyles = css({
   width: 20,
   height: "1em",
   display: "inline-block",
   marginLeft: 10,
 });
+const delaysColorGuideStyles = css(
+  {
+    backgroundColor: theme.snailTrailColor,
+  },
+  colorGuideStyles
+);
+const extensionsColorGuideStyles = css(
+  {
+    backgroundColor: theme.extensionColor,
+  },
+  colorGuideStyles
+);
