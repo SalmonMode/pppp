@@ -1,6 +1,6 @@
 {
   "name": "pppp",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "Gerald Weinberg's PPPP brought to life.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -100,6 +100,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.7",
     "@reduxjs/toolkit": "^1.9.1",
     "@stdlib/stats-incr-mpcorr": "^0.0.6",
