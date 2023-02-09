@@ -292,9 +292,9 @@ describe("React Integration: TaskUnitCard", () => {
             it("should have labeled task box", function () {
               expect(labelText).to.equal(relevantUnit.name);
             });
-            it("should have task box with a width according to anticipated duration, and review and prereq box widths", function () {
+            it("should have task box with a flex basis according to anticipated duration, and review and prereq box widths", function () {
               expect(
-                Number(firstTaskBoxComputedStyles.width.slice(0, -2))
+                Number(firstTaskBoxComputedStyles.flexBasis.slice(0, -2))
               ).to.equal(
                 getPixelGapBetweenTimes(
                   relevantUnit.anticipatedEndDate.getTime(),
@@ -318,13 +318,13 @@ describe("React Integration: TaskUnitCard", () => {
             it("should have extension trail as last child in task box wrapper", function () {
               expect(firstExtensionalTrailIndex).to.equal(1);
             });
-            it("should have task box wrapper with a width according to actual duration, and review and prereq box widths", function () {
+            it("should have task box wrapper with a flex basis according to actual duration, and review and prereq box widths", function () {
               const precedingEvent = relevantUnit.eventHistory[0];
               const reviewEvent = relevantUnit.eventHistory[1];
               assertIsObject(precedingEvent);
               assertIsObject(reviewEvent);
               expect(
-                Number(firstTaskBoxWrapperComputedStyles.width.slice(0, -2))
+                Number(firstTaskBoxWrapperComputedStyles.flexBasis.slice(0, -2))
               ).to.equal(
                 getPixelGapBetweenTimes(
                   reviewEvent.date.getTime(),
@@ -336,6 +336,11 @@ describe("React Integration: TaskUnitCard", () => {
             });
             it("should have task box wrapper as the second item", function () {
               expect(firstTaskBoxWrapperIndex).to.equal(1);
+            });
+            it("should have task box wrapper that is willing to shrink", function () {
+              expect(
+                Number(firstTaskBoxWrapperComputedStyles.flexShrink)
+              ).to.equal(1);
             });
           });
           describe("Third Item", function () {
@@ -488,9 +493,9 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have labeled task box", function () {
             expect(firstLabelText).to.equal(relevantUnit.name);
           });
-          it("should have task box with a width according to anticipated duration, and review and prereq box widths", function () {
+          it("should have task box with a flex basis according to anticipated duration, and review and prereq box widths", function () {
             expect(
-              Number(firstTaskBoxComputedStyles.width.slice(0, -2))
+              Number(firstTaskBoxComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.anticipatedEndDate.getTime(),
@@ -514,9 +519,9 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have extension trail as last child in task box wrapper", function () {
             expect(firstExtensionalTrailIndex).to.equal(1);
           });
-          it("should have task box wrapper with a width according to anticipated duration, and review and prereq box widths", function () {
+          it("should have task box wrapper with a flex basis according to anticipated duration, and review and prereq box widths", function () {
             expect(
-              Number(firstTaskBoxWrapperComputedStyles.width.slice(0, -2))
+              Number(firstTaskBoxWrapperComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.anticipatedEndDate.getTime(),
@@ -528,6 +533,11 @@ describe("React Integration: TaskUnitCard", () => {
           });
           it("should have task box wrapper as the second item", function () {
             expect(firstTaskBoxWrapperIndex).to.equal(1);
+          });
+          it("should have task box wrapper that is willing to shrink", function () {
+            expect(
+              Number(firstTaskBoxWrapperComputedStyles.flexShrink)
+            ).to.equal(1);
           });
         });
         describe("Third Item", function () {
@@ -544,9 +554,9 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have second task box wrapper as the last item", function () {
             expect(secondTaskBoxWrapperIndex).to.equal(3);
           });
-          it("should have second task box wrapper with a width according to anticipated duration and review box width", function () {
+          it("should have second task box wrapper with a flex basis according to anticipated duration and review box width", function () {
             expect(
-              Number(secondTaskBoxWrapperComputedStyles.width.slice(0, -2))
+              Number(secondTaskBoxWrapperComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.anticipatedEndDate.getTime(),
@@ -557,9 +567,9 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have non labeled task box in second task box wrapper", function () {
             expect(secondLabelText).to.equal("");
           });
-          it("should have task box with a width according to anticipated duration and review box width in second task box wrapper", function () {
+          it("should have task box with a flex basis according to anticipated duration and review box width in second task box wrapper", function () {
             expect(
-              Number(secondTaskBoxComputedStyles.width.slice(0, -2))
+              Number(secondTaskBoxComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.anticipatedEndDate.getTime(),
@@ -795,9 +805,9 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have labeled task box", function () {
             expect(firstLabelText).to.equal(relevantUnit.name);
           });
-          it("should have task box with a width according to anticipated duration, and review and prereq box widths", function () {
+          it("should have task box with a flex basis according to anticipated duration, and review and prereq box widths", function () {
             expect(
-              Number(firstTaskBoxComputedStyles.width.slice(0, -2))
+              Number(firstTaskBoxComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.anticipatedEndDate.getTime(),
@@ -821,9 +831,9 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have extension trail as last child in task box wrapper", function () {
             expect(firstExtensionalTrailIndex).to.equal(1);
           });
-          it("should have task box wrapper with a width according to anticipated duration, and review and prereq box widths", function () {
+          it("should have task box wrapper with a flex basis according to anticipated duration, and review and prereq box widths", function () {
             expect(
-              Number(firstTaskBoxWrapperComputedStyles.width.slice(0, -2))
+              Number(firstTaskBoxWrapperComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.anticipatedEndDate.getTime(),
@@ -835,6 +845,11 @@ describe("React Integration: TaskUnitCard", () => {
           });
           it("should have task box wrapper as the second item", function () {
             expect(firstTaskBoxWrapperIndex).to.equal(1);
+          });
+          it("should have task box wrapper that is willing to shrink", function () {
+            expect(
+              Number(firstTaskBoxWrapperComputedStyles.flexShrink)
+            ).to.equal(1);
           });
         });
         describe("Third Item", function () {
@@ -891,9 +906,9 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have second task box wrapper as sixth item", function () {
             expect(secondTaskBoxWrapperIndex).to.equal(5);
           });
-          it("should have second task box wrapper with a width according to anticipated duration, and review and prereq box widths", function () {
+          it("should have second task box wrapper with a flex basis according to anticipated duration, and review and prereq box widths", function () {
             expect(
-              Number(secondTaskBoxWrapperComputedStyles.width.slice(0, -2))
+              Number(secondTaskBoxWrapperComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.anticipatedEndDate.getTime(),
@@ -906,9 +921,9 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have non labeled task box in second task box wrapper", function () {
             expect(secondLabelText).to.equal("");
           });
-          it("should have task box with a width according to anticipated duration in second task box wrapper, and review and prereq box widths", function () {
+          it("should have task box with a flex basis according to anticipated duration in second task box wrapper, and review and prereq box widths", function () {
             expect(
-              Number(secondTaskBoxComputedStyles.width.slice(0, -2))
+              Number(secondTaskBoxComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.anticipatedEndDate.getTime(),
@@ -947,12 +962,12 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have third task box wrapper as eighth item", function () {
             expect(thirdTaskBoxWrapperIndex).to.equal(7);
           });
-          it("should have third task box wrapper with a width according to start time, and current time", function () {
+          it("should have third task box wrapper with a flex basis according to start time, and current time", function () {
             // doesn't need to compensate for prereq box
             const reviewEvent = relevantUnit.eventHistory[3];
             assertIsObject(reviewEvent);
             expect(
-              Number(thirdTaskBoxWrapperComputedStyles.width.slice(0, -2))
+              Number(thirdTaskBoxWrapperComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(now.getTime(), reviewEvent.date.getTime())
             );
@@ -960,14 +975,14 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have non labeled task box in third task box wrapper", function () {
             expect(thirdLabelText).to.equal("");
           });
-          it("should have task box with a width according to actual duration and review box width in third task box wrapper", function () {
+          it("should have task box with a flex basis according to actual duration and review box width in third task box wrapper", function () {
             // doesn't need to compensate for prereq box
             const precedingEvent = relevantUnit.eventHistory[2];
             const reviewEvent = relevantUnit.eventHistory[3];
             assertIsObject(precedingEvent);
             assertIsObject(reviewEvent);
             expect(
-              Number(thirdTaskBoxComputedStyles.width.slice(0, -2))
+              Number(thirdTaskBoxComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 reviewEvent.date.getTime(),
@@ -1203,9 +1218,9 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have labeled task box", function () {
             expect(firstLabelText).to.equal(relevantUnit.name);
           });
-          it("should have task box with a width according to anticipated duration, and review and prereq box widths", function () {
+          it("should have task box with a flex basis according to anticipated duration, and review and prereq box widths", function () {
             expect(
-              Number(firstTaskBoxComputedStyles.width.slice(0, -2))
+              Number(firstTaskBoxComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.anticipatedEndDate.getTime(),
@@ -1229,9 +1244,9 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have extension trail as last child in task box wrapper", function () {
             expect(firstExtensionalTrailIndex).to.equal(1);
           });
-          it("should have task box wrapper with a width according to anticipated duration, and review and prereq box widths", function () {
+          it("should have task box wrapper with a flex basis according to anticipated duration, and review and prereq box widths", function () {
             expect(
-              Number(firstTaskBoxWrapperComputedStyles.width.slice(0, -2))
+              Number(firstTaskBoxWrapperComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.anticipatedEndDate.getTime(),
@@ -1243,6 +1258,11 @@ describe("React Integration: TaskUnitCard", () => {
           });
           it("should have task box wrapper as the second item", function () {
             expect(firstTaskBoxWrapperIndex).to.equal(1);
+          });
+          it("should have task box wrapper that is willing to shrink", function () {
+            expect(
+              Number(firstTaskBoxWrapperComputedStyles.flexShrink)
+            ).to.equal(1);
           });
         });
         describe("Third Item", function () {
@@ -1259,13 +1279,13 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have second task box wrapper as fourth item", function () {
             expect(secondTaskBoxWrapperIndex).to.equal(3);
           });
-          it("should have second task box wrapper with a width according to actual duration, and review box width", function () {
+          it("should have second task box wrapper with a flex basis according to actual duration, and review box width", function () {
             const precedingEvent = relevantUnit.eventHistory[1];
             const reviewEvent = relevantUnit.eventHistory[2];
             assertIsObject(precedingEvent);
             assertIsObject(reviewEvent);
             expect(
-              Number(secondTaskBoxWrapperComputedStyles.width.slice(0, -2))
+              Number(secondTaskBoxWrapperComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 reviewEvent.date.getTime(),
@@ -1276,9 +1296,9 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have non labeled task box in second task box wrapper", function () {
             expect(secondLabelText).to.equal("");
           });
-          it("should have task box with a width according to anticipated duration in second task box wrapper, and review box width", function () {
+          it("should have task box with a flex basis according to anticipated duration in second task box wrapper, and review box width", function () {
             expect(
-              Number(secondTaskBoxComputedStyles.width.slice(0, -2))
+              Number(secondTaskBoxComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.anticipatedEndDate.getTime(),
@@ -1350,10 +1370,10 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have third task box wrapper as eighth item", function () {
             expect(thirdTaskBoxWrapperIndex).to.equal(7);
           });
-          it("should have third task box wrapper with a width according to anticipated duration, and review and prereqs box widths", function () {
+          it("should have third task box wrapper with a flex basis according to anticipated duration, and review and prereqs box widths", function () {
             // doesn't need to compensate for prereq box
             expect(
-              Number(thirdTaskBoxWrapperComputedStyles.width.slice(0, -2))
+              Number(thirdTaskBoxWrapperComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.anticipatedEndDate.getTime(),
@@ -1366,10 +1386,10 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have non labeled task box in third task box wrapper", function () {
             expect(thirdLabelText).to.equal("");
           });
-          it("should have task box with a width according to anticipated duration, amd review and prereqs box widths in third task box wrapper", function () {
+          it("should have task box with a flex basis according to anticipated duration, amd review and prereqs box widths in third task box wrapper", function () {
             // doesn't need to compensate for prereq box
             expect(
-              Number(thirdTaskBoxComputedStyles.width.slice(0, -2))
+              Number(thirdTaskBoxComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.anticipatedEndDate.getTime(),
@@ -1501,9 +1521,9 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have labeled task box", function () {
             expect(labelText).to.equal(relevantUnit.name);
           });
-          it("should have task box with a width according to anticipated duration, and review and prereq box widths", function () {
+          it("should have task box with a flex basis according to anticipated duration, and review and prereq box widths", function () {
             expect(
-              Number(firstTaskBoxComputedStyles.width.slice(0, -2))
+              Number(firstTaskBoxComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.anticipatedEndDate.getTime(),
@@ -1527,9 +1547,9 @@ describe("React Integration: TaskUnitCard", () => {
           it("should have extension trail as last child in task box wrapper", function () {
             expect(firstExtensionalTrailIndex).to.equal(1);
           });
-          it("should have task box wrapper with a width according to start time, current time, and prereq box width", function () {
+          it("should have task box wrapper with a flex basis according to start time, current time, and prereq box width", function () {
             expect(
-              Number(firstTaskBoxWrapperComputedStyles.width.slice(0, -2))
+              Number(firstTaskBoxWrapperComputedStyles.flexBasis.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 now.getTime(),
@@ -1539,6 +1559,11 @@ describe("React Integration: TaskUnitCard", () => {
           });
           it("should have task box wrapper as the second item", function () {
             expect(firstTaskBoxWrapperIndex).to.equal(1);
+          });
+          it("should have task box wrapper that is willing to shrink", function () {
+            expect(
+              Number(firstTaskBoxWrapperComputedStyles.flexShrink)
+            ).to.equal(1);
           });
         });
         describe("Third Item", function () {

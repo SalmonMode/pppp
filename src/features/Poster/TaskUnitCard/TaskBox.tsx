@@ -24,14 +24,14 @@ export default function TaskBox({
       css={wrapperStyles}
       className={"taskBoxWrapper"}
       style={{
-        width: actualDurationWidth,
+        flexBasis: actualDurationWidth,
       }}
     >
       <div
         css={boxStyles}
         className={"taskBox"}
         style={{
-          width: expectedDurationWidth,
+          flexBasis: expectedDurationWidth,
         }}
       >
         <Typography>{label}</Typography>
@@ -45,7 +45,7 @@ const wrapperStyles = css({
   display: "flex",
   height: "100%",
   flexDirection: "row",
-  flexShrink: 0,
+  flexShrink: 1,
 });
 const boxStyles = css({
   display: "flex",
