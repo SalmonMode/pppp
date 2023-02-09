@@ -104,7 +104,7 @@ export function turnClusterIntoState(
   let coefficient: number | null = 0;
   const window = 20;
   const accumulator = incrmpcorr(window);
-  for (let unit of units) {
+  for (const unit of units) {
     const currentDelayInSeconds = differenceInSeconds(
       unit.apparentStartDate,
       unit.anticipatedStartDate

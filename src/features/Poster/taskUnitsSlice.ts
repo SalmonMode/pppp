@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { TaskUnit } from "../../Relations";
 import type { TaskUnitDetails } from "../../types";
 import { getSeedData } from "./seedData";

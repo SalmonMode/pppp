@@ -2,10 +2,7 @@ import { css } from "@emotion/react";
 import { assertIsObject } from "../../typePredicates";
 import type { TaskUnitDetails } from "../../types";
 import SnailTrailTrack from "./TaskUnitCard/SnailTrailTrack";
-import type {
-  TaskUnitsLoadingCompleteState,
-  TaskUnitsState,
-} from "./taskUnitsSlice";
+import type { TaskUnitsLoadingCompleteState } from "./taskUnitsSlice";
 
 export default function SnailTrailContainer({
   taskUnits,
