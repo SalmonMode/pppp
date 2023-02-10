@@ -7,8 +7,8 @@ import MetricsSummary from "./MetricsSummary";
 
 use(chaiAsPromised);
 
-describe("React Integration: MetricsSummary", () => {
-  describe("Normal Coefficient", () => {
+describe("React Integration: MetricsSummary", function (): void {
+  describe("Normal Coefficient", function (): void {
     beforeEach(function (): void {
       renderWithProvider(
         <MetricsSummary
@@ -49,7 +49,7 @@ describe("React Integration: MetricsSummary", () => {
         .rejected;
     });
   });
-  describe("NaN Coefficient", () => {
+  describe("NaN Coefficient", function (): void {
     // This can happen if all the estimated times for each task is the same number. This happens because the formula to
     // determine the coefficient must find the covariance of each set of numbers (apparent vs anticipated). If it's all
     // the same number, then there is no variance, i.e. 0. And dividing by zero is impossible.
@@ -89,7 +89,7 @@ describe("React Integration: MetricsSummary", () => {
       await screen.findByTestId(`coefficient-chart`);
     });
   });
-  describe("Coefficient Modal Button Clicked", () => {
+  describe("Coefficient Modal Button Clicked", function (): void {
     beforeEach(async function (): Promise<void> {
       renderWithProvider(
         <MetricsSummary
@@ -113,7 +113,7 @@ describe("React Integration: MetricsSummary", () => {
       );
     });
   });
-  describe("Coefficient Modal Dismissed", () => {
+  describe("Coefficient Modal Dismissed", function (): void {
     beforeEach(async function (): Promise<void> {
       renderWithProvider(
         <MetricsSummary

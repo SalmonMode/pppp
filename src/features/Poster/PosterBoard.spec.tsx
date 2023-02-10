@@ -4,8 +4,8 @@ import { createSandbox, SinonSandbox } from "sinon";
 import { renderWithProvider } from "../../Utility/TestRenderers";
 import PosterBoard from "./PosterBoard";
 
-describe("React Integration: PosterBoard", () => {
-  describe("Initial State", () => {
+describe("React Integration: PosterBoard", function (): void {
+  describe("Initial State", function (): void {
     let sandbox: SinonSandbox;
     beforeEach(function (): void {
       sandbox = createSandbox();

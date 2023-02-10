@@ -22,8 +22,8 @@ const halfDayWidth = getPixelGapBetweenTimes(
   0
 );
 
-describe("React Integration: Poster", () => {
-  describe("Initial State", () => {
+describe("React Integration: Poster", function (): void {
+  describe("Initial State", function (): void {
     let sandbox: SinonSandbox;
     beforeEach(function (): void {
       sandbox = createSandbox();
@@ -45,7 +45,7 @@ describe("React Integration: Poster", () => {
     });
   });
 
-  describe("Chaotic Tracks", () => {
+  describe("Chaotic Tracks", function (): void {
     let sandbox: SinonSandbox;
     let scrollStub: SinonStub;
     let initialState: TaskUnitsLoadingCompleteState;
@@ -1927,7 +1927,7 @@ describe("React Integration: Poster", () => {
       });
     });
   });
-  describe("Reusing Tracks (Different Path Heights)", () => {
+  describe("Reusing Tracks (Different Path Heights)", function (): void {
     let sandbox: SinonSandbox;
     const firstDate = add(now, { days: 1 });
     const secondDate = add(firstDate, { days: 1 });

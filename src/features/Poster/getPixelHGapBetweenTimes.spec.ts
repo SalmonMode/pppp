@@ -4,8 +4,8 @@ import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
 
 const now = new Date();
 
-describe("getPixelGapBetweenTimes", () => {
-  describe("Half Day", () => {
+describe("getPixelGapBetweenTimes", function (): void {
+  describe("Half Day", function (): void {
     it("should be 86.4", async function (): Promise<void> {
       const halfDayWidth = getPixelGapBetweenTimes(
         now.getTime() - sub(now, { hours: 12 }).getTime(),
@@ -14,7 +14,7 @@ describe("getPixelGapBetweenTimes", () => {
       expect(halfDayWidth).to.equal(86.4);
     });
   });
-  describe("Full Day", () => {
+  describe("Full Day", function (): void {
     it("should be 172.8", async function (): Promise<void> {
       const fullDayWidth = getPixelGapBetweenTimes(
         now.getTime() - sub(sub(now, { hours: 12 }), { hours: 12 }).getTime(),

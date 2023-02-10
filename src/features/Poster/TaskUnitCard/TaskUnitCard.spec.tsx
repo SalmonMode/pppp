@@ -23,8 +23,8 @@ const seventhDate = add(sixthDate, { days: 1 });
 const eighthDate = add(seventhDate, { days: 1 });
 const ninthDate = add(eighthDate, { days: 1 });
 
-describe("React Integration: TaskUnitCard", () => {
-  describe("Chaotic Tracks", () => {
+describe("React Integration: TaskUnitCard", function (): void {
+  describe("Chaotic Tracks", function (): void {
     let initialState: TaskUnitsLoadingCompleteState;
 
     const unitA = new TaskUnit(now, [], firstDate, secondDate, "A", [
@@ -181,7 +181,7 @@ describe("React Integration: TaskUnitCard", () => {
 
       initialState = turnClusterIntoState(cluster);
     });
-    describe("Cards", () => {
+    describe("Cards", function (): void {
       /**
        * Units with a simple history. These only have 2 events: TaskIterationStarted, and ReviewedAndAccepted. As such,
        * their test structures are identical.
@@ -197,7 +197,7 @@ describe("React Integration: TaskUnitCard", () => {
         unitK,
       ];
       for (const relevantUnit of standardUnits) {
-        describe(relevantUnit.name, () => {
+        describe(relevantUnit.name, function (): void {
           let boxComputedStyles: CSSStyleDeclaration;
           let cardComputedStyles: CSSStyleDeclaration;
           let labelText: string;
@@ -355,7 +355,7 @@ describe("React Integration: TaskUnitCard", () => {
           });
         });
       }
-      describe("B", () => {
+      describe("B", function (): void {
         let relevantUnit: TaskUnit;
         let boxComputedStyles: CSSStyleDeclaration;
         let cardComputedStyles: CSSStyleDeclaration;
@@ -603,7 +603,7 @@ describe("React Integration: TaskUnitCard", () => {
           });
         });
       });
-      describe("D", () => {
+      describe("D", function (): void {
         let relevantUnit: TaskUnit;
         let boxComputedStyles: CSSStyleDeclaration;
         let cardComputedStyles: CSSStyleDeclaration;
@@ -1016,7 +1016,7 @@ describe("React Integration: TaskUnitCard", () => {
           });
         });
       });
-      describe("H", () => {
+      describe("H", function (): void {
         let relevantUnit: TaskUnit;
         let boxComputedStyles: CSSStyleDeclaration;
         let cardComputedStyles: CSSStyleDeclaration;
@@ -1425,7 +1425,7 @@ describe("React Integration: TaskUnitCard", () => {
           });
         });
       });
-      describe("L", () => {
+      describe("L", function (): void {
         let relevantUnit: TaskUnit;
         let boxComputedStyles: CSSStyleDeclaration;
         let cardComputedStyles: CSSStyleDeclaration;
