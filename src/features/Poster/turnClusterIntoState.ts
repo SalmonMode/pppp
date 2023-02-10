@@ -1,32 +1,31 @@
-import GraphableChainPath from "../../Graphing/GraphableChainPath";
 import incrmpcorr from "@stdlib/stats-incr-mpcorr";
-import type { TaskUnitCluster } from "../../Relations";
-import type {
-  TaskUnitsState,
-  TaskUnitMap,
-  TrackToUnitMap,
-  TaskUnitsLoadingCompleteState,
-  TaskMetrics,
-} from "./taskUnitsSlice";
 import { differenceInSeconds } from "date-fns";
+import type { ChainPath, TaskUnit, TaskUnitCluster } from "../../Relations";
 import { assertIsNumber } from "../../typePredicates";
+import type { InterpolatedTaskEvent, SerializableTaskEvent } from "../../types";
+import type {
+  TaskMetrics,
+  TaskUnitMap,
+  TaskUnitsLoadingCompleteState,
+  TaskUnitsState,
+  TrackToUnitMap,
+} from "./taskUnitsSlice";
 
 export function turnClusterIntoState(
   cluster: TaskUnitCluster
 ): TaskUnitsLoadingCompleteState {
-  const totalPresence = cluster.paths.reduce(
-    (acc: number, path) => acc + path.presenceTime,
+  const totalPresence = cluster.paths.reduce<number>(
+    (acc: number, path: ChainPath): number => acc + path.presenceTime,
     0
   );
   const halfwayPresencePoint = totalPresence / 2;
 
-  let trackCurrentlyBeingBuilt: GraphableChainPath[] = [];
-  const pathTracks: GraphableChainPath[][] = [trackCurrentlyBeingBuilt];
+  let trackCurrentlyBeingBuilt: ChainPath[] = [];
+  const pathTracks: ChainPath[][] = [trackCurrentlyBeingBuilt];
   for (const path of cluster.pathsSortedByRanking) {
-    const graphablePath = new GraphableChainPath(path);
     let overlapFound = false;
     for (const trackedPath of trackCurrentlyBeingBuilt) {
-      if (path.overlapsWithPath(trackedPath.path)) {
+      if (path.overlapsWithPath(trackedPath)) {
         // Overlap found, meaning it cannot fit on the same track, so track and break from the innermost loop.
         overlapFound = true;
         break;
@@ -34,34 +33,36 @@ export function turnClusterIntoState(
     }
     if (overlapFound) {
       // Can't fit on the same track so start building the next
-      trackCurrentlyBeingBuilt = [graphablePath];
+      trackCurrentlyBeingBuilt = [path];
       pathTracks.push(trackCurrentlyBeingBuilt);
       continue;
     }
     // No overlap, so it can go in the same track
-    trackCurrentlyBeingBuilt.push(graphablePath);
+    trackCurrentlyBeingBuilt.push(path);
   }
   let presenceSoFar = 0;
   let unitTracksSoFar = 0;
 
   const unitCoords: TaskUnitMap = {};
   for (const track of pathTracks) {
-    const pathsHeights = track.map((path) => path.path.tracks.length);
+    const pathsHeights = track.map(
+      (path: ChainPath): number => path.tracks.length
+    );
 
     const tallestPathHeight = Math.max(...pathsHeights);
     const beforeHalfwayPoint = presenceSoFar < halfwayPresencePoint;
-    track.forEach((path) => {
-      while (path.path.tracks.length < tallestPathHeight) {
+    track.forEach((path: ChainPath): void => {
+      while (path.tracks.length < tallestPathHeight) {
         // fill with empty arrays to make positioning and determining coordinates easier when above the center point.
         // Otherwise, tracks won't be positioned towards the bottom, and we'd have to do more expensive calculations to
         // find the positions of each unit.
-        path.path.tracks.push([]);
+        path.tracks.push([]);
       }
       if (beforeHalfwayPoint) {
         // flip them around because we're above the center point
-        path.path.tracks.reverse();
+        path.tracks.reverse();
       }
-      path.path.tracks.forEach((track, unitTrackIndex) => {
+      path.tracks.forEach((track: TaskUnit[], unitTrackIndex: number): void => {
         for (const unit of track) {
           unitCoords[unit.id] = {
             anticipatedStartTime: unit.anticipatedStartDate.getTime(),
@@ -71,19 +72,25 @@ export function turnClusterIntoState(
             trackIndex: unitTracksSoFar + unitTrackIndex,
             name: unit.name,
             id: unit.id,
-            directDependencies: [...unit.directDependencies].map((u) => u.id),
-            eventHistory: unit.interpolatedEventHistory.map((event) => ({
-              type: event.type,
-              time: event.date.getTime(),
-              projected: event.projected,
-            })),
+            directDependencies: [...unit.directDependencies].map(
+              (u: TaskUnit): string => u.id
+            ),
+            eventHistory: unit.interpolatedEventHistory.map(
+              (event: InterpolatedTaskEvent): SerializableTaskEvent => ({
+                type: event.type,
+                time: event.date.getTime(),
+                projected: event.projected,
+              })
+            ),
           };
         }
       });
     });
     // These steps must be done outside the track.forEach to make sure the paths in the track stay together
     unitTracksSoFar += tallestPathHeight;
-    track.forEach((path) => (presenceSoFar += path.path.presenceTime));
+    track.forEach((path: ChainPath): void => {
+      presenceSoFar += path.presenceTime;
+    });
   }
 
   const trackMap: TrackToUnitMap = [];

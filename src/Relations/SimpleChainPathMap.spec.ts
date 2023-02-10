@@ -3,13 +3,13 @@ import { NoSuchChainPathError } from "../Error";
 import type { InterconnectionStrengthMapping, ResourceMap } from "../types";
 import { ChainPath, SimpleChainMap, SimpleChainPathMap, TaskUnit } from "./";
 
-describe("SimpleChainPathMap", function () {
-  describe("No Units", function () {
-    it("should throw RangeError", function () {
+describe("SimpleChainPathMap", function (): void {
+  describe("No Units", function (): void {
+    it("should throw RangeError", function (): void {
       expect(() => new SimpleChainMap([])).to.throw(RangeError);
     });
   });
-  describe("Many Paths", function () {
+  describe("Many Paths", function (): void {
     let pathA: ChainPath;
     let pathB: ChainPath;
     let pathC: ChainPath;
@@ -17,7 +17,7 @@ describe("SimpleChainPathMap", function () {
     let pathE: ChainPath;
     let pathF: ChainPath;
     let pathMap: SimpleChainPathMap;
-    before(function () {
+    before(function (): void {
       const now = new Date();
       const firstDate = new Date(now.getTime() - 100000);
       const secondDate = new Date(firstDate.getTime() + 1000);
@@ -169,23 +169,29 @@ describe("SimpleChainPathMap", function () {
         pathD,
         pathE,
         pathF,
-      ].reduce((acc, path) => {
-        return { ...acc, [path.id]: path };
-      }, {});
+      ].reduce<ResourceMap<ChainPath>>(
+        (
+          acc: ResourceMap<ChainPath>,
+          path: ChainPath
+        ): ResourceMap<ChainPath> => {
+          return { ...acc, [path.id]: path };
+        },
+        {}
+      );
       pathMap = new SimpleChainPathMap(pathMapping, chainMap);
     });
-    it("should provide correct path for ID", function () {
+    it("should provide correct path for ID", function (): void {
       expect(pathMap.getPathById(pathA.id)).to.equal(pathA);
     });
-    it("should throw NoSuchChainPathError when unrecognized path by id", function () {
+    it("should throw NoSuchChainPathError when unrecognized path by id", function (): void {
       expect(() => pathMap.getPathById("abc")).to.throw(NoSuchChainPathError);
     });
-    it("should throw NoSuchChainPathError when getting connections of unrecognized path id", function () {
+    it("should throw NoSuchChainPathError when getting connections of unrecognized path id", function (): void {
       expect(() => pathMap.getConnectionsForPathById("abc")).to.throw(
         NoSuchChainPathError
       );
     });
-    it("should have correct number of connections between paths", function () {
+    it("should have correct number of connections between paths", function (): void {
       const expectedMap: InterconnectionStrengthMapping = {
         [pathA.id]: {
           [pathC.id]: 2,

@@ -1,4 +1,8 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  ActionReducerMapBuilder,
+  createAsyncThunk,
+  createSlice,
+} from "@reduxjs/toolkit";
 import type { TaskUnit } from "../../Relations";
 import type { TaskUnitDetails } from "../../types";
 import { getSeedData } from "./seedData";
@@ -33,7 +37,10 @@ const initialState: TaskUnitsState = {
   loading: true,
 };
 
-export const generateCluster = createAsyncThunk("tasks/generate", async () => {
+export const generateCluster = createAsyncThunk<
+  TaskUnitsLoadingCompleteState,
+  void
+>("tasks/generate", async (): Promise<TaskUnitsLoadingCompleteState> => {
   const seedData = getSeedData();
   return turnClusterIntoState(seedData);
 });
@@ -46,7 +53,7 @@ export const taskUnitsSlice = createSlice<
   name: "tasks",
   initialState,
   reducers: {},
-  extraReducers: (builder) => {
+  extraReducers: (builder: ActionReducerMapBuilder<TaskUnitsState>): void => {
     builder.addCase(generateCluster.pending, (state) => {
       state.loading = true;
     });

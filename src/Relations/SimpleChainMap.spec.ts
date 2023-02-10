@@ -12,33 +12,33 @@ const fifthDate = new Date(fourthDate.getTime() + 1000);
 const sixthDate = new Date(fifthDate.getTime() + 1000);
 const seventhDate = new Date(sixthDate.getTime() + 1000);
 
-describe("SimpleChainMap", function () {
-  describe("No Units", function () {
-    it("should throw RangeError", function () {
+describe("SimpleChainMap", function (): void {
+  describe("No Units", function (): void {
+    it("should throw RangeError", function (): void {
       expect(() => new SimpleChainMap([])).to.throw(RangeError);
     });
   });
-  describe("One Unit", function () {
+  describe("One Unit", function (): void {
     let unit: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unit = new TaskUnit(now, [], firstDate, secondDate);
       chainMap = new SimpleChainMap([unit]);
     });
-    it("should have one chain", function () {
+    it("should have one chain", function (): void {
       expect(chainMap.chains.length).to.equal(1);
     });
-    it("should get chain of unit", function () {
+    it("should get chain of unit", function (): void {
       const expectedChain = chainMap.chains[0];
       assertIsObject(expectedChain);
       expect(chainMap.getChainOfUnit(unit)).to.equal(expectedChain);
     });
-    it("should throw NoSuchChainError when getting chain of unrecognized unit", function () {
+    it("should throw NoSuchChainError when getting chain of unrecognized unit", function (): void {
       expect(() =>
         chainMap.getChainOfUnit(new TaskUnit(now, [], firstDate, secondDate))
       ).to.throw(NoSuchChainError);
     });
-    it("should throw NoSuchChainError when getting chains connected to unrecognized chain", function () {
+    it("should throw NoSuchChainError when getting chains connected to unrecognized chain", function (): void {
       expect(() =>
         chainMap.getChainsConnectedToChain(
           new IsolatedDependencyChain([
@@ -48,7 +48,7 @@ describe("SimpleChainMap", function () {
       ).to.throw(NoSuchChainError);
     });
   });
-  describe("Two Units in One Chain, Passing Non True Head", function () {
+  describe("Two Units in One Chain, Passing Non True Head", function (): void {
     /**
      * ```text
      *  ┏━━━┓_____┏━━━┓
@@ -57,17 +57,17 @@ describe("SimpleChainMap", function () {
      */
     let unitA: TaskUnit;
     let unitB: TaskUnit;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
     });
-    it("should throw DependencyOrderError", function () {
+    it("should throw DependencyOrderError", function (): void {
       expect(() => new SimpleChainMap([unitA, unitB])).to.throw(
         DependencyOrderError
       );
     });
   });
-  describe("Two Units in One Chain", function () {
+  describe("Two Units in One Chain", function (): void {
     /**
      * ```text
      *  ┏━━━┓_____┏━━━┓
@@ -77,21 +77,21 @@ describe("SimpleChainMap", function () {
     let unitA: TaskUnit;
     let unitB: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
       chainMap = new SimpleChainMap([unitB]);
     });
-    it("should have one chain", function () {
+    it("should have one chain", function (): void {
       expect(chainMap.chains.length).to.equal(1);
     });
-    it("should get same chain for unitA and unitB", function () {
+    it("should get same chain for unitA and unitB", function (): void {
       expect(chainMap.getChainOfUnit(unitA)).to.equal(
         chainMap.getChainOfUnit(unitB)
       );
     });
   });
-  describe("Three Units in One Chain", function () {
+  describe("Three Units in One Chain", function (): void {
     /**
      * ```text
      *  ┏━━━┓_____┏━━━┓_____┏━━━┓
@@ -102,22 +102,22 @@ describe("SimpleChainMap", function () {
     let unitB: TaskUnit;
     let unitC: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
       unitC = new TaskUnit(now, [unitB], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitC]);
     });
-    it("should have one chain", function () {
+    it("should have one chain", function (): void {
       expect(chainMap.chains.length).to.equal(1);
     });
-    it("should get same chain for unitA, unitB, and unitC", function () {
+    it("should get same chain for unitA, unitB, and unitC", function (): void {
       expect(chainMap.getChainOfUnit(unitA))
         .to.equal(chainMap.getChainOfUnit(unitB))
         .and.to.equal(chainMap.getChainOfUnit(unitC));
     });
   });
-  describe("Fork", function () {
+  describe("Fork", function (): void {
     /**
      * ```text
      *         ┏━━━┓
@@ -132,38 +132,38 @@ describe("SimpleChainMap", function () {
     let unitB: TaskUnit;
     let unitC: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
       unitC = new TaskUnit(now, [unitA], secondDate, thirdDate);
       chainMap = new SimpleChainMap([unitB, unitC]);
     });
-    it("should have 3 chains", function () {
+    it("should have 3 chains", function (): void {
       expect(chainMap.chains.length).to.equal(3);
     });
-    it("should provide head chains for B and C", function () {
+    it("should provide head chains for B and C", function (): void {
       expect(chainMap.getHeadChains()).to.have.members([
         chainMap.getChainOfUnit(unitB),
         chainMap.getChainOfUnit(unitC),
       ]);
     });
-    it("should have different chain for unitA than the other units", function () {
+    it("should have different chain for unitA than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitA))
         .to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC));
     });
-    it("should have different chain for unitB than the other units", function () {
+    it("should have different chain for unitB than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitB))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC));
     });
-    it("should have different chain for unitC than the other units", function () {
+    it("should have different chain for unitC than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitC))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB));
     });
-    describe("Connections", function () {
-      it("should have chain for unitA connected to chain for unitB", function () {
+    describe("Connections", function (): void {
+      it("should have chain for unitA connected to chain for unitB", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -171,7 +171,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should have chain for unitA connected to chain for unitC", function () {
+      it("should have chain for unitA connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -179,7 +179,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitB connected to chain for unitC", function () {
+      it("should not have chain for unitB connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -189,7 +189,7 @@ describe("SimpleChainMap", function () {
       });
     });
   });
-  describe("One Unit Chain Before Fork", function () {
+  describe("One Unit Chain Before Fork", function (): void {
     /**
      * ```text
      *                   ┏━━━┓
@@ -205,20 +205,20 @@ describe("SimpleChainMap", function () {
     let unitC: TaskUnit;
     let unitD: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
       unitC = new TaskUnit(now, [unitB], thirdDate, fourthDate);
       unitD = new TaskUnit(now, [unitB], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitC, unitD]);
     });
-    it("should provide all units", function () {
+    it("should provide all units", function (): void {
       expect(chainMap.units).to.have.members([unitA, unitB, unitC, unitD]);
     });
-    it("should have 4 chains", function () {
+    it("should have 4 chains", function (): void {
       expect(chainMap.chains.length).to.equal(4);
     });
-    it("should have provide chains for A and B for dependencies of C", function () {
+    it("should have provide chains for A and B for dependencies of C", function (): void {
       expect([
         ...chainMap.getAllDependenciesOfChain(chainMap.getChainOfUnit(unitC)),
       ]).to.have.members([
@@ -226,7 +226,7 @@ describe("SimpleChainMap", function () {
         chainMap.getChainOfUnit(unitB),
       ]);
     });
-    it("should have provide chains for A and B for dependencies of D", function () {
+    it("should have provide chains for A and B for dependencies of D", function (): void {
       expect([
         ...chainMap.getAllDependenciesOfChain(chainMap.getChainOfUnit(unitD)),
       ]).to.have.members([
@@ -234,22 +234,22 @@ describe("SimpleChainMap", function () {
         chainMap.getChainOfUnit(unitB),
       ]);
     });
-    it("should have provide chain for B for chains connected to C", function () {
+    it("should have provide chain for B for chains connected to C", function (): void {
       expect([
         ...chainMap.getChainsConnectedToChain(chainMap.getChainOfUnit(unitC)),
       ]).to.have.members([chainMap.getChainOfUnit(unitB)]);
     });
-    it("should have provide chain for B for chains connected to D", function () {
+    it("should have provide chain for B for chains connected to D", function (): void {
       expect([
         ...chainMap.getChainsConnectedToChain(chainMap.getChainOfUnit(unitD)),
       ]).to.have.members([chainMap.getChainOfUnit(unitB)]);
     });
-    it("should have provide chain for B for chains connected to A", function () {
+    it("should have provide chain for B for chains connected to A", function (): void {
       expect([
         ...chainMap.getChainsConnectedToChain(chainMap.getChainOfUnit(unitA)),
       ]).to.have.members([chainMap.getChainOfUnit(unitB)]);
     });
-    it("should have provide chain for A, C, and D for chains connected to B", function () {
+    it("should have provide chain for A, C, and D for chains connected to B", function (): void {
       expect([
         ...chainMap.getChainsConnectedToChain(chainMap.getChainOfUnit(unitB)),
       ]).to.have.members([
@@ -258,32 +258,32 @@ describe("SimpleChainMap", function () {
         chainMap.getChainOfUnit(unitD),
       ]);
     });
-    it("should have different chain for unitA than the other units", function () {
+    it("should have different chain for unitA than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitA))
         .to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD));
     });
-    it("should have different chain for unitB than the other units", function () {
+    it("should have different chain for unitB than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitB))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD));
     });
-    it("should have different chain for unitC than the other units", function () {
+    it("should have different chain for unitC than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitC))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD));
     });
-    it("should have different chain for unitD than the other units", function () {
+    it("should have different chain for unitD than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitD))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC));
     });
-    describe("Connections", function () {
-      it("should have chain for unitA connected to chain for unitB", function () {
+    describe("Connections", function (): void {
+      it("should have chain for unitA connected to chain for unitB", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -291,7 +291,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitA connected to chain for unitC", function () {
+      it("should not have chain for unitA connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -299,7 +299,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitA connected to chain for unitD", function () {
+      it("should not have chain for unitA connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -307,7 +307,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitB connected to chain for unitC", function () {
+      it("should have chain for unitB connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -315,7 +315,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should have chain for unitB connected to chain for unitD", function () {
+      it("should have chain for unitB connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -323,7 +323,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitC connected to chain for unitD", function () {
+      it("should not have chain for unitC connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -333,7 +333,7 @@ describe("SimpleChainMap", function () {
       });
     });
   });
-  describe("One Unit Chain Before Fork, With Earlier Branch Being Chainable", function () {
+  describe("One Unit Chain Before Fork, With Earlier Branch Being Chainable", function (): void {
     /**
      * ```text
      *                   ┏━━━┓___┏━━━┓
@@ -350,7 +350,7 @@ describe("SimpleChainMap", function () {
     let unitD: TaskUnit;
     let unitE: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
       unitC = new TaskUnit(now, [unitB], thirdDate, fourthDate);
@@ -358,37 +358,37 @@ describe("SimpleChainMap", function () {
       unitE = new TaskUnit(now, [unitC], fourthDate, fifthDate);
       chainMap = new SimpleChainMap([unitD, unitE]);
     });
-    it("should have 4 chains", function () {
+    it("should have 4 chains", function (): void {
       expect(chainMap.chains.length).to.equal(4);
     });
-    it("should have different chain for unitA than the other units", function () {
+    it("should have different chain for unitA than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitA))
         .to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD))
         .and.to.not.equal(chainMap.getChainOfUnit(unitE));
     });
-    it("should have different chain for unitB than the other units", function () {
+    it("should have different chain for unitB than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitB))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD))
         .and.to.not.equal(chainMap.getChainOfUnit(unitE));
     });
-    it("should have different chain for unitD than the other units", function () {
+    it("should have different chain for unitD than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitD))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitE));
     });
-    it("should have same chain for unitC and unitE", function () {
+    it("should have same chain for unitC and unitE", function (): void {
       expect(chainMap.getChainOfUnit(unitC)).to.equal(
         chainMap.getChainOfUnit(unitE)
       );
     });
-    describe("Connections", function () {
-      it("should have chain for unitA connected to chain for unitB", function () {
+    describe("Connections", function (): void {
+      it("should have chain for unitA connected to chain for unitB", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -396,7 +396,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitA connected to chain for unitC and unitE", function () {
+      it("should not have chain for unitA connected to chain for unitC and unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -404,7 +404,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitA connected to chain for unitD", function () {
+      it("should not have chain for unitA connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -412,7 +412,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitB connected to chain for unitC and unitE", function () {
+      it("should have chain for unitB connected to chain for unitC and unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -420,7 +420,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should have chain for unitB connected to chain for unitD", function () {
+      it("should have chain for unitB connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -428,7 +428,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitC and unitE connected to chain for unitD", function () {
+      it("should not have chain for unitC and unitE connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -438,7 +438,7 @@ describe("SimpleChainMap", function () {
       });
     });
   });
-  describe("One Unit Chain Before Fork, With Later Branch Being Chainable", function () {
+  describe("One Unit Chain Before Fork, With Later Branch Being Chainable", function (): void {
     /**
      * ```text
      *                   ┏━━━┓
@@ -455,7 +455,7 @@ describe("SimpleChainMap", function () {
     let unitD: TaskUnit;
     let unitE: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
       unitC = new TaskUnit(now, [unitB], thirdDate, fourthDate);
@@ -463,37 +463,37 @@ describe("SimpleChainMap", function () {
       unitE = new TaskUnit(now, [unitD], fourthDate, fifthDate);
       chainMap = new SimpleChainMap([unitC, unitE]);
     });
-    it("should have 4 chains", function () {
+    it("should have 4 chains", function (): void {
       expect(chainMap.chains.length).to.equal(4);
     });
-    it("should have different chain for unitA than the other units", function () {
+    it("should have different chain for unitA than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitA))
         .to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD))
         .and.to.not.equal(chainMap.getChainOfUnit(unitE));
     });
-    it("should have different chain for unitB than the other units", function () {
+    it("should have different chain for unitB than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitB))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD))
         .and.to.not.equal(chainMap.getChainOfUnit(unitE));
     });
-    it("should have different chain for unitC than the other units", function () {
+    it("should have different chain for unitC than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitC))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD))
         .and.to.not.equal(chainMap.getChainOfUnit(unitE));
     });
-    it("should have same chain for unitD and unitE", function () {
+    it("should have same chain for unitD and unitE", function (): void {
       expect(chainMap.getChainOfUnit(unitD)).to.equal(
         chainMap.getChainOfUnit(unitE)
       );
     });
-    describe("Connections", function () {
-      it("should have chain for unitA connected to chain for unitB", function () {
+    describe("Connections", function (): void {
+      it("should have chain for unitA connected to chain for unitB", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -501,7 +501,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitA connected to chain for unitC", function () {
+      it("should not have chain for unitA connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -509,7 +509,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitA connected to chain for unitD and unitE", function () {
+      it("should not have chain for unitA connected to chain for unitD and unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -517,7 +517,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitB connected to chain for unitC", function () {
+      it("should have chain for unitB connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -525,7 +525,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should have chain for unitB connected to chain for unitD and unitE", function () {
+      it("should have chain for unitB connected to chain for unitD and unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -533,7 +533,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitC connected to chain for unitD and unitE", function () {
+      it("should not have chain for unitC connected to chain for unitD and unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -543,7 +543,7 @@ describe("SimpleChainMap", function () {
       });
     });
   });
-  describe("Merge", function () {
+  describe("Merge", function (): void {
     /**
      * ```text
      *     ┏━━━┓
@@ -558,32 +558,32 @@ describe("SimpleChainMap", function () {
     let unitB: TaskUnit;
     let unitC: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [], firstDate, secondDate);
       unitC = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
       chainMap = new SimpleChainMap([unitC]);
     });
-    it("should have 3 chains", function () {
+    it("should have 3 chains", function (): void {
       expect(chainMap.chains.length).to.equal(3);
     });
-    it("should have different chain for unitA than the other units", function () {
+    it("should have different chain for unitA than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitA))
         .to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC));
     });
-    it("should have different chain for unitB than the other units", function () {
+    it("should have different chain for unitB than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitB))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC));
     });
-    it("should have different chain for unitC than the other units", function () {
+    it("should have different chain for unitC than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitC))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB));
     });
-    describe("Connections", function () {
-      it("should not have chain for unitA connected to chain for unitB", function () {
+    describe("Connections", function (): void {
+      it("should not have chain for unitA connected to chain for unitB", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -591,7 +591,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitA connected to chain for unitC", function () {
+      it("should have chain for unitA connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -599,7 +599,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should have chain for unitB connected to chain for unitC", function () {
+      it("should have chain for unitB connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -609,7 +609,7 @@ describe("SimpleChainMap", function () {
       });
     });
   });
-  describe("Two Units Merging Before One Unit", function () {
+  describe("Two Units Merging Before One Unit", function (): void {
     /**
      * ```text
      *     ┏━━━┓
@@ -625,42 +625,42 @@ describe("SimpleChainMap", function () {
     let unitC: TaskUnit;
     let unitD: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [], secondDate, thirdDate);
       unitC = new TaskUnit(now, [unitA, unitB], thirdDate, fourthDate);
       unitD = new TaskUnit(now, [unitC], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitD]);
     });
-    it("should have 4 chains", function () {
+    it("should have 4 chains", function (): void {
       expect(chainMap.chains.length).to.equal(4);
     });
-    it("should have different chain for unitA than the other units", function () {
+    it("should have different chain for unitA than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitA))
         .to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD));
     });
-    it("should have different chain for unitB than the other units", function () {
+    it("should have different chain for unitB than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitB))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD));
     });
-    it("should have different chain for unitC than the other units", function () {
+    it("should have different chain for unitC than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitC))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD));
     });
-    it("should have different chain for unitD than the other units", function () {
+    it("should have different chain for unitD than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitD))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC));
     });
-    describe("Connections", function () {
-      it("should not have chain for unitA connected to chain for unitB", function () {
+    describe("Connections", function (): void {
+      it("should not have chain for unitA connected to chain for unitB", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -668,7 +668,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitA connected to chain for unitC", function () {
+      it("should have chain for unitA connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -676,7 +676,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitA connected to chain for unitD", function () {
+      it("should not have chain for unitA connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -684,7 +684,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitB connected to chain for unitC", function () {
+      it("should have chain for unitB connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -692,7 +692,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitB connected to chain for unitD", function () {
+      it("should not have chain for unitB connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -700,7 +700,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitC connected to chain for unitD", function () {
+      it("should have chain for unitC connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -710,7 +710,7 @@ describe("SimpleChainMap", function () {
       });
     });
   });
-  describe("Two Units Merging Before Forking Into Two Units", function () {
+  describe("Two Units Merging Before Forking Into Two Units", function (): void {
     /**
      * ```text
      *     ┏━━━┓         ┏━━━┓
@@ -727,7 +727,7 @@ describe("SimpleChainMap", function () {
     let unitD: TaskUnit;
     let unitE: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [], firstDate, secondDate);
       unitC = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
@@ -735,46 +735,46 @@ describe("SimpleChainMap", function () {
       unitE = new TaskUnit(now, [unitC], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitD, unitE]);
     });
-    it("should have 5 chains", function () {
+    it("should have 5 chains", function (): void {
       expect(chainMap.chains.length).to.equal(5);
     });
-    it("should have different chain for unitA than the other units", function () {
+    it("should have different chain for unitA than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitA))
         .to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD))
         .and.to.not.equal(chainMap.getChainOfUnit(unitE));
     });
-    it("should have different chain for unitB than the other units", function () {
+    it("should have different chain for unitB than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitB))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD))
         .and.to.not.equal(chainMap.getChainOfUnit(unitE));
     });
-    it("should have different chain for unitC than the other units", function () {
+    it("should have different chain for unitC than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitC))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD))
         .and.to.not.equal(chainMap.getChainOfUnit(unitE));
     });
-    it("should have different chain for unitD than the other units", function () {
+    it("should have different chain for unitD than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitD))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitE));
     });
-    it("should have different chain for unitE than the other units", function () {
+    it("should have different chain for unitE than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitE))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD));
     });
-    describe("Connections", function () {
-      it("should not have chain for unitA connected to chain for unitB", function () {
+    describe("Connections", function (): void {
+      it("should not have chain for unitA connected to chain for unitB", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -782,7 +782,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitA connected to chain for unitC", function () {
+      it("should have chain for unitA connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -790,7 +790,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitA connected to chain for unitD", function () {
+      it("should not have chain for unitA connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -798,7 +798,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitA connected to chain for unitE", function () {
+      it("should not have chain for unitA connected to chain for unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -806,7 +806,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitB connected to chain for unitC", function () {
+      it("should have chain for unitB connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -814,7 +814,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitB connected to chain for unitD", function () {
+      it("should not have chain for unitB connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -822,7 +822,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitB connected to chain for unitE", function () {
+      it("should not have chain for unitB connected to chain for unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -830,7 +830,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitC connected to chain for unitD", function () {
+      it("should have chain for unitC connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -838,7 +838,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should have chain for unitC connected to chain for unitE", function () {
+      it("should have chain for unitC connected to chain for unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -846,7 +846,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitD connected to chain for unitE", function () {
+      it("should not have chain for unitD connected to chain for unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitD),
@@ -856,7 +856,7 @@ describe("SimpleChainMap", function () {
       });
     });
   });
-  describe("Two Units Merging Before One Unit Later Forking Into Two Units", function () {
+  describe("Two Units Merging Before One Unit Later Forking Into Two Units", function (): void {
     /**
      * ```text
      *     ┏━━━┓                 ┏━━━┓
@@ -874,7 +874,7 @@ describe("SimpleChainMap", function () {
     let unitE: TaskUnit;
     let unitF: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [], firstDate, secondDate);
       unitC = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
@@ -883,10 +883,10 @@ describe("SimpleChainMap", function () {
       unitF = new TaskUnit(now, [unitD], fourthDate, fifthDate);
       chainMap = new SimpleChainMap([unitE, unitF]);
     });
-    it("should have 6 chains", function () {
+    it("should have 6 chains", function (): void {
       expect(chainMap.chains.length).to.equal(6);
     });
-    it("should have different chain for unitA than the other units", function () {
+    it("should have different chain for unitA than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitA))
         .to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
@@ -894,7 +894,7 @@ describe("SimpleChainMap", function () {
         .and.to.not.equal(chainMap.getChainOfUnit(unitE))
         .and.to.not.equal(chainMap.getChainOfUnit(unitF));
     });
-    it("should have different chain for unitB than the other units", function () {
+    it("should have different chain for unitB than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitB))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
@@ -902,7 +902,7 @@ describe("SimpleChainMap", function () {
         .and.to.not.equal(chainMap.getChainOfUnit(unitE))
         .and.to.not.equal(chainMap.getChainOfUnit(unitF));
     });
-    it("should have different chain for unitC than the other units", function () {
+    it("should have different chain for unitC than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitC))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
@@ -910,7 +910,7 @@ describe("SimpleChainMap", function () {
         .and.to.not.equal(chainMap.getChainOfUnit(unitE))
         .and.to.not.equal(chainMap.getChainOfUnit(unitF));
     });
-    it("should have different chain for unitD than the other units", function () {
+    it("should have different chain for unitD than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitD))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
@@ -918,7 +918,7 @@ describe("SimpleChainMap", function () {
         .and.to.not.equal(chainMap.getChainOfUnit(unitE))
         .and.to.not.equal(chainMap.getChainOfUnit(unitF));
     });
-    it("should have different chain for unitE than the other units", function () {
+    it("should have different chain for unitE than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitE))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
@@ -926,8 +926,8 @@ describe("SimpleChainMap", function () {
         .and.to.not.equal(chainMap.getChainOfUnit(unitD))
         .and.to.not.equal(chainMap.getChainOfUnit(unitF));
     });
-    describe("Connections", function () {
-      it("should not have chain for unitA connected to chain for unitB", function () {
+    describe("Connections", function (): void {
+      it("should not have chain for unitA connected to chain for unitB", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -935,7 +935,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitA connected to chain for unitC", function () {
+      it("should have chain for unitA connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -943,7 +943,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitA connected to chain for unitD", function () {
+      it("should not have chain for unitA connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -951,7 +951,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitA connected to chain for unitE", function () {
+      it("should not have chain for unitA connected to chain for unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -959,7 +959,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitA connected to chain for unitF", function () {
+      it("should not have chain for unitA connected to chain for unitF", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -967,7 +967,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitB connected to chain for unitC", function () {
+      it("should have chain for unitB connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -975,7 +975,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitB connected to chain for unitD", function () {
+      it("should not have chain for unitB connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -983,7 +983,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitB connected to chain for unitE", function () {
+      it("should not have chain for unitB connected to chain for unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -991,7 +991,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitB connected to chain for unitF", function () {
+      it("should not have chain for unitB connected to chain for unitF", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -999,7 +999,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitC connected to chain for unitD", function () {
+      it("should have chain for unitC connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -1007,7 +1007,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitC connected to chain for unitE", function () {
+      it("should not have chain for unitC connected to chain for unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -1015,7 +1015,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitC connected to chain for unitF", function () {
+      it("should not have chain for unitC connected to chain for unitF", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -1023,7 +1023,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitD connected to chain for unitE", function () {
+      it("should have chain for unitD connected to chain for unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitD),
@@ -1031,7 +1031,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should have chain for unitD connected to chain for unitF", function () {
+      it("should have chain for unitD connected to chain for unitF", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitD),
@@ -1039,7 +1039,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitE connected to chain for unitF", function () {
+      it("should not have chain for unitE connected to chain for unitF", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitE),
@@ -1049,7 +1049,7 @@ describe("SimpleChainMap", function () {
       });
     });
   });
-  describe("Two Units Merging Before Two Units Later Forking Into Two Units", function () {
+  describe("Two Units Merging Before Two Units Later Forking Into Two Units", function (): void {
     /**
      * ```text
      *     ┏━━━┓                         ┏━━━┓
@@ -1068,7 +1068,7 @@ describe("SimpleChainMap", function () {
     let unitF: TaskUnit;
     let unitG: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [], firstDate, secondDate);
       unitC = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
@@ -1078,10 +1078,10 @@ describe("SimpleChainMap", function () {
       unitG = new TaskUnit(now, [unitE], fifthDate, sixthDate);
       chainMap = new SimpleChainMap([unitF, unitG]);
     });
-    it("should have 7 chains", function () {
+    it("should have 7 chains", function (): void {
       expect(chainMap.chains.length).to.equal(7);
     });
-    it("should have different chain for unitA than the other units", function () {
+    it("should have different chain for unitA than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitA))
         .to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
@@ -1090,7 +1090,7 @@ describe("SimpleChainMap", function () {
         .and.to.not.equal(chainMap.getChainOfUnit(unitF))
         .and.to.not.equal(chainMap.getChainOfUnit(unitG));
     });
-    it("should have different chain for unitB than the other units", function () {
+    it("should have different chain for unitB than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitB))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
@@ -1099,7 +1099,7 @@ describe("SimpleChainMap", function () {
         .and.to.not.equal(chainMap.getChainOfUnit(unitF))
         .and.to.not.equal(chainMap.getChainOfUnit(unitG));
     });
-    it("should have different chain for unitC than the other units", function () {
+    it("should have different chain for unitC than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitC))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
@@ -1108,7 +1108,7 @@ describe("SimpleChainMap", function () {
         .and.to.not.equal(chainMap.getChainOfUnit(unitF))
         .and.to.not.equal(chainMap.getChainOfUnit(unitG));
     });
-    it("should have different chain for unitD than the other units", function () {
+    it("should have different chain for unitD than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitD))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
@@ -1117,7 +1117,7 @@ describe("SimpleChainMap", function () {
         .and.to.not.equal(chainMap.getChainOfUnit(unitF))
         .and.to.not.equal(chainMap.getChainOfUnit(unitG));
     });
-    it("should have different chain for unitE than the other units", function () {
+    it("should have different chain for unitE than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitE))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
@@ -1126,8 +1126,8 @@ describe("SimpleChainMap", function () {
         .and.to.not.equal(chainMap.getChainOfUnit(unitF))
         .and.to.not.equal(chainMap.getChainOfUnit(unitG));
     });
-    describe("Connections", function () {
-      it("should not have chain for unitA connected to chain for unitB", function () {
+    describe("Connections", function (): void {
+      it("should not have chain for unitA connected to chain for unitB", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1135,7 +1135,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitA connected to chain for unitC", function () {
+      it("should have chain for unitA connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1143,7 +1143,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitA connected to chain for unitD", function () {
+      it("should not have chain for unitA connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1151,7 +1151,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitA connected to chain for unitE", function () {
+      it("should not have chain for unitA connected to chain for unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1159,7 +1159,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitA connected to chain for unitF", function () {
+      it("should not have chain for unitA connected to chain for unitF", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1167,7 +1167,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitA connected to chain for unitG", function () {
+      it("should not have chain for unitA connected to chain for unitG", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1175,7 +1175,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitB connected to chain for unitC", function () {
+      it("should have chain for unitB connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -1183,7 +1183,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitB connected to chain for unitD", function () {
+      it("should not have chain for unitB connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -1191,7 +1191,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitB connected to chain for unitE", function () {
+      it("should not have chain for unitB connected to chain for unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -1199,7 +1199,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitB connected to chain for unitF", function () {
+      it("should not have chain for unitB connected to chain for unitF", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -1207,7 +1207,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitB connected to chain for unitG", function () {
+      it("should not have chain for unitB connected to chain for unitG", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -1215,7 +1215,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitC connected to chain for unitD", function () {
+      it("should have chain for unitC connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -1223,7 +1223,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitC connected to chain for unitE", function () {
+      it("should not have chain for unitC connected to chain for unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -1231,7 +1231,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitC connected to chain for unitF", function () {
+      it("should not have chain for unitC connected to chain for unitF", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -1239,7 +1239,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitC connected to chain for unitG", function () {
+      it("should not have chain for unitC connected to chain for unitG", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -1247,7 +1247,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitD connected to chain for unitE", function () {
+      it("should have chain for unitD connected to chain for unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitD),
@@ -1255,7 +1255,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitD connected to chain for unitF", function () {
+      it("should not have chain for unitD connected to chain for unitF", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitD),
@@ -1263,7 +1263,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitD connected to chain for unitG", function () {
+      it("should not have chain for unitD connected to chain for unitG", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitD),
@@ -1271,7 +1271,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitE connected to chain for unitF", function () {
+      it("should have chain for unitE connected to chain for unitF", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitE),
@@ -1279,7 +1279,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should have chain for unitE connected to chain for unitG", function () {
+      it("should have chain for unitE connected to chain for unitG", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitE),
@@ -1287,7 +1287,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitF connected to chain for unitG", function () {
+      it("should not have chain for unitF connected to chain for unitG", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitF),
@@ -1297,7 +1297,7 @@ describe("SimpleChainMap", function () {
       });
     });
   });
-  describe("Two Units Merging Before Three Units Later Forking Into Two Units", function () {
+  describe("Two Units Merging Before Three Units Later Forking Into Two Units", function (): void {
     /**
      * ```text
      *     ┏━━━┓                                 ┏━━━┓
@@ -1317,7 +1317,7 @@ describe("SimpleChainMap", function () {
     let unitG: TaskUnit;
     let unitH: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [], firstDate, secondDate);
       unitC = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
@@ -1328,10 +1328,10 @@ describe("SimpleChainMap", function () {
       unitH = new TaskUnit(now, [unitF], sixthDate, seventhDate);
       chainMap = new SimpleChainMap([unitG, unitH]);
     });
-    it("should have 7 chains", function () {
+    it("should have 7 chains", function (): void {
       expect(chainMap.chains.length).to.equal(7);
     });
-    it("should have different chain for unitA than the other units", function () {
+    it("should have different chain for unitA than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitA))
         .to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
@@ -1340,7 +1340,7 @@ describe("SimpleChainMap", function () {
         .and.to.not.equal(chainMap.getChainOfUnit(unitF))
         .and.to.not.equal(chainMap.getChainOfUnit(unitG));
     });
-    it("should have different chain for unitB than the other units", function () {
+    it("should have different chain for unitB than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitB))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
@@ -1349,7 +1349,7 @@ describe("SimpleChainMap", function () {
         .and.to.not.equal(chainMap.getChainOfUnit(unitF))
         .and.to.not.equal(chainMap.getChainOfUnit(unitG));
     });
-    it("should have different chain for unitC than the other units", function () {
+    it("should have different chain for unitC than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitC))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
@@ -1358,12 +1358,12 @@ describe("SimpleChainMap", function () {
         .and.to.not.equal(chainMap.getChainOfUnit(unitF))
         .and.to.not.equal(chainMap.getChainOfUnit(unitG));
     });
-    it("should have same chain for unitD as unitE", function () {
+    it("should have same chain for unitD as unitE", function (): void {
       expect(chainMap.getChainOfUnit(unitD)).to.equal(
         chainMap.getChainOfUnit(unitE)
       );
     });
-    it("should have different chain for unitD and unitE than the other units", function () {
+    it("should have different chain for unitD and unitE than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitD))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
@@ -1371,8 +1371,8 @@ describe("SimpleChainMap", function () {
         .and.to.not.equal(chainMap.getChainOfUnit(unitF))
         .and.to.not.equal(chainMap.getChainOfUnit(unitG));
     });
-    describe("Connections", function () {
-      it("should not have chain for unitA connected to chain for unitB", function () {
+    describe("Connections", function (): void {
+      it("should not have chain for unitA connected to chain for unitB", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1380,7 +1380,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitA connected to chain for unitC", function () {
+      it("should have chain for unitA connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1388,7 +1388,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitA connected to chain for unitD and unitE", function () {
+      it("should not have chain for unitA connected to chain for unitD and unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1396,7 +1396,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitA connected to chain for unitF", function () {
+      it("should not have chain for unitA connected to chain for unitF", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1404,7 +1404,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitA connected to chain for unitG", function () {
+      it("should not have chain for unitA connected to chain for unitG", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1412,7 +1412,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitA connected to chain for unitH", function () {
+      it("should not have chain for unitA connected to chain for unitH", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1420,7 +1420,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitB connected to chain for unitC", function () {
+      it("should have chain for unitB connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -1428,7 +1428,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitB connected to chain for unitD and unitE", function () {
+      it("should not have chain for unitB connected to chain for unitD and unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -1436,7 +1436,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitB connected to chain for unitF", function () {
+      it("should not have chain for unitB connected to chain for unitF", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -1444,7 +1444,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitB connected to chain for unitG", function () {
+      it("should not have chain for unitB connected to chain for unitG", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -1452,7 +1452,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitB connected to chain for unitH", function () {
+      it("should not have chain for unitB connected to chain for unitH", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -1460,7 +1460,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitC connected to chain for unitD and unitE", function () {
+      it("should have chain for unitC connected to chain for unitD and unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -1468,7 +1468,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should have chain for unitC connected to chain for unitE", function () {
+      it("should have chain for unitC connected to chain for unitE", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -1476,7 +1476,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitC connected to chain for unitF", function () {
+      it("should not have chain for unitC connected to chain for unitF", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -1484,7 +1484,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitC connected to chain for unitG", function () {
+      it("should not have chain for unitC connected to chain for unitG", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -1492,7 +1492,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitC connected to chain for unitH", function () {
+      it("should not have chain for unitC connected to chain for unitH", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -1500,7 +1500,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitD and unitE connected to chain for unitF", function () {
+      it("should have chain for unitD and unitE connected to chain for unitF", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitD),
@@ -1508,7 +1508,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitD and unitE connected to chain for unitG", function () {
+      it("should not have chain for unitD and unitE connected to chain for unitG", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitD),
@@ -1516,7 +1516,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitD and unitE connected to chain for unitH", function () {
+      it("should not have chain for unitD and unitE connected to chain for unitH", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitD),
@@ -1524,7 +1524,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitE connected to chain for unitG", function () {
+      it("should not have chain for unitE connected to chain for unitG", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitE),
@@ -1532,7 +1532,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitE connected to chain for unitH", function () {
+      it("should not have chain for unitE connected to chain for unitH", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitE),
@@ -1540,7 +1540,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitF connected to chain for unitG", function () {
+      it("should have chain for unitF connected to chain for unitG", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitF),
@@ -1548,7 +1548,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should have chain for unitF connected to chain for unitH", function () {
+      it("should have chain for unitF connected to chain for unitH", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitF),
@@ -1556,7 +1556,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitG connected to chain for unitH", function () {
+      it("should not have chain for unitG connected to chain for unitH", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitG),
@@ -1566,7 +1566,7 @@ describe("SimpleChainMap", function () {
       });
     });
   });
-  describe("Fork Before Merge", function () {
+  describe("Fork Before Merge", function (): void {
     /**
      * ```text
      *           ┏━━━┓
@@ -1582,42 +1582,42 @@ describe("SimpleChainMap", function () {
     let unitC: TaskUnit;
     let unitD: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
       unitC = new TaskUnit(now, [unitA], secondDate, thirdDate);
       unitD = new TaskUnit(now, [unitB, unitC], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitD]);
     });
-    it("should have 4 chains", function () {
+    it("should have 4 chains", function (): void {
       expect(chainMap.chains.length).to.equal(4);
     });
-    it("should have different chain for unitA than the other units", function () {
+    it("should have different chain for unitA than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitA))
         .to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD));
     });
-    it("should have different chain for unitB than the other units", function () {
+    it("should have different chain for unitB than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitB))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD));
     });
-    it("should have different chain for unitC than the other units", function () {
+    it("should have different chain for unitC than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitC))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD));
     });
-    it("should have different chain for unitD than the other units", function () {
+    it("should have different chain for unitD than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitD))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC));
     });
-    describe("Connections", function () {
-      it("should have chain for unitA connected to chain for unitB", function () {
+    describe("Connections", function (): void {
+      it("should have chain for unitA connected to chain for unitB", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1625,7 +1625,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should have chain for unitA connected to chain for unitC", function () {
+      it("should have chain for unitA connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1633,7 +1633,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitA connected to chain for unitD", function () {
+      it("should not have chain for unitA connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1641,7 +1641,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should not have chain for unitB connected to chain for unitC", function () {
+      it("should not have chain for unitB connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -1649,7 +1649,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitB connected to chain for unitD", function () {
+      it("should have chain for unitB connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -1657,7 +1657,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should have chain for unitC connected to chain for unitD", function () {
+      it("should have chain for unitC connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -1667,7 +1667,7 @@ describe("SimpleChainMap", function () {
       });
     });
   });
-  describe("Four Units Interwoven", function () {
+  describe("Four Units Interwoven", function (): void {
     /**
      * ```text
      *     ┏━━━┓____┏━━━┓
@@ -1683,42 +1683,42 @@ describe("SimpleChainMap", function () {
     let unitC: TaskUnit;
     let unitD: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [], firstDate, secondDate);
       unitC = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
       unitD = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
       chainMap = new SimpleChainMap([unitC, unitD]);
     });
-    it("should have 4 chains", function () {
+    it("should have 4 chains", function (): void {
       expect(chainMap.chains.length).to.equal(4);
     });
-    it("should have different chain for unitA than the other units", function () {
+    it("should have different chain for unitA than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitA))
         .to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD));
     });
-    it("should have different chain for unitB than the other units", function () {
+    it("should have different chain for unitB than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitB))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD));
     });
-    it("should have different chain for unitC than the other units", function () {
+    it("should have different chain for unitC than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitC))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD));
     });
-    it("should have different chain for unitD than the other units", function () {
+    it("should have different chain for unitD than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitD))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC));
     });
-    describe("Connections", function () {
-      it("should not have chain for unitA connected to chain for unitB", function () {
+    describe("Connections", function (): void {
+      it("should not have chain for unitA connected to chain for unitB", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1726,7 +1726,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitA connected to chain for unitC", function () {
+      it("should have chain for unitA connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1734,7 +1734,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should have chain for unitA connected to chain for unitD", function () {
+      it("should have chain for unitA connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1742,7 +1742,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should have chain for unitB connected to chain for unitC", function () {
+      it("should have chain for unitB connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -1750,7 +1750,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should have chain for unitB connected to chain for unitD", function () {
+      it("should have chain for unitB connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -1758,7 +1758,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitC connected to chain for unitD", function () {
+      it("should not have chain for unitC connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -1768,7 +1768,7 @@ describe("SimpleChainMap", function () {
       });
     });
   });
-  describe("Four Units Semi Interwoven", function () {
+  describe("Four Units Semi Interwoven", function (): void {
     /**
      * ```text
      *     ┏━━━┓____┏━━━┓
@@ -1784,42 +1784,42 @@ describe("SimpleChainMap", function () {
     let unitC: TaskUnit;
     let unitD: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [], firstDate, secondDate);
       unitC = new TaskUnit(now, [unitA], secondDate, thirdDate);
       unitD = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
       chainMap = new SimpleChainMap([unitC, unitD]);
     });
-    it("should have 4 chains", function () {
+    it("should have 4 chains", function (): void {
       expect(chainMap.chains.length).to.equal(4);
     });
-    it("should have different chain for unitA than the other units", function () {
+    it("should have different chain for unitA than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitA))
         .to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD));
     });
-    it("should have different chain for unitB than the other units", function () {
+    it("should have different chain for unitB than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitB))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD));
     });
-    it("should have different chain for unitC than the other units", function () {
+    it("should have different chain for unitC than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitC))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitD));
     });
-    it("should have different chain for unitD than the other units", function () {
+    it("should have different chain for unitD than the other units", function (): void {
       expect(chainMap.getChainOfUnit(unitD))
         .to.not.equal(chainMap.getChainOfUnit(unitA))
         .and.to.not.equal(chainMap.getChainOfUnit(unitB))
         .and.to.not.equal(chainMap.getChainOfUnit(unitC));
     });
-    describe("Connections", function () {
-      it("should not have chain for unitA connected to chain for unitB", function () {
+    describe("Connections", function (): void {
+      it("should not have chain for unitA connected to chain for unitB", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1827,7 +1827,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitA connected to chain for unitC", function () {
+      it("should have chain for unitA connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1835,7 +1835,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should have chain for unitA connected to chain for unitD", function () {
+      it("should have chain for unitA connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitA),
@@ -1843,7 +1843,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitB connected to chain for unitC", function () {
+      it("should not have chain for unitB connected to chain for unitC", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -1851,7 +1851,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.false;
       });
-      it("should have chain for unitB connected to chain for unitD", function () {
+      it("should have chain for unitB connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitB),
@@ -1859,7 +1859,7 @@ describe("SimpleChainMap", function () {
           )
         ).to.be.true;
       });
-      it("should not have chain for unitC connected to chain for unitD", function () {
+      it("should not have chain for unitC connected to chain for unitD", function (): void {
         expect(
           chainMap.chainsAreConnected(
             chainMap.getChainOfUnit(unitC),
@@ -1869,7 +1869,7 @@ describe("SimpleChainMap", function () {
       });
     });
   });
-  describe("Complex Interdependence", function () {
+  describe("Complex Interdependence", function (): void {
     /**
      * ```text
      *           ┏━━━┓
@@ -1899,7 +1899,7 @@ describe("SimpleChainMap", function () {
     let unitI: TaskUnit;
     let unitJ: TaskUnit;
     let chainMap: SimpleChainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [], firstDate, secondDate);
       unitC = new TaskUnit(now, [], firstDate, secondDate);
@@ -1914,7 +1914,7 @@ describe("SimpleChainMap", function () {
       unitJ = new TaskUnit(now, [unitF, unitG], thirdDate, fourthDate);
       chainMap = new SimpleChainMap([unitH, unitI, unitJ]);
     });
-    it("should have heads of I and J without A, D, and H", function () {
+    it("should have heads of I and J without A, D, and H", function (): void {
       expect(
         chainMap.unitPathMatrix.getHeadUnitsWithoutIsolatedUnit([
           unitA,
@@ -1923,7 +1923,7 @@ describe("SimpleChainMap", function () {
         ])
       ).to.have.members([unitI, unitJ]);
     });
-    it("should have heads of D, E, F, and G without H, I, and J", function () {
+    it("should have heads of D, E, F, and G without H, I, and J", function (): void {
       expect(
         chainMap.unitPathMatrix.getHeadUnitsWithoutIsolatedUnit([
           unitH,
@@ -1932,7 +1932,7 @@ describe("SimpleChainMap", function () {
         ])
       ).to.have.members([unitD, unitE, unitF, unitG]);
     });
-    it("should have head of just E without A, B, C, D, F, G, H, I, and J", function () {
+    it("should have head of just E without A, B, C, D, F, G, H, I, and J", function (): void {
       expect(
         chainMap.unitPathMatrix.getHeadUnitsWithoutIsolatedUnit([
           unitA,
@@ -1947,7 +1947,7 @@ describe("SimpleChainMap", function () {
         ])
       ).to.have.members([unitE]);
     });
-    it("should have no heads without any units A, B, C, D, E, F, G, H, I, and J", function () {
+    it("should have no heads without any units A, B, C, D, E, F, G, H, I, and J", function (): void {
       expect(
         chainMap.unitPathMatrix.getHeadUnitsWithoutIsolatedUnit([
           unitA,

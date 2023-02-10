@@ -18,13 +18,13 @@ const twelfthDate = new Date(eleventhDate.getTime() + 1000);
 const thirteenthDate = new Date(twelfthDate.getTime() + 1000);
 const fourteenthDate = new Date(thirteenthDate.getTime() + 1000);
 
-describe("TaskUnitCluster", function () {
-  describe("No Units", function () {
-    it("should throw RangeError", function () {
+describe("TaskUnitCluster", function (): void {
+  describe("No Units", function (): void {
+    it("should throw RangeError", function (): void {
       expect(() => new TaskUnitCluster([])).to.throw(RangeError);
     });
   });
-  describe("Simple Cluster", function () {
+  describe("Simple Cluster", function (): void {
     /**
      * ```text
      *           ┏━━━┓
@@ -36,18 +36,18 @@ describe("TaskUnitCluster", function () {
      * ```
      */
     let cluster: TaskUnitCluster;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate);
       const unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
       const unitC = new TaskUnit(now, [unitA], secondDate, thirdDate);
       const unitD = new TaskUnit(now, [unitB, unitC], thirdDate, fourthDate);
       cluster = new TaskUnitCluster([unitD]);
     });
-    it("should have 2 paths", function () {
+    it("should have 2 paths", function (): void {
       expect(cluster.paths.length).to.equal(2);
     });
   });
-  describe("Simple Conflict Cluster", function () {
+  describe("Simple Conflict Cluster", function (): void {
     /**
      * ```text
      *           ┏━━━┓
@@ -70,7 +70,7 @@ describe("TaskUnitCluster", function () {
     let chainF: IsolatedDependencyChain;
     let chainG: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate);
       const unitE = new TaskUnit(now, [], firstDate, secondDate);
 
@@ -89,32 +89,32 @@ describe("TaskUnitCluster", function () {
       chainF = cluster.chainMap.getChainOfUnit(unitF);
       chainG = cluster.chainMap.getChainOfUnit(unitG);
     });
-    it("should have 3 paths", function () {
+    it("should have 3 paths", function (): void {
       expect(cluster.paths.length).to.equal(3);
     });
-    it("should have path with only D", function () {
+    it("should have path with only D", function (): void {
       expect(cluster.getPathOfChain(chainD).chains).to.have.members([chainD]);
     });
-    it("should have path with only A, B, and C", function () {
+    it("should have path with only A, B, and C", function (): void {
       expect(cluster.getPathOfChain(chainA).chains).to.have.members([
         chainA,
         chainB,
         chainC,
       ]);
     });
-    it("should have path with only E, G, and F", function () {
+    it("should have path with only E, G, and F", function (): void {
       expect(cluster.getPathOfChain(chainE).chains).to.have.members([
         chainE,
         chainG,
         chainF,
       ]);
     });
-    it("should have D path in the middle", function () {
+    it("should have D path in the middle", function (): void {
       expect(cluster.pathsSortedByRanking[1]).to.equal(
         cluster.getPathOfChain(chainD)
       );
     });
-    it("should throw NoSuchChainPathError when getting path of unrecognized chain", function () {
+    it("should throw NoSuchChainPathError when getting path of unrecognized chain", function (): void {
       expect(() =>
         cluster.getPathOfChain(
           new IsolatedDependencyChain([
@@ -124,7 +124,7 @@ describe("TaskUnitCluster", function () {
       ).to.throw(NoSuchChainPathError);
     });
   });
-  describe("Unavoidable Unfamiliarity Cluster", function () {
+  describe("Unavoidable Unfamiliarity Cluster", function (): void {
     /**
      * ```text
      *           ┏━━━┓
@@ -154,7 +154,7 @@ describe("TaskUnitCluster", function () {
     let chainI: IsolatedDependencyChain;
     let chainJ: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate);
       const unitB = new TaskUnit(now, [], firstDate, secondDate);
       const unitC = new TaskUnit(now, [], firstDate, secondDate);
@@ -179,35 +179,35 @@ describe("TaskUnitCluster", function () {
       chainI = cluster.chainMap.getChainOfUnit(unitI);
       chainJ = cluster.chainMap.getChainOfUnit(unitJ);
     });
-    it("should have 4 paths", function () {
+    it("should have 4 paths", function (): void {
       expect(cluster.paths.length).to.equal(4);
     });
-    it("should have path with only A, D, and H", function () {
+    it("should have path with only A, D, and H", function (): void {
       expect(cluster.getPathOfChain(chainA).chains).to.have.members([
         chainA,
         chainD,
         chainH,
       ]);
     });
-    it("should have path with only C, G, and J", function () {
+    it("should have path with only C, G, and J", function (): void {
       expect(cluster.getPathOfChain(chainC).chains).to.have.members([
         chainC,
         chainG,
         chainJ,
       ]);
     });
-    it("should have path with only B, E, and I", function () {
+    it("should have path with only B, E, and I", function (): void {
       expect(cluster.getPathOfChain(chainB).chains).to.have.members([
         chainB,
         chainE,
         chainI,
       ]);
     });
-    it("should have path with only F", function () {
+    it("should have path with only F", function (): void {
       expect(cluster.getPathOfChain(chainF).chains).to.have.members([chainF]);
     });
   });
-  describe("More Complex Conflict Cluster", function () {
+  describe("More Complex Conflict Cluster", function (): void {
     /**
      * ```text
      *                 ┏━━━┓
@@ -242,7 +242,7 @@ describe("TaskUnitCluster", function () {
     let chainH: IsolatedDependencyChain;
     let chainI: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate);
 
       const unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
@@ -268,10 +268,10 @@ describe("TaskUnitCluster", function () {
       chainH = cluster.chainMap.getChainOfUnit(unitH);
       chainI = cluster.chainMap.getChainOfUnit(unitI);
     });
-    it("should have 3 paths", function () {
+    it("should have 3 paths", function (): void {
       expect(cluster.paths.length).to.equal(3);
     });
-    it("should have chains A, B, E, D, and F in the same path", function () {
+    it("should have chains A, B, E, D, and F in the same path", function (): void {
       expect(cluster.getPathOfChain(chainA).chains).to.have.members([
         chainA,
         chainB,
@@ -280,23 +280,23 @@ describe("TaskUnitCluster", function () {
         chainF,
       ]);
     });
-    it("should have chains G, H, and I in the same path", function () {
+    it("should have chains G, H, and I in the same path", function (): void {
       expect(cluster.getPathOfChain(chainG).chains).to.have.members([
         chainG,
         chainH,
         chainI,
       ]);
     });
-    it("should have chain C in its own path", function () {
+    it("should have chain C in its own path", function (): void {
       expect(cluster.getPathOfChain(chainC).chains).to.have.members([chainC]);
     });
-    it("should have A path in the middle", function () {
+    it("should have A path in the middle", function (): void {
       expect(cluster.pathsSortedByRanking[1]).to.equal(
         cluster.getPathOfChain(chainA)
       );
     });
   });
-  describe("Competing Heads", function () {
+  describe("Competing Heads", function (): void {
     /**
      * ```text
      *                        ┏━━━┓
@@ -369,7 +369,7 @@ describe("TaskUnitCluster", function () {
     let chainX: IsolatedDependencyChain;
     let chainY: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
 
@@ -526,7 +526,7 @@ describe("TaskUnitCluster", function () {
       chainX = cluster.chainMap.getChainOfUnit(unitX);
       chainY = cluster.chainMap.getChainOfUnit(unitY);
     });
-    it("should have chain A, C, F, K, O, S, and W in the same path", function () {
+    it("should have chain A, C, F, K, O, S, and W in the same path", function (): void {
       expect(cluster.getPathOfChain(chainA).chains).to.have.members([
         chainA,
         chainC,
@@ -537,13 +537,13 @@ describe("TaskUnitCluster", function () {
         chainW,
       ]);
     });
-    it("should have chain H in its own path", function () {
+    it("should have chain H in its own path", function (): void {
       expect(cluster.getPathOfChain(chainH).chains).to.have.members([chainH]);
     });
-    it("should have chain J in its own path", function () {
+    it("should have chain J in its own path", function (): void {
       expect(cluster.getPathOfChain(chainJ).chains).to.have.members([chainJ]);
     });
-    it("should have chains B, E, I, M, Q, T, and X in the same path", function () {
+    it("should have chains B, E, I, M, Q, T, and X in the same path", function (): void {
       expect(cluster.getPathOfChain(chainM).chains).to.have.members([
         chainB,
         chainE,
@@ -554,7 +554,7 @@ describe("TaskUnitCluster", function () {
         chainX,
       ]);
     });
-    it("should have chains D, G, L, and P in the same path", function () {
+    it("should have chains D, G, L, and P in the same path", function (): void {
       expect(cluster.getPathOfChain(chainD).chains).to.have.members([
         chainD,
         chainG,
@@ -562,7 +562,7 @@ describe("TaskUnitCluster", function () {
         chainP,
       ]);
     });
-    it("should have chains N, R, V, and Y in the same path", function () {
+    it("should have chains N, R, V, and Y in the same path", function (): void {
       expect(cluster.getPathOfChain(chainN).chains).to.have.members([
         chainN,
         chainR,
@@ -570,11 +570,11 @@ describe("TaskUnitCluster", function () {
         chainY,
       ]);
     });
-    it("should have chain U in its own path", function () {
+    it("should have chain U in its own path", function (): void {
       expect(cluster.getPathOfChain(chainU).chains).to.have.members([chainU]);
     });
   });
-  describe("Same Relative Attachment, But Different Strain", function () {
+  describe("Same Relative Attachment, But Different Strain", function (): void {
     /**
      * ```text
      *                               ┏━━━┓
@@ -602,7 +602,7 @@ describe("TaskUnitCluster", function () {
     let chainJ: IsolatedDependencyChain;
     let chainK: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate);
 
       const unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
@@ -642,17 +642,17 @@ describe("TaskUnitCluster", function () {
       chainJ = cluster.chainMap.getChainOfUnit(unitJ);
       chainK = cluster.chainMap.getChainOfUnit(unitK);
     });
-    it("should have 4 paths", function () {
+    it("should have 4 paths", function (): void {
       expect(cluster.paths.length).to.equal(4);
     });
-    it("should have path with only E, G, and J", function () {
+    it("should have path with only E, G, and J", function (): void {
       expect(cluster.getPathOfChain(chainE).chains).to.have.members([
         chainE,
         chainG,
         chainJ,
       ]);
     });
-    it("should have path with only A, B, D, F, I, and K", function () {
+    it("should have path with only A, B, D, F, I, and K", function (): void {
       expect(cluster.getPathOfChain(chainA).chains).to.have.members([
         chainA,
         chainB,
@@ -662,14 +662,14 @@ describe("TaskUnitCluster", function () {
         chainK,
       ]);
     });
-    it("should have path with only C", function () {
+    it("should have path with only C", function (): void {
       expect(cluster.getPathOfChain(chainC).chains).to.have.members([chainC]);
     });
-    it("should have path with only H", function () {
+    it("should have path with only H", function (): void {
       expect(cluster.getPathOfChain(chainH).chains).to.have.members([chainH]);
     });
   });
-  describe("Same Relative Attachment, Same Strain, But Different Density (Higher Density First)", function () {
+  describe("Same Relative Attachment, Same Strain, But Different Density (Higher Density First)", function (): void {
     /**
      * ```text
      *
@@ -702,7 +702,7 @@ describe("TaskUnitCluster", function () {
     let chainI: IsolatedDependencyChain;
     let chainJ: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate);
       const unitB = new TaskUnit(now, [], firstDate, secondDate);
       const unitC = new TaskUnit(now, [], firstDate, secondDate);
@@ -728,27 +728,27 @@ describe("TaskUnitCluster", function () {
       chainI = cluster.chainMap.getChainOfUnit(unitI);
       chainJ = cluster.chainMap.getChainOfUnit(unitJ);
     });
-    it("should have 4 paths", function () {
+    it("should have 4 paths", function (): void {
       expect(cluster.paths.length).to.equal(4);
     });
-    it("should have path with only F", function () {
+    it("should have path with only F", function (): void {
       expect(cluster.getPathOfChain(chainF).chains).to.have.members([chainF]);
     });
-    it("should have path with only A, D, and H", function () {
+    it("should have path with only A, D, and H", function (): void {
       expect(cluster.getPathOfChain(chainA).chains).to.have.members([
         chainA,
         chainD,
         chainH,
       ]);
     });
-    it("should have path with only B, E, and I", function () {
+    it("should have path with only B, E, and I", function (): void {
       expect(cluster.getPathOfChain(chainB).chains).to.have.members([
         chainB,
         chainE,
         chainI,
       ]);
     });
-    it("should have path with only C, G, and J", function () {
+    it("should have path with only C, G, and J", function (): void {
       expect(cluster.getPathOfChain(chainC).chains).to.have.members([
         chainC,
         chainG,
@@ -756,7 +756,7 @@ describe("TaskUnitCluster", function () {
       ]);
     });
   });
-  describe("Same Relative Attachment, Same Strain, But Different Density (Higher Density Last)", function () {
+  describe("Same Relative Attachment, Same Strain, But Different Density (Higher Density Last)", function (): void {
     /**
      * ```text
      *
@@ -789,7 +789,7 @@ describe("TaskUnitCluster", function () {
     let chainI: IsolatedDependencyChain;
     let chainJ: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate);
       const unitB = new TaskUnit(now, [], firstDate, secondDate);
       const unitC = new TaskUnit(now, [], firstDate, secondDate);
@@ -814,27 +814,27 @@ describe("TaskUnitCluster", function () {
       chainI = cluster.chainMap.getChainOfUnit(unitI);
       chainJ = cluster.chainMap.getChainOfUnit(unitJ);
     });
-    it("should have 4 paths", function () {
+    it("should have 4 paths", function (): void {
       expect(cluster.paths.length).to.equal(4);
     });
-    it("should have path with only E", function () {
+    it("should have path with only E", function (): void {
       expect(cluster.getPathOfChain(chainE).chains).to.have.members([chainE]);
     });
-    it("should have path with only A, D, and H", function () {
+    it("should have path with only A, D, and H", function (): void {
       expect(cluster.getPathOfChain(chainA).chains).to.have.members([
         chainA,
         chainD,
         chainH,
       ]);
     });
-    it("should have path with only B, F, and I", function () {
+    it("should have path with only B, F, and I", function (): void {
       expect(cluster.getPathOfChain(chainB).chains).to.have.members([
         chainB,
         chainF,
         chainI,
       ]);
     });
-    it("should have path with only C, G, and J", function () {
+    it("should have path with only C, G, and J", function (): void {
       expect(cluster.getPathOfChain(chainC).chains).to.have.members([
         chainC,
         chainG,
@@ -842,7 +842,7 @@ describe("TaskUnitCluster", function () {
       ]);
     });
   });
-  describe("Relative Familiarity", function () {
+  describe("Relative Familiarity", function (): void {
     /**
      * ```text
      *                     ┏━━━┓
@@ -871,7 +871,7 @@ describe("TaskUnitCluster", function () {
     let chainH: IsolatedDependencyChain;
     let chainI: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate);
 
       const unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
@@ -897,10 +897,10 @@ describe("TaskUnitCluster", function () {
       chainH = cluster.chainMap.getChainOfUnit(unitH);
       chainI = cluster.chainMap.getChainOfUnit(unitI);
     });
-    it("should have 4 paths", function () {
+    it("should have 4 paths", function (): void {
       expect(cluster.paths.length).to.equal(4);
     });
-    it("should have path with only A, C, E, H and I", function () {
+    it("should have path with only A, C, E, H and I", function (): void {
       expect(cluster.getPathOfChain(chainA).chains).to.have.members([
         chainA,
         chainC,
@@ -909,20 +909,20 @@ describe("TaskUnitCluster", function () {
         chainI,
       ]);
     });
-    it("should have path with only B and G", function () {
+    it("should have path with only B and G", function (): void {
       expect(cluster.getPathOfChain(chainB).chains).to.have.members([
         chainB,
         chainG,
       ]);
     });
-    it("should have path with only F", function () {
+    it("should have path with only F", function (): void {
       expect(cluster.getPathOfChain(chainF).chains).to.have.members([chainF]);
     });
-    it("should have path with only D", function () {
+    it("should have path with only D", function (): void {
       expect(cluster.getPathOfChain(chainD).chains).to.have.members([chainD]);
     });
   });
-  describe("Relative Unfamiliarity", function () {
+  describe("Relative Unfamiliarity", function (): void {
     /**
      * ```text
      *                                       ┏━━━┓
@@ -958,7 +958,7 @@ describe("TaskUnitCluster", function () {
     let chainK: IsolatedDependencyChain;
     let chainL: IsolatedDependencyChain;
     let cluster: TaskUnitCluster;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate);
 
       const unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
@@ -1002,16 +1002,16 @@ describe("TaskUnitCluster", function () {
       chainK = cluster.chainMap.getChainOfUnit(unitK);
       chainL = cluster.chainMap.getChainOfUnit(unitL);
     });
-    it("should have 6 paths", function () {
+    it("should have 6 paths", function (): void {
       expect(cluster.paths.length).to.equal(6);
     });
-    it("should have path with only C and H", function () {
+    it("should have path with only C and H", function (): void {
       expect(cluster.getPathOfChain(chainC).chains).to.have.members([
         chainC,
         chainH,
       ]);
     });
-    it("should have path with only A, D, I, and L", function () {
+    it("should have path with only A, D, I, and L", function (): void {
       expect(cluster.getPathOfChain(chainA).chains).to.have.members([
         chainA,
         chainD,
@@ -1019,20 +1019,20 @@ describe("TaskUnitCluster", function () {
         chainL,
       ]);
     });
-    it("should have path with only B, E, and J", function () {
+    it("should have path with only B, E, and J", function (): void {
       expect(cluster.getPathOfChain(chainB).chains).to.have.members([
         chainB,
         chainE,
         chainJ,
       ]);
     });
-    it("should have path with only F", function () {
+    it("should have path with only F", function (): void {
       expect(cluster.getPathOfChain(chainF).chains).to.have.members([chainF]);
     });
-    it("should have path with only G", function () {
+    it("should have path with only G", function (): void {
       expect(cluster.getPathOfChain(chainG).chains).to.have.members([chainG]);
     });
-    it("should have path with only K", function () {
+    it("should have path with only K", function (): void {
       expect(cluster.getPathOfChain(chainK).chains).to.have.members([chainK]);
     });
   });

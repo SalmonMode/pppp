@@ -63,8 +63,8 @@ export default class IsolatedDependencyChain {
 
     this._chainTotalTime =
       this.endDate.getTime() - this.anticipatedStartDate.getTime();
-    this._chainPresenceTime = this.units.reduce(
-      (sum, curr) => sum + curr.presenceTime,
+    this._chainPresenceTime = this.units.reduce<number>(
+      (sum: number, curr: TaskUnit): number => sum + curr.presenceTime,
       0
     );
     this._externalDependencies = this._getExternalDependencies();

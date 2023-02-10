@@ -1,6 +1,8 @@
 import { css } from "@emotion/react";
+import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import type { Action } from "@reduxjs/toolkit";
 import { formatDuration } from "date-fns";
 import { useAppDispatch } from "../../app/hooks";
 import { theme } from "../../app/theme";
@@ -10,7 +12,11 @@ import type { TaskMetrics } from "../Poster/taskUnitsSlice";
 import colorScale from "./colorScale";
 import EstimateCoefficientChart from "./EstimateCoefficientChart";
 
-export default function MetricsSummary({ metrics }: { metrics: TaskMetrics }) {
+export default function MetricsSummary({
+  metrics,
+}: {
+  metrics: TaskMetrics;
+}): EmotionJSX.Element {
   // If all the anticipated durations are the same, or all the apparent durations are the same, there will be no
   // covariance, and then the formula to determine the coefficient breaksdown because it ends up dividing by 0. When
   // this happens, the coefficient is NaN, and this can make things wonky, so to avoid this, we assume the coefficient
@@ -60,7 +66,11 @@ export default function MetricsSummary({ metrics }: { metrics: TaskMetrics }) {
           {coefficient.toPrecision(5)}
         </Typography>
 
-        <Button onClick={(event) => dispatch(openCoefficientHelpModal(event))}>
+        <Button
+          onClick={(event): Action<string> =>
+            dispatch(openCoefficientHelpModal(event))
+          }
+        >
           What's this?
         </Button>
       </div>

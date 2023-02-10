@@ -1,4 +1,5 @@
 import { css, SerializedStyles } from "@emotion/react";
+import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import PendingOutlinedIcon from "@mui/icons-material/PendingOutlined";
@@ -9,7 +10,11 @@ import Tooltip from "@mui/material/Tooltip";
 import { theme } from "../../../app/theme";
 import { ReviewType } from "../../../types";
 
-export default function ReviewBox({ variant }: { variant: ReviewType }) {
+export default function ReviewBox({
+  variant,
+}: {
+  variant: ReviewType;
+}): EmotionJSX.Element {
   const className = classMap[variant];
   const wrapperStyles = styleMap[variant];
   const IconComponent = iconMap[variant];

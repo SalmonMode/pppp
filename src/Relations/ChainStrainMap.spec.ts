@@ -4,7 +4,7 @@ import {
   ChainStrainMap,
   IsolatedDependencyChain,
   SimpleChainMap,
-  TaskUnit,
+  TaskUnit
 } from "./";
 
 const now = new Date();
@@ -15,17 +15,17 @@ const fourthDate = new Date(thirdDate.getTime() + 1000);
 const fifthDate = new Date(fourthDate.getTime() + 1000);
 const sixthDate = new Date(fifthDate.getTime() + 1000);
 
-describe("ChainStrainMap", function () {
-  describe("One Unit", function () {
+describe("ChainStrainMap", function (): void {
+  describe("One Unit", function (): void {
     let chainMap: SimpleChainMap;
     let strainMap: ChainStrainMap;
     let unit: TaskUnit;
-    before(function () {
+    before(function (): void {
       unit = new TaskUnit(now, [], new Date(), new Date());
       chainMap = new SimpleChainMap([unit]);
       strainMap = new ChainStrainMap(chainMap);
     });
-    it("should throw NoSuchChainError when getting strain of unrecognized chain", function () {
+    it("should throw NoSuchChainError when getting strain of unrecognized chain", function (): void {
       expect(() =>
         strainMap.getStrainOfChain(
           new IsolatedDependencyChain([
@@ -34,20 +34,20 @@ describe("ChainStrainMap", function () {
         )
       ).to.throw(NoSuchChainError);
     });
-    it("should have strain of 0 for only chain", function () {
+    it("should have strain of 0 for only chain", function (): void {
       expect(
         strainMap.getStrainOfChain(chainMap.getChainOfUnit(unit))
       ).to.equal(0);
     });
   });
-  describe("Simple Cluster", function () {
+  describe("Simple Cluster", function (): void {
     let unitA: TaskUnit;
     let unitB: TaskUnit;
     let unitC: TaskUnit;
     let unitD: TaskUnit;
     let chainMap: SimpleChainMap;
     let strainMap: ChainStrainMap;
-    before(function () {
+    before(function (): void {
       unitA = new TaskUnit(now, [], firstDate, secondDate);
       unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
       unitC = new TaskUnit(now, [unitA], secondDate, thirdDate);
@@ -55,28 +55,28 @@ describe("ChainStrainMap", function () {
       chainMap = new SimpleChainMap([unitD]);
       strainMap = new ChainStrainMap(chainMap);
     });
-    it("should have strain of 2 for A", function () {
+    it("should have strain of 2 for A", function (): void {
       expect(
         strainMap.getStrainOfChain(chainMap.getChainOfUnit(unitA))
       ).to.equal(2);
     });
-    it("should have strain of 2 for B", function () {
+    it("should have strain of 2 for B", function (): void {
       expect(
         strainMap.getStrainOfChain(chainMap.getChainOfUnit(unitB))
       ).to.equal(2);
     });
-    it("should have strain of 2 for C", function () {
+    it("should have strain of 2 for C", function (): void {
       expect(
         strainMap.getStrainOfChain(chainMap.getChainOfUnit(unitC))
       ).to.equal(2);
     });
-    it("should have strain of 2 for D", function () {
+    it("should have strain of 2 for D", function (): void {
       expect(
         strainMap.getStrainOfChain(chainMap.getChainOfUnit(unitD))
       ).to.equal(2);
     });
   });
-  describe("Relative Unfamiliarity", function () {
+  describe("Relative Unfamiliarity", function (): void {
     /**
      * ```text
      *                ┏━━━┓
@@ -96,7 +96,7 @@ describe("ChainStrainMap", function () {
     let chainF: IsolatedDependencyChain;
     let chainMap: SimpleChainMap;
     let strainMap: ChainStrainMap;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate);
 
       const unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
@@ -113,7 +113,7 @@ describe("ChainStrainMap", function () {
       chainF = chainMap.getChainOfUnit(unitF);
       strainMap = new ChainStrainMap(chainMap);
     });
-    it("should have higher relative familiarity from F to C than F to B", function () {
+    it("should have higher relative familiarity from F to C than F to B", function (): void {
       const bRelFam = strainMap.getRelativeFamiliarityOfChainWithChain(
         chainB,
         chainF

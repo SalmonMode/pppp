@@ -1,17 +1,24 @@
+import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
+import type { Action } from "@reduxjs/toolkit";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import type { AppState } from "../../app/types";
 import { closeCoefficientHelpModal } from "./coefficientHelpModalOpenSlice";
 
-export default function CoefficientHelpModal() {
-  const isOpen = useAppSelector((state) => state.coefficientHelpModal.open);
+export default function CoefficientHelpModal(): EmotionJSX.Element {
+  const isOpen = useAppSelector(
+    (state: AppState): boolean => state.coefficientHelpModal.open
+  );
   const dispatch = useAppDispatch();
   return (
     <Modal
       keepMounted={true}
       open={isOpen}
-      onClose={(event) => dispatch(closeCoefficientHelpModal(event))}
+      onClose={(event: object): Action<string> =>
+        dispatch(closeCoefficientHelpModal(event))
+      }
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >

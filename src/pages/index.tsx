@@ -1,9 +1,10 @@
+import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import type { NextPage } from "next";
 import Head from "next/head";
 
 import Landing from "../features/Landing";
 
-const IndexPage: NextPage = () => {
+const IndexPage: NextPage = (): EmotionJSX.Element => {
   return (
     <div>
       <Head>

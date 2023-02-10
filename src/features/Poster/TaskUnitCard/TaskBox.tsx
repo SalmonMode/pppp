@@ -1,4 +1,5 @@
 import { css } from "@emotion/react";
+import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Typography from "@mui/material/Typography";
 import { ExtensionTrail } from "./ExtensionTrail";
 
@@ -18,7 +19,7 @@ export default function TaskBox({
    */
   actualDurationWidth: number;
   label?: string;
-}) {
+}): EmotionJSX.Element {
   return (
     <div
       css={wrapperStyles}

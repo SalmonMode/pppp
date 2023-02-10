@@ -86,7 +86,7 @@ export default class SimpleChainMap {
   /**
    * Iterate through all the units building out the chains.
    */
-  private _buildChains() {
+  private _buildChains(): void {
     for (const head of this.getHeadUnits()) {
       this._buildForklessChains(head, []);
     }
@@ -106,7 +106,9 @@ export default class SimpleChainMap {
    * @returns The chains that no other chains are dependent on
    */
   private _getHeadChains(): IsolatedDependencyChain[] {
-    return this.getHeadUnits().map((unit) => this.getChainOfUnit(unit));
+    return this.getHeadUnits().map(
+      (unit: TaskUnit): IsolatedDependencyChain => this.getChainOfUnit(unit)
+    );
   }
   /**
    * This can be tricky, because if there are units between the two passed units, but no branching dependencies, it will
@@ -199,12 +201,13 @@ export default class SimpleChainMap {
    * @param unit The unit to find the number of paths to
    * @returns how many paths there are to the unit from all heads
    */
-  getNumberOfPathsToUnit(unit: TaskUnit) {
+  getNumberOfPathsToUnit(unit: TaskUnit): number {
     if (this._heads.has(unit)) {
       return 1;
     }
-    return [...this._heads].reduce(
-      (sum, head) => sum + head.getNumberOfPathsToDependency(unit),
+    return [...this._heads].reduce<number>(
+      (sum: number, head: TaskUnit): number =>
+        sum + head.getNumberOfPathsToDependency(unit),
       0
     );
   }
@@ -305,9 +308,9 @@ export default class SimpleChainMap {
       // went on for at least one unit prior to the possibleTail, or the possibleTail is a standalone head with no
       // dependencies and no units that are dependent on it.
       const bufferedChain = new IsolatedDependencyChain(bufferedChainSoFar);
-      bufferedChainSoFar.forEach(
-        (unit) => (this._unitToChainMap[unit.id] = bufferedChain)
-      );
+      bufferedChainSoFar.forEach((unit: TaskUnit): void => {
+        this._unitToChainMap[unit.id] = bufferedChain;
+      });
     }
 
     if (isForkingPoint || isMergingPoint) {
@@ -350,7 +353,9 @@ export default class SimpleChainMap {
   ): Set<IsolatedDependencyChain> {
     const allDependencyUnits = chain.lastUnit.getAllDependencies();
     return new Set<IsolatedDependencyChain>(
-      [...allDependencyUnits].map((unit) => this.getChainOfUnit(unit))
+      [...allDependencyUnits].map(
+        (unit: TaskUnit): IsolatedDependencyChain => this.getChainOfUnit(unit)
+      )
     );
   }
   /**
@@ -362,8 +367,8 @@ export default class SimpleChainMap {
     chain: IsolatedDependencyChain
   ): Set<IsolatedDependencyChain> {
     return new Set(
-      [...chain.lastUnit.directDependencies].map((unit) =>
-        this.getChainOfUnit(unit)
+      [...chain.lastUnit.directDependencies].map(
+        (unit: TaskUnit): IsolatedDependencyChain => this.getChainOfUnit(unit)
       )
     );
   }

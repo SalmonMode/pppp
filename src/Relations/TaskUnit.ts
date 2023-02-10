@@ -7,7 +7,7 @@ import {
   EventType,
   InterpolatedTaskEvent,
   RelationshipMapping,
-  TaskEvent,
+  TaskEvent
 } from "../types";
 
 export default class TaskUnit {
@@ -65,14 +65,18 @@ export default class TaskUnit {
 
     this._buildProjectedHistory(now);
     this.interpolatedEventHistory = [
-      ...this.eventHistory.map((e) => ({
-        ...e,
-        projected: false,
-      })),
-      ...this.projectedHistory.map((e) => ({
-        ...e,
-        projected: true,
-      })),
+      ...this.eventHistory.map(
+        (e: TaskEvent): InterpolatedTaskEvent => ({
+          ...e,
+          projected: false,
+        })
+      ),
+      ...this.projectedHistory.map(
+        (e: TaskEvent): InterpolatedTaskEvent => ({
+          ...e,
+          projected: true,
+        })
+      ),
     ];
     const lastConceivedEvent = [...this.eventHistory, ...this.projectedHistory][
       this.eventHistory.length + this.projectedHistory.length - 1
@@ -146,7 +150,7 @@ export default class TaskUnit {
       // This task hasn't been started yet, so there's no need to check if it was started before it should have.
     }
     const now = new Date();
-    this.eventHistory.forEach((event, index) => {
+    this.eventHistory.forEach((event: TaskEvent, index: number): void => {
       // Don't check the next event if it can be helped, because if there is a next event, it'll have its turn to check
       // previous events, and that presents much narrower criteria to check.
       const prevEvent = this.eventHistory[index - 1];
@@ -254,8 +258,10 @@ export default class TaskUnit {
    */
   private _getTrueDirectDependencies(): Set<TaskUnit> {
     const trueDirect = this._providedDirectDependencies.filter(
-      (unit) =>
-        !this._providedDirectDependencies.some((dep) => dep.isDependentOn(unit))
+      (unit: TaskUnit): boolean =>
+        !this._providedDirectDependencies.some((dep: TaskUnit): boolean =>
+          dep.isDependentOn(unit)
+        )
     );
     return new Set(trueDirect);
   }
@@ -274,8 +280,8 @@ export default class TaskUnit {
    * @returns the time in ms of the apparent end time of the last apparently finished direct dependency
    */
   private _getEarliestPossibleStartTime(): number {
-    const depApparentEndTimes = [...this.directDependencies].map((unit) =>
-      unit.apparentEndDate.getTime()
+    const depApparentEndTimes = [...this.directDependencies].map(
+      (unit: TaskUnit): number => unit.apparentEndDate.getTime()
     );
     // There may be no deps here, and the unit's apparent start date may have been set explicitely. If the apparent
     // start date wasn't set explicitely, it would be the anticipated start date, which also works. We'll consider both
@@ -288,7 +294,7 @@ export default class TaskUnit {
    *
    * This is to help make both rendering and reasoning about the unit times easier.
    */
-  private _buildProjectedHistory(now: Date) {
+  private _buildProjectedHistory(now: Date): void {
     /**
      * The anticipated duration of the task
      */
@@ -408,8 +414,10 @@ export default class TaskUnit {
    */
   private _getAllDependencies(): Set<TaskUnit> {
     const deps = new Set<TaskUnit>(this.directDependencies);
-    this.directDependencies.forEach((parentUnit) =>
-      parentUnit.getAllDependencies().forEach((depUnit) => deps.add(depUnit))
+    this.directDependencies.forEach((parentUnit: TaskUnit): void =>
+      parentUnit.getAllDependencies().forEach((depUnit: TaskUnit): void => {
+        deps.add(depUnit);
+      })
     );
     return deps;
   }
@@ -585,8 +593,9 @@ export default class TaskUnit {
    *
    */
   private _calculateAttachmentToDependencies(): number {
-    return [...this.directDependencies].reduce(
-      (acc, dep) => acc + (dep.attachmentToDependencies || 1),
+    return [...this.directDependencies].reduce<number>(
+      (acc: number, dep: TaskUnit): number =>
+        acc + (dep.attachmentToDependencies || 1),
       0
     );
   }
@@ -614,6 +623,8 @@ export default class TaskUnit {
    * @returns true, if all the direct dependencies are completed, false, if not
    */
   private _shouldBeAbleToStart(): boolean {
-    return [...this.directDependencies].every((unit) => unit.isComplete());
+    return [...this.directDependencies].every((unit: TaskUnit): boolean =>
+      unit.isComplete()
+    );
   }
 }

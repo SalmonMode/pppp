@@ -59,8 +59,16 @@ export default class Matrix {
    * @returns an array containing the numbers of the column in order
    */
   getColumn(columnIndex: number): number[] {
-    const column: number[] = this.data.map((_, rowIndex) =>
-      this.getElementAtPosition(rowIndex, columnIndex)
+    const column: number[] = this.data.map(
+      (row: number[], rowIndex: number): number => {
+        const entry = row[columnIndex];
+        if (entry === undefined) {
+          throw new RangeError(
+            `Matrix does not have a column at index ${rowIndex}`
+          );
+        }
+        return entry;
+      }
     );
 
     return column;
@@ -81,7 +89,7 @@ export default class Matrix {
   /** Make sure every row of the matrix has the same number of columns. */
   private _verifyMatrixSize(): void {
     const allAreSameSize = this.data.every(
-      (row) => row.length === this._firstRow.length
+      (row: number[]): boolean => row.length === this._firstRow.length
     );
     if (!allAreSameSize) {
       throw new RangeError("All rows of the matrix must have the same size");

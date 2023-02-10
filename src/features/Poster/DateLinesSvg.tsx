@@ -1,4 +1,5 @@
 import { css } from "@emotion/react";
+import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Typography from "@mui/material/Typography";
 import { add, sub } from "date-fns";
 import { useEffect, useRef } from "react";
@@ -14,7 +15,7 @@ export default function DateLinesSvg({
   now: Date;
   dateIntervals: Date[];
   height: number;
-}) {
+}): EmotionJSX.Element {
   const firstDate = dateIntervals[0];
   assertIsObject(firstDate);
   const lastDate = dateIntervals[dateIntervals.length - 1];
@@ -26,7 +27,7 @@ export default function DateLinesSvg({
   );
   const nowLeft = getPixelGapBetweenTimes(now.getTime(), earliestStartTime);
   const textNode = useRef<SVGTextElement>(null);
-  useEffect(() => {
+  useEffect((): void => {
     assertIsObject(textNode.current);
     textNode.current.scrollIntoView({
       inline: "center",
@@ -44,7 +45,7 @@ export default function DateLinesSvg({
         className={"dateLinesGroup"}
         style={{ width: svgWidth, height }}
       >
-        {dateIntervals.map((date, index) => {
+        {dateIntervals.map((date: Date, index: number): EmotionJSX.Element => {
           const left = getPixelGapBetweenTimes(
             date.getTime(),
             earliestStartTime

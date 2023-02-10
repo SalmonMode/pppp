@@ -81,8 +81,8 @@ export default class TaskUnitCluster {
   getHeadsWithoutChains(
     unavailableChains: IsolatedDependencyChain[]
   ): IsolatedDependencyChain[] {
-    const unavailableUnits: TaskUnit[] = unavailableChains.reduce(
-      (acc: TaskUnit[], chain) => {
+    const unavailableUnits: TaskUnit[] = unavailableChains.reduce<TaskUnit[]>(
+      (acc: TaskUnit[], chain: IsolatedDependencyChain): TaskUnit[] => {
         return [...acc, ...chain.units];
       },
       []
@@ -91,8 +91,9 @@ export default class TaskUnitCluster {
       this.strainMap.chainMap.unitPathMatrix.getHeadUnitsWithoutIsolatedUnit(
         unavailableUnits
       );
-    const headChains = headUnits.map((unit) =>
-      this.strainMap.chainMap.getChainOfUnit(unit)
+    const headChains = headUnits.map(
+      (unit: TaskUnit): IsolatedDependencyChain =>
+        this.strainMap.chainMap.getChainOfUnit(unit)
     );
     return headChains;
   }
@@ -112,14 +113,20 @@ export default class TaskUnitCluster {
     // Rely on the strain map to figure out the preffered path for that given head. The best path for each head will
     // be compared against the others, finding the most preferred out of all of them. It will then be stored, its chains
     // marked as off limits, and this function will be called again with the updated list of off limits chains.
-    const pathsForHeads = heads.map((head) =>
-      this.strainMap.getPathsMostFamiliarWithChainWithoutChains(
-        head,
-        isolatedChains
-      )
+    const pathsForHeads = heads.map(
+      (head: IsolatedDependencyChain): ChainPath[] =>
+        this.strainMap.getPathsMostFamiliarWithChainWithoutChains(
+          head,
+          isolatedChains
+        )
     );
-    const potentialPreferredPaths: ChainPath[] = pathsForHeads.reduce(
-      (acc, chains) => [...acc, ...chains],
+    const potentialPreferredPaths: ChainPath[] = pathsForHeads.reduce<
+      ChainPath[]
+    >(
+      (acc: ChainPath[], chains: ChainPath[]): ChainPath[] => [
+        ...acc,
+        ...chains,
+      ],
       []
     );
     // Sort the chains.
@@ -129,7 +136,7 @@ export default class TaskUnitCluster {
       // There must not have been any remaining heads left, so we're done building the chains.
       return;
     }
-    nextMostDensePath.chains.forEach((chain) => {
+    nextMostDensePath.chains.forEach((chain: IsolatedDependencyChain): void => {
       isolatedChains.push(chain);
       this._chainToPathMap[chain.id] = nextMostDensePath;
     });
@@ -146,7 +153,7 @@ export default class TaskUnitCluster {
    */
   private _getSortedPaths(paths: ChainPath[]): ChainPath[] {
     const sortedPaths = [...paths];
-    sortedPaths.sort((prev, next) => {
+    sortedPaths.sort((prev: ChainPath, next: ChainPath): number => {
       // use the sum of the relative familiarity of all chains in the path (more preferred)
       const nextFamiliarity = this.strainMap.getRelativeFamiliarityOfPath(next);
       const prevFamiliarity = this.strainMap.getRelativeFamiliarityOfPath(prev);

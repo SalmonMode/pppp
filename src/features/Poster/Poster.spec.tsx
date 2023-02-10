@@ -25,7 +25,7 @@ const halfDayWidth = getPixelGapBetweenTimes(
 describe("React Integration: Poster", () => {
   describe("Initial State", () => {
     let sandbox: SinonSandbox;
-    beforeEach(function () {
+    beforeEach(function (): void {
       sandbox = createSandbox();
       Element.prototype.scrollIntoView = function (): void {
         // Purely exists because jsdom does not actually support this method so it cannot be stubbed without something
@@ -35,11 +35,11 @@ describe("React Integration: Poster", () => {
       sandbox.stub(Element.prototype, "scrollIntoView");
       renderWithProvider(<Poster />);
     });
-    afterEach(function () {
+    afterEach(function (): void {
       sandbox.restore();
     });
 
-    it('should say "loading..."', async function () {
+    it('should say "loading..."', async function (): Promise<void> {
       const poster = await screen.findByTestId(`poster-loading`);
       expect(poster.textContent).to.equal("loading...");
     });
@@ -328,7 +328,7 @@ describe("React Integration: Poster", () => {
     const startOfEleventhDate = startOfDay(add(now, { days: 1 }));
     const startOfTwelfthDate = startOfDay(add(now, { days: 2 }));
 
-    before(async function () {
+    before(async function (): Promise<void> {
       sandbox = createSandbox();
       Element.prototype.scrollIntoView = function (): void {
         // Purely exists because jsdom does not actually support this method so it cannot be stubbed without something
@@ -701,31 +701,31 @@ describe("React Integration: Poster", () => {
       assertIsObject(twelfthDateLine);
       twelfthDateLineX = Number(twelfthDateLine.getAttribute("x1"));
     });
-    after(function () {
+    after(function (): void {
       sandbox.restore();
     });
 
-    it("should have tried to scroll", function () {
+    it("should have tried to scroll", function (): void {
       expect(scrollStub.called).to.be.true;
     });
-    it("should have 4 task tracks", function () {
+    it("should have 4 task tracks", function (): void {
       expect(trackCount).to.equal(4);
     });
-    it("should have B-D on second track (index 1)", function () {
+    it("should have B-D on second track (index 1)", function (): void {
       expect([...secondTrackText]).to.have.members(["B", "D"]);
     });
-    it("should have A-C on third track (index 2)", function () {
+    it("should have A-C on third track (index 2)", function (): void {
       expect([...thirdTrackText]).to.have.members(["A", "C"]);
     });
 
-    describe("Boxes", function () {
-      describe("A", function () {
-        it("should have red background for snail trail", function () {
+    describe("Boxes", function (): void {
+      describe("A", function (): void {
+        it("should have red background for snail trail", function (): void {
           expect(chroma(unitASnailTrailStyles.backgroundColor).hex()).to.equal(
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function () {
+        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitASnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitA.apparentEndDate.getTime(),
@@ -733,7 +733,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function () {
+        it("should have box width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitABoxStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitA.apparentEndDate.getTime(),
@@ -741,7 +741,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have card width according to apparent start date and apparent end date", function () {
+        it("should have card width according to apparent start date and apparent end date", function (): void {
           expect(Number(unitACardStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitA.apparentEndDate.getTime(),
@@ -749,99 +749,99 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should having box starting from the same horizontal point as box for E", function () {
+        it("should having box starting from the same horizontal point as box for E", function (): void {
           expect(Number(unitABoxStyles.left.slice(0, -2))).to.equal(
             Number(unitEBoxStyles.left.slice(0, -2))
           );
         });
-        it("should having box starting from the same horizontal point as box for I", function () {
+        it("should having box starting from the same horizontal point as box for I", function (): void {
           expect(Number(unitABoxStyles.left.slice(0, -2))).to.equal(
             Number(unitIBoxStyles.left.slice(0, -2))
           );
         });
-        it("should have card same width as B Card", function () {
+        it("should have card same width as B Card", function (): void {
           expect(Number(unitACardStyles.width.slice(0, -2))).to.equal(
             Number(unitBCardStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for C", function () {
+        it("should have card wider than card for C", function (): void {
           expect(Number(unitACardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitCCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for C", function () {
+        it("should have box wider than box for C", function (): void {
           expect(Number(unitABoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitCBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for E", function () {
+        it("should have card wider than card for E", function (): void {
           expect(Number(unitACardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitECardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for E", function () {
+        it("should have box wider than box for E", function (): void {
           expect(Number(unitABoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitEBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for F", function () {
+        it("should have card wider than card for F", function (): void {
           expect(Number(unitACardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitFCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box as wide as box for F", function () {
+        it("should have box as wide as box for F", function (): void {
           expect(Number(unitABoxStyles.width.slice(0, -2))).to.equal(
             Number(unitFBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for G", function () {
+        it("should have card wider than card for G", function (): void {
           expect(Number(unitACardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitGCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for G", function () {
+        it("should have box wider than box for G", function (): void {
           expect(Number(unitABoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitGBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for I", function () {
+        it("should have card wider than card for I", function (): void {
           expect(Number(unitACardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitICardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for I", function () {
+        it("should have box wider than box for I", function (): void {
           expect(Number(unitABoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitIBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for J", function () {
+        it("should have card wider than card for J", function (): void {
           expect(Number(unitACardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitJCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box as wide as box for J", function () {
+        it("should have box as wide as box for J", function (): void {
           expect(Number(unitABoxStyles.width.slice(0, -2))).to.equal(
             Number(unitJBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for K", function () {
+        it("should have card wider than card for K", function (): void {
           expect(Number(unitACardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitKCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for K", function () {
+        it("should have box wider than box for K", function (): void {
           expect(Number(unitABoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitKBoxStyles.width.slice(0, -2))
           );
         });
       });
-      describe("B", function () {
-        it("should have red background for snail trail", function () {
+      describe("B", function (): void {
+        it("should have red background for snail trail", function (): void {
           expect(chroma(unitBSnailTrailStyles.backgroundColor).hex()).to.equal(
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function () {
+        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitBSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitB.apparentEndDate.getTime(),
@@ -849,7 +849,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function () {
+        it("should have box width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitBBoxStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitB.apparentEndDate.getTime(),
@@ -857,7 +857,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have card width according to apparent start date and apparent end date", function () {
+        it("should have card width according to apparent start date and apparent end date", function (): void {
           expect(Number(unitBCardStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitB.apparentEndDate.getTime(),
@@ -865,104 +865,104 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should having box starting further to the right than box for A", function () {
+        it("should having box starting further to the right than box for A", function (): void {
           expect(Number(unitBBoxStyles.left.slice(0, -2))).to.be.greaterThan(
             Number(unitABoxStyles.left.slice(0, -2))
           );
         });
-        it("should having box starting from the same horizontal point as box for F", function () {
+        it("should having box starting from the same horizontal point as box for F", function (): void {
           expect(Number(unitBBoxStyles.left.slice(0, -2))).to.equal(
             Number(unitFBoxStyles.left.slice(0, -2))
           );
         });
-        it("should having box starting from the same horizontal point as box for J", function () {
+        it("should having box starting from the same horizontal point as box for J", function (): void {
           expect(Number(unitBBoxStyles.left.slice(0, -2))).to.equal(
             Number(unitJBoxStyles.left.slice(0, -2))
           );
         });
-        it("should have box wider than box for A", function () {
+        it("should have box wider than box for A", function (): void {
           expect(Number(unitBBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitABoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for C", function () {
+        it("should have card wider than card for C", function (): void {
           expect(Number(unitBCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitCCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for C", function () {
+        it("should have box wider than box for C", function (): void {
           expect(Number(unitBBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitCBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for E", function () {
+        it("should have card wider than card for E", function (): void {
           expect(Number(unitBCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitECardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for E", function () {
+        it("should have box wider than box for E", function (): void {
           expect(Number(unitBBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitEBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for F", function () {
+        it("should have card wider than card for F", function (): void {
           expect(Number(unitBCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitFCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for F", function () {
+        it("should have box wider than box for F", function (): void {
           expect(Number(unitBBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitFBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for G", function () {
+        it("should have card wider than card for G", function (): void {
           expect(Number(unitBCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitGCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for G", function () {
+        it("should have box wider than box for G", function (): void {
           expect(Number(unitBBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitGBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for I", function () {
+        it("should have card wider than card for I", function (): void {
           expect(Number(unitBCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitICardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for I", function () {
+        it("should have box wider than box for I", function (): void {
           expect(Number(unitBBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitIBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for J", function () {
+        it("should have card wider than card for J", function (): void {
           expect(Number(unitBCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitJCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for J", function () {
+        it("should have box wider than box for J", function (): void {
           expect(Number(unitBBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitJBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for K", function () {
+        it("should have card wider than card for K", function (): void {
           expect(Number(unitBCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitKCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for K", function () {
+        it("should have box wider than box for K", function (): void {
           expect(Number(unitBBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitKBoxStyles.width.slice(0, -2))
           );
         });
       });
-      describe("C", function () {
-        it("should have red background for snail trail", function () {
+      describe("C", function (): void {
+        it("should have red background for snail trail", function (): void {
           expect(chroma(unitCSnailTrailStyles.backgroundColor).hex()).to.equal(
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function () {
+        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitCSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitC.apparentEndDate.getTime(),
@@ -970,7 +970,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function () {
+        it("should have box width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitCBoxStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitC.apparentEndDate.getTime(),
@@ -978,7 +978,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have card width according to apparent start date and apparent end date", function () {
+        it("should have card width according to apparent start date and apparent end date", function (): void {
           expect(Number(unitCCardStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitC.apparentEndDate.getTime(),
@@ -986,79 +986,79 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should having box starting further to the right than box for G", function () {
+        it("should having box starting further to the right than box for G", function (): void {
           expect(Number(unitCBoxStyles.left.slice(0, -2))).to.be.greaterThan(
             Number(unitGBoxStyles.left.slice(0, -2))
           );
         });
-        it("should having box starting from the same horizontal point as box for H", function () {
+        it("should having box starting from the same horizontal point as box for H", function (): void {
           expect(Number(unitCBoxStyles.left.slice(0, -2))).to.equal(
             Number(unitHBoxStyles.left.slice(0, -2))
           );
         });
-        it("should having box starting from the same horizontal point as box for L", function () {
+        it("should having box starting from the same horizontal point as box for L", function (): void {
           expect(Number(unitCBoxStyles.left.slice(0, -2))).to.equal(
             Number(unitLBoxStyles.left.slice(0, -2))
           );
         });
-        it("should have card wider than card for E", function () {
+        it("should have card wider than card for E", function (): void {
           expect(Number(unitCCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitECardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for E", function () {
+        it("should have box wider than box for E", function (): void {
           expect(Number(unitCBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitEBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for F", function () {
+        it("should have card wider than card for F", function (): void {
           expect(Number(unitCCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitFCardStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for G", function () {
+        it("should have card wider than card for G", function (): void {
           expect(Number(unitCCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitGCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for G", function () {
+        it("should have box wider than box for G", function (): void {
           expect(Number(unitCBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitGBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for I", function () {
+        it("should have card wider than card for I", function (): void {
           expect(Number(unitCCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitICardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for I", function () {
+        it("should have box wider than box for I", function (): void {
           expect(Number(unitCBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitIBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for J", function () {
+        it("should have card wider than card for J", function (): void {
           expect(Number(unitCCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitJCardStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for K", function () {
+        it("should have card wider than card for K", function (): void {
           expect(Number(unitCCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitKCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for K", function () {
+        it("should have box wider than box for K", function (): void {
           expect(Number(unitCBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitKBoxStyles.width.slice(0, -2))
           );
         });
       });
-      describe("D", function () {
-        it("should have red background for snail trail", function () {
+      describe("D", function (): void {
+        it("should have red background for snail trail", function (): void {
           expect(chroma(unitDSnailTrailStyles.backgroundColor).hex()).to.equal(
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function () {
+        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitDSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitD.apparentEndDate.getTime(),
@@ -1066,7 +1066,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function () {
+        it("should have box width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitDBoxStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitD.apparentEndDate.getTime(),
@@ -1074,7 +1074,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have card width according to apparent start date and apparent end date", function () {
+        it("should have card width according to apparent start date and apparent end date", function (): void {
           expect(Number(unitDCardStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitD.apparentEndDate.getTime(),
@@ -1082,114 +1082,114 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should having box starting further to the right than box for H", function () {
+        it("should having box starting further to the right than box for H", function (): void {
           expect(Number(unitDBoxStyles.left.slice(0, -2))).to.be.greaterThan(
             Number(unitHBoxStyles.left.slice(0, -2))
           );
         });
-        it("should have card wider than card for A", function () {
+        it("should have card wider than card for A", function (): void {
           expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitACardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for A", function () {
+        it("should have box wider than box for A", function (): void {
           expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitABoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for B", function () {
+        it("should have card wider than card for B", function (): void {
           expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitBCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for B", function () {
+        it("should have box wider than box for B", function (): void {
           expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitBBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for C", function () {
+        it("should have card wider than card for C", function (): void {
           expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitCCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for C", function () {
+        it("should have box wider than box for C", function (): void {
           expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitCBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for E", function () {
+        it("should have card wider than card for E", function (): void {
           expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitECardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for E", function () {
+        it("should have box wider than box for E", function (): void {
           expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitEBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for F", function () {
+        it("should have card wider than card for F", function (): void {
           expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitFCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for F", function () {
+        it("should have box wider than box for F", function (): void {
           expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitFBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for G", function () {
+        it("should have card wider than card for G", function (): void {
           expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitGCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for G", function () {
+        it("should have box wider than box for G", function (): void {
           expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitGBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for I", function () {
+        it("should have card wider than card for I", function (): void {
           expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitICardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for I", function () {
+        it("should have box wider than box for I", function (): void {
           expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitIBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for J", function () {
+        it("should have card wider than card for J", function (): void {
           expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitJCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for J", function () {
+        it("should have box wider than box for J", function (): void {
           expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitJBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card wider than card for K", function () {
+        it("should have card wider than card for K", function (): void {
           expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitKCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for K", function () {
+        it("should have box wider than box for K", function (): void {
           expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitKBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card as wide as card for L", function () {
+        it("should have card as wide as card for L", function (): void {
           expect(Number(unitDCardStyles.width.slice(0, -2))).to.equal(
             Number(unitLCardStyles.width.slice(0, -2))
           );
         });
       });
-      describe("E", function () {
-        it("should have red background for snail trail", function () {
+      describe("E", function (): void {
+        it("should have red background for snail trail", function (): void {
           expect(chroma(unitESnailTrailStyles.backgroundColor).hex()).to.equal(
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function () {
+        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitESnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitE.apparentEndDate.getTime(),
@@ -1197,7 +1197,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function () {
+        it("should have box width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitEBoxStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitE.apparentEndDate.getTime(),
@@ -1205,7 +1205,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have card width according to apparent start date and apparent end date", function () {
+        it("should have card width according to apparent start date and apparent end date", function (): void {
           expect(Number(unitECardStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitE.apparentEndDate.getTime(),
@@ -1213,49 +1213,49 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have card as wide as card for F", function () {
+        it("should have card as wide as card for F", function (): void {
           expect(Number(unitECardStyles.width.slice(0, -2))).to.equal(
             Number(unitFCardStyles.width.slice(0, -2))
           );
         });
-        it("should have card as wide as card for G", function () {
+        it("should have card as wide as card for G", function (): void {
           expect(Number(unitECardStyles.width.slice(0, -2))).to.equal(
             Number(unitGCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box as wide as box for G", function () {
+        it("should have box as wide as box for G", function (): void {
           expect(Number(unitEBoxStyles.width.slice(0, -2))).to.equal(
             Number(unitGBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have card as wide as card for I", function () {
+        it("should have card as wide as card for I", function (): void {
           expect(Number(unitECardStyles.width.slice(0, -2))).to.equal(
             Number(unitICardStyles.width.slice(0, -2))
           );
         });
-        it("should have card as wide as card for J", function () {
+        it("should have card as wide as card for J", function (): void {
           expect(Number(unitECardStyles.width.slice(0, -2))).to.equal(
             Number(unitJCardStyles.width.slice(0, -2))
           );
         });
-        it("should have card as wide as card for K", function () {
+        it("should have card as wide as card for K", function (): void {
           expect(Number(unitECardStyles.width.slice(0, -2))).to.equal(
             Number(unitKCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box as wide as box for K", function () {
+        it("should have box as wide as box for K", function (): void {
           expect(Number(unitEBoxStyles.width.slice(0, -2))).to.equal(
             Number(unitKBoxStyles.width.slice(0, -2))
           );
         });
       });
-      describe("F", function () {
-        it("should have red background for snail trail", function () {
+      describe("F", function (): void {
+        it("should have red background for snail trail", function (): void {
           expect(chroma(unitFSnailTrailStyles.backgroundColor).hex()).to.equal(
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function () {
+        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitFSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitF.apparentEndDate.getTime(),
@@ -1263,7 +1263,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function () {
+        it("should have box width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitFBoxStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitF.apparentEndDate.getTime(),
@@ -1271,7 +1271,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have card width according to apparent start date and apparent end date", function () {
+        it("should have card width according to apparent start date and apparent end date", function (): void {
           expect(Number(unitFCardStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitF.apparentEndDate.getTime(),
@@ -1279,39 +1279,39 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have box wider than box for E", function () {
+        it("should have box wider than box for E", function (): void {
           expect(Number(unitFBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitEBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for G", function () {
+        it("should have box wider than box for G", function (): void {
           expect(Number(unitFBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitGBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for I", function () {
+        it("should have box wider than box for I", function (): void {
           expect(Number(unitFBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitIBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have box as wide as box for J", function () {
+        it("should have box as wide as box for J", function (): void {
           expect(Number(unitFBoxStyles.width.slice(0, -2))).to.equal(
             Number(unitJBoxStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for K", function () {
+        it("should have box wider than box for K", function (): void {
           expect(Number(unitFBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitKBoxStyles.width.slice(0, -2))
           );
         });
       });
-      describe("G", function () {
-        it("should have red background for snail trail", function () {
+      describe("G", function (): void {
+        it("should have red background for snail trail", function (): void {
           expect(chroma(unitGSnailTrailStyles.backgroundColor).hex()).to.equal(
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function () {
+        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitGSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitG.apparentEndDate.getTime(),
@@ -1319,7 +1319,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function () {
+        it("should have box width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitGBoxStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitG.apparentEndDate.getTime(),
@@ -1327,7 +1327,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have card width according to apparent start date and apparent end date", function () {
+        it("should have card width according to apparent start date and apparent end date", function (): void {
           expect(Number(unitGCardStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitG.apparentEndDate.getTime(),
@@ -1335,24 +1335,24 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should having box starting further to the right than box for B", function () {
+        it("should having box starting further to the right than box for B", function (): void {
           expect(Number(unitGBoxStyles.left.slice(0, -2))).to.be.greaterThan(
             Number(unitBBoxStyles.left.slice(0, -2))
           );
         });
-        it("should having box starting from the same horizontal point as box for K", function () {
+        it("should having box starting from the same horizontal point as box for K", function (): void {
           expect(Number(unitGBoxStyles.left.slice(0, -2))).to.equal(
             Number(unitKBoxStyles.left.slice(0, -2))
           );
         });
       });
-      describe("H", function () {
-        it("should have red background for snail trail", function () {
+      describe("H", function (): void {
+        it("should have red background for snail trail", function (): void {
           expect(chroma(unitHSnailTrailStyles.backgroundColor).hex()).to.equal(
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function () {
+        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitHSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitH.apparentEndDate.getTime(),
@@ -1360,7 +1360,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function () {
+        it("should have box width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitHBoxStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitH.apparentEndDate.getTime(),
@@ -1368,7 +1368,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have card width according to apparent start date and apparent end date", function () {
+        it("should have card width according to apparent start date and apparent end date", function (): void {
           expect(Number(unitHCardStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitH.apparentEndDate.getTime(),
@@ -1376,24 +1376,24 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have card wider than card for L", function () {
+        it("should have card wider than card for L", function (): void {
           expect(Number(unitHCardStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitLCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for L", function () {
+        it("should have box wider than box for L", function (): void {
           expect(Number(unitHBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitLBoxStyles.width.slice(0, -2))
           );
         });
       });
-      describe("I", function () {
-        it("should have red background for snail trail", function () {
+      describe("I", function (): void {
+        it("should have red background for snail trail", function (): void {
           expect(chroma(unitISnailTrailStyles.backgroundColor).hex()).to.equal(
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function () {
+        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitISnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitI.apparentEndDate.getTime(),
@@ -1401,7 +1401,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function () {
+        it("should have box width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitIBoxStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitI.apparentEndDate.getTime(),
@@ -1409,7 +1409,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have card width according to apparent start date and apparent end date", function () {
+        it("should have card width according to apparent start date and apparent end date", function (): void {
           expect(Number(unitICardStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitI.apparentEndDate.getTime(),
@@ -1418,13 +1418,13 @@ describe("React Integration: Poster", () => {
           );
         });
       });
-      describe("J", function () {
-        it("should have red background for snail trail", function () {
+      describe("J", function (): void {
+        it("should have red background for snail trail", function (): void {
           expect(chroma(unitJSnailTrailStyles.backgroundColor).hex()).to.equal(
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function () {
+        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitJSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitJ.apparentEndDate.getTime(),
@@ -1432,7 +1432,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function () {
+        it("should have box width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitJBoxStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitJ.apparentEndDate.getTime(),
@@ -1440,7 +1440,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have card width according to apparent start date and apparent end date", function () {
+        it("should have card width according to apparent start date and apparent end date", function (): void {
           expect(Number(unitJCardStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitJ.apparentEndDate.getTime(),
@@ -1449,13 +1449,13 @@ describe("React Integration: Poster", () => {
           );
         });
       });
-      describe("K", function () {
-        it("should have red background for snail trail", function () {
+      describe("K", function (): void {
+        it("should have red background for snail trail", function (): void {
           expect(chroma(unitKSnailTrailStyles.backgroundColor).hex()).to.equal(
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function () {
+        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitKSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitK.apparentEndDate.getTime(),
@@ -1463,7 +1463,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function () {
+        it("should have box width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitKBoxStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitK.apparentEndDate.getTime(),
@@ -1471,7 +1471,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have card width according to apparent start date and apparent end date", function () {
+        it("should have card width according to apparent start date and apparent end date", function (): void {
           expect(Number(unitKCardStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitK.apparentEndDate.getTime(),
@@ -1480,13 +1480,13 @@ describe("React Integration: Poster", () => {
           );
         });
       });
-      describe("L", function () {
-        it("should have red background for snail trail", function () {
+      describe("L", function (): void {
+        it("should have red background for snail trail", function (): void {
           expect(chroma(unitLSnailTrailStyles.backgroundColor).hex()).to.equal(
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function () {
+        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitLSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitL.apparentEndDate.getTime(),
@@ -1494,7 +1494,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function () {
+        it("should have box width according to anticipated start date and apparent end date", function (): void {
           expect(Number(unitLBoxStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitL.apparentEndDate.getTime(),
@@ -1502,7 +1502,7 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have card width according to apparent start date and apparent end date", function () {
+        it("should have card width according to apparent start date and apparent end date", function (): void {
           expect(Number(unitLCardStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitL.apparentEndDate.getTime(),
@@ -1510,19 +1510,19 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have card as wide as card for D", function () {
+        it("should have card as wide as card for D", function (): void {
           expect(Number(unitLCardStyles.width.slice(0, -2))).to.equal(
             Number(unitDCardStyles.width.slice(0, -2))
           );
         });
-        it("should have box wider than box for D", function () {
+        it("should have box wider than box for D", function (): void {
           expect(Number(unitLBoxStyles.width.slice(0, -2))).to.be.greaterThan(
             Number(unitDBoxStyles.width.slice(0, -2))
           );
         });
       });
     });
-    describe("Paths", function () {
+    describe("Paths", function (): void {
       const pathDetails: {
         rightTask: TaskUnit;
         leftTask: TaskUnit;
@@ -1541,7 +1541,7 @@ describe("React Integration: Poster", () => {
         { rightTask: unitF, leftTask: unitA },
       ];
       let processedPoints: ConnectedPoints[];
-      before(function () {
+      before(function (): void {
         processedPoints = [
           pathPointsForBA,
           pathPointsForDC,
@@ -1558,7 +1558,7 @@ describe("React Integration: Poster", () => {
         ];
       });
       for (const pd of pathDetails) {
-        it(`should have path from ${pd.rightTask.name} to ${pd.leftTask.name}`, function () {
+        it(`should have path from ${pd.rightTask.name} to ${pd.leftTask.name}`, function (): void {
           const leftTaskDetails = initialState.units[pd.leftTask.id];
           assertIsObject(leftTaskDetails);
           const rightTaskDetails = initialState.units[pd.rightTask.id];
@@ -1590,9 +1590,9 @@ describe("React Integration: Poster", () => {
         });
       }
     });
-    describe("Date Lines", function () {
-      describe("Lines", function () {
-        it("should have first date line in position according to date", function () {
+    describe("Date Lines", function (): void {
+      describe("Lines", function (): void {
+        it("should have first date line in position according to date", function (): void {
           expect(firstDateLineX).to.equal(
             getPixelGapBetweenTimes(
               startOfFirstDate.getTime(),
@@ -1600,10 +1600,10 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have first date line half a day's worth of width in from the left", function () {
+        it("should have first date line half a day's worth of width in from the left", function (): void {
           expect(firstDateLineX).to.equal(halfDayWidth);
         });
-        it("should have second date line in position according to date", function () {
+        it("should have second date line in position according to date", function (): void {
           expect(secondDateLineX).to.equal(
             getPixelGapBetweenTimes(
               startOfSecondDate.getTime(),
@@ -1611,10 +1611,10 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have second date line to the right of the first date line", function () {
+        it("should have second date line to the right of the first date line", function (): void {
           expect(secondDateLineX).to.be.greaterThan(firstDateLineX);
         });
-        it("should have third date line in position according to date", function () {
+        it("should have third date line in position according to date", function (): void {
           expect(thirdDateLineX).to.equal(
             getPixelGapBetweenTimes(
               startOfThirdDate.getTime(),
@@ -1622,10 +1622,10 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have third date line to the right of the second date line", function () {
+        it("should have third date line to the right of the second date line", function (): void {
           expect(thirdDateLineX).to.be.greaterThan(secondDateLineX);
         });
-        it("should have fourth date line in position according to date", function () {
+        it("should have fourth date line in position according to date", function (): void {
           expect(fourthDateLineX).to.equal(
             getPixelGapBetweenTimes(
               startOfFourthDate.getTime(),
@@ -1633,10 +1633,10 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have fourth date line to the right of the third date line", function () {
+        it("should have fourth date line to the right of the third date line", function (): void {
           expect(fourthDateLineX).to.be.greaterThan(thirdDateLineX);
         });
-        it("should have fifth date line in position according to date", function () {
+        it("should have fifth date line in position according to date", function (): void {
           expect(fifthDateLineX).to.equal(
             getPixelGapBetweenTimes(
               startOfFifthDate.getTime(),
@@ -1644,10 +1644,10 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have fifth date line to the right of the fourth date line", function () {
+        it("should have fifth date line to the right of the fourth date line", function (): void {
           expect(fifthDateLineX).to.be.greaterThan(fourthDateLineX);
         });
-        it("should have sixth date line in position according to date", function () {
+        it("should have sixth date line in position according to date", function (): void {
           expect(sixthDateLineX).to.equal(
             getPixelGapBetweenTimes(
               startOfSixthDate.getTime(),
@@ -1655,10 +1655,10 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have sixth date line to the right of the fifth date line", function () {
+        it("should have sixth date line to the right of the fifth date line", function (): void {
           expect(sixthDateLineX).to.be.greaterThan(fifthDateLineX);
         });
-        it("should have seventh date line in position according to date", function () {
+        it("should have seventh date line in position according to date", function (): void {
           expect(seventhDateLineX).to.equal(
             getPixelGapBetweenTimes(
               startOfSeventhDate.getTime(),
@@ -1666,10 +1666,10 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have seventh date line to the right of the sixth date line", function () {
+        it("should have seventh date line to the right of the sixth date line", function (): void {
           expect(seventhDateLineX).to.be.greaterThan(sixthDateLineX);
         });
-        it("should have eighth date line in position according to date", function () {
+        it("should have eighth date line in position according to date", function (): void {
           expect(eighthDateLineX).to.equal(
             getPixelGapBetweenTimes(
               startOfEighthDate.getTime(),
@@ -1677,10 +1677,10 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have eighth date line to the right of the seventh date line", function () {
+        it("should have eighth date line to the right of the seventh date line", function (): void {
           expect(eighthDateLineX).to.be.greaterThan(seventhDateLineX);
         });
-        it("should have ninth date line in position according to date", function () {
+        it("should have ninth date line in position according to date", function (): void {
           expect(ninthDateLineX).to.equal(
             getPixelGapBetweenTimes(
               startOfNinthDate.getTime(),
@@ -1688,10 +1688,10 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have ninth date line to the right of the eighth date line", function () {
+        it("should have ninth date line to the right of the eighth date line", function (): void {
           expect(ninthDateLineX).to.be.greaterThan(eighthDateLineX);
         });
-        it("should have tenth date line in position according to date", function () {
+        it("should have tenth date line in position according to date", function (): void {
           expect(tenthDateLineX).to.equal(
             getPixelGapBetweenTimes(
               startOfTenthDate.getTime(),
@@ -1699,10 +1699,10 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have tenth date line to the right of the ninth date line", function () {
+        it("should have tenth date line to the right of the ninth date line", function (): void {
           expect(tenthDateLineX).to.be.greaterThan(ninthDateLineX);
         });
-        it("should have eleventh date line in position according to date", function () {
+        it("should have eleventh date line in position according to date", function (): void {
           expect(eleventhDateLineX).to.equal(
             getPixelGapBetweenTimes(
               startOfEleventhDate.getTime(),
@@ -1710,10 +1710,10 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have eleventh date line to the right of the tenth date line", function () {
+        it("should have eleventh date line to the right of the tenth date line", function (): void {
           expect(eleventhDateLineX).to.be.greaterThan(tenthDateLineX);
         });
-        it("should have twelfth date line in position according to date", function () {
+        it("should have twelfth date line in position according to date", function (): void {
           expect(twelfthDateLineX).to.equal(
             getPixelGapBetweenTimes(
               startOfTwelfthDate.getTime(),
@@ -1721,20 +1721,20 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have twelfth date line to the right of the eleventh date line", function () {
+        it("should have twelfth date line to the right of the eleventh date line", function (): void {
           expect(twelfthDateLineX).to.be.greaterThan(eleventhDateLineX);
         });
-        it("should have twelfth date line half a day's worth of width from the end of the SVG", function () {
+        it("should have twelfth date line half a day's worth of width from the end of the SVG", function (): void {
           expect(twelfthDateLabelX + halfDayWidth).to.lessThanOrEqual(svgWidth);
         });
       });
-      describe("Labels", function () {
-        it("should have first date label with proper date text", function () {
+      describe("Labels", function (): void {
+        it("should have first date label with proper date text", function (): void {
           expect(firstDateLabelText).to.equal(
             startOfFirstDate.toLocaleDateString()
           );
         });
-        it("should have first date label in position according to date", function () {
+        it("should have first date label in position according to date", function (): void {
           expect(firstDateLabelX).to.equal(
             getPixelGapBetweenTimes(
               startOfFirstDate.getTime(),
@@ -1742,15 +1742,15 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have first date label half a day's worth of width in from the left", function () {
+        it("should have first date label half a day's worth of width in from the left", function (): void {
           expect(firstDateLabelX).to.equal(halfDayWidth);
         });
-        it("should have second date label with proper date text", function () {
+        it("should have second date label with proper date text", function (): void {
           expect(secondDateLabelText).to.equal(
             startOfSecondDate.toLocaleDateString()
           );
         });
-        it("should have second date label in position according to date", function () {
+        it("should have second date label in position according to date", function (): void {
           expect(secondDateLabelX).to.equal(
             getPixelGapBetweenTimes(
               startOfSecondDate.getTime(),
@@ -1758,15 +1758,15 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have second date label to the right of the first date label", function () {
+        it("should have second date label to the right of the first date label", function (): void {
           expect(secondDateLabelX).to.be.greaterThan(firstDateLabelX);
         });
-        it("should have third date label with proper date text", function () {
+        it("should have third date label with proper date text", function (): void {
           expect(thirdDateLabelText).to.equal(
             startOfThirdDate.toLocaleDateString()
           );
         });
-        it("should have third date label in position according to date", function () {
+        it("should have third date label in position according to date", function (): void {
           expect(thirdDateLabelX).to.equal(
             getPixelGapBetweenTimes(
               startOfThirdDate.getTime(),
@@ -1774,15 +1774,15 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have third date label to the right of the second date label", function () {
+        it("should have third date label to the right of the second date label", function (): void {
           expect(thirdDateLabelX).to.be.greaterThan(secondDateLabelX);
         });
-        it("should have fourth date label with proper date text", function () {
+        it("should have fourth date label with proper date text", function (): void {
           expect(fourthDateLabelText).to.equal(
             startOfFourthDate.toLocaleDateString()
           );
         });
-        it("should have fourth date label in position according to date", function () {
+        it("should have fourth date label in position according to date", function (): void {
           expect(fourthDateLabelX).to.equal(
             getPixelGapBetweenTimes(
               startOfFourthDate.getTime(),
@@ -1790,15 +1790,15 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have fourth date label to the right of the third date label", function () {
+        it("should have fourth date label to the right of the third date label", function (): void {
           expect(fourthDateLabelX).to.be.greaterThan(thirdDateLabelX);
         });
-        it("should have fifth date label with proper date text", function () {
+        it("should have fifth date label with proper date text", function (): void {
           expect(fifthDateLabelText).to.equal(
             startOfFifthDate.toLocaleDateString()
           );
         });
-        it("should have fifth date label in position according to date", function () {
+        it("should have fifth date label in position according to date", function (): void {
           expect(fifthDateLabelX).to.equal(
             getPixelGapBetweenTimes(
               startOfFifthDate.getTime(),
@@ -1806,15 +1806,15 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have fifth date label to the right of the fourth date label", function () {
+        it("should have fifth date label to the right of the fourth date label", function (): void {
           expect(fifthDateLabelX).to.be.greaterThan(fourthDateLabelX);
         });
-        it("should have sixth date label with proper date text", function () {
+        it("should have sixth date label with proper date text", function (): void {
           expect(sixthDateLabelText).to.equal(
             startOfSixthDate.toLocaleDateString()
           );
         });
-        it("should have sixth date label in position according to date", function () {
+        it("should have sixth date label in position according to date", function (): void {
           expect(sixthDateLabelX).to.equal(
             getPixelGapBetweenTimes(
               startOfSixthDate.getTime(),
@@ -1822,15 +1822,15 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have sixth date label to the right of the fifth date label", function () {
+        it("should have sixth date label to the right of the fifth date label", function (): void {
           expect(sixthDateLabelX).to.be.greaterThan(fifthDateLabelX);
         });
-        it("should have seventh date label with proper date text", function () {
+        it("should have seventh date label with proper date text", function (): void {
           expect(seventhDateLabelText).to.equal(
             startOfSeventhDate.toLocaleDateString()
           );
         });
-        it("should have seventh date label in position according to date", function () {
+        it("should have seventh date label in position according to date", function (): void {
           expect(seventhDateLabelX).to.equal(
             getPixelGapBetweenTimes(
               startOfSeventhDate.getTime(),
@@ -1838,15 +1838,15 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have seventh date label to the right of the sixth date label", function () {
+        it("should have seventh date label to the right of the sixth date label", function (): void {
           expect(seventhDateLabelX).to.be.greaterThan(sixthDateLabelX);
         });
-        it("should have eighth date label with proper date text", function () {
+        it("should have eighth date label with proper date text", function (): void {
           expect(eighthDateLabelText).to.equal(
             startOfEighthDate.toLocaleDateString()
           );
         });
-        it("should have eighth date label in position according to date", function () {
+        it("should have eighth date label in position according to date", function (): void {
           expect(eighthDateLabelX).to.equal(
             getPixelGapBetweenTimes(
               startOfEighthDate.getTime(),
@@ -1854,15 +1854,15 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have eighth date label to the right of the seventh date label", function () {
+        it("should have eighth date label to the right of the seventh date label", function (): void {
           expect(eighthDateLabelX).to.be.greaterThan(seventhDateLabelX);
         });
-        it("should have ninth date label with proper date text", function () {
+        it("should have ninth date label with proper date text", function (): void {
           expect(ninthDateLabelText).to.equal(
             startOfNinthDate.toLocaleDateString()
           );
         });
-        it("should have ninth date label in position according to date", function () {
+        it("should have ninth date label in position according to date", function (): void {
           expect(ninthDateLabelX).to.equal(
             getPixelGapBetweenTimes(
               startOfNinthDate.getTime(),
@@ -1870,15 +1870,15 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have ninth date label to the right of the eighth date label", function () {
+        it("should have ninth date label to the right of the eighth date label", function (): void {
           expect(ninthDateLabelX).to.be.greaterThan(eighthDateLabelX);
         });
-        it("should have tenth date label with proper date text", function () {
+        it("should have tenth date label with proper date text", function (): void {
           expect(tenthDateLabelText).to.equal(
             startOfTenthDate.toLocaleDateString()
           );
         });
-        it("should have tenth date label in position according to date", function () {
+        it("should have tenth date label in position according to date", function (): void {
           expect(tenthDateLabelX).to.equal(
             getPixelGapBetweenTimes(
               startOfTenthDate.getTime(),
@@ -1886,15 +1886,15 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have tenth date label to the right of the ninth date label", function () {
+        it("should have tenth date label to the right of the ninth date label", function (): void {
           expect(tenthDateLabelX).to.be.greaterThan(ninthDateLabelX);
         });
-        it("should have eleventh date label with proper date text", function () {
+        it("should have eleventh date label with proper date text", function (): void {
           expect(eleventhDateLabelText).to.equal(
             startOfEleventhDate.toLocaleDateString()
           );
         });
-        it("should have eleventh date label in position according to date", function () {
+        it("should have eleventh date label in position according to date", function (): void {
           expect(eleventhDateLabelX).to.equal(
             getPixelGapBetweenTimes(
               startOfEleventhDate.getTime(),
@@ -1902,15 +1902,15 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have eleventh date label to the right of the tenth date label", function () {
+        it("should have eleventh date label to the right of the tenth date label", function (): void {
           expect(eleventhDateLabelX).to.be.greaterThan(tenthDateLabelX);
         });
-        it("should have twelfth date label with proper date text", function () {
+        it("should have twelfth date label with proper date text", function (): void {
           expect(twelfthDateLabelText).to.equal(
             startOfTwelfthDate.toLocaleDateString()
           );
         });
-        it("should have twelfth date label in position according to date", function () {
+        it("should have twelfth date label in position according to date", function (): void {
           expect(twelfthDateLabelX).to.equal(
             getPixelGapBetweenTimes(
               startOfTwelfthDate.getTime(),
@@ -1918,10 +1918,10 @@ describe("React Integration: Poster", () => {
             )
           );
         });
-        it("should have twelfth date label to the right of the eleventh date label", function () {
+        it("should have twelfth date label to the right of the eleventh date label", function (): void {
           expect(twelfthDateLabelX).to.be.greaterThan(eleventhDateLabelX);
         });
-        it("should have twelfth date label half a day's worth of width from the end of the SVG", function () {
+        it("should have twelfth date label half a day's worth of width from the end of the SVG", function (): void {
           expect(twelfthDateLabelX + halfDayWidth).to.lessThanOrEqual(svgWidth);
         });
       });
@@ -1941,7 +1941,7 @@ describe("React Integration: Poster", () => {
     let secondTrackText: string;
     let thirdTrackText: string;
 
-    before(async function () {
+    before(async function (): Promise<void> {
       sandbox = createSandbox();
       Element.prototype.scrollIntoView = function (): void {
         // Purely exists because jsdom does not actually support this method so it cannot be stubbed without something
@@ -2005,17 +2005,17 @@ describe("React Integration: Poster", () => {
       assertIsString(thirdTrackContent);
       thirdTrackText = thirdTrackContent;
     });
-    after(function () {
+    after(function (): void {
       sandbox.restore();
     });
 
-    it("should have 4 task tracks", function () {
+    it("should have 4 task tracks", function (): void {
       expect(trackCount).to.equal(4);
     });
-    it("should have B on second track (index 1)", function () {
+    it("should have B on second track (index 1)", function (): void {
       expect([...secondTrackText]).to.have.members(["B"]);
     });
-    it("should have A-C-D on third track (index 2)", function () {
+    it("should have A-C-D on third track (index 2)", function (): void {
       expect([...thirdTrackText]).to.have.members(["A", "C", "D"]);
     });
   });

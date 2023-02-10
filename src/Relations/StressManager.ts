@@ -31,7 +31,7 @@ export default class StressManager {
   /**
    * Organize the paths by trying to find the lowest total distance and fewest tracks we can.
    */
-  private _organizePathsByStress() {
+  private _organizePathsByStress(): void {
     try {
       for (;;) {
         const chosenMove = this._getNextBestMove();

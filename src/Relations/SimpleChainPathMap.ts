@@ -4,7 +4,12 @@ import type {
   RelationshipMapping,
   ResourceMap,
 } from "../types";
-import type { ChainPath, SimpleChainMap, TaskUnit } from "./";
+import type {
+  ChainPath,
+  IsolatedDependencyChain,
+  SimpleChainMap,
+  TaskUnit,
+} from "./";
 
 /**
  * A collection of interconnected {@link TaskUnit}s, along with helpful functions to make reasoning about them easier.
@@ -48,7 +53,7 @@ export default class SimpleChainPathMap {
   /**
    * Build a map showing which paths are connected to which paths.
    */
-  private _buildPathInterconnections() {
+  private _buildPathInterconnections(): void {
     for (const path of this.paths) {
       // Get the units that the units in this path have a connection to. This will tell us which other paths this path
       // is connected to, and in how many ways. The number of units it's connected to in another path is equal to the
@@ -77,9 +82,9 @@ export default class SimpleChainPathMap {
               // set of connected units (to speed up the next iterations), and then move on to the next otherPath.
               mapping[otherPath.id] = otherPathRelationshipToPath;
               const otherPathsUnits = this._getUnitsInPath(otherPath);
-              otherPathsUnits.forEach((unit) =>
-                unitsConnectedToUnitsInPath.delete(unit)
-              );
+              otherPathsUnits.forEach((unit: TaskUnit): void => {
+                unitsConnectedToUnitsInPath.delete(unit);
+              });
             } else {
               // otherPath has no connections to main path, so we can move on to the next otherPath
             }
@@ -147,8 +152,11 @@ export default class SimpleChainPathMap {
    */
   private _getUnitsInPath(path: ChainPath): Set<TaskUnit> {
     return new Set<TaskUnit>(
-      path.chains.reduce(
-        (acc: TaskUnit[], chain) => [...acc, ...chain.units],
+      path.chains.reduce<TaskUnit[]>(
+        (acc: TaskUnit[], chain: IsolatedDependencyChain): TaskUnit[] => [
+          ...acc,
+          ...chain.units,
+        ],
         []
       )
     );

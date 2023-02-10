@@ -50,7 +50,9 @@ export default class UnitPathMatrix {
    * @returns a new array of units sorted according to their IDs
    */
   private _getAllUnitsSortedById(units: TaskUnit[]): TaskUnit[] {
-    return [...units].sort((prev, next) => prev.id.localeCompare(next.id));
+    return [...units].sort((prev: TaskUnit, next: TaskUnit): number =>
+      prev.id.localeCompare(next.id)
+    );
   }
   /**
    * Get the IDs of the units in alphabetical order.
@@ -61,7 +63,9 @@ export default class UnitPathMatrix {
    * @returns The IDs of the units in alphabetical order
    */
   private _getPathMatrixKeys(): string[] {
-    return this._unitsSortedById.map((unit) => unit.id).sort();
+    return this._unitsSortedById
+      .map((unit: TaskUnit): string => unit.id)
+      .sort();
   }
   /**
    * A matrix showing which units are connected to which other units.
@@ -118,7 +122,7 @@ export default class UnitPathMatrix {
   private _buildSubsetSingleStepMatrix(sortedUnits: TaskUnit[]): Matrix {
     // get slice of single step for relevant units
     const matrixData: number[][] = [];
-    const sliceIndexes = sortedUnits.map((unit) =>
+    const sliceIndexes = sortedUnits.map((unit: TaskUnit): number =>
       this.getMatrixIndexForUnit(unit)
     );
     for (const row of sliceIndexes) {
@@ -138,7 +142,7 @@ export default class UnitPathMatrix {
    */
   getHeadUnitsWithoutIsolatedUnit(isolatedUnits: TaskUnit[]): TaskUnit[] {
     const allowedUnits = this._unitsSortedById.filter(
-      (unit) => !isolatedUnits.includes(unit)
+      (unit: TaskUnit): boolean => !isolatedUnits.includes(unit)
     );
     if (allowedUnits.length === 0) {
       // must not be any more available heads, so return empty list.
@@ -165,7 +169,7 @@ export default class UnitPathMatrix {
       const index = Number(indexAsString);
       // get the index associated with
       const column = matrix.getColumn(index);
-      if (column.some((pathCountToUnit) => pathCountToUnit)) {
+      if (column.some((pathCountToUnit: number): number => pathCountToUnit)) {
         // There are some paths to this unit, so it must not be a head
         continue;
       } else {
@@ -193,7 +197,7 @@ export default class UnitPathMatrix {
     const connectedUnits = new Set<TaskUnit>();
     const unitIndex = this.getMatrixIndexForUnit(unit);
     const connectionsRow = this.taskUnitInterconnections.getRow(unitIndex);
-    connectionsRow.forEach((walks, connectionIndex) => {
+    connectionsRow.forEach((walks: number, connectionIndex: number): void => {
       if (walks) {
         connectedUnits.add(this.getUnitForMatrixIndex(connectionIndex));
       }

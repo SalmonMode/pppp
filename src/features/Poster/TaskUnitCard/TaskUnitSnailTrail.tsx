@@ -1,4 +1,5 @@
 import { css } from "@emotion/react";
+import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Box from "@mui/material/Box";
 import { theme } from "../../../app/theme";
 import type { Coordinate, TaskUnitDetails } from "../../../types";
@@ -10,7 +11,7 @@ export default function TaskUnitSnailTrail({
 }: {
   unit: TaskUnitDetails;
   position: Coordinate;
-}) {
+}): EmotionJSX.Element {
   const presenceWidth = getPixelGapBetweenTimes(
     unit.apparentEndTime,
     unit.anticipatedStartTime

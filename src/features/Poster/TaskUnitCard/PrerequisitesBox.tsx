@@ -1,10 +1,15 @@
 import { css } from "@emotion/react";
-import { theme } from "../../../app/theme";
+import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import PendingOutlinedIcon from "@mui/icons-material/PendingOutlined";
 import Tooltip from "@mui/material/Tooltip";
+import { theme } from "../../../app/theme";
 
-export default function PrerequisitesBox({ started }: { started: boolean }) {
+export default function PrerequisitesBox({
+  started,
+}: {
+  started: boolean;
+}): EmotionJSX.Element {
   const [wrapperStyles, className, IconComponent, tooltipText] = started
     ? [
         acceptedStyles,

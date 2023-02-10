@@ -6,7 +6,7 @@ import {
   SimpleChainMap,
   SimpleChainPathMap,
   StressTracker,
-  TaskUnit,
+  TaskUnit
 } from "./";
 
 const now = new Date();
@@ -19,10 +19,10 @@ const sixthDate = new Date(fifthDate.getTime() + 1000);
 const seventhDate = new Date(sixthDate.getTime() + 1000);
 const eighthDate = new Date(seventhDate.getTime() + 1000);
 
-describe("StressTracker", function () {
-  describe("Simple Paths", function () {
+describe("StressTracker", function (): void {
+  describe("Simple Paths", function (): void {
     let stressTracker: StressTracker;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
       const unitC = new TaskUnit(now, [], firstDate, secondDate, "C");
@@ -124,24 +124,30 @@ describe("StressTracker", function () {
         pathB,
         pathC,
         pathD,
-      ].reduce((acc, path) => {
-        return { ...acc, [path.id]: path };
-      }, {});
+      ].reduce<ResourceMap<ChainPath>>(
+        (
+          acc: ResourceMap<ChainPath>,
+          path: ChainPath
+        ): ResourceMap<ChainPath> => {
+          return { ...acc, [path.id]: path };
+        },
+        {}
+      );
       const pathMap = new SimpleChainPathMap(pathMapping, chainMap);
       stressTracker = new StressTracker(pathMap);
     });
-    it("should have a total distance of 34", function () {
+    it("should have a total distance of 34", function (): void {
       expect(stressTracker.getCurrentTotalDistanceOfPaths()).to.equal(34);
     });
-    it("should throw NoSuchChainPathError when getting path ID for out of range matrix index", function () {
+    it("should throw NoSuchChainPathError when getting path ID for out of range matrix index", function (): void {
       expect(() => stressTracker.getPathIdForMatrixIndex(10000)).to.throw(
         NoSuchChainPathError
       );
     });
   });
-  describe("Simple Paths After Swap", function () {
+  describe("Simple Paths After Swap", function (): void {
     let stressTracker: StressTracker;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
       const unitC = new TaskUnit(now, [], firstDate, secondDate, "C");
@@ -229,20 +235,26 @@ describe("StressTracker", function () {
         pathB,
         pathC,
         pathD,
-      ].reduce((acc, path) => {
-        return { ...acc, [path.id]: path };
-      }, {});
+      ].reduce<ResourceMap<ChainPath>>(
+        (
+          acc: ResourceMap<ChainPath>,
+          path: ChainPath
+        ): ResourceMap<ChainPath> => {
+          return { ...acc, [path.id]: path };
+        },
+        {}
+      );
       const pathMap = new SimpleChainPathMap(pathMapping, chainMap);
       stressTracker = new StressTracker(pathMap);
       stressTracker.swapPathsById(pathD.id, pathB.id);
     });
-    it("should have a total distance of 46", function () {
+    it("should have a total distance of 46", function (): void {
       expect(stressTracker.getCurrentTotalDistanceOfPaths()).to.equal(46);
     });
   });
-  describe("Sharing Tracks", function () {
+  describe("Sharing Tracks", function (): void {
     let stressTracker: StressTracker;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(
         now,
@@ -323,22 +335,28 @@ describe("StressTracker", function () {
         pathC,
         pathE,
         pathI,
-      ].reduce((acc, path) => {
-        return { ...acc, [path.id]: path };
-      }, {});
+      ].reduce<ResourceMap<ChainPath>>(
+        (
+          acc: ResourceMap<ChainPath>,
+          path: ChainPath
+        ): ResourceMap<ChainPath> => {
+          return { ...acc, [path.id]: path };
+        },
+        {}
+      );
       const pathMap = new SimpleChainPathMap(pathMapping, chainMap);
       stressTracker = new StressTracker(pathMap);
     });
-    it("should have a total distance of 16", function () {
+    it("should have a total distance of 16", function (): void {
       expect(stressTracker.getCurrentTotalDistanceOfPaths()).to.equal(16);
     });
-    it("should have 4 tracks", function () {
+    it("should have 4 tracks", function (): void {
       expect(stressTracker.getCurrentTracks().length).to.equal(4);
     });
   });
-  describe("Sharing Tracks After Swap", function () {
+  describe("Sharing Tracks After Swap", function (): void {
     let stressTracker: StressTracker;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(
         now,
@@ -419,23 +437,29 @@ describe("StressTracker", function () {
         pathC,
         pathE,
         pathI,
-      ].reduce((acc, path) => {
-        return { ...acc, [path.id]: path };
-      }, {});
+      ].reduce<ResourceMap<ChainPath>>(
+        (
+          acc: ResourceMap<ChainPath>,
+          path: ChainPath
+        ): ResourceMap<ChainPath> => {
+          return { ...acc, [path.id]: path };
+        },
+        {}
+      );
       const pathMap = new SimpleChainPathMap(pathMapping, chainMap);
       stressTracker = new StressTracker(pathMap);
       stressTracker.swapPathsById(pathI.id, pathC.id);
     });
-    it("should have a total distance of 18", function () {
+    it("should have a total distance of 18", function (): void {
       expect(stressTracker.getCurrentTotalDistanceOfPaths()).to.equal(18);
     });
-    it("should have 4 tracks", function () {
+    it("should have 4 tracks", function (): void {
       expect(stressTracker.getCurrentTracks().length).to.equal(4);
     });
   });
-  describe("Sharing Tracks After Move To Top", function () {
+  describe("Sharing Tracks After Move To Top", function (): void {
     let stressTracker: StressTracker;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(
         now,
@@ -516,23 +540,29 @@ describe("StressTracker", function () {
         pathC,
         pathE,
         pathI,
-      ].reduce((acc, path) => {
-        return { ...acc, [path.id]: path };
-      }, {});
+      ].reduce<ResourceMap<ChainPath>>(
+        (
+          acc: ResourceMap<ChainPath>,
+          path: ChainPath
+        ): ResourceMap<ChainPath> => {
+          return { ...acc, [path.id]: path };
+        },
+        {}
+      );
       const pathMap = new SimpleChainPathMap(pathMapping, chainMap);
       stressTracker = new StressTracker(pathMap);
       stressTracker.movePathToTopById(pathC.id);
     });
-    it("should have a total distance of 16", function () {
+    it("should have a total distance of 16", function (): void {
       expect(stressTracker.getCurrentTotalDistanceOfPaths()).to.equal(16);
     });
-    it("should have 3 tracks", function () {
+    it("should have 3 tracks", function (): void {
       expect(stressTracker.getCurrentTracks().length).to.equal(3);
     });
   });
-  describe("Sharing Tracks After Move Below", function () {
+  describe("Sharing Tracks After Move Below", function (): void {
     let stressTracker: StressTracker;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(
         now,
@@ -613,23 +643,29 @@ describe("StressTracker", function () {
         pathC,
         pathE,
         pathI,
-      ].reduce((acc, path) => {
-        return { ...acc, [path.id]: path };
-      }, {});
+      ].reduce<ResourceMap<ChainPath>>(
+        (
+          acc: ResourceMap<ChainPath>,
+          path: ChainPath
+        ): ResourceMap<ChainPath> => {
+          return { ...acc, [path.id]: path };
+        },
+        {}
+      );
       const pathMap = new SimpleChainPathMap(pathMapping, chainMap);
       stressTracker = new StressTracker(pathMap);
       stressTracker.movePathBelowPathById(pathA.id, pathI.id);
     });
-    it("should have a total distance of 16", function () {
+    it("should have a total distance of 16", function (): void {
       expect(stressTracker.getCurrentTotalDistanceOfPaths()).to.equal(16);
     });
-    it("should have 3 tracks", function () {
+    it("should have 3 tracks", function (): void {
       expect(stressTracker.getCurrentTracks().length).to.equal(3);
     });
   });
-  describe("Sharing Tracks After Converge", function () {
+  describe("Sharing Tracks After Converge", function (): void {
     let stressTracker: StressTracker;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(
         now,
@@ -710,17 +746,23 @@ describe("StressTracker", function () {
         pathC,
         pathE,
         pathI,
-      ].reduce((acc, path) => {
-        return { ...acc, [path.id]: path };
-      }, {});
+      ].reduce<ResourceMap<ChainPath>>(
+        (
+          acc: ResourceMap<ChainPath>,
+          path: ChainPath
+        ): ResourceMap<ChainPath> => {
+          return { ...acc, [path.id]: path };
+        },
+        {}
+      );
       const pathMap = new SimpleChainPathMap(pathMapping, chainMap);
       stressTracker = new StressTracker(pathMap);
       stressTracker.convergePathsById(pathA.id, pathC.id);
     });
-    it("should have a total distance of 12", function () {
+    it("should have a total distance of 12", function (): void {
       expect(stressTracker.getCurrentTotalDistanceOfPaths()).to.equal(12);
     });
-    it("should have 3 tracks", function () {
+    it("should have 3 tracks", function (): void {
       expect(stressTracker.getCurrentTracks().length).to.equal(3);
     });
   });

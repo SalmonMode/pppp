@@ -1,13 +1,13 @@
 import { screen } from "@testing-library/react";
 import { expect } from "chai";
-import { renderWithProvider } from "../../Utility/TestRenderers";
 import { createSandbox, SinonSandbox } from "sinon";
+import { renderWithProvider } from "../../Utility/TestRenderers";
 import PosterBoard from "./PosterBoard";
 
 describe("React Integration: PosterBoard", () => {
   describe("Initial State", () => {
     let sandbox: SinonSandbox;
-    beforeEach(function () {
+    beforeEach(function (): void {
       sandbox = createSandbox();
       Element.prototype.scrollIntoView = function (): void {
         // Purely exists because jsdom does not actually support this method so it cannot be stubbed without something
@@ -17,14 +17,14 @@ describe("React Integration: PosterBoard", () => {
       sandbox.stub(Element.prototype, "scrollIntoView");
       renderWithProvider(<PosterBoard />);
     });
-    afterEach(function () {
+    afterEach(function (): void {
       sandbox.restore();
     });
-    it('should initially say "loading..."', async function () {
+    it('should initially say "loading..."', async function (): Promise<void> {
       const poster = await screen.findByTestId(`poster-loading`);
       expect(poster.textContent).to.equal("loading...");
     });
-    it("should have 4 tracks after loading", async function () {
+    it("should have 4 tracks after loading", async function (): Promise<void> {
       const poster = await screen.findByTestId(`poster`);
       const tracks = poster.querySelectorAll(".taskTrack");
       expect(tracks.length).to.equal(4);

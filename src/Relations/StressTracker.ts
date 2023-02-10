@@ -2,7 +2,7 @@ import { NoSuchChainPathError } from "../Error";
 import {
   assertIsNumber,
   assertIsObject,
-  assertIsString,
+  assertIsString
 } from "../typePredicates";
 import type { RelationshipMapping } from "../types";
 import { Matrix } from "../Utility";
@@ -81,7 +81,9 @@ export default class StressTracker {
     let distance = 0;
     const pathMatrixIndex = this.getMatrixIndexForPathId(pathId);
     const pathConns = this.pathMap.getConnectionsForPathById(pathId);
-    for (const [otherPathId, numberOfConnections] of Object.entries(pathConns)) {
+    for (const [otherPathId, numberOfConnections] of Object.entries(
+      pathConns
+    )) {
       const otherPathMatrixIndex = this.getMatrixIndexForPathId(otherPathId);
 
       const distanceBetween = distances.getElementAtPosition(
@@ -212,35 +214,39 @@ export default class StressTracker {
 
     // Produce a new matrix containing the updated relative positions.
     const updatedPositionData: number[][] = [];
-    this.pathMatrixKeys.forEach((key, index) => {
+    this.pathMatrixKeys.forEach((_key: string, index: number): void => {
       const oldRow = [...this.positionsMatrix.getRow(index)];
       if (diff[index]) {
         // this row was affected so update it
         if (index === matrixIndexOfPath || index === matrixIndexOfOtherPath) {
           // The row for one of the swapping paths. All truthy indexes in the diff need to be updated
-          const updatedRow = oldRow.map((value, columnIndex) => {
-            if (diff[columnIndex]) {
-              // The value for one of the impacted paths
-              return value * -1;
+          const updatedRow = oldRow.map(
+            (value: number, columnIndex: number): number => {
+              if (diff[columnIndex]) {
+                // The value for one of the impacted paths
+                return value * -1;
+              }
+              // A path that was neither one of the swapping paths, nor one of the paths between them.
+              return value;
             }
-            // A path that was neither one of the swapping paths, nor one of the paths between them.
-            return value;
-          });
+          );
           updatedPositionData.push(updatedRow);
         } else {
           // One of the in between paths. Only the values for the swapped paths need to be swapped. All other values can
           // stay the same.
-          const updatedRow = oldRow.map((value, columnIndex) => {
-            if (
-              columnIndex === matrixIndexOfPath ||
-              columnIndex === matrixIndexOfOtherPath
-            ) {
-              // The value for one of the swapped paths
-              return value * -1;
+          const updatedRow = oldRow.map(
+            (value: number, columnIndex: number): number => {
+              if (
+                columnIndex === matrixIndexOfPath ||
+                columnIndex === matrixIndexOfOtherPath
+              ) {
+                // The value for one of the swapped paths
+                return value * -1;
+              }
+              // A path that was neither one of the swapping paths
+              return value;
             }
-            // A path that was neither one of the swapping paths
-            return value;
-          });
+          );
           updatedPositionData.push(updatedRow);
         }
       } else {
@@ -271,7 +277,8 @@ export default class StressTracker {
     }
     const currentRankings = this.getRankings();
     const [upperPathId, lowerPathId] = [pathId, otherPathId].sort(
-      (a, b) => currentRankings.indexOf(a) - currentRankings.indexOf(b)
+      (a: string, b: string): number =>
+        currentRankings.indexOf(a) - currentRankings.indexOf(b)
     );
     assertIsString(upperPathId);
     assertIsString(lowerPathId);
@@ -315,7 +322,7 @@ export default class StressTracker {
 
     // Produce a new matrix containing the updated relative positions.
     const updatedPositionData: number[][] = [];
-    this.pathMatrixKeys.forEach((key, index) => {
+    this.pathMatrixKeys.forEach((key: string, index: number): void => {
       let updatedRow: number[];
       if (key === pathId) {
         // This is the row that is moving, so copy the target path's positions, but update its relative position to the
@@ -382,13 +389,13 @@ export default class StressTracker {
 
     // Produce a new matrix containing the updated relative positions.
     const updatedPositionData: number[][] = [];
-    this.pathMatrixKeys.forEach((key, index) => {
+    this.pathMatrixKeys.forEach((key: string, index: number): void => {
       let updatedRow: number[];
       if (key === pathId) {
         // This is the row that is moving, so make it all 1s except for a 0 for itself.
         updatedRow = this.positionsMatrix
           .getRow(matrixIndexOfPathThatIsMoving)
-          .map((value) => (value === 0 ? 0 : 1));
+          .map((value: number): number => (value === 0 ? 0 : 1));
       } else {
         // This is for the rows of every other path. The only thing that might need to change here is that their
         // position relative to the moving path should -1 (since everything is below it now).
@@ -557,17 +564,28 @@ export default class StressTracker {
     /**
      * Tracks which track each path is on to speed up lookup times.
      */
-    const pathTrackMap: RelationshipMapping = allTracksDetails.reduce(
-      (acc, track, index) => {
-        return {
-          ...acc,
-          ...track.paths.reduce((innerAcc, pathId) => {
-            return { ...innerAcc, [pathId]: index };
-          }, {}),
-        };
-      },
-      {}
-    );
+    const pathTrackMap: RelationshipMapping =
+      allTracksDetails.reduce<RelationshipMapping>(
+        (
+          acc: RelationshipMapping,
+          track: TrackDetails,
+          index: number
+        ): RelationshipMapping => {
+          return {
+            ...acc,
+            ...track.paths.reduce<RelationshipMapping>(
+              (
+                innerAcc: RelationshipMapping,
+                pathId: string
+              ): RelationshipMapping => {
+                return { ...innerAcc, [pathId]: index };
+              },
+              {}
+            ),
+          };
+        },
+        {}
+      );
     for (const pathId of this.pathMatrixKeys) {
       for (const otherPathId of this.pathMatrixKeys) {
         const matrixIndex = this.getMatrixIndexForPathId(pathId);
@@ -583,7 +601,7 @@ export default class StressTracker {
           otherPathId
         );
         const trackIndexesInvolved = new Set<number>();
-        inBetweens.forEach((value, index) => {
+        inBetweens.forEach((value: number, index: number): void => {
           if (value) {
             // is in between
             const pathId = this.getPathIdForMatrixIndex(index);
@@ -658,13 +676,14 @@ export default class StressTracker {
   private _getPathTrackDetails(tracks: ChainPath[][]): TrackDetails[] {
     const trackDetails: TrackDetails[] = [];
     for (const track of tracks) {
-      const height = track.reduce(
-        (acc, path) => Math.max(acc, path.tracks.length),
+      const height = track.reduce<number>(
+        (acc: number, path: ChainPath): number =>
+          Math.max(acc, path.tracks.length),
         0
       );
       trackDetails.push({
         height,
-        paths: track.map((path) => path.id),
+        paths: track.map((path: ChainPath): string => path.id),
       });
     }
     return trackDetails;
@@ -701,7 +720,7 @@ export default class StressTracker {
       otherPathId
     );
     const pathIdsInvolved: ChainPath["id"][] = [];
-    inBetweens.forEach((value, index) => {
+    inBetweens.forEach((value: number, index: number): void => {
       if (value) {
         // is in between
         const inBetweenPathId = this.pathMatrixKeys[index];
@@ -731,11 +750,14 @@ export default class StressTracker {
     for (const id of this.pathMatrixKeys) {
       const matrixIndex = this.getMatrixIndexForPathId(id);
       const positionRow = positions.getRow(matrixIndex);
-      const rank = positionRow.reduce((acc, curr) => acc + curr, 0);
+      const rank = positionRow.reduce<number>(
+        (acc: number, curr: number): number => acc + curr,
+        0
+      );
       rankings[id] = rank;
     }
     const rankedIds = [...this.pathMatrixKeys];
-    rankedIds.sort((a, b) => {
+    rankedIds.sort((a: string, b: string): number => {
       const rankA = rankings[a];
       assertIsNumber(rankA);
       const rankB = rankings[b];

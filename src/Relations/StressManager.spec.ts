@@ -7,7 +7,7 @@ import {
   SimpleChainPathMap,
   StressManager,
   StressTracker,
-  TaskUnit,
+  TaskUnit
 } from "./";
 
 const now = new Date();
@@ -20,11 +20,11 @@ const sixthDate = new Date(fifthDate.getTime() + 1000);
 const seventhDate = new Date(sixthDate.getTime() + 1000);
 const eighthDate = new Date(seventhDate.getTime() + 1000);
 
-describe("StressManager", function () {
-  describe("Many Paths", function () {
+describe("StressManager", function (): void {
+  describe("Many Paths", function (): void {
     let stressTracker: StressTracker;
     let originalDistance: number;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
       const unitC = new TaskUnit(now, [], firstDate, secondDate, "C");
@@ -169,20 +169,26 @@ describe("StressManager", function () {
         pathD,
         pathE,
         pathF,
-      ].reduce((acc, path) => {
-        return { ...acc, [path.id]: path };
-      }, {});
+      ].reduce<ResourceMap<ChainPath>>(
+        (
+          acc: ResourceMap<ChainPath>,
+          path: ChainPath
+        ): ResourceMap<ChainPath> => {
+          return { ...acc, [path.id]: path };
+        },
+        {}
+      );
       const pathMap = new SimpleChainPathMap(pathMapping, chainMap);
       stressTracker = new StressTracker(pathMap);
       originalDistance = stressTracker.getCurrentTotalDistanceOfPaths();
       new StressManager(stressTracker);
     });
-    it("should have less distance after sorting", function () {
+    it("should have less distance after sorting", function (): void {
       const postSortDistance = stressTracker.getCurrentTotalDistanceOfPaths();
       expect(postSortDistance).to.be.lessThan(originalDistance);
     });
   });
-  describe("Many Paths Best Move Is To Top", function () {
+  describe("Many Paths Best Move Is To Top", function (): void {
     let stressTracker: StressTracker;
     let pathA: ChainPath;
     let pathB: ChainPath;
@@ -190,7 +196,7 @@ describe("StressManager", function () {
     let pathD: ChainPath;
     let pathE: ChainPath;
     let originalDistance: number;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
       const unitC = new TaskUnit(now, [], firstDate, secondDate, "C");
@@ -255,19 +261,25 @@ describe("StressManager", function () {
         pathC,
         pathD,
         pathE,
-      ].reduce((acc, path) => {
-        return { ...acc, [path.id]: path };
-      }, {});
+      ].reduce<ResourceMap<ChainPath>>(
+        (
+          acc: ResourceMap<ChainPath>,
+          path: ChainPath
+        ): ResourceMap<ChainPath> => {
+          return { ...acc, [path.id]: path };
+        },
+        {}
+      );
       const pathMap = new SimpleChainPathMap(pathMapping, chainMap);
       stressTracker = new StressTracker(pathMap);
       originalDistance = stressTracker.getCurrentTotalDistanceOfPaths();
       new StressManager(stressTracker);
     });
-    it("should have less distance after sorting", function () {
+    it("should have less distance after sorting", function (): void {
       const postSortDistance = stressTracker.getCurrentTotalDistanceOfPaths();
       expect(postSortDistance).to.be.lessThan(originalDistance);
     });
-    it("should be sorted E, A, B, C, then D", function () {
+    it("should be sorted E, A, B, C, then D", function (): void {
       expect(stressTracker.getRankings()).to.deep.equal([
         pathE.id,
         pathA.id,
@@ -277,7 +289,7 @@ describe("StressManager", function () {
       ]);
     });
   });
-  describe("Many Paths Best Move Is Below", function () {
+  describe("Many Paths Best Move Is Below", function (): void {
     let stressTracker: StressTracker;
     let pathA: ChainPath;
     let pathB: ChainPath;
@@ -288,7 +300,7 @@ describe("StressManager", function () {
     let pathG: ChainPath;
     let pathH: ChainPath;
     let originalDistance: number;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
       const unitC = new TaskUnit(now, [], firstDate, secondDate, "C");
@@ -408,19 +420,25 @@ describe("StressManager", function () {
         pathF,
         pathG,
         pathH,
-      ].reduce((acc, path) => {
-        return { ...acc, [path.id]: path };
-      }, {});
+      ].reduce<ResourceMap<ChainPath>>(
+        (
+          acc: ResourceMap<ChainPath>,
+          path: ChainPath
+        ): ResourceMap<ChainPath> => {
+          return { ...acc, [path.id]: path };
+        },
+        {}
+      );
       const pathMap = new SimpleChainPathMap(pathMapping, chainMap);
       stressTracker = new StressTracker(pathMap);
       originalDistance = stressTracker.getCurrentTotalDistanceOfPaths();
       new StressManager(stressTracker);
     });
-    it("should have less distance after sorting", function () {
+    it("should have less distance after sorting", function (): void {
       const postSortDistance = stressTracker.getCurrentTotalDistanceOfPaths();
       expect(postSortDistance).to.be.lessThan(originalDistance);
     });
-    it("should be sorted A, B, H, C, D, E, F, then G", function () {
+    it("should be sorted A, B, H, C, D, E, F, then G", function (): void {
       expect(stressTracker.getRankings()).to.deep.equal([
         pathA.id,
         pathB.id,
@@ -433,14 +451,14 @@ describe("StressManager", function () {
       ]);
     });
   });
-  describe("Best Move is Scooching Closer", function () {
+  describe("Best Move is Scooching Closer", function (): void {
     let stressTracker: StressTracker;
     let pathA: ChainPath;
     let pathC: ChainPath;
     let pathE: ChainPath;
     let pathI: ChainPath;
     let originalDistance: number;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(
         now,
@@ -520,19 +538,25 @@ describe("StressManager", function () {
         pathC,
         pathE,
         pathI,
-      ].reduce((acc, path) => {
-        return { ...acc, [path.id]: path };
-      }, {});
+      ].reduce<ResourceMap<ChainPath>>(
+        (
+          acc: ResourceMap<ChainPath>,
+          path: ChainPath
+        ): ResourceMap<ChainPath> => {
+          return { ...acc, [path.id]: path };
+        },
+        {}
+      );
       const pathMap = new SimpleChainPathMap(pathMapping, chainMap);
       stressTracker = new StressTracker(pathMap);
       originalDistance = stressTracker.getCurrentTotalDistanceOfPaths();
       new StressManager(stressTracker);
     });
-    it("should have less distance after sorting", function () {
+    it("should have less distance after sorting", function (): void {
       const postSortDistance = stressTracker.getCurrentTotalDistanceOfPaths();
       expect(postSortDistance).to.be.lessThan(originalDistance);
     });
-    it("should be sorted E, C, A, then I", function () {
+    it("should be sorted E, C, A, then I", function (): void {
       expect(stressTracker.getRankings()).to.deep.equal([
         pathE.id,
         pathC.id,
@@ -541,14 +565,14 @@ describe("StressManager", function () {
       ]);
     });
   });
-  describe("Sharing a Track", function () {
+  describe("Sharing a Track", function (): void {
     let stressTracker: StressTracker;
     let pathA: ChainPath;
     let pathB: ChainPath;
     let pathC: ChainPath;
     let pathH: ChainPath;
     let originalDistance: number;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
       const unitC = new TaskUnit(now, [], firstDate, secondDate, "C");
@@ -604,19 +628,25 @@ describe("StressManager", function () {
         pathB,
         pathC,
         pathH,
-      ].reduce((acc, path) => {
-        return { ...acc, [path.id]: path };
-      }, {});
+      ].reduce<ResourceMap<ChainPath>>(
+        (
+          acc: ResourceMap<ChainPath>,
+          path: ChainPath
+        ): ResourceMap<ChainPath> => {
+          return { ...acc, [path.id]: path };
+        },
+        {}
+      );
       const pathMap = new SimpleChainPathMap(pathMapping, chainMap);
       stressTracker = new StressTracker(pathMap);
       originalDistance = stressTracker.getCurrentTotalDistanceOfPaths();
       new StressManager(stressTracker);
     });
-    it("should have same distance after sorting", function () {
+    it("should have same distance after sorting", function (): void {
       const postSortDistance = stressTracker.getCurrentTotalDistanceOfPaths();
       expect(postSortDistance).to.equal(originalDistance);
     });
-    it("should be sorted B, A, H, C", function () {
+    it("should be sorted B, A, H, C", function (): void {
       expect(stressTracker.getRankings()).to.deep.equal([
         pathB.id,
         pathA.id,
@@ -624,18 +654,18 @@ describe("StressManager", function () {
         pathC.id,
       ]);
     });
-    it("should have 3 tracks", function () {
+    it("should have 3 tracks", function (): void {
       expect(stressTracker.getCurrentTracks().length).to.equal(3);
     });
   });
-  describe("Sharing a Track (Different Path Heights)", function () {
+  describe("Sharing a Track (Different Path Heights)", function (): void {
     let stressTracker: StressTracker;
     let pathA: ChainPath;
     let pathC: ChainPath;
     let pathE: ChainPath;
     let pathI: ChainPath;
     let originalDistance: number;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(
         now,
@@ -710,19 +740,25 @@ describe("StressManager", function () {
         pathC,
         pathE,
         pathI,
-      ].reduce((acc, path) => {
-        return { ...acc, [path.id]: path };
-      }, {});
+      ].reduce<ResourceMap<ChainPath>>(
+        (
+          acc: ResourceMap<ChainPath>,
+          path: ChainPath
+        ): ResourceMap<ChainPath> => {
+          return { ...acc, [path.id]: path };
+        },
+        {}
+      );
       const pathMap = new SimpleChainPathMap(pathMapping, chainMap);
       stressTracker = new StressTracker(pathMap);
       originalDistance = stressTracker.getCurrentTotalDistanceOfPaths();
       new StressManager(stressTracker);
     });
-    it("should have less distance after sorting", function () {
+    it("should have less distance after sorting", function (): void {
       const postSortDistance = stressTracker.getCurrentTotalDistanceOfPaths();
       expect(postSortDistance).to.be.lessThan(originalDistance);
     });
-    it("should be sorted E, A, C, I", function () {
+    it("should be sorted E, A, C, I", function (): void {
       expect(stressTracker.getRankings()).to.deep.equal([
         pathE.id,
         pathA.id,
@@ -730,18 +766,18 @@ describe("StressManager", function () {
         pathI.id,
       ]);
     });
-    it("should have 3 tracks", function () {
+    it("should have 3 tracks", function (): void {
       expect(stressTracker.getCurrentTracks().length).to.equal(3);
     });
   });
-  describe("Sharing a Track (Different Path Heights, Starting With Shorter On Top)", function () {
+  describe("Sharing a Track (Different Path Heights, Starting With Shorter On Top)", function (): void {
     let stressTracker: StressTracker;
     let pathA: ChainPath;
     let pathC: ChainPath;
     let pathE: ChainPath;
     let pathI: ChainPath;
     let originalDistance: number;
-    before(function () {
+    before(function (): void {
       const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
       const unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate, "B");
       const unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C");
@@ -816,19 +852,25 @@ describe("StressManager", function () {
         pathC,
         pathE,
         pathI,
-      ].reduce((acc, path) => {
-        return { ...acc, [path.id]: path };
-      }, {});
+      ].reduce<ResourceMap<ChainPath>>(
+        (
+          acc: ResourceMap<ChainPath>,
+          path: ChainPath
+        ): ResourceMap<ChainPath> => {
+          return { ...acc, [path.id]: path };
+        },
+        {}
+      );
       const pathMap = new SimpleChainPathMap(pathMapping, chainMap);
       stressTracker = new StressTracker(pathMap);
       originalDistance = stressTracker.getCurrentTotalDistanceOfPaths();
       new StressManager(stressTracker);
     });
-    it("should have less distance after sorting", function () {
+    it("should have less distance after sorting", function (): void {
       const postSortDistance = stressTracker.getCurrentTotalDistanceOfPaths();
       expect(postSortDistance).to.be.lessThan(originalDistance);
     });
-    it("should be sorted E, A, C, I", function () {
+    it("should be sorted E, A, C, I", function (): void {
       expect(stressTracker.getRankings()).to.deep.equal([
         pathE.id,
         pathA.id,
@@ -836,11 +878,11 @@ describe("StressManager", function () {
         pathI.id,
       ]);
     });
-    it("should have 3 tracks", function () {
+    it("should have 3 tracks", function (): void {
       expect(stressTracker.getCurrentTracks().length).to.equal(3);
     });
   });
-  describe("Busted Moving During Organize", function () {
+  describe("Busted Moving During Organize", function (): void {
     let stressTracker: StressTracker;
     let pathA: ChainPath;
     let pathC: ChainPath;
@@ -848,7 +890,7 @@ describe("StressManager", function () {
     let pathI: ChainPath;
     let sandbox: SinonSandbox;
     let moveBelowStub: SinonStub;
-    before(function () {
+    before(function (): void {
       sandbox = createSandbox();
       moveBelowStub = sandbox.stub(StressTracker.prototype, "swapPathsById");
       moveBelowStub.throws(RangeError);
@@ -931,16 +973,22 @@ describe("StressManager", function () {
         pathC,
         pathE,
         pathI,
-      ].reduce((acc, path) => {
-        return { ...acc, [path.id]: path };
-      }, {});
+      ].reduce<ResourceMap<ChainPath>>(
+        (
+          acc: ResourceMap<ChainPath>,
+          path: ChainPath
+        ): ResourceMap<ChainPath> => {
+          return { ...acc, [path.id]: path };
+        },
+        {}
+      );
       const pathMap = new SimpleChainPathMap(pathMapping, chainMap);
       stressTracker = new StressTracker(pathMap);
     });
-    after(function () {
+    after(function (): void {
       sandbox.restore();
     });
-    it("should bubble error properly", function () {
+    it("should bubble error properly", function (): void {
       expect(() => new StressManager(stressTracker)).to.throw(RangeError);
     });
   });

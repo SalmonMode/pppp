@@ -258,7 +258,8 @@ export default class ChainStrainMap {
     // Filter out the dependencies that we can't use.
     const headDirectDeps = this.chainMap.getDirectDependenciesOfChain(head);
     const availableDeps = [...headDirectDeps].filter(
-      (dep) => !unavailableChains.includes(dep)
+      (dep: IsolatedDependencyChain): boolean =>
+        !unavailableChains.includes(dep)
     );
     // We want any paths with a greater relative familiarity to stand out. We can filter out any deps after the first
     // that would have a lower relative familiarity. This is where we factor in unfamiliar attachment and discourage
@@ -306,19 +307,24 @@ export default class ChainStrainMap {
     root: IsolatedDependencyChain
   ): IsolatedDependencyChain[] {
     const sortedDeps = [...availableDeps];
-    sortedDeps.sort((prev, next) => {
-      // use the familiarity of the path option relative to the root (more preferred)
-      const nextFamiliarity = this.getRelativeFamiliarityOfChainWithChain(
-        next,
-        root
-      );
-      const prevFamiliarity = this.getRelativeFamiliarityOfChainWithChain(
-        prev,
-        root
-      );
-      const familiarityDiff = nextFamiliarity - prevFamiliarity;
-      return familiarityDiff;
-    });
+    sortedDeps.sort(
+      (
+        prev: IsolatedDependencyChain,
+        next: IsolatedDependencyChain
+      ): number => {
+        // use the familiarity of the path option relative to the root (more preferred)
+        const nextFamiliarity = this.getRelativeFamiliarityOfChainWithChain(
+          next,
+          root
+        );
+        const prevFamiliarity = this.getRelativeFamiliarityOfChainWithChain(
+          prev,
+          root
+        );
+        const familiarityDiff = nextFamiliarity - prevFamiliarity;
+        return familiarityDiff;
+      }
+    );
     return sortedDeps;
   }
   private _getMostFamiliarPathsFromLeastDiscouragedHeads(
@@ -458,7 +464,7 @@ export default class ChainStrainMap {
   }
   private _getSortedPreferredPaths(paths: ChainPath[]): ChainPath[] {
     const sortedPaths = [...paths];
-    sortedPaths.sort((prev, next) => {
+    sortedPaths.sort((prev: ChainPath, next: ChainPath): number => {
       // use the sum of the relative familiarity of all chains in the path (more preferred)
       const nextFamiliarity = this.getRelativeFamiliarityOfPath(next);
       const prevFamiliarity = this.getRelativeFamiliarityOfPath(prev);
@@ -507,8 +513,9 @@ export default class ChainStrainMap {
    * @returns how much strain the path has
    */
   getStrainOfPath(path: ChainPath): number {
-    return path.chains.reduce(
-      (sum, chain) => sum + this.getStrainOfChain(chain),
+    return path.chains.reduce<number>(
+      (sum: number, chain: IsolatedDependencyChain): number =>
+        sum + this.getStrainOfChain(chain),
       0
     );
   }
@@ -519,8 +526,8 @@ export default class ChainStrainMap {
    * @returns how much strain the path has
    */
   getRelativeFamiliarityOfPath(path: ChainPath): number {
-    return path.chains.reduce(
-      (sum, chain) =>
+    return path.chains.reduce<number>(
+      (sum: number, chain: IsolatedDependencyChain): number =>
         sum + this.getRelativeFamiliarityOfChainWithChain(chain, path.head),
       0
     );
@@ -532,8 +539,8 @@ export default class ChainStrainMap {
    * @returns how much strain the path has
    */
   getUnfamiliarityOfPath(path: ChainPath): number {
-    return path.chains.reduce(
-      (sum, chain) =>
+    return path.chains.reduce<number>(
+      (sum: number, chain: IsolatedDependencyChain): number =>
         sum +
         this.getUnfamiliarStrainOnChainRelativeToObservingChain(
           chain,

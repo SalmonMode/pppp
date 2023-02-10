@@ -64,8 +64,9 @@ export default class ChainPath {
 
     this._pathTotalTime =
       this.endDate.getTime() - this.anticipatedStartDate.getTime();
-    this._pathPresenceTime = this.chains.reduce(
-      (sum, curr) => sum + curr.presenceTime,
+    this._pathPresenceTime = this.chains.reduce<number>(
+      (sum: number, curr: IsolatedDependencyChain): number =>
+        sum + curr.presenceTime,
       0
     );
     this._units = new Set<TaskUnit>();
@@ -186,7 +187,7 @@ export default class ChainPath {
     // layer the tracks in a way that shows them branching away from the center (as needed) as time goes on, rather than
     // starting out in open space and moving towards the center.
     tasks.sort(
-      (a, b) =>
+      (a: TaskUnit, b: TaskUnit): number =>
         b.anticipatedStartDate.getTime() - a.anticipatedStartDate.getTime()
     );
     let nextTask = tasks.pop();

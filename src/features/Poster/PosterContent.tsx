@@ -1,4 +1,5 @@
 import { css } from "@emotion/react";
+import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import { assertIsObject } from "../../typePredicates";
 import type { TaskUnitDetails } from "../../types";
 import TaskTrack from "./TaskUnitCard/TaskTrack";
@@ -10,11 +11,11 @@ export default function PosterContent({
 }: {
   taskUnits: TaskUnitsLoadingCompleteState;
   earliestStartTime: number;
-}) {
+}): EmotionJSX.Element {
   const tracks = taskUnits.unitTrackMap;
   return (
     <div data-testid={"poster"} css={styles}>
-      {tracks.map((track, index) => {
+      {tracks.map((track: string[], index: number): EmotionJSX.Element => {
         return (
           <TaskTrack
             key={index}

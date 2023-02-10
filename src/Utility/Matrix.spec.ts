@@ -1,59 +1,59 @@
 import { expect } from "chai";
 import { default as Matrix } from "./Matrix";
 
-describe("Matrix", function () {
-  describe("Empty Matrix", function () {
-    it("should throw RangeError", function () {
+describe("Matrix", function (): void {
+  describe("Empty Matrix", function (): void {
+    it("should throw RangeError", function (): void {
       expect(() => new Matrix([])).to.throw(RangeError);
     });
   });
-  describe("Uneven Matrix", function () {
-    it("should throw RangeError", function () {
+  describe("Uneven Matrix", function (): void {
+    it("should throw RangeError", function (): void {
       expect(() => new Matrix([[1, 2], [1]])).to.throw(RangeError);
     });
   });
-  describe("Good Matrix", function () {
+  describe("Good Matrix", function (): void {
     let matrix: Matrix;
-    before(function () {
+    before(function (): void {
       matrix = new Matrix([
         [1, 2],
         [3, 4],
         [5, 6],
       ]);
     });
-    it("should have 3 rows", function () {
+    it("should have 3 rows", function (): void {
       expect(matrix.numberOfRows).to.equal(3);
     });
-    it("should have 2 columns", function () {
+    it("should have 2 columns", function (): void {
       expect(matrix.numberOfColumns).to.equal(2);
     });
-    it("should throw RangeError when getting nonexistent row", function () {
+    it("should throw RangeError when getting nonexistent row", function (): void {
       expect(() => matrix.getRow(3)).to.throw(RangeError);
     });
-    it("should throw RangeError when getting nonexistent column", function () {
+    it("should throw RangeError when getting nonexistent column", function (): void {
       expect(() => matrix.getColumn(2)).to.throw(RangeError);
     });
-    it("should throw RangeError when getting nonexistent element (outside row range)", function () {
+    it("should throw RangeError when getting nonexistent element (outside row range)", function (): void {
       expect(() => matrix.getElementAtPosition(3, 1)).to.throw(RangeError);
     });
-    it("should throw RangeError when getting nonexistent element (outside column range)", function () {
+    it("should throw RangeError when getting nonexistent element (outside column range)", function (): void {
       expect(() => matrix.getElementAtPosition(1, 3)).to.throw(RangeError);
     });
   });
-  describe("Multiplication", function () {
+  describe("Multiplication", function (): void {
     let matrix: Matrix;
-    before(function () {
+    before(function (): void {
       matrix = new Matrix([
         [1, 2],
         [3, 4],
         [5, 6],
       ]);
     });
-    it("should throw RangeError when multiplying by matrix with fewer rows than good matrix has columns", function () {
+    it("should throw RangeError when multiplying by matrix with fewer rows than good matrix has columns", function (): void {
       const otherMatrix = new Matrix([[1, 2, 3, 4, 5, 6]]);
       expect(() => matrix.multiply(otherMatrix)).to.throw(RangeError);
     });
-    it("should throw RangeError when multiplying by matrix with more rows than good matrix has columns", function () {
+    it("should throw RangeError when multiplying by matrix with more rows than good matrix has columns", function (): void {
       const otherMatrix = new Matrix([
         [1, 2],
         [3, 4],
@@ -62,7 +62,7 @@ describe("Matrix", function () {
       ]);
       expect(() => matrix.multiply(otherMatrix)).to.throw(RangeError);
     });
-    it("should produce correct matrix when multiplying by another good matrix", function () {
+    it("should produce correct matrix when multiplying by another good matrix", function (): void {
       const otherMatrix = new Matrix([
         [1, 2, 3],
         [4, 5, 6],
@@ -75,23 +75,23 @@ describe("Matrix", function () {
       expect(matrix.multiply(otherMatrix)).to.deep.equal(expectedMatrix);
     });
   });
-  describe("Addition", function () {
+  describe("Addition", function (): void {
     let matrix: Matrix;
-    before(function () {
+    before(function (): void {
       matrix = new Matrix([
         [1, 2],
         [3, 4],
         [5, 6],
       ]);
     });
-    it("should throw RangeError when adding by matrix with fewer rows than good matrix", function () {
+    it("should throw RangeError when adding by matrix with fewer rows than good matrix", function (): void {
       const otherMatrix = new Matrix([
         [1, 2],
         [3, 4],
       ]);
       expect(() => matrix.add(otherMatrix)).to.throw(RangeError);
     });
-    it("should throw RangeError when adding by matrix with more rows than good matrix", function () {
+    it("should throw RangeError when adding by matrix with more rows than good matrix", function (): void {
       const otherMatrix = new Matrix([
         [1, 2],
         [3, 4],
@@ -100,11 +100,11 @@ describe("Matrix", function () {
       ]);
       expect(() => matrix.add(otherMatrix)).to.throw(RangeError);
     });
-    it("should throw RangeError when adding by matrix with fewer columns than good matrix", function () {
+    it("should throw RangeError when adding by matrix with fewer columns than good matrix", function (): void {
       const otherMatrix = new Matrix([[1], [3], [5]]);
       expect(() => matrix.add(otherMatrix)).to.throw(RangeError);
     });
-    it("should throw RangeError when adding by matrix with more columns than good matrix", function () {
+    it("should throw RangeError when adding by matrix with more columns than good matrix", function (): void {
       const otherMatrix = new Matrix([
         [1, 2, 3],
         [4, 5, 6],
@@ -112,7 +112,7 @@ describe("Matrix", function () {
       ]);
       expect(() => matrix.add(otherMatrix)).to.throw(RangeError);
     });
-    it("should produce correct sum matrix when adding compatible matrices", function () {
+    it("should produce correct sum matrix when adding compatible matrices", function (): void {
       const otherMatrix = new Matrix([
         [0, 5],
         [4, 0],
@@ -126,23 +126,23 @@ describe("Matrix", function () {
       expect(matrix.add(otherMatrix)).to.deep.equal(expectedMatrix);
     });
   });
-  describe("Subtraction", function () {
+  describe("Subtraction", function (): void {
     let matrix: Matrix;
-    before(function () {
+    before(function (): void {
       matrix = new Matrix([
         [1, 2],
         [3, 4],
         [5, 6],
       ]);
     });
-    it("should throw RangeError when subtracting by matrix with fewer rows than good matrix", function () {
+    it("should throw RangeError when subtracting by matrix with fewer rows than good matrix", function (): void {
       const otherMatrix = new Matrix([
         [1, 2],
         [3, 4],
       ]);
       expect(() => matrix.subtract(otherMatrix)).to.throw(RangeError);
     });
-    it("should throw RangeError when subtracting by matrix with more rows than good matrix", function () {
+    it("should throw RangeError when subtracting by matrix with more rows than good matrix", function (): void {
       const otherMatrix = new Matrix([
         [1, 2],
         [3, 4],
@@ -151,11 +151,11 @@ describe("Matrix", function () {
       ]);
       expect(() => matrix.subtract(otherMatrix)).to.throw(RangeError);
     });
-    it("should throw RangeError when subtracting by matrix with fewer columns than good matrix", function () {
+    it("should throw RangeError when subtracting by matrix with fewer columns than good matrix", function (): void {
       const otherMatrix = new Matrix([[1], [3], [5]]);
       expect(() => matrix.subtract(otherMatrix)).to.throw(RangeError);
     });
-    it("should throw RangeError when subtracting by matrix with more columns than good matrix", function () {
+    it("should throw RangeError when subtracting by matrix with more columns than good matrix", function (): void {
       const otherMatrix = new Matrix([
         [1, 2, 3],
         [4, 5, 6],
@@ -163,7 +163,7 @@ describe("Matrix", function () {
       ]);
       expect(() => matrix.subtract(otherMatrix)).to.throw(RangeError);
     });
-    it("should produce correct difference matrix when subtracting compatible matrices", function () {
+    it("should produce correct difference matrix when subtracting compatible matrices", function (): void {
       const otherMatrix = new Matrix([
         [0, 5],
         [1, 0],
@@ -177,16 +177,16 @@ describe("Matrix", function () {
       expect(matrix.subtract(otherMatrix)).to.deep.equal(expectedMatrix);
     });
   });
-  describe("Transpose", function () {
+  describe("Transpose", function (): void {
     let matrix: Matrix;
-    before(function () {
+    before(function (): void {
       matrix = new Matrix([
         [1, 2],
         [3, 4],
         [5, 6],
       ]);
     });
-    it("should provide a new matrix with the numbers reflected over the X and Y axis", function () {
+    it("should provide a new matrix with the numbers reflected over the X and Y axis", function (): void {
       const expectedMatrix = new Matrix([
         [1, 3, 5],
         [2, 4, 6],
