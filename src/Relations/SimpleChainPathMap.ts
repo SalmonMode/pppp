@@ -1,4 +1,4 @@
-import { NoSuchChainPathError } from "../Error";
+import { NoSuchChainPathError } from "../errors/Error";
 import type {
   InterconnectionStrengthMapping,
   RelationshipMapping,

@@ -1,4 +1,4 @@
-import { NoSuchChainError } from "../Error";
+import { NoSuchChainError } from "../errors/Error";
 import type { RelationshipMapping } from "../types";
 import type { IsolatedDependencyChain, SimpleChainMap } from "./";
 import { ChainPath } from "./";

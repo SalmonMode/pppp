@@ -1,6 +1,9 @@
 import { expect } from "chai";
 import { add, sub } from "date-fns";
-import { EventHistoryInvalidError, PrematureTaskStartError } from "../Error";
+import {
+  EventHistoryInvalidError,
+  PrematureTaskStartError,
+} from "../errors/Error";
 import { assertIsObject } from "../typePredicates";
 import { EventType } from "../types";
 import { TaskUnit } from "./";

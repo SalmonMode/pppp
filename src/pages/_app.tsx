@@ -1,3 +1,3 @@
-import App from "../app/App";
+import App from "../service/app/App";
 
 export default App;

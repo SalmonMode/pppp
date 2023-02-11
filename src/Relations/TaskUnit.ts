@@ -1,16 +1,20 @@
 import { add, differenceInSeconds, max } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
-import { theme, unitTaskTimeConversion } from "../app/theme";
-import { EventHistoryInvalidError, PrematureTaskStartError } from "../Error";
+import { theme, unitTaskTimeConversion } from "../theme/theme";
+import {
+  EventHistoryInvalidError,
+  PrematureTaskStartError,
+} from "../errors/Error";
 import { assertIsObject } from "../typePredicates";
 import {
   EventType,
   InterpolatedTaskEvent,
+  ITaskUnit,
   RelationshipMapping,
-  TaskEvent
+  TaskEvent,
 } from "../types";
 
-export default class TaskUnit {
+export default class TaskUnit implements ITaskUnit {
   public readonly id: string;
   /**
    * The direct dependencies of this {@link TaskUnit}.

@@ -1,4 +1,4 @@
-import { Matrix } from "../Utility";
+import { Matrix } from "../matrix";
 import type { TaskUnit } from "./";
 
 /**

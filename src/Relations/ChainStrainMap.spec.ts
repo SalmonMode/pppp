@@ -1,10 +1,10 @@
 import { expect } from "chai";
-import { NoSuchChainError } from "../Error";
+import { NoSuchChainError } from "../errors/Error";
 import {
   ChainStrainMap,
   IsolatedDependencyChain,
   SimpleChainMap,
-  TaskUnit
+  TaskUnit,
 } from "./";
 
 const now = new Date();

@@ -1,6 +1,6 @@
 {
   "name": "pppp",
-  "version": "0.17.4",
+  "version": "0.17.5",
   "description": "Gerald Weinberg's PPPP brought to life.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,8 +8,8 @@
     "dev": "next dev",
     "start": "next start",
     "next:build": "next build",
-    "build": "TS_NODE_PROJECT='./tsconfig.test.json' npx tsc",
-    "build:diagnostic": "TS_NODE_PROJECT='./tsconfig.test.json' npx tsc --extendedDiagnostics",
+    "build": "TS_NODE_PROJECT='./tsconfig.test.json' npx tsc -b",
+    "build:diagnostic": "TS_NODE_PROJECT='./tsconfig.test.json' npx tsc -b --extendedDiagnostics",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
     "test": "TS_NODE_PROJECT='./tsconfig.test.json' nyc mocha --recursive ./src/",

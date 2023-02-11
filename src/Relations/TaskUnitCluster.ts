@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { NoSuchChainPathError } from "../Error";
+import { NoSuchChainPathError } from "../errors/Error";
 import { assertIsObject } from "../typePredicates";
 import type { ResourceMap } from "../types";
 import type { ChainPath, IsolatedDependencyChain, TaskUnit } from "./";
@@ -8,7 +8,7 @@ import {
   SimpleChainMap,
   SimpleChainPathMap,
   StressManager,
-  StressTracker
+  StressTracker,
 } from "./";
 
 /**

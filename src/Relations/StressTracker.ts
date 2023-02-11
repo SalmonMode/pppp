@@ -1,11 +1,11 @@
-import { NoSuchChainPathError } from "../Error";
+import { NoSuchChainPathError } from "../errors/Error";
 import {
   assertIsNumber,
   assertIsObject,
-  assertIsString
+  assertIsString,
 } from "../typePredicates";
 import type { RelationshipMapping } from "../types";
-import { Matrix } from "../Utility";
+import Matrix from "../matrix/Matrix";
 import type { ChainPath, SimpleChainPathMap } from "./";
 
 interface TrackDetails {

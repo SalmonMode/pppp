@@ -3,7 +3,5 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "skipLibCheck": false
-  },
-  "include": ["./src"],
-  "exclude": ["node_modules"]
+  }
 }

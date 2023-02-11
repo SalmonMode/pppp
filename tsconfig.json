@@ -1,4 +1,34 @@
 {
+  "files": [],
+  "references": [
+    {
+      "path": "src/service"
+    },
+    {
+      "path": "src/Relations"
+    },
+    {
+      "path": "src/matrix"
+    },
+    {
+      "path": "src/types"
+    },
+    {
+      "path": "src/typePredicates"
+    },
+    {
+      "path": "src/Graphing"
+    },
+    {
+      "path": "src/theme"
+    },
+    {
+      "path": "src/pages"
+    },
+    {
+      "path": "src/errors"
+    }
+  ],
   "compilerOptions": {
     /* Basic Options */
     "target": "es2018" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */,
@@ -13,6 +43,7 @@
     "jsx": "preserve" /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */,
     "jsxImportSource": "@emotion/react",
     "declaration": true /* Generates corresponding '.d.ts' file. */,
+    "declarationMap": true /* Generates corresponding '.d.ts' file. */,
     "sourceMap": true /* Generates corresponding '.map' file. */,
     // "outFile": "./",                       /* Concatenate and emit output to single file. */
     "outDir": "./dist" /* Redirect output structure to the directory. */,
@@ -66,7 +97,8 @@
     "allowJs": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "importsNotUsedAsValues": "error"
+    "importsNotUsedAsValues": "error",
+    "composite": true
   },
   "include": ["./src"],
   "exclude": ["node_modules"]

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { NoSuchChainPathError } from "../Error";
+import { NoSuchChainPathError } from "../errors/Error";
 import type { InterconnectionStrengthMapping, ResourceMap } from "../types";
 import { ChainPath, SimpleChainMap, SimpleChainPathMap, TaskUnit } from "./";
 

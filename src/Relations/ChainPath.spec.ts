@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { DependencyOrderError } from "../Error";
+import { DependencyOrderError } from "../errors/Error";
 import ChainPath from "./ChainPath";
 import IsolatedDependencyChain from "./IsolatedDependencyChain";
 import TaskUnit from "./TaskUnit";

@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "../../src",
+    "composite": true
+  },
+  "references": [
+    { "path": "../errors" },
+    { "path": "../types" },
+    { "path": "../matrix" },
+    { "path": "../theme" },
+    { "path": "../typePredicates" }
+  ]
+}

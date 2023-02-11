@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { NoSuchChainPathError } from "../Error";
+import { NoSuchChainPathError } from "../errors/Error";
 import { IsolatedDependencyChain, TaskUnit, TaskUnitCluster } from "./";
 
 const now = new Date();

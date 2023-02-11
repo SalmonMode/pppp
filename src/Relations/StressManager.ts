@@ -1,4 +1,4 @@
-import { NoMoreSortingOptionsError } from "../Error";
+import { NoMoreSortingOptionsError } from "../errors/Error";
 import type { ChainPath, StressTracker } from "./";
 
 enum MoveType {

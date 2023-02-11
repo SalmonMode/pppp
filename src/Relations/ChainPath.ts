@@ -1,18 +1,19 @@
 import { v4 as uuidv4 } from "uuid";
-import { DependencyOrderError } from "../Error";
-import type { IsolatedDependencyChain, TaskUnit } from "./";
+import { DependencyOrderError } from "../errors/Error";
+import type { ITaskUnit } from "../types/TaskUnit";
+import type IsolatedDependencyChain from "./IsolatedDependencyChain";
 
 /**
- * A set of {@link TaskUnit}s that comprise a single "chain", i.e., one that will be positioned on the graph as a row.
+ * A set of {@link ITaskUnit}s that comprise a single "chain", i.e., one that will be positioned on the graph as a row.
  *
- * In order to make visualizing the dependencies coherent and as organized as possible, the {@link TaskUnit}s must first
+ * In order to make visualizing the dependencies coherent and as organized as possible, the {@link ITaskUnit}s must first
  * be broken apart into "isolated" rows that can show a linear dependency between each other. Because there will be
- * issues with this, given that each {@link TaskUnit} can have multiple dependencies, there must be some way to decide
+ * issues with this, given that each {@link ITaskUnit} can have multiple dependencies, there must be some way to decide
  * how to break things up. The method chosen is to focus on "visual density", with more dense chains being given
  * priority for maintaining their linear sequence.
  *
- * "Chains" are the path from a "head" to the end of a "tail". Heads are {@link TaskUnit}s that either no other
- * {@link TaskUnit} is dependent on, or the ones that depend on it are already used in other chains, making them
+ * "Chains" are the path from a "head" to the end of a "tail". Heads are {@link ITaskUnit}s that either no other
+ * {@link ITaskUnit} is dependent on, or the ones that depend on it are already used in other chains, making them
  * "unavailable". The ends of tails are the furthest possible task unit in the chain of dependencies that either has no
  * other dependencies, or it is dependent on only units that are already used in other chains.
  *
@@ -42,13 +43,13 @@ import type { IsolatedDependencyChain, TaskUnit } from "./";
 export default class ChainPath {
   public id: string;
   private _chainAnticipatedStartDate: Date;
-  private _units: Set<TaskUnit>;
+  private _units: Set<ITaskUnit>;
   private _head: IsolatedDependencyChain;
   private _tail: IsolatedDependencyChain[];
   private _lastChain: IsolatedDependencyChain;
   private _pathTotalTime: number;
   private _pathPresenceTime: number;
-  public tracks: TaskUnit[][];
+  public tracks: ITaskUnit[][];
   constructor(public readonly chains: IsolatedDependencyChain[]) {
     this.id = uuidv4();
     this._verifyUnitsAreUnbrokenChain();
@@ -69,7 +70,7 @@ export default class ChainPath {
         sum + curr.presenceTime,
       0
     );
-    this._units = new Set<TaskUnit>();
+    this._units = new Set<ITaskUnit>();
     for (const chain of this.chains) {
       for (const unit of chain.units) {
         this._units.add(unit);
@@ -179,21 +180,21 @@ export default class ChainPath {
     }
     return false;
   }
-  private _buildTracks(): TaskUnit[][] {
-    const tracks: TaskUnit[][] = [[]];
+  private _buildTracks(): ITaskUnit[][] {
+    const tracks: ITaskUnit[][] = [[]];
     // Units should already be sorted from latest to earliest
     const tasks = [...this._units];
     // Sort them according to anticipated start date so they go from latest to earliest just to be safe. This is to help
     // layer the tracks in a way that shows them branching away from the center (as needed) as time goes on, rather than
     // starting out in open space and moving towards the center.
     tasks.sort(
-      (a: TaskUnit, b: TaskUnit): number =>
+      (a: ITaskUnit, b: ITaskUnit): number =>
         b.anticipatedStartDate.getTime() - a.anticipatedStartDate.getTime()
     );
     let nextTask = tasks.pop();
     while (nextTask) {
       // nextTask is used for loop logic, so track the current task for easier type safety
-      const currentTask: TaskUnit = nextTask;
+      const currentTask: ITaskUnit = nextTask;
       for (const track of tracks) {
         // check if this can squeeze in after the last task on this track
         const lastItemInTrack = track[track.length - 1];

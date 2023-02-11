@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { DependencyOrderError } from "../Error";
+import { DependencyOrderError } from "../errors/Error";
 import { IsolatedDependencyChain, TaskUnit } from "./";
 
 const now = new Date();

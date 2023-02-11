@@ -1,4 +1,4 @@
-import { DependencyOrderError, NoSuchChainError } from "../Error";
+import { DependencyOrderError, NoSuchChainError } from "../errors/Error";
 import type { ConnectedResourcesSetMap, ResourceMap } from "../types";
 import type { TaskUnit } from "./";
 import { IsolatedDependencyChain, UnitPathMatrix } from "./";

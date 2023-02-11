@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { DependencyOrderError, NoSuchChainError } from "../Error";
+import { DependencyOrderError, NoSuchChainError } from "../errors/Error";
 import { assertIsObject } from "../typePredicates";
 import { IsolatedDependencyChain, SimpleChainMap, TaskUnit } from "./";
 

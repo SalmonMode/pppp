@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { DependencyOrderError } from "../Error";
+import { DependencyOrderError } from "../errors/Error";
 import type { TaskUnit } from "./";
 
 /**
