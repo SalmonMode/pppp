@@ -4,7 +4,7 @@ import chroma from "chroma-js";
 import { add, sub } from "date-fns";
 import { theme } from "../../../../theme/theme";
 import { TaskUnit, TaskUnitCluster } from "../../../../Relations";
-import { assertIsObject, assertIsString } from "../../../../typePredicates";
+import { assertIsObject, assertIsString } from "primitive-predicates";
 import { EventType } from "../../../../types";
 import { renderWithProvider } from "../../../Utility/TestRenderers";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";

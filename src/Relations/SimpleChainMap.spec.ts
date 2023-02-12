@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { DependencyOrderError, NoSuchChainError } from "../errors/Error";
-import { assertIsObject } from "../typePredicates";
+import { assertIsObject } from "primitive-predicates";
 import { IsolatedDependencyChain, SimpleChainMap, TaskUnit } from "./";
 
 const now = new Date();

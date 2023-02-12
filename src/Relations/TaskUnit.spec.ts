@@ -4,7 +4,7 @@ import {
   EventHistoryInvalidError,
   PrematureTaskStartError,
 } from "../errors/Error";
-import { assertIsObject } from "../typePredicates";
+import { assertIsObject } from "primitive-predicates";
 import { EventType } from "../types";
 import { TaskUnit } from "./";
 

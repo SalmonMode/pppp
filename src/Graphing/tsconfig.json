@@ -4,5 +4,5 @@
     "rootDir": "../../src",
     "composite": true
   },
-  "references": [{ "path": "../types" }, { "path": "../typePredicates" }]
+  "references": [{ "path": "../types" }]
 }

@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/react";
 import { expect, use } from "chai";
 import chaiAsPromised from "chai-as-promised";
-import { assertIsObject } from "../../../typePredicates";
+import { assertIsObject } from "primitive-predicates";
 import { renderWithProvider } from "../../Utility/TestRenderers";
 import MetricsSummary from "./MetricsSummary";
 

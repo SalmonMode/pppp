@@ -8,7 +8,6 @@
     { "path": "../errors" },
     { "path": "../types" },
     { "path": "../matrix" },
-    { "path": "../theme" },
-    { "path": "../typePredicates" }
+    { "path": "../theme" }
   ]
 }

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { NoSuchChainPathError } from "../errors/Error";
-import { assertIsObject } from "../typePredicates";
+import { assertIsObject } from "primitive-predicates";
 import type { ResourceMap } from "../types";
 import type { ChainPath, IsolatedDependencyChain, TaskUnit } from "./";
 import {

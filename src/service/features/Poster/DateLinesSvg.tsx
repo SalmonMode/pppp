@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { add, sub } from "date-fns";
 import { useEffect, useRef } from "react";
 import { theme } from "../../../theme/theme";
-import { assertIsObject } from "../../../typePredicates";
+import { assertIsObject } from "primitive-predicates";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
 
 export default function DateLinesSvg({

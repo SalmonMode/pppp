@@ -1,6 +1,6 @@
 {
   "name": "pppp",
-  "version": "0.17.5",
+  "version": "0.17.6",
   "description": "Gerald Weinberg's PPPP brought to life.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -109,6 +109,7 @@
     "chroma-js": "^2.4.2",
     "date-fns": "^2.29.3",
     "next": "^13.1.1",
+    "primitive-predicates": "^1.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",

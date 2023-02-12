@@ -1,4 +1,4 @@
-import { assertIsNumber, assertIsString } from "../typePredicates";
+import { assertIsNumber, assertIsString } from "primitive-predicates";
 import type {
   Coordinate,
   CoordinateString,

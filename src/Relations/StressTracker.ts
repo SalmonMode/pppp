@@ -3,7 +3,7 @@ import {
   assertIsNumber,
   assertIsObject,
   assertIsString,
-} from "../typePredicates";
+} from "primitive-predicates";
 import type { RelationshipMapping } from "../types";
 import Matrix from "../matrix/Matrix";
 import type { ChainPath, SimpleChainPathMap } from "./";

@@ -6,7 +6,7 @@ import { createSandbox, SinonSandbox, SinonStub } from "sinon";
 import { theme } from "../../../theme/theme";
 import ConnectedPoints from "../../../Graphing/ConnectedPoints";
 import { TaskUnit, TaskUnitCluster } from "../../../Relations";
-import { assertIsObject, assertIsString } from "../../../typePredicates";
+import { assertIsObject, assertIsString } from "primitive-predicates";
 import { EventType } from "../../../types";
 import { renderWithProvider } from "../../Utility/TestRenderers";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";

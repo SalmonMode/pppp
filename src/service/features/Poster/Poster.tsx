@@ -5,7 +5,7 @@ import { add, eachDayOfInterval, sub } from "date-fns";
 import { useAppSelector } from "../../app/hooks";
 import { theme } from "../../../theme/theme";
 import type { AppState } from "../../app/types";
-import { assertIsObject } from "../../../typePredicates";
+import { assertIsObject } from "primitive-predicates";
 import type { TaskUnitDetails } from "../../../types";
 import DateLinesSvg from "./DateLinesSvg";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";

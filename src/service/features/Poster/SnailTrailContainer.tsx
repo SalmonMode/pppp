@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
-import { assertIsObject } from "../../../typePredicates";
+import { assertIsObject } from "primitive-predicates";
 import type { TaskUnitDetails } from "../../../types";
 import SnailTrailTrack from "./TaskUnitCard/SnailTrailTrack";
 import type { TaskUnitsLoadingCompleteState } from "./taskUnitsSlice";

@@ -1,7 +1,7 @@
 import incrmpcorr from "@stdlib/stats-incr-mpcorr";
 import { differenceInSeconds } from "date-fns";
 import type { ChainPath, TaskUnitCluster } from "../../../Relations";
-import { assertIsNumber } from "../../../typePredicates";
+import { assertIsNumber } from "primitive-predicates";
 import type {
   InterpolatedTaskEvent,
   ITaskUnit,
