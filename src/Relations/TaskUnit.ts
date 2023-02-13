@@ -1,11 +1,10 @@
 import { add, differenceInSeconds, max } from "date-fns";
+import { assertIsObject } from "primitive-predicates";
 import { v4 as uuidv4 } from "uuid";
-import { theme, unitTaskTimeConversion } from "../theme/theme";
 import {
   EventHistoryInvalidError,
   PrematureTaskStartError,
 } from "../errors/Error";
-import { assertIsObject } from "primitive-predicates";
 import {
   EventType,
   InterpolatedTaskEvent,
@@ -308,12 +307,6 @@ export default class TaskUnit implements ITaskUnit {
         this.anticipatedStartDate
       ),
     };
-    // To aid with visualization, the pending review box should always be after the now line, as this makes it clearer
-    // that it's being pushed forward by the flow of time. To accomplish this, the projected time for a pending review
-    // may need to be pushed out enough to cover the timespan covered by the review box's width.
-    const reviewBoxBufferDuration: Duration = {
-      seconds: (theme.reviewBoxWidth * unitTaskTimeConversion) / 1000,
-    };
     // If the last event is EventType.ReviewedAndAccepted, then update the apparent end date to that date. Otherwise,
     // estimate the apparent end date relative to the apparent start date.
     const lastEvent = this.eventHistory[this.eventHistory.length - 1];
@@ -346,10 +339,7 @@ export default class TaskUnit implements ITaskUnit {
             lastEvent.date,
             estimatedTaskDuration
           );
-          const taskEndDate = max([
-            add(now, reviewBoxBufferDuration),
-            lastEventTimePlusBuffer,
-          ]);
+          const taskEndDate = max([now, lastEventTimePlusBuffer]);
           this.projectedHistory.push({
             type: EventType.ReviewedAndAccepted,
             date: taskEndDate,
@@ -362,10 +352,7 @@ export default class TaskUnit implements ITaskUnit {
             lastEvent.date,
             estimatedTaskDuration
           );
-          const taskEndDate = max([
-            add(now, reviewBoxBufferDuration),
-            lastEventTimePlusBuffer,
-          ]);
+          const taskEndDate = max([now, lastEventTimePlusBuffer]);
           this.projectedHistory.push({
             type: EventType.MinorRevisionComplete,
             date: taskEndDate,
@@ -378,10 +365,7 @@ export default class TaskUnit implements ITaskUnit {
             lastEvent.date,
             estimatedTaskDuration
           );
-          const taskEndDate = max([
-            add(now, reviewBoxBufferDuration),
-            lastEventTimePlusBuffer,
-          ]);
+          const taskEndDate = max([now, lastEventTimePlusBuffer]);
           this.projectedHistory.push({
             type: EventType.ReviewedAndAccepted,
             date: taskEndDate,

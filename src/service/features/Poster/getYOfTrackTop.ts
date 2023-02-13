@@ -1,4 +1,4 @@
-import { theme } from "../../../theme/theme";
+import { theme } from "../../app/theme";
 
 export default function getYOfTrackTop(trackIndex: number): number {
   return (

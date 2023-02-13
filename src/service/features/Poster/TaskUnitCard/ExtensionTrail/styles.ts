@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { theme } from "../../../../../theme/theme";
+import { theme } from "../../../../app/theme";
 
 const baseStyles = css({
   flexShrink: 0,

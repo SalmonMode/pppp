@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Box from "@mui/material/Box";
-import { theme } from "../../../../theme/theme";
+import { theme } from "../../../app/theme";
 import type { TaskUnitDetails } from "../../../../types";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 import getYOfTrackTop from "../getYOfTrackTop";
@@ -25,7 +25,7 @@ export default function TaskTrack({
     >
       {units.map((unit: TaskUnitDetails, index: number): EmotionJSX.Element => {
         const adjustedX = getPixelGapBetweenTimes(
-          unit.anticipatedStartTime,
+          unit.apparentStartTime,
           pathStartDate.getTime()
         );
         return (

@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Box from "@mui/material/Box";
-import { theme } from "../../../../theme/theme";
+import { theme } from "../../../app/theme";
 import type { Coordinate, TaskUnitDetails } from "../../../../types";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 

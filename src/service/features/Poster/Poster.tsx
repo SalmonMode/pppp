@@ -3,7 +3,7 @@ import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Typography from "@mui/material/Typography";
 import { add, eachDayOfInterval, sub } from "date-fns";
 import { useAppSelector } from "../../app/hooks";
-import { theme } from "../../../theme/theme";
+import { theme } from "../../app/theme";
 import type { AppState } from "../../app/types";
 import { assertIsObject } from "primitive-predicates";
 import type { TaskUnitDetails } from "../../../types";

@@ -3,7 +3,7 @@ import { expect } from "chai";
 import chroma from "chroma-js";
 import { add, startOfDay, sub } from "date-fns";
 import { createSandbox, SinonSandbox, SinonStub } from "sinon";
-import { theme } from "../../../theme/theme";
+import { theme } from "../../app/theme";
 import ConnectedPoints from "../../../Graphing/ConnectedPoints";
 import { TaskUnit, TaskUnitCluster } from "../../../Relations";
 import { assertIsObject, assertIsString } from "primitive-predicates";
@@ -215,51 +215,39 @@ describe("React Integration: Poster", function (): void {
 
     let unitASnailTrailStyles: CSSStyleDeclaration;
     let unitABoxStyles: CSSStyleDeclaration;
-    let unitACardStyles: CSSStyleDeclaration;
 
     let unitBSnailTrailStyles: CSSStyleDeclaration;
     let unitBBoxStyles: CSSStyleDeclaration;
-    let unitBCardStyles: CSSStyleDeclaration;
 
     let unitCSnailTrailStyles: CSSStyleDeclaration;
     let unitCBoxStyles: CSSStyleDeclaration;
-    let unitCCardStyles: CSSStyleDeclaration;
 
     let unitDSnailTrailStyles: CSSStyleDeclaration;
     let unitDBoxStyles: CSSStyleDeclaration;
-    let unitDCardStyles: CSSStyleDeclaration;
 
     let unitESnailTrailStyles: CSSStyleDeclaration;
     let unitEBoxStyles: CSSStyleDeclaration;
-    let unitECardStyles: CSSStyleDeclaration;
 
     let unitFSnailTrailStyles: CSSStyleDeclaration;
     let unitFBoxStyles: CSSStyleDeclaration;
-    let unitFCardStyles: CSSStyleDeclaration;
 
     let unitGSnailTrailStyles: CSSStyleDeclaration;
     let unitGBoxStyles: CSSStyleDeclaration;
-    let unitGCardStyles: CSSStyleDeclaration;
 
     let unitHSnailTrailStyles: CSSStyleDeclaration;
     let unitHBoxStyles: CSSStyleDeclaration;
-    let unitHCardStyles: CSSStyleDeclaration;
 
     let unitISnailTrailStyles: CSSStyleDeclaration;
     let unitIBoxStyles: CSSStyleDeclaration;
-    let unitICardStyles: CSSStyleDeclaration;
 
     let unitJSnailTrailStyles: CSSStyleDeclaration;
     let unitJBoxStyles: CSSStyleDeclaration;
-    let unitJCardStyles: CSSStyleDeclaration;
 
     let unitKSnailTrailStyles: CSSStyleDeclaration;
     let unitKBoxStyles: CSSStyleDeclaration;
-    let unitKCardStyles: CSSStyleDeclaration;
 
     let unitLSnailTrailStyles: CSSStyleDeclaration;
     let unitLBoxStyles: CSSStyleDeclaration;
-    let unitLCardStyles: CSSStyleDeclaration;
 
     let pathPointsForBA: ConnectedPoints;
     let pathPointsForDC: ConnectedPoints;
@@ -363,84 +351,72 @@ describe("React Integration: Poster", function (): void {
       unitABoxStyles = getComputedStyle(unitABox);
       const unitACard = unitABox.querySelector(".taskUnit");
       assertIsObject(unitACard);
-      unitACardStyles = getComputedStyle(unitACard);
       const unitBSnailTrail = screen.getByTestId(`snailTrail-${unitB.id}`);
       unitBSnailTrailStyles = getComputedStyle(unitBSnailTrail);
       const unitBBox = screen.getByTestId(`task-${unitB.id}`);
       unitBBoxStyles = getComputedStyle(unitBBox);
       const unitBCard = unitBBox.querySelector(".taskUnit");
       assertIsObject(unitBCard);
-      unitBCardStyles = getComputedStyle(unitBCard);
       const unitCSnailTrail = screen.getByTestId(`snailTrail-${unitC.id}`);
       unitCSnailTrailStyles = getComputedStyle(unitCSnailTrail);
       const unitCBox = screen.getByTestId(`task-${unitC.id}`);
       unitCBoxStyles = getComputedStyle(unitCBox);
       const unitCCard = unitCBox.querySelector(".taskUnit");
       assertIsObject(unitCCard);
-      unitCCardStyles = getComputedStyle(unitCCard);
       const unitDSnailTrail = screen.getByTestId(`snailTrail-${unitD.id}`);
       unitDSnailTrailStyles = getComputedStyle(unitDSnailTrail);
       const unitDBox = screen.getByTestId(`task-${unitD.id}`);
       unitDBoxStyles = getComputedStyle(unitDBox);
       const unitDCard = unitDBox.querySelector(".taskUnit");
       assertIsObject(unitDCard);
-      unitDCardStyles = getComputedStyle(unitDCard);
       const unitESnailTrail = screen.getByTestId(`snailTrail-${unitE.id}`);
       unitESnailTrailStyles = getComputedStyle(unitESnailTrail);
       const unitEBox = screen.getByTestId(`task-${unitE.id}`);
       unitEBoxStyles = getComputedStyle(unitEBox);
       const unitECard = unitEBox.querySelector(".taskUnit");
       assertIsObject(unitECard);
-      unitECardStyles = getComputedStyle(unitECard);
       const unitFSnailTrail = screen.getByTestId(`snailTrail-${unitF.id}`);
       unitFSnailTrailStyles = getComputedStyle(unitFSnailTrail);
       const unitFBox = screen.getByTestId(`task-${unitF.id}`);
       unitFBoxStyles = getComputedStyle(unitFBox);
       const unitFCard = unitFBox.querySelector(".taskUnit");
       assertIsObject(unitFCard);
-      unitFCardStyles = getComputedStyle(unitFCard);
       const unitGSnailTrail = screen.getByTestId(`snailTrail-${unitG.id}`);
       unitGSnailTrailStyles = getComputedStyle(unitGSnailTrail);
       const unitGBox = screen.getByTestId(`task-${unitG.id}`);
       unitGBoxStyles = getComputedStyle(unitGBox);
       const unitGCard = unitGBox.querySelector(".taskUnit");
       assertIsObject(unitGCard);
-      unitGCardStyles = getComputedStyle(unitGCard);
       const unitHSnailTrail = screen.getByTestId(`snailTrail-${unitH.id}`);
       unitHSnailTrailStyles = getComputedStyle(unitHSnailTrail);
       const unitHBox = screen.getByTestId(`task-${unitH.id}`);
       unitHBoxStyles = getComputedStyle(unitHBox);
       const unitHCard = unitHBox.querySelector(".taskUnit");
       assertIsObject(unitHCard);
-      unitHCardStyles = getComputedStyle(unitHCard);
       const unitISnailTrail = screen.getByTestId(`snailTrail-${unitI.id}`);
       unitISnailTrailStyles = getComputedStyle(unitISnailTrail);
       const unitIBox = screen.getByTestId(`task-${unitI.id}`);
       unitIBoxStyles = getComputedStyle(unitIBox);
       const unitICard = unitIBox.querySelector(".taskUnit");
       assertIsObject(unitICard);
-      unitICardStyles = getComputedStyle(unitICard);
       const unitJSnailTrail = screen.getByTestId(`snailTrail-${unitJ.id}`);
       unitJSnailTrailStyles = getComputedStyle(unitJSnailTrail);
       const unitJBox = screen.getByTestId(`task-${unitJ.id}`);
       unitJBoxStyles = getComputedStyle(unitJBox);
       const unitJCard = unitJBox.querySelector(".taskUnit");
       assertIsObject(unitJCard);
-      unitJCardStyles = getComputedStyle(unitJCard);
       const unitKSnailTrail = screen.getByTestId(`snailTrail-${unitK.id}`);
       unitKSnailTrailStyles = getComputedStyle(unitKSnailTrail);
       const unitKBox = screen.getByTestId(`task-${unitK.id}`);
       unitKBoxStyles = getComputedStyle(unitKBox);
       const unitKCard = unitKBox.querySelector(".taskUnit");
       assertIsObject(unitKCard);
-      unitKCardStyles = getComputedStyle(unitKCard);
       const unitLSnailTrail = screen.getByTestId(`snailTrail-${unitL.id}`);
       unitLSnailTrailStyles = getComputedStyle(unitLSnailTrail);
       const unitLBox = screen.getByTestId(`task-${unitL.id}`);
       unitLBoxStyles = getComputedStyle(unitLBox);
       const unitLCard = unitLBox.querySelector(".taskUnit");
       assertIsObject(unitLCard);
-      unitLCardStyles = getComputedStyle(unitLCard);
       // Connected points
       const pathGroupBA = screen.getByTestId(
         `pathGroup-${unitB.id}-${unitA.id}`
@@ -733,22 +709,6 @@ describe("React Integration: Poster", function (): void {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function (): void {
-          expect(Number(unitABoxStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitA.apparentEndDate.getTime(),
-              unitA.anticipatedStartDate.getTime()
-            )
-          );
-        });
-        it("should have card width according to apparent start date and apparent end date", function (): void {
-          expect(Number(unitACardStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitA.apparentEndDate.getTime(),
-              unitA.apparentStartDate.getTime()
-            )
-          );
-        });
         it("should having box starting from the same horizontal point as box for E", function (): void {
           expect(Number(unitABoxStyles.left.slice(0, -2))).to.equal(
             Number(unitEBoxStyles.left.slice(0, -2))
@@ -757,81 +717,6 @@ describe("React Integration: Poster", function (): void {
         it("should having box starting from the same horizontal point as box for I", function (): void {
           expect(Number(unitABoxStyles.left.slice(0, -2))).to.equal(
             Number(unitIBoxStyles.left.slice(0, -2))
-          );
-        });
-        it("should have card same width as B Card", function (): void {
-          expect(Number(unitACardStyles.width.slice(0, -2))).to.equal(
-            Number(unitBCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for C", function (): void {
-          expect(Number(unitACardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitCCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for C", function (): void {
-          expect(Number(unitABoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitCBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for E", function (): void {
-          expect(Number(unitACardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitECardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for E", function (): void {
-          expect(Number(unitABoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitEBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for F", function (): void {
-          expect(Number(unitACardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitFCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box as wide as box for F", function (): void {
-          expect(Number(unitABoxStyles.width.slice(0, -2))).to.equal(
-            Number(unitFBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for G", function (): void {
-          expect(Number(unitACardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitGCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for G", function (): void {
-          expect(Number(unitABoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitGBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for I", function (): void {
-          expect(Number(unitACardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitICardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for I", function (): void {
-          expect(Number(unitABoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitIBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for J", function (): void {
-          expect(Number(unitACardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitJCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box as wide as box for J", function (): void {
-          expect(Number(unitABoxStyles.width.slice(0, -2))).to.equal(
-            Number(unitJBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for K", function (): void {
-          expect(Number(unitACardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitKCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for K", function (): void {
-          expect(Number(unitABoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitKBoxStyles.width.slice(0, -2))
           );
         });
       });
@@ -846,22 +731,6 @@ describe("React Integration: Poster", function (): void {
             getPixelGapBetweenTimes(
               unitB.apparentEndDate.getTime(),
               unitB.anticipatedStartDate.getTime()
-            )
-          );
-        });
-        it("should have box width according to anticipated start date and apparent end date", function (): void {
-          expect(Number(unitBBoxStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitB.apparentEndDate.getTime(),
-              unitB.anticipatedStartDate.getTime()
-            )
-          );
-        });
-        it("should have card width according to apparent start date and apparent end date", function (): void {
-          expect(Number(unitBCardStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitB.apparentEndDate.getTime(),
-              unitB.apparentStartDate.getTime()
             )
           );
         });
@@ -880,81 +749,6 @@ describe("React Integration: Poster", function (): void {
             Number(unitJBoxStyles.left.slice(0, -2))
           );
         });
-        it("should have box wider than box for A", function (): void {
-          expect(Number(unitBBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitABoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for C", function (): void {
-          expect(Number(unitBCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitCCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for C", function (): void {
-          expect(Number(unitBBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitCBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for E", function (): void {
-          expect(Number(unitBCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitECardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for E", function (): void {
-          expect(Number(unitBBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitEBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for F", function (): void {
-          expect(Number(unitBCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitFCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for F", function (): void {
-          expect(Number(unitBBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitFBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for G", function (): void {
-          expect(Number(unitBCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitGCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for G", function (): void {
-          expect(Number(unitBBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitGBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for I", function (): void {
-          expect(Number(unitBCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitICardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for I", function (): void {
-          expect(Number(unitBBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitIBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for J", function (): void {
-          expect(Number(unitBCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitJCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for J", function (): void {
-          expect(Number(unitBBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitJBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for K", function (): void {
-          expect(Number(unitBCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitKCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for K", function (): void {
-          expect(Number(unitBBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitKBoxStyles.width.slice(0, -2))
-          );
-        });
       });
       describe("C", function (): void {
         it("should have red background for snail trail", function (): void {
@@ -970,85 +764,19 @@ describe("React Integration: Poster", function (): void {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function (): void {
-          expect(Number(unitCBoxStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitC.apparentEndDate.getTime(),
-              unitC.anticipatedStartDate.getTime()
-            )
+        it("should having box starting further to the right than box for B", function (): void {
+          expect(Number(unitCBoxStyles.left.slice(0, -2))).to.be.greaterThan(
+            Number(unitBBoxStyles.left.slice(0, -2))
           );
         });
-        it("should have card width according to apparent start date and apparent end date", function (): void {
-          expect(Number(unitCCardStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitC.apparentEndDate.getTime(),
-              unitC.apparentStartDate.getTime()
-            )
+        it("should having box starting further to the right than box for K", function (): void {
+          expect(Number(unitCBoxStyles.left.slice(0, -2))).to.be.greaterThan(
+            Number(unitKBoxStyles.left.slice(0, -2))
           );
         });
         it("should having box starting further to the right than box for G", function (): void {
           expect(Number(unitCBoxStyles.left.slice(0, -2))).to.be.greaterThan(
             Number(unitGBoxStyles.left.slice(0, -2))
-          );
-        });
-        it("should having box starting from the same horizontal point as box for H", function (): void {
-          expect(Number(unitCBoxStyles.left.slice(0, -2))).to.equal(
-            Number(unitHBoxStyles.left.slice(0, -2))
-          );
-        });
-        it("should having box starting from the same horizontal point as box for L", function (): void {
-          expect(Number(unitCBoxStyles.left.slice(0, -2))).to.equal(
-            Number(unitLBoxStyles.left.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for E", function (): void {
-          expect(Number(unitCCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitECardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for E", function (): void {
-          expect(Number(unitCBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitEBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for F", function (): void {
-          expect(Number(unitCCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitFCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for G", function (): void {
-          expect(Number(unitCCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitGCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for G", function (): void {
-          expect(Number(unitCBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitGBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for I", function (): void {
-          expect(Number(unitCCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitICardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for I", function (): void {
-          expect(Number(unitCBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitIBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for J", function (): void {
-          expect(Number(unitCCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitJCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for K", function (): void {
-          expect(Number(unitCCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitKCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for K", function (): void {
-          expect(Number(unitCBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitKBoxStyles.width.slice(0, -2))
           );
         });
       });
@@ -1066,120 +794,19 @@ describe("React Integration: Poster", function (): void {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function (): void {
-          expect(Number(unitDBoxStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitD.apparentEndDate.getTime(),
-              unitD.anticipatedStartDate.getTime()
-            )
-          );
-        });
-        it("should have card width according to apparent start date and apparent end date", function (): void {
-          expect(Number(unitDCardStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitD.apparentEndDate.getTime(),
-              unitD.apparentStartDate.getTime()
-            )
-          );
-        });
-        it("should having box starting further to the right than box for H", function (): void {
+        it("should having box starting further to the right than box for C", function (): void {
           expect(Number(unitDBoxStyles.left.slice(0, -2))).to.be.greaterThan(
+            Number(unitCBoxStyles.left.slice(0, -2))
+          );
+        });
+        it("should having box starting from the same horizontal point as box for H", function (): void {
+          expect(Number(unitDBoxStyles.left.slice(0, -2))).to.equal(
             Number(unitHBoxStyles.left.slice(0, -2))
           );
         });
-        it("should have card wider than card for A", function (): void {
-          expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitACardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for A", function (): void {
-          expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitABoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for B", function (): void {
-          expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitBCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for B", function (): void {
-          expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitBBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for C", function (): void {
-          expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitCCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for C", function (): void {
-          expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitCBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for E", function (): void {
-          expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitECardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for E", function (): void {
-          expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitEBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for F", function (): void {
-          expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitFCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for F", function (): void {
-          expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitFBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for G", function (): void {
-          expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitGCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for G", function (): void {
-          expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitGBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for I", function (): void {
-          expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitICardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for I", function (): void {
-          expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitIBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for J", function (): void {
-          expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitJCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for J", function (): void {
-          expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitJBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card wider than card for K", function (): void {
-          expect(Number(unitDCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitKCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for K", function (): void {
-          expect(Number(unitDBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitKBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card as wide as card for L", function (): void {
-          expect(Number(unitDCardStyles.width.slice(0, -2))).to.equal(
-            Number(unitLCardStyles.width.slice(0, -2))
+        it("should having box starting from the same horizontal point as box for L", function (): void {
+          expect(Number(unitDBoxStyles.left.slice(0, -2))).to.equal(
+            Number(unitLBoxStyles.left.slice(0, -2))
           );
         });
       });
@@ -1197,57 +824,6 @@ describe("React Integration: Poster", function (): void {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function (): void {
-          expect(Number(unitEBoxStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitE.apparentEndDate.getTime(),
-              unitE.anticipatedStartDate.getTime()
-            )
-          );
-        });
-        it("should have card width according to apparent start date and apparent end date", function (): void {
-          expect(Number(unitECardStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitE.apparentEndDate.getTime(),
-              unitE.apparentStartDate.getTime()
-            )
-          );
-        });
-        it("should have card as wide as card for F", function (): void {
-          expect(Number(unitECardStyles.width.slice(0, -2))).to.equal(
-            Number(unitFCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card as wide as card for G", function (): void {
-          expect(Number(unitECardStyles.width.slice(0, -2))).to.equal(
-            Number(unitGCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box as wide as box for G", function (): void {
-          expect(Number(unitEBoxStyles.width.slice(0, -2))).to.equal(
-            Number(unitGBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card as wide as card for I", function (): void {
-          expect(Number(unitECardStyles.width.slice(0, -2))).to.equal(
-            Number(unitICardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card as wide as card for J", function (): void {
-          expect(Number(unitECardStyles.width.slice(0, -2))).to.equal(
-            Number(unitJCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have card as wide as card for K", function (): void {
-          expect(Number(unitECardStyles.width.slice(0, -2))).to.equal(
-            Number(unitKCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box as wide as box for K", function (): void {
-          expect(Number(unitEBoxStyles.width.slice(0, -2))).to.equal(
-            Number(unitKBoxStyles.width.slice(0, -2))
-          );
-        });
       });
       describe("F", function (): void {
         it("should have red background for snail trail", function (): void {
@@ -1263,47 +839,6 @@ describe("React Integration: Poster", function (): void {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function (): void {
-          expect(Number(unitFBoxStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitF.apparentEndDate.getTime(),
-              unitF.anticipatedStartDate.getTime()
-            )
-          );
-        });
-        it("should have card width according to apparent start date and apparent end date", function (): void {
-          expect(Number(unitFCardStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitF.apparentEndDate.getTime(),
-              unitF.apparentStartDate.getTime()
-            )
-          );
-        });
-        it("should have box wider than box for E", function (): void {
-          expect(Number(unitFBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitEBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for G", function (): void {
-          expect(Number(unitFBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitGBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for I", function (): void {
-          expect(Number(unitFBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitIBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box as wide as box for J", function (): void {
-          expect(Number(unitFBoxStyles.width.slice(0, -2))).to.equal(
-            Number(unitJBoxStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for K", function (): void {
-          expect(Number(unitFBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitKBoxStyles.width.slice(0, -2))
-          );
-        });
       });
       describe("G", function (): void {
         it("should have red background for snail trail", function (): void {
@@ -1316,22 +851,6 @@ describe("React Integration: Poster", function (): void {
             getPixelGapBetweenTimes(
               unitG.apparentEndDate.getTime(),
               unitG.anticipatedStartDate.getTime()
-            )
-          );
-        });
-        it("should have box width according to anticipated start date and apparent end date", function (): void {
-          expect(Number(unitGBoxStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitG.apparentEndDate.getTime(),
-              unitG.anticipatedStartDate.getTime()
-            )
-          );
-        });
-        it("should have card width according to apparent start date and apparent end date", function (): void {
-          expect(Number(unitGCardStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitG.apparentEndDate.getTime(),
-              unitG.apparentStartDate.getTime()
             )
           );
         });
@@ -1360,32 +879,6 @@ describe("React Integration: Poster", function (): void {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function (): void {
-          expect(Number(unitHBoxStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitH.apparentEndDate.getTime(),
-              unitH.anticipatedStartDate.getTime()
-            )
-          );
-        });
-        it("should have card width according to apparent start date and apparent end date", function (): void {
-          expect(Number(unitHCardStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitH.apparentEndDate.getTime(),
-              unitH.apparentStartDate.getTime()
-            )
-          );
-        });
-        it("should have card wider than card for L", function (): void {
-          expect(Number(unitHCardStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitLCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for L", function (): void {
-          expect(Number(unitHBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitLBoxStyles.width.slice(0, -2))
-          );
-        });
       });
       describe("I", function (): void {
         it("should have red background for snail trail", function (): void {
@@ -1398,22 +891,6 @@ describe("React Integration: Poster", function (): void {
             getPixelGapBetweenTimes(
               unitI.apparentEndDate.getTime(),
               unitI.anticipatedStartDate.getTime()
-            )
-          );
-        });
-        it("should have box width according to anticipated start date and apparent end date", function (): void {
-          expect(Number(unitIBoxStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitI.apparentEndDate.getTime(),
-              unitI.anticipatedStartDate.getTime()
-            )
-          );
-        });
-        it("should have card width according to apparent start date and apparent end date", function (): void {
-          expect(Number(unitICardStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitI.apparentEndDate.getTime(),
-              unitI.apparentStartDate.getTime()
             )
           );
         });
@@ -1432,22 +909,6 @@ describe("React Integration: Poster", function (): void {
             )
           );
         });
-        it("should have box width according to anticipated start date and apparent end date", function (): void {
-          expect(Number(unitJBoxStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitJ.apparentEndDate.getTime(),
-              unitJ.anticipatedStartDate.getTime()
-            )
-          );
-        });
-        it("should have card width according to apparent start date and apparent end date", function (): void {
-          expect(Number(unitJCardStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitJ.apparentEndDate.getTime(),
-              unitJ.apparentStartDate.getTime()
-            )
-          );
-        });
       });
       describe("K", function (): void {
         it("should have red background for snail trail", function (): void {
@@ -1460,22 +921,6 @@ describe("React Integration: Poster", function (): void {
             getPixelGapBetweenTimes(
               unitK.apparentEndDate.getTime(),
               unitK.anticipatedStartDate.getTime()
-            )
-          );
-        });
-        it("should have box width according to anticipated start date and apparent end date", function (): void {
-          expect(Number(unitKBoxStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitK.apparentEndDate.getTime(),
-              unitK.anticipatedStartDate.getTime()
-            )
-          );
-        });
-        it("should have card width according to apparent start date and apparent end date", function (): void {
-          expect(Number(unitKCardStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitK.apparentEndDate.getTime(),
-              unitK.apparentStartDate.getTime()
             )
           );
         });
@@ -1492,32 +937,6 @@ describe("React Integration: Poster", function (): void {
               unitL.apparentEndDate.getTime(),
               unitL.anticipatedStartDate.getTime()
             )
-          );
-        });
-        it("should have box width according to anticipated start date and apparent end date", function (): void {
-          expect(Number(unitLBoxStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitL.apparentEndDate.getTime(),
-              unitL.anticipatedStartDate.getTime()
-            )
-          );
-        });
-        it("should have card width according to apparent start date and apparent end date", function (): void {
-          expect(Number(unitLCardStyles.width.slice(0, -2))).to.equal(
-            getPixelGapBetweenTimes(
-              unitL.apparentEndDate.getTime(),
-              unitL.apparentStartDate.getTime()
-            )
-          );
-        });
-        it("should have card as wide as card for D", function (): void {
-          expect(Number(unitLCardStyles.width.slice(0, -2))).to.equal(
-            Number(unitDCardStyles.width.slice(0, -2))
-          );
-        });
-        it("should have box wider than box for D", function (): void {
-          expect(Number(unitLBoxStyles.width.slice(0, -2))).to.be.greaterThan(
-            Number(unitDBoxStyles.width.slice(0, -2))
           );
         });
       });

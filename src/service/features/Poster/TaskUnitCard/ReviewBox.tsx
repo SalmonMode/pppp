@@ -7,7 +7,7 @@ import ReportGmailerrorredOutlinedIcon from "@mui/icons-material/ReportGmailerro
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import type SvgIcon from "@mui/material/SvgIcon";
 import Tooltip from "@mui/material/Tooltip";
-import { theme } from "../../../../theme/theme";
+import { theme } from "../../../app/theme";
 import { ReviewType } from "../../../../types";
 
 export default function ReviewBox({
@@ -15,7 +15,7 @@ export default function ReviewBox({
 }: {
   variant: ReviewType;
 }): EmotionJSX.Element {
-  const className = classMap[variant];
+  const className = reviewVariantClassMap[variant];
   const wrapperStyles = styleMap[variant];
   const IconComponent = iconMap[variant];
   const tooltipText = tooltipMap[variant];
@@ -40,7 +40,7 @@ type ReviewVariantIconMap = {
   [V in ReviewType]: typeof SvgIcon;
 };
 
-const classMap: ReviewVariantStringMap = {
+export const reviewVariantClassMap: ReviewVariantStringMap = {
   [ReviewType.Pending]: "pendingReview",
   [ReviewType.Accepted]: "acceptedReview",
   [ReviewType.NeedsMinorRevision]: "needsMinorRevisionReview",

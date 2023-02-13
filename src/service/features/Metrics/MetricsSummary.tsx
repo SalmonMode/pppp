@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import type { Action } from "@reduxjs/toolkit";
 import { formatDuration } from "date-fns";
 import { useAppDispatch } from "../../app/hooks";
-import { theme } from "../../../theme/theme";
+import { theme } from "../../app/theme";
 import CoefficientHelpModal from "../CoefficientModal/CoefficientHelpModal";
 import { openCoefficientHelpModal } from "../CoefficientModal/coefficientHelpModalOpenSlice";
 import type { TaskMetrics } from "../Poster/taskUnitsSlice";

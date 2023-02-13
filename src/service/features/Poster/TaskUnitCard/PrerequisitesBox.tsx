@@ -3,7 +3,7 @@ import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import PendingOutlinedIcon from "@mui/icons-material/PendingOutlined";
 import Tooltip from "@mui/material/Tooltip";
-import { theme } from "../../../../theme/theme";
+import { theme } from "../../../app/theme";
 
 export default function PrerequisitesBox({
   started,
@@ -13,19 +13,19 @@ export default function PrerequisitesBox({
   const [wrapperStyles, className, IconComponent, tooltipText] = started
     ? [
         acceptedStyles,
-        "acceptedPrerequisiteBox",
+        "acceptedPrerequisitesBox",
         FactCheckOutlinedIcon,
         "This task's prerequisites have been signed off on",
       ]
     : [
         pendingStyles,
-        "pendingPrerequisiteBox",
+        "pendingPrerequisitesBox",
         PendingOutlinedIcon,
         "This task's prerequisites have not been signed off on",
       ];
   return (
     <Tooltip describeChild title={tooltipText} arrow>
-      <div css={wrapperStyles} className={`prerequisiteBox ${className}`}>
+      <div css={wrapperStyles} className={`prerequisitesBox ${className}`}>
         <div css={iconBoxStyles}>
           <IconComponent fontSize="small" />
         </div>

@@ -9,8 +9,8 @@ export default function ExtensionTrailFixedSize({
   return (
     <div
       css={fixedExtensionTrailStyles}
-      className="extensionTrail"
-      style={{ flexBasis: width }}
+      className="extensionTrail extensionTrailFixedSize"
+      style={{ width }}
     ></div>
   );
 }
