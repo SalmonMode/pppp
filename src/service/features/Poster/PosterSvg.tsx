@@ -3,7 +3,7 @@ import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import { theme } from "../../app/theme";
 import ConnectedPoints from "../../../Graphing/ConnectedPoints";
 import { assertIsObject } from "primitive-predicates";
-import type { TaskUnitDetails } from "../../../types";
+import type { Coordinate, TaskUnitDetails } from "../../../types";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
 import getYOfTrackTop from "./getYOfTrackTop";
 import type { TaskUnitsLoadingCompleteState } from "./taskUnitsSlice";
@@ -28,23 +28,25 @@ export default function PosterSvg({
               (depUnitId: string): EmotionJSX.Element => {
                 const depUnitData = taskUnits.units[depUnitId];
                 assertIsObject(depUnitData);
+                const depUnitConnPoint: Coordinate = {
+                  x: getPixelGapBetweenTimes(
+                    depUnitData.apparentEndTime,
+                    earliestStartTime
+                  ),
+                  y:
+                    getYOfTrackTop(depUnitData.trackIndex) +
+                    theme.trackHeight / 2,
+                };
+                const unitConnPoint: Coordinate = {
+                  x: getPixelGapBetweenTimes(
+                    unit.apparentStartTime,
+                    earliestStartTime
+                  ),
+                  y: getYOfTrackTop(unit.trackIndex) + theme.trackHeight / 2,
+                };
                 const connection = new ConnectedPoints(
-                  {
-                    x: getPixelGapBetweenTimes(
-                      depUnitData.apparentEndTime,
-                      earliestStartTime
-                    ),
-                    y:
-                      getYOfTrackTop(depUnitData.trackIndex) +
-                      theme.trackHeight / 2,
-                  },
-                  {
-                    x: getPixelGapBetweenTimes(
-                      unit.apparentStartTime,
-                      earliestStartTime
-                    ),
-                    y: getYOfTrackTop(unit.trackIndex) + theme.trackHeight / 2,
-                  }
+                  depUnitConnPoint,
+                  unitConnPoint
                 );
                 const curveAsPathString =
                   connection.getCubicBezierCurvePathShape();
