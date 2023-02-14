@@ -217,14 +217,15 @@ describe("React Integration: TaskUnitCard", function (): void {
               );
             });
             describe("First Item (Static Task Iteration Box)", function (): void {
-              it("should have width of actual duration", function (): void {
+              it("should have width of actual duration minus both borders width", function (): void {
                 expect(
                   Number(firstIterationWrapperComputedStyles.width.slice(0, -2))
                 ).to.equal(
                   getPixelGapBetweenTimes(
                     relevantUnit.apparentEndDate.getTime(),
                     relevantUnit.apparentStartDate.getTime()
-                  )
+                  ) -
+                    theme.borderWidth * 2
                 );
               });
             });
@@ -274,7 +275,7 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be first child", function (): void {
             expect(firstIterationIndex).to.equal(0);
           });
-          it("should have width according to actual duration of first iteration", function (): void {
+          it("should have width according to actual duration of first iteration minus one border width", function (): void {
             const reviewEvent = relevantUnit.interpolatedEventHistory[0];
             const startedEvent = relevantUnit.interpolatedEventHistory[1];
             assertIsObject(reviewEvent);
@@ -285,7 +286,7 @@ describe("React Integration: TaskUnitCard", function (): void {
               getPixelGapBetweenTimes(
                 startedEvent.date.getTime(),
                 reviewEvent.date.getTime()
-              )
+              ) - theme.borderWidth
             );
           });
           it("should have static, minor review, and prereq included class name and not the other variant names", function (): void {
@@ -311,7 +312,7 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be second child", function (): void {
             expect(secondIterationIndex).to.equal(1);
           });
-          it("should have width according to actual duration of second iteration", function (): void {
+          it("should have width according to actual duration of second iteration minus one border width", function (): void {
             const reviewEvent = relevantUnit.interpolatedEventHistory[1];
             const startedEvent = relevantUnit.interpolatedEventHistory[2];
             assertIsObject(reviewEvent);
@@ -322,7 +323,7 @@ describe("React Integration: TaskUnitCard", function (): void {
               getPixelGapBetweenTimes(
                 startedEvent.date.getTime(),
                 reviewEvent.date.getTime()
-              )
+              ) - theme.borderWidth
             );
           });
           it("should have static, accepted review, and prereqs not included class name and not the other variant names", function (): void {
@@ -405,7 +406,7 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be first child", function (): void {
             expect(firstIterationIndex).to.equal(0);
           });
-          it("should have width according to actual duration of first iteration", function (): void {
+          it("should have width according to actual duration of first iteration minus one border width", function (): void {
             const reviewEvent = relevantUnit.interpolatedEventHistory[0];
             const startedEvent = relevantUnit.interpolatedEventHistory[1];
             assertIsObject(reviewEvent);
@@ -416,7 +417,7 @@ describe("React Integration: TaskUnitCard", function (): void {
               getPixelGapBetweenTimes(
                 startedEvent.date.getTime(),
                 reviewEvent.date.getTime()
-              )
+              ) - theme.borderWidth
             );
           });
           it("should have static, rebuild review, prereqs accepted, and prereq included class name and not the other variant names", function (): void {
@@ -442,7 +443,7 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be second child", function (): void {
             expect(extensionTrailIndex).to.equal(1);
           });
-          it("should have width according to actual duration of second iteration", function (): void {
+          it("should have width according to actual duration of second iteration minus neither borders width", function (): void {
             const reviewEvent = relevantUnit.interpolatedEventHistory[1];
             const startedEvent = relevantUnit.interpolatedEventHistory[2];
             assertIsObject(reviewEvent);
@@ -459,7 +460,7 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be third child", function (): void {
             expect(secondIterationIndex).to.equal(2);
           });
-          it("should have width according to actual duration of second iteration", function (): void {
+          it("should have width according to actual duration of second iteration minus neither borders width", function (): void {
             const reviewEvent = relevantUnit.interpolatedEventHistory[2];
             const startedEvent = relevantUnit.interpolatedEventHistory[3];
             assertIsObject(reviewEvent);
@@ -496,7 +497,7 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be fourth child", function (): void {
             expect(thirdIterationIndex).to.equal(3);
           });
-          it("should have width according to actual duration of third iteration plus review box width", function (): void {
+          it("should have width according to actual duration of third iteration plus review box width minus one border width", function (): void {
             const reviewEvent = relevantUnit.interpolatedEventHistory[3];
             const startedEvent = relevantUnit.interpolatedEventHistory[4];
             assertIsObject(reviewEvent);
@@ -507,7 +508,9 @@ describe("React Integration: TaskUnitCard", function (): void {
               getPixelGapBetweenTimes(
                 startedEvent.date.getTime(),
                 reviewEvent.date.getTime()
-              ) + theme.reviewBoxWidth
+              ) +
+                theme.reviewBoxWidth -
+                theme.borderWidth
             );
           });
           it("should have active, pending review, and prereq not included class name and not the other variant names", function (): void {
@@ -590,7 +593,7 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be first child", function (): void {
             expect(firstIterationIndex).to.equal(0);
           });
-          it("should have width according to actual duration of first iteration", function (): void {
+          it("should have width according to actual duration of first iteration minus one border width", function (): void {
             const reviewEvent = relevantUnit.interpolatedEventHistory[0];
             const startedEvent = relevantUnit.interpolatedEventHistory[1];
             assertIsObject(reviewEvent);
@@ -601,7 +604,7 @@ describe("React Integration: TaskUnitCard", function (): void {
               getPixelGapBetweenTimes(
                 startedEvent.date.getTime(),
                 reviewEvent.date.getTime()
-              )
+              ) - theme.borderWidth
             );
           });
           it("should have static, major review, accepted prereqs, and prereq included class name and not the other variant names", function (): void {
@@ -628,7 +631,7 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be second child", function (): void {
             expect(secondIterationIndex).to.equal(1);
           });
-          it("should have width according to actual duration of second iteration", function (): void {
+          it("should have width according to actual duration of second iteration minus neither borders width", function (): void {
             const reviewEvent = relevantUnit.interpolatedEventHistory[1];
             const startedEvent = relevantUnit.interpolatedEventHistory[2];
             assertIsObject(reviewEvent);
@@ -665,7 +668,7 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be third child", function (): void {
             expect(extensionTrailIndex).to.equal(2);
           });
-          it("should have width according to actual duration of second iteration", function (): void {
+          it("should have width according to actual duration of second iteration minus neither borders width", function (): void {
             const reviewEvent = relevantUnit.interpolatedEventHistory[2];
             const startedEvent = relevantUnit.interpolatedEventHistory[3];
             assertIsObject(reviewEvent);
@@ -682,7 +685,7 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be fourth child", function (): void {
             expect(thirdIterationIndex).to.equal(3);
           });
-          it("should have width according to actual duration of third iteration", function (): void {
+          it("should have width according to actual duration of third iteration minus one borders width", function (): void {
             const reviewEvent = relevantUnit.interpolatedEventHistory[3];
             const startedEvent = relevantUnit.interpolatedEventHistory[4];
             assertIsObject(reviewEvent);
@@ -693,7 +696,7 @@ describe("React Integration: TaskUnitCard", function (): void {
               getPixelGapBetweenTimes(
                 startedEvent.date.getTime(),
                 reviewEvent.date.getTime()
-              )
+              ) - theme.borderWidth
             );
           });
           it("should have static, pending review, pending prereqs, and prereq included class name and not the other variant names", function (): void {
@@ -755,7 +758,7 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be first child", function (): void {
             expect(firstIterationIndex).to.equal(0);
           });
-          it("should have width according to actual duration of first iteration plus review box width", function (): void {
+          it("should have width according to actual duration of first iteration plus review box width minus both borders width", function (): void {
             const reviewEvent = relevantUnit.interpolatedEventHistory[0];
             const startedEvent = relevantUnit.interpolatedEventHistory[1];
             assertIsObject(reviewEvent);
@@ -766,17 +769,21 @@ describe("React Integration: TaskUnitCard", function (): void {
               getPixelGapBetweenTimes(
                 startedEvent.date.getTime(),
                 reviewEvent.date.getTime()
-              ) + theme.reviewBoxWidth
+              ) +
+                theme.reviewBoxWidth -
+                theme.borderWidth * 2
             );
           });
-          it("should have width according to actual duration plus review box width", function (): void {
+          it("should have width according to actual duration plus review box width minus both borders width", function (): void {
             expect(
               Number(firstIterationWrapperComputedStyles.width.slice(0, -2))
             ).to.equal(
               getPixelGapBetweenTimes(
                 relevantUnit.apparentEndDate.getTime(),
                 relevantUnit.apparentStartDate.getTime()
-              ) + theme.reviewBoxWidth
+              ) +
+                theme.reviewBoxWidth -
+                theme.borderWidth * 2
             );
           });
           it("should have static, pending review, prereqs accepted, and prereq included class name and not the other variant names", function (): void {

@@ -176,3 +176,56 @@ export interface SerializableTaskEvent {
   time: number;
   projected: boolean;
 }
+
+/**
+ * Enum flags to help determine if task unit iterations are the first/last/only/middle.
+ *
+ * @example
+ * Here's a simple example:
+ *
+ * ```
+ * let position = IterationRelativePosition.LastKnownIteration | IterationRelativePosition.FirstKnownIteration;
+ * if ((position & IterationRelativePosition.LastKnownIteration) === IterationRelativePosition.LastKnownIteration) {
+ *   console.log("Is last known iteration, but may not be the only iteration");
+ * }
+ * if (position === IterationRelativePosition.OnlyKnownIteration) {
+ *   console.log("Is only known iteration");
+ * }
+ * ```
+ *
+ * @example
+ * Here's how to add a flag:
+ *
+ * ```
+ * let position = IterationRelativePosition.Intermediate; // 0
+ * position |= IterationRelativePosition.FirstKnownIteration; // 2
+ * ```
+ *
+ * @example
+ * Here's how to remove a flag:
+ *
+ * ```
+ * let position = IterationRelativePosition.OnlyKnownIteration; // 3
+ * position &= IterationRelativePosition.LastKnownIteration; // 2
+ * ```
+ *
+ * These operations are idempotent so they can be performed any number of times redundantly without risk.
+ */
+export enum IterationRelativePosition {
+  /**
+   * This is neither the first nor the last iteration, but there are other iterations.
+   */
+  IntermediateIteration = 0,
+  /**
+   * This is the last known iteration, but it is not necessarily the first.
+   */
+  LastKnownIteration = 1 << 0,
+  /**
+   * This is the first known iteration, but it is not necessarily the last.
+   */
+  FirstKnownIteration = 1 << 1,
+  /**
+   * This is both the first and the last known iteration. It is the only known iteration.
+   */
+  OnlyKnownIteration = ~(~0 << 2),
+}

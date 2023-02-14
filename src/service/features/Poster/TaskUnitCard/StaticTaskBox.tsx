@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import { isUndefined } from "primitive-predicates";
-import type { ReviewType } from "../../../../types";
+import { IterationRelativePosition, ReviewType } from "../../../../types";
 import { theme } from "../../../app/theme";
 import CoreTaskWrapper from "./CoreTaskWrapper";
 import { ExtensionTrail } from "./ExtensionTrail";
@@ -23,6 +23,7 @@ export default function StaticTaskBox({
   actualDurationWidth,
   prereqsAccepted,
   reviewVariant,
+  relativeIterationPosition,
   label,
 }: {
   /**
@@ -44,8 +45,22 @@ export default function StaticTaskBox({
    * start appearing once we hit the now line and the review box needs to start being pushed back.
    */
   reviewVariant: ReviewType;
+  relativeIterationPosition: IterationRelativePosition;
   label?: string;
 }): EmotionJSX.Element {
+  let borderAdjustment: number;
+  switch (relativeIterationPosition) {
+    case IterationRelativePosition.IntermediateIteration:
+      borderAdjustment = 0;
+      break;
+    case IterationRelativePosition.OnlyKnownIteration:
+      borderAdjustment = theme.borderWidth * 2;
+      break;
+
+    default:
+      borderAdjustment = theme.borderWidth;
+      break;
+  }
   let prereqsBox: EmotionJSX.Element | undefined;
   if (!isUndefined(prereqsAccepted)) {
     // must include the prereqs
@@ -68,14 +83,17 @@ export default function StaticTaskBox({
   const reviewClass = reviewVariantClassMap[reviewVariant];
 
   const adjustedCoreWidth =
-    expectedDurationWidth - theme.reviewBoxWidth - prereqsAdjustmentWidth;
+    expectedDurationWidth -
+    theme.reviewBoxWidth -
+    prereqsAdjustmentWidth -
+    borderAdjustment;
 
   return (
     <div
       css={styles}
       className={`taskIteration staticTaskBox ${prereqClass} ${reviewClass}`}
       style={{
-        width: actualDurationWidth,
+        width: actualDurationWidth - borderAdjustment,
       }}
     >
       {prereqsBox}

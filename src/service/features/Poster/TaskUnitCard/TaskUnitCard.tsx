@@ -8,6 +8,7 @@ import { theme } from "../../../app/theme";
 import {
   Coordinate,
   EventType,
+  IterationRelativePosition,
   ReviewType,
   SerializableTaskEvent,
   TaskUnitDetails,
@@ -55,6 +56,18 @@ export default function TaskUnitCard({
                   case EventType.ReviewedAndNeedsMajorRevision:
                   case EventType.ReviewedAndNeedsRebuild: {
                     assertIsObject(prevEvent);
+                    let relativeIterationPosition: IterationRelativePosition =
+                      IterationRelativePosition.OnlyKnownIteration;
+                    if (prevPrevEvent) {
+                      // This is not the first known iteration.
+                      relativeIterationPosition &=
+                        IterationRelativePosition.FirstKnownIteration;
+                    }
+                    if (nextEvent) {
+                      // This is not the last known iteration.
+                      relativeIterationPosition &=
+                        IterationRelativePosition.LastKnownIteration;
+                    }
                     const comps: JSX.Element[] = [];
                     const includePrereqs =
                       prevEvent.type === EventType.TaskIterationStarted;
@@ -99,6 +112,7 @@ export default function TaskUnitCard({
                             adjustableExpectedDurationWidth
                           }
                           actualDurationWidth={actualDurationWidth}
+                          relativeIterationPosition={relativeIterationPosition}
                           label={label}
                           includePrereqs={includePrereqs}
                         />
@@ -111,6 +125,7 @@ export default function TaskUnitCard({
                             adjustableExpectedDurationWidth
                           }
                           actualDurationWidth={actualDurationWidth}
+                          relativeIterationPosition={relativeIterationPosition}
                           label={label}
                           prereqsAccepted={prereqsAccepted}
                           reviewVariant={reviewVariant}
@@ -140,6 +155,7 @@ export default function TaskUnitCard({
                     return comps;
                   }
                   case EventType.TaskIterationStarted: {
+                    // Don't do anything here. The task iteration boxes are produced by other events.
                     return [];
                   }
                 }
@@ -161,6 +177,7 @@ const cardStyles = css({
   position: "absolute",
   boxSizing: "border-box",
   top: 0,
+  borderWidth: theme.borderWidth,
 });
 const cardContentStyles = css({
   padding: 0,

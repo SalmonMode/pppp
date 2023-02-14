@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
-import { ReviewType } from "../../../../types";
+import { IterationRelativePosition, ReviewType } from "../../../../types";
 import { theme } from "../../../app/theme";
 import CoreTaskWrapper from "./CoreTaskWrapper";
 import { ExtensionTrail } from "./ExtensionTrail";
@@ -21,6 +21,7 @@ export default function ActiveTaskBox({
   expectedDurationWidth,
   actualDurationWidth,
   includePrereqs,
+  relativeIterationPosition,
   label,
 }: {
   /**
@@ -34,6 +35,7 @@ export default function ActiveTaskBox({
    */
   actualDurationWidth: number;
   includePrereqs: boolean;
+  relativeIterationPosition: IterationRelativePosition;
   label?: string;
 }): EmotionJSX.Element {
   let prereqsBox: EmotionJSX.Element | undefined;
@@ -47,15 +49,30 @@ export default function ActiveTaskBox({
   } else {
     // won't be providing prereqs box, so this iteration is either after a major or minor review
   }
+  let borderAdjustment: number;
+  switch (relativeIterationPosition) {
+    case IterationRelativePosition.IntermediateIteration:
+      borderAdjustment = 0;
+      break;
+    case IterationRelativePosition.OnlyKnownIteration:
+      borderAdjustment = theme.borderWidth * 2;
+      break;
+
+    default:
+      borderAdjustment = theme.borderWidth;
+      break;
+  }
+
   const adjustedActualDurationWidth =
     actualDurationWidth + theme.reviewBoxWidth;
-  const adjustedCoreWidth = expectedDurationWidth - prereqsAdjustmentWidth;
+  const adjustedCoreWidth =
+    expectedDurationWidth - prereqsAdjustmentWidth - borderAdjustment;
   return (
     <div
       css={styles}
       className={`taskIteration activeTaskBox pendingReview ${prereqsClassName}`}
       style={{
-        width: adjustedActualDurationWidth,
+        width: adjustedActualDurationWidth - borderAdjustment,
       }}
     >
       {prereqsBox}
