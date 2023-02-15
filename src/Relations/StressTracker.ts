@@ -8,6 +8,19 @@ import type { RelationshipMapping } from "../types";
 import Matrix from "../matrix/Matrix";
 import type { ChainPath, SimpleChainPathMap } from "./";
 
+/**
+ * The information detailing a given "track". This includes how tall the track is (i.e., how many "subtracks" are
+ * within this track), and which ChainPaths are in that track.
+ *
+ * Each track contains only paths that can be placed horizontally of each other without overlapping. This would suggest
+ * that the height should be 1, but each path can overlap with itself, and so might need to be layered vertically in
+ * order to fit. This layering creates "subtracks" within the track itself, which is why the "height" of the track
+ * isn't always 1. The ChainPath requiring the most layers/subtracks determines the "height" of the track, because
+ * that is the smallest amount of subtracks necessary to make sure every included ChainPath can fit.
+ *
+ * This height matters, because it is the vertical distance a connecting line will have to travel should it go over that
+ * track, and we want to keep this number as low as possible.
+ */
 interface TrackDetails {
   height: number;
   paths: ChainPath["id"][];
@@ -647,6 +660,12 @@ export default class StressTracker {
   getCurrentTotalDistanceOfPaths(): number {
     return this._currentTotalDistance;
   }
+  /**
+   * Figure out which ChainPaths should be grouped together in the same tracks given the provided positions matrix.
+   *
+   * @param positions the positions of the paths
+   * @returns an array of ChainPath arrays, with each ChainPath array representing a track
+   */
   private _getPathTracksWithPositions(positions: Matrix): ChainPath[][] {
     const rankings = this.getRankingsUsingPositions(positions);
     // First figure out the tracks
@@ -673,6 +692,13 @@ export default class StressTracker {
     }
     return pathTracks;
   }
+  /**
+   * Convert the provided arrays of ChainPath arrays (with each ChainPath array representing a given track) into track
+   * details.
+   *
+   * @param tracks the paths of each track
+   * @returns the track details for all tracks
+   */
   private _getPathTrackDetails(tracks: ChainPath[][]): TrackDetails[] {
     const trackDetails: TrackDetails[] = [];
     for (const track of tracks) {
@@ -688,10 +714,23 @@ export default class StressTracker {
     }
     return trackDetails;
   }
+  /**
+   * Get the details for all the tracks given the provided positions matrix.
+   *
+   * @param positions the positions of the paths
+   * @returns the track details
+   */
   getPathTrackDetailsWithPositions(positions: Matrix): TrackDetails[] {
     const tracks = this._getPathTracksWithPositions(positions);
     return this._getPathTrackDetails(tracks);
   }
+  /**
+   * Given the positions and the current track details, get the cumulative distance each path would have to travel to
+   * reach each of its connected paths.
+   *
+   * @param positions the positions of the paths
+   * @returns the cumulative distance each path would have to travel to reach each of its connected paths
+   */
   getTotalDistanceOfPathsWithPositions(positions: Matrix): number {
     const allTracksDetails = this.getPathTrackDetailsWithPositions(positions);
     return this.getTotalDistanceOfPathsWithPositionsWithTrackDetails(
@@ -699,6 +738,14 @@ export default class StressTracker {
       allTracksDetails
     );
   }
+  /**
+   * Given the positions and track details, get the cumulative distance each path would have to travel to reach each of
+   * its connected paths.
+   *
+   * @param positions the positions of the paths
+   * @param allTracksDetails the track details
+   * @returns the cumulative distance each path would have to travel to reach each of its connected paths
+   */
   getTotalDistanceOfPathsWithPositionsWithTrackDetails(
     positions: Matrix,
     allTracksDetails: TrackDetails[]
@@ -709,6 +756,16 @@ export default class StressTracker {
     );
     return this.getTotalDistanceWithDistances(distances);
   }
+  /**
+   * Get the IDs of the ChainPaths that are between the two paths provided, according to the provided positions matrix.
+   *
+   * Note: This includes the IDs of the two paths provided.
+   *
+   * @param positions the positions of the paths
+   * @param pathId one of the two outer paths to consider
+   * @param otherPathId one of the two outer paths to consider
+   * @returns an array of ChainPath IDs
+   */
   getPathsBetweenPathsWithPositionsById(
     positions: Matrix,
     pathId: ChainPath["id"],
@@ -766,9 +823,19 @@ export default class StressTracker {
     });
     return rankedIds;
   }
+  /**
+   *
+   * @returns the track details according to the current positioning of the paths
+   */
   getCurrentTracks(): TrackDetails[] {
     return this._allTracksDetails;
   }
+  /**
+   * Get the track details if the paths were positioned according to the passed positions matrix.
+   *
+   * @param positions the positions of each path
+   * @returns the track details
+   */
   getTracksWithPositions(positions: Matrix): TrackDetails[] {
     const tracks = this._getPathTracksWithPositions(positions);
     const allTracksDetails = this._getPathTrackDetails(tracks);
