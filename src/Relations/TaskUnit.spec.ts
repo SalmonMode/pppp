@@ -4,7 +4,7 @@ import {
   EventHistoryInvalidError,
   PrematureTaskStartError,
 } from "../errors/Error";
-import { assertIsObject } from "primitive-predicates";
+import { assertIsNumber, assertIsObject } from "primitive-predicates";
 import { EventType } from "../types";
 import { TaskUnit } from "./";
 
@@ -25,6 +25,24 @@ const eleventhDate = new Date(tenthDate.getTime() + 1000);
 const twelfthDate = new Date(eleventhDate.getTime() + 1000);
 const thirteenthDate = new Date(twelfthDate.getTime() + 1000);
 const fourteenthDate = new Date(thirteenthDate.getTime() + 1000);
+
+/**
+ * This is intended to be used with others of its type that will be grouped relative to a common TaskUnit. Each one
+ * represents how many paths the common unit has to each unit in the collection. For example, if the common unit is A,
+ * and A is directly dependent on B, the key will be B's name, and the value will be 1 (because it's a direct
+ * dependency). But given the same relationship, if B is the common unit, the key will be A's name, and the value would
+ * be 0 (because B does not depend on A).
+ */
+type TaskNameToDependencyCountMap = {
+  [key: string]: number;
+};
+/**
+ * Each key is a unit's name. Each value is a dict containing references to all other units and how many paths each of
+ * the top level unit has to them.
+ */
+type TaskNameToDependencyCountMapMap = {
+  [key: string]: TaskNameToDependencyCountMap;
+};
 
 describe("TaskUnit", function (): void {
   describe("No Dependencies", function (): void {
@@ -1585,266 +1603,128 @@ describe("TaskUnit", function (): void {
      *   F┗━━━┛   ┗━━━┛G  ┗━━━┛H
      * ```
      */
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let unitC: TaskUnit;
-    let unitD: TaskUnit;
-    let unitE: TaskUnit;
-    let unitF: TaskUnit;
-    let unitG: TaskUnit;
-    let unitH: TaskUnit;
-    before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitC = new TaskUnit(now, [], firstDate, secondDate);
-      unitF = new TaskUnit(now, [], firstDate, secondDate);
+    const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
+    const unitC = new TaskUnit(now, [], firstDate, secondDate, "C");
+    const unitF = new TaskUnit(now, [], firstDate, secondDate, "F");
 
-      unitB = new TaskUnit(now, [unitA, unitC], thirdDate, fourthDate);
-      unitD = new TaskUnit(now, [unitA, unitC, unitF], thirdDate, fourthDate);
-      unitG = new TaskUnit(now, [unitC, unitF], thirdDate, fourthDate);
+    const unitB = new TaskUnit(now, [unitA, unitC], thirdDate, fourthDate, "B");
+    const unitD = new TaskUnit(
+      now,
+      [unitA, unitC, unitF],
+      thirdDate,
+      fourthDate,
+      "D"
+    );
+    const unitG = new TaskUnit(now, [unitC, unitF], thirdDate, fourthDate, "G");
 
-      unitE = new TaskUnit(now, [unitB, unitD, unitG], fifthDate, sixthDate);
-      unitH = new TaskUnit(now, [unitD, unitG], fifthDate, sixthDate);
-    });
-    describe("From A", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitA;
-      });
-      it("should have 0 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(0);
-      });
-      it("should have 0 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
-      });
-      it("should have 0 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 0 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(0);
-      });
-      it("should have 0 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From B", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitB;
-      });
-      it("should have 1 path to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
-      });
-      it("should have 0 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
-      });
-      it("should have 1 path to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(1);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 0 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(0);
-      });
-      it("should have 0 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From C", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitC;
-      });
-      it("should have 0 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(0);
-      });
-      it("should have 0 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
-      });
-      it("should have 0 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 0 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(0);
-      });
-      it("should have 0 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From D", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitD;
-      });
-      it("should have 1 path to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
-      });
-      it("should have 0 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
-      });
-      it("should have 1 path to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(1);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 1 path to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(1);
-      });
-      it("should have 0 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From E", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitE;
-      });
-      it("should have 2 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(2);
-      });
-      it("should have 1 path to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(1);
-      });
-      it("should have 3 path to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(3);
-      });
-      it("should have 1 path to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(1);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 2 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(2);
-      });
-      it("should have 1 path to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(1);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From F", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitF;
-      });
-      it("should have 0 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(0);
-      });
-      it("should have 0 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
-      });
-      it("should have 0 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 0 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(0);
-      });
-      it("should have 0 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From G", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitG;
-      });
-      it("should have 0 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(0);
-      });
-      it("should have 0 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
-      });
-      it("should have 1 path to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(1);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 1 path to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(1);
-      });
-      it("should have 0 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From H", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitH;
-      });
-      it("should have 1 path to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
-      });
-      it("should have 0 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
-      });
-      it("should have 2 path to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(2);
-      });
-      it("should have 1 path to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(1);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 2 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(2);
-      });
-      it("should have 1 path to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(1);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
+    const unitE = new TaskUnit(
+      now,
+      [unitB, unitD, unitG],
+      fifthDate,
+      sixthDate,
+      "E"
+    );
+    const unitH = new TaskUnit(now, [unitD, unitG], fifthDate, sixthDate, "H");
+
+    const units = [unitA, unitB, unitC, unitD, unitE, unitF, unitG, unitH];
+
+    const dependencyCountMapMap: TaskNameToDependencyCountMapMap = {
+      A: {
+        A: 0,
+        B: 0,
+        C: 0,
+        D: 0,
+        E: 0,
+        F: 0,
+        G: 0,
+        H: 0,
+      },
+      B: {
+        A: 1,
+        B: 0,
+        C: 1,
+        D: 0,
+        E: 0,
+        F: 0,
+        G: 0,
+        H: 0,
+      },
+      C: {
+        A: 0,
+        B: 0,
+        C: 0,
+        D: 0,
+        E: 0,
+        F: 0,
+        G: 0,
+        H: 0,
+      },
+      D: {
+        A: 1,
+        B: 0,
+        C: 1,
+        D: 0,
+        E: 0,
+        F: 1,
+        G: 0,
+        H: 0,
+      },
+      E: {
+        A: 2,
+        B: 1,
+        C: 3,
+        D: 1,
+        E: 0,
+        F: 2,
+        G: 1,
+        H: 0,
+      },
+      F: {
+        A: 0,
+        B: 0,
+        C: 0,
+        D: 0,
+        E: 0,
+        F: 0,
+        G: 0,
+        H: 0,
+      },
+      G: {
+        A: 0,
+        B: 0,
+        C: 1,
+        D: 0,
+        E: 0,
+        F: 1,
+        G: 0,
+        H: 0,
+      },
+      H: {
+        A: 1,
+        B: 0,
+        C: 2,
+        D: 1,
+        E: 0,
+        F: 2,
+        G: 1,
+        H: 0,
+      },
+    };
+    for (let unit of units) {
+      describe(`From ${unit.name}`, function (): void {
+        const depCountMap = dependencyCountMapMap[unit.name];
+        assertIsObject(depCountMap);
+        for (let depUnit of units) {
+          const depCount = depCountMap[depUnit.name];
+          assertIsNumber(depCount);
+          it(`should have ${depCount} paths to ${depUnit.name}`, function (): void {
+            expect(unit.getNumberOfPathsToDependency(depUnit)).to.equal(
+              depCount
+            );
+          });
+        }
+      });
+    }
   });
   describe("Complex Interconnections (Redundancies)", function (): void {
     /**
@@ -1863,88 +1743,60 @@ describe("TaskUnit", function (): void {
      * `A` can be reached from `C` by going through `B`, and `B` can be reached from `D` by going through `C`, so the
      * paths `C`->`A` and `D`->`B` are redundant.
      */
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let unitC: TaskUnit;
-    let unitD: TaskUnit;
-    before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
-      unitC = new TaskUnit(now, [unitA, unitB], fifthDate, sixthDate);
-      unitD = new TaskUnit(now, [unitA, unitB, unitC], seventhDate, eighthDate);
-    });
-    describe("From A", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitA;
+    const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
+    const unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate, "B");
+    const unitC = new TaskUnit(now, [unitA, unitB], fifthDate, sixthDate, "C");
+    const unitD = new TaskUnit(
+      now,
+      [unitA, unitB, unitC],
+      seventhDate,
+      eighthDate,
+      "D"
+    );
+
+    const units = [unitA, unitB, unitC, unitD];
+
+    const dependencyCountMapMap: TaskNameToDependencyCountMapMap = {
+      A: {
+        A: 0,
+        B: 0,
+        C: 0,
+        D: 0,
+      },
+      B: {
+        A: 1,
+        B: 0,
+        C: 0,
+        D: 0,
+      },
+      C: {
+        A: 1,
+        B: 1,
+        C: 0,
+        D: 0,
+      },
+      D: {
+        A: 1,
+        B: 1,
+        C: 1,
+        D: 0,
+      },
+    };
+    for (let unit of units) {
+      describe(`From ${unit.name}`, function (): void {
+        const depCountMap = dependencyCountMapMap[unit.name];
+        assertIsObject(depCountMap);
+        for (let depUnit of units) {
+          const depCount = depCountMap[depUnit.name];
+          assertIsNumber(depCount);
+          it(`should have ${depCount} paths to ${depUnit.name}`, function (): void {
+            expect(unit.getNumberOfPathsToDependency(depUnit)).to.equal(
+              depCount
+            );
+          });
+        }
       });
-      it("should have 0 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(0);
-      });
-      it("should have 0 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
-      });
-      it("should have 0 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-    });
-    describe("From B", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitB;
-      });
-      it("should have 1 path to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
-      });
-      it("should have 0 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
-      });
-      it("should have 0 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-    });
-    describe("From C", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitC;
-      });
-      it("should have 1 path to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
-      });
-      it("should have 1 path to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(1);
-      });
-      it("should have 0 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-    });
-    describe("From D", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitD;
-      });
-      it("should have 1 path to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
-      });
-      it("should have 1 path to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(1);
-      });
-      it("should have 1 path to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(1);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-    });
+    }
   });
   describe("Complex Interconnections (Interwoven Without Redundancies)", function (): void {
     /**
@@ -1959,544 +1811,129 @@ describe("TaskUnit", function (): void {
      * There are no redundant paths.
      * ```
      */
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let unitC: TaskUnit;
-    let unitD: TaskUnit;
-    let unitE: TaskUnit;
-    let unitF: TaskUnit;
-    let unitG: TaskUnit;
-    let unitH: TaskUnit;
-    before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
+    const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
 
-      unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
-      unitF = new TaskUnit(now, [unitA], thirdDate, fourthDate);
+    const unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate, "B");
+    const unitF = new TaskUnit(now, [unitA], thirdDate, fourthDate, "F");
 
-      unitC = new TaskUnit(now, [unitB, unitF], fifthDate, sixthDate);
-      unitG = new TaskUnit(now, [unitB, unitF], fifthDate, sixthDate);
+    const unitC = new TaskUnit(now, [unitB, unitF], fifthDate, sixthDate, "C");
+    const unitG = new TaskUnit(now, [unitB, unitF], fifthDate, sixthDate, "G");
 
-      unitD = new TaskUnit(now, [unitC, unitG], seventhDate, eighthDate);
-      unitH = new TaskUnit(now, [unitC, unitG], seventhDate, eighthDate);
+    const unitD = new TaskUnit(
+      now,
+      [unitC, unitG],
+      seventhDate,
+      eighthDate,
+      "D"
+    );
+    const unitH = new TaskUnit(
+      now,
+      [unitC, unitG],
+      seventhDate,
+      eighthDate,
+      "H"
+    );
 
-      unitE = new TaskUnit(now, [unitD, unitH], ninthDate, tenthDate);
-    });
-    describe("From A", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitA;
-      });
-      it("should have 0 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(0);
-      });
-      it("should have 0 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
-      });
-      it("should have 0 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 0 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(0);
-      });
-      it("should have 0 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From B", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitB;
-      });
-      it("should have 1 path to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
-      });
-      it("should have 0 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
-      });
-      it("should have 0 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 0 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(0);
-      });
-      it("should have 0 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From C", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitC;
-      });
-      it("should have 2 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(2);
-      });
-      it("should have 1 path to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(1);
-      });
-      it("should have 0 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 1 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(1);
-      });
-      it("should have 0 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From D", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitD;
-      });
-      it("should have 4 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(4);
-      });
-      it("should have 2 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(2);
-      });
-      it("should have 1 path to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(1);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 2 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(2);
-      });
-      it("should have 1 path to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(1);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From E", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitE;
-      });
-      it("should have 8 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(8);
-      });
-      it("should have 4 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(4);
-      });
-      it("should have 2 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(2);
-      });
-      it("should have 1 path to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(1);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 4 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(4);
-      });
-      it("should have 2 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(2);
-      });
-      it("should have 1 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(1);
-      });
-    });
-    describe("From F", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitF;
-      });
-      it("should have 1 path to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
-      });
-      it("should have 0 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
-      });
-      it("should have 0 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 0 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(0);
-      });
-      it("should have 0 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From G", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitG;
-      });
-      it("should have 2 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(2);
-      });
-      it("should have 1 path to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(1);
-      });
-      it("should have 0 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 1 path to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(1);
-      });
-      it("should have 0 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From H", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitH;
-      });
-      it("should have 4 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(4);
-      });
-      it("should have 2 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(2);
-      });
-      it("should have 1 path to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(1);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 2 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(2);
-      });
-      it("should have 1 path to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(1);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-  });
-  describe("Complex Interconnections (Interwoven Without Redundancies)", function (): void {
-    /**
-     * ```text
-     *          ┏━━━┓____┏━━━┓____┏━━━┓
-     *        B╱┗━━━┛╲  ╱┗━━━┛╲C ╱┗━━━┛╲D
-     *   ┏━━━┓╱       ╲╱       ╲╱       ╲┏━━━┓
-     *  A┗━━━┛╲       ╱╲       ╱╲       ╱┗━━━┛E
-     *         ╲┏━━━┓╱__╲┏━━━┓╱__╲┏━━━┓╱
-     *         F┗━━━┛    ┗━━━┛G   ┗━━━┛H
-     *
-     * There are no redundant paths.
-     * ```
-     */
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let unitC: TaskUnit;
-    let unitD: TaskUnit;
-    let unitE: TaskUnit;
-    let unitF: TaskUnit;
-    let unitG: TaskUnit;
-    let unitH: TaskUnit;
-    before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
+    const unitE = new TaskUnit(now, [unitD, unitH], ninthDate, tenthDate, "E");
 
-      unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
-      unitF = new TaskUnit(now, [unitA], thirdDate, fourthDate);
-
-      unitC = new TaskUnit(now, [unitB, unitF], fifthDate, sixthDate);
-      unitG = new TaskUnit(now, [unitB, unitF], fifthDate, sixthDate);
-
-      unitD = new TaskUnit(now, [unitC, unitG], seventhDate, eighthDate);
-      unitH = new TaskUnit(now, [unitC, unitG], seventhDate, eighthDate);
-
-      unitE = new TaskUnit(now, [unitD, unitH], ninthDate, tenthDate);
-    });
-    describe("From A", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitA;
-      });
-      it("should have 0 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(0);
-      });
-      it("should have 0 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
-      });
-      it("should have 0 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 0 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(0);
-      });
-      it("should have 0 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From B", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitB;
-      });
-      it("should have 1 path to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
-      });
-      it("should have 0 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
-      });
-      it("should have 0 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 0 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(0);
-      });
-      it("should have 0 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From C", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitC;
-      });
-      it("should have 2 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(2);
-      });
-      it("should have 1 path to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(1);
-      });
-      it("should have 0 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 1 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(1);
-      });
-      it("should have 0 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From D", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitD;
-      });
-      it("should have 4 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(4);
-      });
-      it("should have 2 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(2);
-      });
-      it("should have 1 path to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(1);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 2 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(2);
-      });
-      it("should have 1 path to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(1);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From E", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitE;
-      });
-      it("should have 8 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(8);
-      });
-      it("should have 4 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(4);
-      });
-      it("should have 2 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(2);
-      });
-      it("should have 1 path to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(1);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 4 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(4);
-      });
-      it("should have 2 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(2);
-      });
-      it("should have 1 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(1);
-      });
-    });
-    describe("From F", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitF;
-      });
-      it("should have 1 path to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(1);
-      });
-      it("should have 0 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(0);
-      });
-      it("should have 0 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 0 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(0);
-      });
-      it("should have 0 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From G", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitG;
-      });
-      it("should have 2 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(2);
-      });
-      it("should have 1 path to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(1);
-      });
-      it("should have 0 paths to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(0);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 1 path to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(1);
-      });
-      it("should have 0 paths to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(0);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
-    describe("From H", function (): void {
-      let sourceUnit: TaskUnit;
-      before(function (): void {
-        sourceUnit = unitH;
-      });
-      it("should have 4 paths to A", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitA)).to.equal(4);
-      });
-      it("should have 2 paths to B", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitB)).to.equal(2);
-      });
-      it("should have 1 path to C", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitC)).to.equal(1);
-      });
-      it("should have 0 paths to D", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitD)).to.equal(0);
-      });
-      it("should have 0 paths to E", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitE)).to.equal(0);
-      });
-      it("should have 2 paths to F", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitF)).to.equal(2);
-      });
-      it("should have 1 path to G", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitG)).to.equal(1);
-      });
-      it("should have 0 paths to H", function (): void {
-        expect(sourceUnit.getNumberOfPathsToDependency(unitH)).to.equal(0);
-      });
-    });
+    const units = [unitA, unitB, unitC, unitD, unitE, unitF, unitG, unitH];
+    const dependencyCountMapMap: TaskNameToDependencyCountMapMap = {
+      A: {
+        A: 0,
+        B: 0,
+        C: 0,
+        D: 0,
+        E: 0,
+        F: 0,
+        G: 0,
+        H: 0,
+      },
+      B: {
+        A: 1,
+        B: 0,
+        C: 0,
+        D: 0,
+        E: 0,
+        F: 0,
+        G: 0,
+        H: 0,
+      },
+      C: {
+        A: 2,
+        B: 1,
+        C: 0,
+        D: 0,
+        E: 0,
+        F: 1,
+        G: 0,
+        H: 0,
+      },
+      D: {
+        A: 4,
+        B: 2,
+        C: 1,
+        D: 0,
+        E: 0,
+        F: 2,
+        G: 1,
+        H: 0,
+      },
+      E: {
+        A: 8,
+        B: 4,
+        C: 2,
+        D: 1,
+        E: 0,
+        F: 4,
+        G: 2,
+        H: 1,
+      },
+      F: {
+        A: 1,
+        B: 0,
+        C: 0,
+        D: 0,
+        E: 0,
+        F: 0,
+        G: 0,
+        H: 0,
+      },
+      G: {
+        A: 2,
+        B: 1,
+        C: 0,
+        D: 0,
+        E: 0,
+        F: 1,
+        G: 0,
+        H: 0,
+      },
+      H: {
+        A: 4,
+        B: 2,
+        C: 1,
+        D: 0,
+        E: 0,
+        F: 2,
+        G: 1,
+        H: 0,
+      },
+    };
+    for (let unit of units) {
+      describe(`From ${unit.name}`, function (): void {
+        const depCountMap = dependencyCountMapMap[unit.name];
+        assertIsObject(depCountMap);
+        for (let depUnit of units) {
+          const depCount = depCountMap[depUnit.name];
+          assertIsNumber(depCount);
+          it(`should have ${depCount} paths to ${depUnit.name}`, function (): void {
+            expect(unit.getNumberOfPathsToDependency(depUnit)).to.equal(
+              depCount
+            );
+          });
+        }
+      });
+    }
   });
   describe("Competing Heads", function (): void {
     /**
@@ -2542,313 +1979,218 @@ describe("TaskUnit", function (): void {
      *          ┗━━━┛E  ┗━━━┛I  ┗━━━┛N  ┗━━━┛R  ┗━━━┛V  ┗━━━┛Y
      * ```
      */
-    let unitA: TaskUnit;
-    let unitB: TaskUnit;
-    let unitC: TaskUnit;
-    let unitD: TaskUnit;
-    let unitE: TaskUnit;
-    let unitF: TaskUnit;
-    let unitG: TaskUnit;
-    let unitH: TaskUnit;
-    let unitI: TaskUnit;
-    let unitJ: TaskUnit;
-    let unitK: TaskUnit;
-    let unitL: TaskUnit;
-    let unitM: TaskUnit;
-    let unitN: TaskUnit;
-    let unitO: TaskUnit;
-    let unitP: TaskUnit;
-    let unitQ: TaskUnit;
-    let unitR: TaskUnit;
-    let unitS: TaskUnit;
-    let unitT: TaskUnit;
-    let unitU: TaskUnit;
-    let unitV: TaskUnit;
-    let unitW: TaskUnit;
-    let unitX: TaskUnit;
-    let unitY: TaskUnit;
-    before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
-      unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
+    const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
+    const unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
 
-      unitC = new TaskUnit(now, [unitA], thirdDate, fourthDate, "C");
-      unitD = new TaskUnit(now, [unitA, unitB], thirdDate, fourthDate, "D");
-      unitE = new TaskUnit(now, [unitB], thirdDate, fourthDate, "E");
+    const unitC = new TaskUnit(now, [unitA], thirdDate, fourthDate, "C");
+    const unitD = new TaskUnit(now, [unitA, unitB], thirdDate, fourthDate, "D");
+    const unitE = new TaskUnit(now, [unitB], thirdDate, fourthDate, "E");
 
-      unitF = new TaskUnit(now, [unitC], fifthDate, sixthDate, "F");
-      unitG = new TaskUnit(now, [unitC, unitD], fifthDate, sixthDate, "G");
-      unitH = new TaskUnit(now, [unitD, unitE], fifthDate, sixthDate, "H");
-      unitI = new TaskUnit(now, [unitE], fifthDate, sixthDate, "I");
+    const unitF = new TaskUnit(now, [unitC], fifthDate, sixthDate, "F");
+    const unitG = new TaskUnit(now, [unitC, unitD], fifthDate, sixthDate, "G");
+    const unitH = new TaskUnit(now, [unitD, unitE], fifthDate, sixthDate, "H");
+    const unitI = new TaskUnit(now, [unitE], fifthDate, sixthDate, "I");
 
-      unitJ = new TaskUnit(now, [unitF], seventhDate, eighthDate, "J");
-      unitK = new TaskUnit(now, [unitF, unitG], seventhDate, eighthDate, "K");
-      unitL = new TaskUnit(now, [unitG, unitH], seventhDate, eighthDate, "L");
-      unitM = new TaskUnit(now, [unitH, unitI], seventhDate, eighthDate, "M");
-      unitN = new TaskUnit(now, [unitI], seventhDate, eighthDate, "N");
+    const unitJ = new TaskUnit(now, [unitF], seventhDate, eighthDate, "J");
+    const unitK = new TaskUnit(
+      now,
+      [unitF, unitG],
+      seventhDate,
+      eighthDate,
+      "K"
+    );
+    const unitL = new TaskUnit(
+      now,
+      [unitG, unitH],
+      seventhDate,
+      eighthDate,
+      "L"
+    );
+    const unitM = new TaskUnit(
+      now,
+      [unitH, unitI],
+      seventhDate,
+      eighthDate,
+      "M"
+    );
+    const unitN = new TaskUnit(now, [unitI], seventhDate, eighthDate, "N");
 
-      unitO = new TaskUnit(now, [unitJ, unitK], ninthDate, tenthDate, "O");
-      unitP = new TaskUnit(now, [unitK, unitL], ninthDate, tenthDate, "P");
-      unitQ = new TaskUnit(now, [unitL, unitM], ninthDate, tenthDate, "Q");
-      unitR = new TaskUnit(now, [unitM, unitN], ninthDate, tenthDate, "R");
+    const unitO = new TaskUnit(now, [unitJ, unitK], ninthDate, tenthDate, "O");
+    const unitP = new TaskUnit(now, [unitK, unitL], ninthDate, tenthDate, "P");
+    const unitQ = new TaskUnit(now, [unitL, unitM], ninthDate, tenthDate, "Q");
+    const unitR = new TaskUnit(now, [unitM, unitN], ninthDate, tenthDate, "R");
 
-      unitS = new TaskUnit(now, [unitO, unitP], eleventhDate, twelfthDate, "S");
-      unitT = new TaskUnit(now, [unitP, unitQ], eleventhDate, twelfthDate, "T");
-      unitU = new TaskUnit(now, [unitQ, unitR], eleventhDate, twelfthDate, "U");
-      unitV = new TaskUnit(now, [unitR], eleventhDate, twelfthDate, "V");
+    const unitS = new TaskUnit(
+      now,
+      [unitO, unitP],
+      eleventhDate,
+      twelfthDate,
+      "S"
+    );
+    const unitT = new TaskUnit(
+      now,
+      [unitP, unitQ],
+      eleventhDate,
+      twelfthDate,
+      "T"
+    );
+    const unitU = new TaskUnit(
+      now,
+      [unitQ, unitR],
+      eleventhDate,
+      twelfthDate,
+      "U"
+    );
+    const unitV = new TaskUnit(now, [unitR], eleventhDate, twelfthDate, "V");
 
-      unitW = new TaskUnit(
-        now,
-        [unitS, unitT],
-        thirteenthDate,
-        fourteenthDate,
-        "W"
-      );
-      unitX = new TaskUnit(
-        now,
-        [unitT, unitU],
-        thirteenthDate,
-        fourteenthDate,
-        "X"
-      );
-      unitY = new TaskUnit(
-        now,
-        [unitU, unitV],
-        thirteenthDate,
-        fourteenthDate,
-        "Y"
-      );
-    });
-    describe("W", function (): void {
-      it("should have 20 paths to A", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitA)).to.equal(20);
-      });
-      it("should have 15 paths to B", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitB)).to.equal(15);
-      });
-      it("should have 10 paths to C", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitC)).to.equal(10);
-      });
-      it("should have 10 paths to D", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitD)).to.equal(10);
-      });
-      it("should have 5 paths to E", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitE)).to.equal(5);
-      });
-      it("should have 4 paths to F", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitF)).to.equal(4);
-      });
-      it("should have 6 paths to G", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitG)).to.equal(6);
-      });
-      it("should have 4 paths to H", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitH)).to.equal(4);
-      });
-      it("should have 1 paths to I", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitI)).to.equal(1);
-      });
-      it("should have 1 paths to J", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitJ)).to.equal(1);
-      });
-      it("should have 3 paths to K", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitK)).to.equal(3);
-      });
-      it("should have 3 paths to L", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitL)).to.equal(3);
-      });
-      it("should have 1 paths to M", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitM)).to.equal(1);
-      });
-      it("should have 0 paths to N", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitN)).to.equal(0);
-      });
-      it("should have 1 paths to O", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitO)).to.equal(1);
-      });
-      it("should have 2 paths to P", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitP)).to.equal(2);
-      });
-      it("should have 1 paths to Q", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitQ)).to.equal(1);
-      });
-      it("should have 0 paths to R", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitR)).to.equal(0);
-      });
-      it("should have 1 paths to S", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitS)).to.equal(1);
-      });
-      it("should have 1 paths to T", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitT)).to.equal(1);
-      });
-      it("should have 0 paths to U", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitU)).to.equal(0);
-      });
-      it("should have 0 paths to V", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitV)).to.equal(0);
-      });
-      it("should have 0 paths to W", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitW)).to.equal(0);
-      });
-      it("should have 0 paths to X", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitX)).to.equal(0);
-      });
-      it("should have 0 paths to Y", function (): void {
-        expect(unitW.getNumberOfPathsToDependency(unitY)).to.equal(0);
-      });
-    });
-    describe("X", function (): void {
-      it("should have 15 paths to A", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitA)).to.equal(15);
-      });
-      it("should have 20 paths to B", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitB)).to.equal(20);
-      });
-      it("should have 5 paths to C", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitC)).to.equal(5);
-      });
-      it("should have 10 paths to D", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitD)).to.equal(10);
-      });
-      it("should have 10 paths to E", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitE)).to.equal(10);
-      });
-      it("should have 1 paths to F", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitF)).to.equal(1);
-      });
-      it("should have 4 paths to G", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitG)).to.equal(4);
-      });
-      it("should have 6 paths to H", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitH)).to.equal(6);
-      });
-      it("should have 4 paths to I", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitI)).to.equal(4);
-      });
-      it("should have 0 paths to J", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitJ)).to.equal(0);
-      });
-      it("should have 1 paths to K", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitK)).to.equal(1);
-      });
-      it("should have 3 paths to L", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitL)).to.equal(3);
-      });
-      it("should have 3 paths to M", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitM)).to.equal(3);
-      });
-      it("should have 1 paths to N", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitN)).to.equal(1);
-      });
-      it("should have 0 paths to O", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitO)).to.equal(0);
-      });
-      it("should have 1 paths to P", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitP)).to.equal(1);
-      });
-      it("should have 2 paths to Q", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitQ)).to.equal(2);
-      });
-      it("should have 1 paths to R", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitR)).to.equal(1);
-      });
-      it("should have 0 paths to S", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitS)).to.equal(0);
-      });
-      it("should have 1 paths to T", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitT)).to.equal(1);
-      });
-      it("should have 1 paths to U", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitU)).to.equal(1);
-      });
-      it("should have 0 paths to V", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitV)).to.equal(0);
-      });
-      it("should have 0 paths to W", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitW)).to.equal(0);
-      });
-      it("should have 0 paths to X", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitX)).to.equal(0);
-      });
-      it("should have 0 paths to Y", function (): void {
-        expect(unitX.getNumberOfPathsToDependency(unitY)).to.equal(0);
-      });
-    });
-    describe("Y", function (): void {
-      it("should have 6 paths to A", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitA)).to.equal(6);
-      });
-      it("should have 14 paths to B", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitB)).to.equal(14);
-      });
-      it("should have 1 paths to C", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitC)).to.equal(1);
-      });
-      it("should have 5 paths to D", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitD)).to.equal(5);
-      });
-      it("should have 9 paths to E", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitE)).to.equal(9);
-      });
-      it("should have 0 paths to F", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitF)).to.equal(0);
-      });
-      it("should have 1 paths to G", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitG)).to.equal(1);
-      });
-      it("should have 4 paths to H", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitH)).to.equal(4);
-      });
-      it("should have 5 paths to I", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitI)).to.equal(5);
-      });
-      it("should have 0 paths to J", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitJ)).to.equal(0);
-      });
-      it("should have 0 paths to K", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitK)).to.equal(0);
-      });
-      it("should have 1 paths to L", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitL)).to.equal(1);
-      });
-      it("should have 3 paths to M", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitM)).to.equal(3);
-      });
-      it("should have 2 paths to N", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitN)).to.equal(2);
-      });
-      it("should have 0 paths to O", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitO)).to.equal(0);
-      });
-      it("should have 0 paths to P", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitP)).to.equal(0);
-      });
-      it("should have 1 paths to Q", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitQ)).to.equal(1);
-      });
-      it("should have 2 paths to R", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitR)).to.equal(2);
-      });
-      it("should have 0 paths to S", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitS)).to.equal(0);
-      });
-      it("should have 0 paths to T", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitT)).to.equal(0);
-      });
-      it("should have 1 paths to U", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitU)).to.equal(1);
-      });
-      it("should have 1 paths to V", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitV)).to.equal(1);
-      });
-      it("should have 0 paths to W", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitW)).to.equal(0);
-      });
-      it("should have 0 paths to X", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitX)).to.equal(0);
-      });
-      it("should have 0 paths to Y", function (): void {
-        expect(unitY.getNumberOfPathsToDependency(unitY)).to.equal(0);
-      });
-    });
+    const unitW = new TaskUnit(
+      now,
+      [unitS, unitT],
+      thirteenthDate,
+      fourteenthDate,
+      "W"
+    );
+    const unitX = new TaskUnit(
+      now,
+      [unitT, unitU],
+      thirteenthDate,
+      fourteenthDate,
+      "X"
+    );
+    const unitY = new TaskUnit(
+      now,
+      [unitU, unitV],
+      thirteenthDate,
+      fourteenthDate,
+      "Y"
+    );
+    const allUnits = [
+      unitA,
+      unitB,
+      unitC,
+      unitD,
+      unitE,
+      unitF,
+      unitG,
+      unitH,
+      unitI,
+      unitJ,
+      unitK,
+      unitL,
+      unitM,
+      unitN,
+      unitO,
+      unitP,
+      unitQ,
+      unitR,
+      unitS,
+      unitT,
+      unitU,
+      unitV,
+      unitW,
+      unitX,
+      unitY,
+    ];
+    // These are the heads and could only have the correct dep path counts if the others are good
+    const checkingUnits = [unitW, unitX, unitY];
+    const dependencyCountMapMap: TaskNameToDependencyCountMapMap = {
+      W: {
+        A: 20,
+        B: 15,
+        C: 10,
+        D: 10,
+        E: 5,
+        F: 4,
+        G: 6,
+        H: 4,
+        I: 1,
+        J: 1,
+        K: 3,
+        L: 3,
+        M: 1,
+        N: 0,
+        O: 1,
+        P: 2,
+        Q: 1,
+        R: 0,
+        S: 1,
+        T: 1,
+        U: 0,
+        V: 0,
+        W: 0,
+        X: 0,
+        Y: 0,
+      },
+      X: {
+        A: 15,
+        B: 20,
+        C: 5,
+        D: 10,
+        E: 10,
+        F: 1,
+        G: 4,
+        H: 6,
+        I: 4,
+        J: 0,
+        K: 1,
+        L: 3,
+        M: 3,
+        N: 1,
+        O: 0,
+        P: 1,
+        Q: 2,
+        R: 1,
+        S: 0,
+        T: 1,
+        U: 1,
+        V: 0,
+        W: 0,
+        X: 0,
+        Y: 0,
+      },
+      Y: {
+        A: 6,
+        B: 14,
+        C: 1,
+        D: 5,
+        E: 9,
+        F: 0,
+        G: 1,
+        H: 4,
+        I: 5,
+        J: 0,
+        K: 0,
+        L: 1,
+        M: 3,
+        N: 2,
+        O: 0,
+        P: 0,
+        Q: 1,
+        R: 2,
+        S: 0,
+        T: 0,
+        U: 1,
+        V: 1,
+        W: 0,
+        X: 0,
+        Y: 0,
+      },
+    };
+    for (let unit of checkingUnits) {
+      describe(`From ${unit.name}`, function (): void {
+        const depCountMap = dependencyCountMapMap[unit.name];
+        assertIsObject(depCountMap);
+        for (let depUnit of allUnits) {
+          const depCount = depCountMap[depUnit.name];
+          assertIsNumber(depCount);
+          it(`should have ${depCount} paths to ${depUnit.name}`, function (): void {
+            expect(unit.getNumberOfPathsToDependency(depUnit)).to.equal(
+              depCount
+            );
+          });
+        }
+      });
+    }
   });
   describe("Cascading Date Influence", function (): void {
     const innerNow = new Date();
