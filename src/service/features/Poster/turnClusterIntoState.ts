@@ -1,11 +1,14 @@
 import incrmpcorr from "@stdlib/stats-incr-mpcorr";
 import { differenceInSeconds } from "date-fns";
-import type { ChainPath, TaskUnitCluster } from "../../../Relations";
 import { assertIsNumber } from "primitive-predicates";
-import type {
-  InterpolatedTaskEvent,
+import type { ChainPath, TaskUnitCluster } from "../../../Relations";
+import {
+  EventType,
+  ITaskPrerequisites,
   ITaskUnit,
   SerializableTaskEvent,
+  SerializableTaskPrerequisitesReference,
+  TaskEvent,
 } from "../../../types";
 import type {
   TaskMetrics,
@@ -80,12 +83,42 @@ export function turnClusterIntoState(
               directDependencies: [...unit.directDependencies].map(
                 (u: ITaskUnit): string => u.id
               ),
-              eventHistory: unit.interpolatedEventHistory.map(
-                (event: InterpolatedTaskEvent): SerializableTaskEvent => ({
-                  type: event.type,
-                  time: event.date.getTime(),
-                  projected: event.projected,
-                })
+              explicitEventHistory: unit.eventHistory.map(
+                (event: TaskEvent): SerializableTaskEvent => {
+                  const time = event.date.getTime();
+                  if (event.type === EventType.TaskIterationStarted) {
+                    return {
+                      type: event.type,
+                      time,
+                      prerequisitesVersion: event.prerequisitesVersion,
+                    };
+                  }
+                  return {
+                    type: event.type,
+                    time,
+                  };
+                }
+              ),
+              projectedEventHistory: unit.projectedHistory.map(
+                (event: TaskEvent): SerializableTaskEvent => {
+                  const time = event.date.getTime();
+                  if (event.type === EventType.TaskIterationStarted) {
+                    return {
+                      type: event.type,
+                      time,
+                      prerequisitesVersion: event.prerequisitesVersion,
+                    };
+                  }
+                  return {
+                    type: event.type,
+                    time,
+                  };
+                }
+              ),
+              prerequisitesIterations: unit.prerequisitesIterations.map(
+                (
+                  iter: ITaskPrerequisites
+                ): SerializableTaskPrerequisitesReference => ({ id: iter.id })
               ),
             };
           }

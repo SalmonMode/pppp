@@ -29,7 +29,7 @@ describe("ChainPath", function (): void {
       });
       const unitB = new TaskUnit({
         now,
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "B",
@@ -98,7 +98,7 @@ describe("ChainPath", function (): void {
       });
       const unitB = new TaskUnit({
         now,
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: secondDate,
         anticipatedEndDate: thirdDate,
         name: "B",

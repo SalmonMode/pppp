@@ -46,21 +46,21 @@ describe("TaskUnitCluster", function (): void {
       const unitB = new TaskUnit({
         now,
         name: "B",
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: secondDate,
         anticipatedEndDate: thirdDate,
       });
       const unitC = new TaskUnit({
         now,
         name: "C",
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: secondDate,
         anticipatedEndDate: thirdDate,
       });
       const unitD = new TaskUnit({
         now,
         name: "D",
-        parentUnits: [unitB, unitC],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB, unitC] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
@@ -110,21 +110,21 @@ describe("TaskUnitCluster", function (): void {
       const unitB = new TaskUnit({
         now,
         name: "B",
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
       const unitD = new TaskUnit({
         now,
         name: "D",
-        parentUnits: [unitA, unitE],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitE] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
       const unitG = new TaskUnit({
         now,
         name: "G",
-        parentUnits: [unitE],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitE] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
@@ -132,14 +132,14 @@ describe("TaskUnitCluster", function (): void {
       const unitC = new TaskUnit({
         now,
         name: "C",
-        parentUnits: [unitB, unitD],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB, unitD] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
       });
       const unitF = new TaskUnit({
         now,
         name: "F",
-        parentUnits: [unitD, unitG],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitD, unitG] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
       });
@@ -245,28 +245,28 @@ describe("TaskUnitCluster", function (): void {
       const unitD = new TaskUnit({
         now,
         name: "D",
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
       const unitE = new TaskUnit({
         now,
         name: "E",
-        parentUnits: [unitA, unitB],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitB] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
       const unitF = new TaskUnit({
         now,
         name: "F",
-        parentUnits: [unitB, unitC],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB, unitC] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
       const unitG = new TaskUnit({
         now,
         name: "G",
-        parentUnits: [unitC],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
@@ -274,21 +274,21 @@ describe("TaskUnitCluster", function (): void {
       const unitH = new TaskUnit({
         now,
         name: "H",
-        parentUnits: [unitD, unitE],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitD, unitE] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
       });
       const unitI = new TaskUnit({
         now,
         name: "I",
-        parentUnits: [unitE, unitF],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitE, unitF] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
       });
       const unitJ = new TaskUnit({
         now,
         name: "J",
-        parentUnits: [unitF, unitG],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitF, unitG] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
       });
@@ -378,14 +378,14 @@ describe("TaskUnitCluster", function (): void {
       const unitB = new TaskUnit({
         now,
         name: "B",
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
       const unitG = new TaskUnit({
         now,
         name: "G",
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
@@ -393,21 +393,21 @@ describe("TaskUnitCluster", function (): void {
       const unitC = new TaskUnit({
         now,
         name: "C",
-        parentUnits: [unitB],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
       });
       const unitE = new TaskUnit({
         now,
         name: "E",
-        parentUnits: [unitB, unitG],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB, unitG] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
       });
       const unitI = new TaskUnit({
         now,
         name: "I",
-        parentUnits: [unitG],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitG] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
       });
@@ -415,14 +415,14 @@ describe("TaskUnitCluster", function (): void {
       const unitD = new TaskUnit({
         now,
         name: "D",
-        parentUnits: [unitC, unitE],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitE] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
       });
       const unitH = new TaskUnit({
         now,
         name: "H",
-        parentUnits: [unitE, unitI],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitE, unitI] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
       });
@@ -430,7 +430,7 @@ describe("TaskUnitCluster", function (): void {
       const unitF = new TaskUnit({
         now,
         name: "F",
-        parentUnits: [unitD, unitH],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitD, unitH] }],
         anticipatedStartDate: ninthDate,
         anticipatedEndDate: tenthDate,
       });
@@ -563,21 +563,21 @@ describe("TaskUnitCluster", function (): void {
 
       const unitC = new TaskUnit({
         now,
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "C",
       });
       const unitD = new TaskUnit({
         now,
-        parentUnits: [unitA, unitB],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitB] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "D",
       });
       const unitE = new TaskUnit({
         now,
-        parentUnits: [unitB],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "E",
@@ -585,28 +585,28 @@ describe("TaskUnitCluster", function (): void {
 
       const unitF = new TaskUnit({
         now,
-        parentUnits: [unitC],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "F",
       });
       const unitG = new TaskUnit({
         now,
-        parentUnits: [unitC, unitD],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitD] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "G",
       });
       const unitH = new TaskUnit({
         now,
-        parentUnits: [unitD, unitE],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitD, unitE] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "H",
       });
       const unitI = new TaskUnit({
         now,
-        parentUnits: [unitE],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitE] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "I",
@@ -614,35 +614,35 @@ describe("TaskUnitCluster", function (): void {
 
       const unitJ = new TaskUnit({
         now,
-        parentUnits: [unitF],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitF] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "J",
       });
       const unitK = new TaskUnit({
         now,
-        parentUnits: [unitF, unitG],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitF, unitG] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "K",
       });
       const unitL = new TaskUnit({
         now,
-        parentUnits: [unitG, unitH],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitG, unitH] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "L",
       });
       const unitM = new TaskUnit({
         now,
-        parentUnits: [unitH, unitI],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitH, unitI] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "M",
       });
       const unitN = new TaskUnit({
         now,
-        parentUnits: [unitI],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitI] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "N",
@@ -650,28 +650,28 @@ describe("TaskUnitCluster", function (): void {
 
       const unitO = new TaskUnit({
         now,
-        parentUnits: [unitJ, unitK],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitJ, unitK] }],
         anticipatedStartDate: ninthDate,
         anticipatedEndDate: tenthDate,
         name: "O",
       });
       const unitP = new TaskUnit({
         now,
-        parentUnits: [unitK, unitL],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitK, unitL] }],
         anticipatedStartDate: ninthDate,
         anticipatedEndDate: tenthDate,
         name: "P",
       });
       const unitQ = new TaskUnit({
         now,
-        parentUnits: [unitL, unitM],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitL, unitM] }],
         anticipatedStartDate: ninthDate,
         anticipatedEndDate: tenthDate,
         name: "Q",
       });
       const unitR = new TaskUnit({
         now,
-        parentUnits: [unitM, unitN],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitM, unitN] }],
         anticipatedStartDate: ninthDate,
         anticipatedEndDate: tenthDate,
         name: "R",
@@ -679,28 +679,28 @@ describe("TaskUnitCluster", function (): void {
 
       const unitS = new TaskUnit({
         now,
-        parentUnits: [unitO, unitP],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitO, unitP] }],
         anticipatedStartDate: eleventhDate,
         anticipatedEndDate: twelfthDate,
         name: "S",
       });
       const unitT = new TaskUnit({
         now,
-        parentUnits: [unitP, unitQ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitP, unitQ] }],
         anticipatedStartDate: eleventhDate,
         anticipatedEndDate: twelfthDate,
         name: "T",
       });
       const unitU = new TaskUnit({
         now,
-        parentUnits: [unitQ, unitR],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitQ, unitR] }],
         anticipatedStartDate: eleventhDate,
         anticipatedEndDate: twelfthDate,
         name: "U",
       });
       const unitV = new TaskUnit({
         now,
-        parentUnits: [unitR],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitR] }],
         anticipatedStartDate: eleventhDate,
         anticipatedEndDate: twelfthDate,
         name: "V",
@@ -708,21 +708,21 @@ describe("TaskUnitCluster", function (): void {
 
       const unitW = new TaskUnit({
         now,
-        parentUnits: [unitS, unitT],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitS, unitT] }],
         anticipatedStartDate: thirteenthDate,
         anticipatedEndDate: fourteenthDate,
         name: "W",
       });
       const unitX = new TaskUnit({
         now,
-        parentUnits: [unitT, unitU],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitT, unitU] }],
         anticipatedStartDate: thirteenthDate,
         anticipatedEndDate: fourteenthDate,
         name: "X",
       });
       const unitY = new TaskUnit({
         now,
-        parentUnits: [unitU, unitV],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitU, unitV] }],
         anticipatedStartDate: thirteenthDate,
         anticipatedEndDate: fourteenthDate,
         name: "Y",
@@ -843,14 +843,14 @@ describe("TaskUnitCluster", function (): void {
       const unitB = new TaskUnit({
         now,
         name: "B",
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
       const unitC = new TaskUnit({
         now,
         name: "C",
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
@@ -858,7 +858,7 @@ describe("TaskUnitCluster", function (): void {
       const unitD = new TaskUnit({
         now,
         name: "D",
-        parentUnits: [unitB, unitC],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB, unitC] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
       });
@@ -872,7 +872,7 @@ describe("TaskUnitCluster", function (): void {
       const unitF = new TaskUnit({
         now,
         name: "F",
-        parentUnits: [unitD],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitD] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
       });
@@ -880,35 +880,35 @@ describe("TaskUnitCluster", function (): void {
       const unitG = new TaskUnit({
         now,
         name: "G",
-        parentUnits: [unitE],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitE] }],
         anticipatedStartDate: ninthDate,
         anticipatedEndDate: tenthDate,
       });
       const unitH = new TaskUnit({
         now,
         name: "H",
-        parentUnits: [unitE, unitF],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitE, unitF] }],
         anticipatedStartDate: ninthDate,
         anticipatedEndDate: tenthDate,
       });
       const unitI = new TaskUnit({
         now,
         name: "I",
-        parentUnits: [unitF],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitF] }],
         anticipatedStartDate: ninthDate,
         anticipatedEndDate: tenthDate,
       });
 
       const unitJ = new TaskUnit({
         now,
-        parentUnits: [unitG, unitH],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitG, unitH] }],
         anticipatedStartDate: eleventhDate,
         anticipatedEndDate: twelfthDate,
         name: "J",
       });
       const unitK = new TaskUnit({
         now,
-        parentUnits: [unitH, unitI],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitH, unitI] }],
         anticipatedStartDate: eleventhDate,
         anticipatedEndDate: twelfthDate,
         name: "K",
@@ -1009,28 +1009,28 @@ describe("TaskUnitCluster", function (): void {
       const unitD = new TaskUnit({
         now,
         name: "D",
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
       const unitE = new TaskUnit({
         now,
         name: "E",
-        parentUnits: [unitA, unitB],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitB] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fifthDate,
       });
       const unitF = new TaskUnit({
         now,
         name: "F",
-        parentUnits: [unitB, unitC],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB, unitC] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
       const unitG = new TaskUnit({
         now,
         name: "G",
-        parentUnits: [unitC],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
@@ -1038,21 +1038,21 @@ describe("TaskUnitCluster", function (): void {
       const unitH = new TaskUnit({
         now,
         name: "H",
-        parentUnits: [unitD, unitE],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitD, unitE] }],
         anticipatedStartDate: sixthDate,
         anticipatedEndDate: seventhDate,
       });
       const unitI = new TaskUnit({
         now,
         name: "I",
-        parentUnits: [unitE, unitF],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitE, unitF] }],
         anticipatedStartDate: sixthDate,
         anticipatedEndDate: seventhDate,
       });
       const unitJ = new TaskUnit({
         now,
         name: "J",
-        parentUnits: [unitF, unitG],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitF, unitG] }],
         anticipatedStartDate: sixthDate,
         anticipatedEndDate: seventhDate,
       });
@@ -1153,28 +1153,28 @@ describe("TaskUnitCluster", function (): void {
       const unitD = new TaskUnit({
         now,
         name: "D",
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
       const unitE = new TaskUnit({
         now,
         name: "E",
-        parentUnits: [unitA, unitB],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitB] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
       const unitF = new TaskUnit({
         now,
         name: "F",
-        parentUnits: [unitB, unitC],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB, unitC] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fifthDate,
       });
       const unitG = new TaskUnit({
         now,
         name: "G",
-        parentUnits: [unitC],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
@@ -1182,21 +1182,21 @@ describe("TaskUnitCluster", function (): void {
       const unitH = new TaskUnit({
         now,
         name: "H",
-        parentUnits: [unitD, unitE],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitD, unitE] }],
         anticipatedStartDate: sixthDate,
         anticipatedEndDate: seventhDate,
       });
       const unitI = new TaskUnit({
         now,
         name: "I",
-        parentUnits: [unitE, unitF],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitE, unitF] }],
         anticipatedStartDate: sixthDate,
         anticipatedEndDate: seventhDate,
       });
       const unitJ = new TaskUnit({
         now,
         name: "J",
-        parentUnits: [unitF, unitG],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitF, unitG] }],
         anticipatedStartDate: sixthDate,
         anticipatedEndDate: seventhDate,
       });
@@ -1280,14 +1280,14 @@ describe("TaskUnitCluster", function (): void {
       const unitB = new TaskUnit({
         now,
         name: "B",
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
       const unitC = new TaskUnit({
         now,
         name: "C",
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
@@ -1295,21 +1295,21 @@ describe("TaskUnitCluster", function (): void {
       const unitD = new TaskUnit({
         now,
         name: "D",
-        parentUnits: [unitB],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
       });
       const unitE = new TaskUnit({
         now,
         name: "E",
-        parentUnits: [unitC],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
       });
       const unitF = new TaskUnit({
         now,
         name: "F",
-        parentUnits: [unitC],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
       });
@@ -1317,14 +1317,14 @@ describe("TaskUnitCluster", function (): void {
       const unitG = new TaskUnit({
         now,
         name: "G",
-        parentUnits: [unitB],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
       });
       const unitH = new TaskUnit({
         now,
         name: "H",
-        parentUnits: [unitE, unitF],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitE, unitF] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
       });
@@ -1332,7 +1332,7 @@ describe("TaskUnitCluster", function (): void {
       const unitI = new TaskUnit({
         now,
         name: "I",
-        parentUnits: [unitG, unitH],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitG, unitH] }],
         anticipatedStartDate: ninthDate,
         anticipatedEndDate: tenthDate,
       });
@@ -1420,7 +1420,7 @@ describe("TaskUnitCluster", function (): void {
       const unitB = new TaskUnit({
         now,
         name: "B",
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
@@ -1428,21 +1428,21 @@ describe("TaskUnitCluster", function (): void {
       const unitC = new TaskUnit({
         now,
         name: "C",
-        parentUnits: [unitB],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
       });
       const unitD = new TaskUnit({
         now,
         name: "D",
-        parentUnits: [unitA],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
       });
       const unitE = new TaskUnit({
         now,
         name: "E",
-        parentUnits: [unitB],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
       });
@@ -1450,27 +1450,29 @@ describe("TaskUnitCluster", function (): void {
       const unitF = new TaskUnit({
         now,
         name: "F",
-        parentUnits: [unitC],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
       });
       const unitG = new TaskUnit({
         now,
         name: "G",
-        parentUnits: [unitC],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
       });
       const unitH = new TaskUnit({
         now,
         name: "H",
-        parentUnits: [unitC, unitD],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitD] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
       });
       const unitI = new TaskUnit({
         now,
-        parentUnits: [unitC, unitD, unitE],
+        prerequisitesIterations: [
+          { id: "1234", parentUnits: [unitC, unitD, unitE] },
+        ],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "I",
@@ -1478,21 +1480,23 @@ describe("TaskUnitCluster", function (): void {
       const unitJ = new TaskUnit({
         now,
         name: "J",
-        parentUnits: [unitD, unitE],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitD, unitE] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
       });
       const unitK = new TaskUnit({
         now,
         name: "K",
-        parentUnits: [unitE],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitE] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
       });
 
       const unitL = new TaskUnit({
         now,
-        parentUnits: [unitH, unitI, unitJ],
+        prerequisitesIterations: [
+          { id: "1234", parentUnits: [unitH, unitI, unitJ] },
+        ],
         anticipatedStartDate: ninthDate,
         anticipatedEndDate: tenthDate,
         name: "L",

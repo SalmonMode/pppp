@@ -1,5 +1,5 @@
 import { add, differenceInSeconds, max } from "date-fns";
-import { assertIsObject } from "primitive-predicates";
+import { assertIsObject, isUndefined } from "primitive-predicates";
 import { v4 as uuidv4 } from "uuid";
 import {
   EventHistoryInvalidError,
@@ -7,7 +7,7 @@ import {
 } from "../errors/Error";
 import {
   EventType,
-  InterpolatedTaskEvent,
+  ITaskPrerequisites,
   ITaskUnit,
   ITaskUnitParameters,
   RelationshipMapping,
@@ -20,6 +20,7 @@ export default class TaskUnit implements ITaskUnit {
   public anticipatedStartDate: Date;
   public name: string;
   public eventHistory: TaskEvent[];
+  public prerequisitesIterations: ITaskPrerequisites[];
   /**
    * The direct dependencies of this {@link TaskUnit}.
    */
@@ -37,21 +38,28 @@ export default class TaskUnit implements ITaskUnit {
   private _apparentStartDate: Date;
   private _apparentEndDate: Date;
   public projectedHistory: TaskEvent[] = [];
-  public interpolatedEventHistory: InterpolatedTaskEvent[];
+  public interpolatedEventHistory: TaskEvent[];
   constructor({
     now,
-    parentUnits = [],
     anticipatedEndDate,
     anticipatedStartDate,
     name,
     eventHistory = [],
+    prerequisitesIterations = [],
   }: ITaskUnitParameters) {
     this.anticipatedEndDate = anticipatedEndDate;
     this.anticipatedStartDate = anticipatedStartDate;
     this.name = name;
     this.eventHistory = eventHistory;
+    this.prerequisitesIterations = prerequisitesIterations;
     this.id = uuidv4();
-    this._providedDirectDependencies = parentUnits;
+    const latestPrereqsIteration =
+      prerequisitesIterations[prerequisitesIterations.length - 1];
+    let parentUnits: ITaskUnit[] | undefined;
+    if (latestPrereqsIteration) {
+      parentUnits = latestPrereqsIteration.parentUnits;
+    }
+    this._providedDirectDependencies = parentUnits || [];
     this._directDependencies = this._getTrueDirectDependencies();
     this._earliestPossibleStartTime = this._getEarliestPossibleStartTime();
     this._validateEventHistory();
@@ -78,15 +86,13 @@ export default class TaskUnit implements ITaskUnit {
     this._buildProjectedHistory(now);
     this.interpolatedEventHistory = [
       ...this.eventHistory.map(
-        (e: TaskEvent): InterpolatedTaskEvent => ({
+        (e: TaskEvent): TaskEvent => ({
           ...e,
-          projected: false,
         })
       ),
       ...this.projectedHistory.map(
-        (e: TaskEvent): InterpolatedTaskEvent => ({
+        (e: TaskEvent): TaskEvent => ({
           ...e,
-          projected: true,
         })
       ),
     ];
@@ -167,6 +173,16 @@ export default class TaskUnit implements ITaskUnit {
       }
       switch (event.type) {
         case EventType.TaskIterationStarted:
+          if (
+            isUndefined(
+              this.prerequisitesIterations[event.prerequisitesVersion]
+            )
+          ) {
+            // This task was supposedly started without having the necessary prerequisites.
+            throw new EventHistoryInvalidError(
+              `The prerequisites iteration (${event.prerequisitesVersion}) specified by the TaskIterationStarted event could not be found.`
+            );
+          }
           if (prevEvent) {
             if (prevEvent.type !== EventType.ReviewedAndNeedsRebuild) {
               // The previous event was not a ReviewedAndNeedsRebuild event, so this event doesn't make sense.
@@ -321,6 +337,11 @@ export default class TaskUnit implements ITaskUnit {
           this.projectedHistory.push({
             type: EventType.TaskIterationStarted,
             date: reqFinishedDate,
+            /**
+             * This will point to an index that doens't exist yet if that iteration of the prereqs are not defined yet.
+             * This means it can be used to determine if upcoming prereqs are accepted or not.
+             */
+            prerequisitesVersion: this.prerequisitesIterations.length,
           });
           const taskEndDate = add(reqFinishedDate, estimatedTaskDuration);
           this.projectedHistory.push({
@@ -376,6 +397,12 @@ export default class TaskUnit implements ITaskUnit {
       this.projectedHistory.push({
         type: EventType.TaskIterationStarted,
         date: this.apparentStartDate,
+        /**
+         * This should be 0 because there could only be one prerequisites iteration available, if any at all. If there
+         * is none at all, then the associated prerequisites should be undefined anyway because it indicates they
+         * weren't accepted yet (if they even exist as a draft).
+         */
+        prerequisitesVersion: 0,
       });
       const taskEndDate = add(this._apparentStartDate, estimatedTaskDuration);
       this.projectedHistory.push({
@@ -517,11 +544,14 @@ export default class TaskUnit implements ITaskUnit {
   }
   /**
    *
-   * @returns true, if all the direct dependencies are completed, false, if not
+   * @returns true, if all direct dependencies are completed and there's at least one prereqs iteration, false, if not
    */
   private _shouldBeAbleToStart(): boolean {
-    return [...this.directDependencies].every((unit: ITaskUnit): boolean =>
-      unit.isComplete()
+    const prerequisiteTasksAreComplete = [...this.directDependencies].every(
+      (unit: ITaskUnit): boolean => unit.isComplete()
     );
+    const hasAtLeastOnePrereqsIteration =
+      this.prerequisitesIterations.length > 0;
+    return prerequisiteTasksAreComplete && hasAtLeastOnePrereqsIteration;
   }
 }

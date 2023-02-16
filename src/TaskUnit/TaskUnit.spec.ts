@@ -91,7 +91,11 @@ describe("TaskUnit", function (): void {
     });
     it("should have projected history", function (): void {
       expect(unit.projectedHistory).to.deep.equal([
-        { type: EventType.TaskIterationStarted, date: firstDate },
+        {
+          type: EventType.TaskIterationStarted,
+          date: firstDate,
+          prerequisitesVersion: 0,
+        },
         { type: EventType.ReviewedAndAccepted, date: secondDate },
       ]);
     });
@@ -113,6 +117,7 @@ describe("TaskUnit", function (): void {
         () =>
           new TaskUnit({
             now,
+            prerequisitesIterations: [{ id: "1234" }],
             name: "unit",
             anticipatedStartDate: firstDate,
             anticipatedEndDate: secondDate,
@@ -120,6 +125,7 @@ describe("TaskUnit", function (): void {
               {
                 type: EventType.TaskIterationStarted,
                 date: firstDate,
+                prerequisitesVersion: 0,
               },
             ],
           })
@@ -154,7 +160,11 @@ describe("TaskUnit", function (): void {
     });
     it("should have projected history", function (): void {
       expect(unit.projectedHistory).to.deep.equal([
-        { type: EventType.TaskIterationStarted, date: firstDate },
+        {
+          type: EventType.TaskIterationStarted,
+          date: firstDate,
+          prerequisitesVersion: 0,
+        },
         { type: EventType.ReviewedAndAccepted, date: secondDate },
       ]);
     });
@@ -165,11 +175,16 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
+          prerequisitesIterations: [{ id: "1234" }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
           eventHistory: [
-            { type: EventType.TaskIterationStarted, date: firstDate },
+            {
+              type: EventType.TaskIterationStarted,
+              date: firstDate,
+              prerequisitesVersion: 0,
+            },
             { type: EventType.ReviewedAndAccepted, date: thirdDate },
           ],
         });
@@ -200,11 +215,16 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
+          prerequisitesIterations: [{ id: "1234" }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
           eventHistory: [
-            { type: EventType.TaskIterationStarted, date: firstDate },
+            {
+              type: EventType.TaskIterationStarted,
+              date: firstDate,
+              prerequisitesVersion: 0,
+            },
           ],
         });
       });
@@ -246,11 +266,16 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
+          prerequisitesIterations: [{ id: "1234" }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
           eventHistory: [
-            { type: EventType.TaskIterationStarted, date: thirdDate },
+            {
+              type: EventType.TaskIterationStarted,
+              date: thirdDate,
+              prerequisitesVersion: 0,
+            },
           ],
         });
       });
@@ -292,11 +317,16 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
+          prerequisitesIterations: [{ id: "1234" }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
           eventHistory: [
-            { type: EventType.TaskIterationStarted, date: firstDate },
+            {
+              type: EventType.TaskIterationStarted,
+              date: firstDate,
+              prerequisitesVersion: 0,
+            },
             { type: EventType.ReviewedAndNeedsMinorRevision, date: secondDate },
             { type: EventType.MinorRevisionComplete, date: thirdDate },
           ],
@@ -328,11 +358,16 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
+          prerequisitesIterations: [{ id: "1234" }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
           eventHistory: [
-            { type: EventType.TaskIterationStarted, date: secondDate },
+            {
+              type: EventType.TaskIterationStarted,
+              date: secondDate,
+              prerequisitesVersion: 0,
+            },
             { type: EventType.ReviewedAndNeedsMinorRevision, date: thirdDate },
             { type: EventType.MinorRevisionComplete, date: fourthDate },
           ],
@@ -364,11 +399,16 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
+          prerequisitesIterations: [{ id: "1234" }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
           eventHistory: [
-            { type: EventType.TaskIterationStarted, date: firstDate },
+            {
+              type: EventType.TaskIterationStarted,
+              date: firstDate,
+              prerequisitesVersion: 0,
+            },
             { type: EventType.ReviewedAndNeedsMajorRevision, date: secondDate },
           ],
         });
@@ -411,11 +451,16 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
+          prerequisitesIterations: [{ id: "1234" }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
           eventHistory: [
-            { type: EventType.TaskIterationStarted, date: secondDate },
+            {
+              type: EventType.TaskIterationStarted,
+              date: secondDate,
+              prerequisitesVersion: 0,
+            },
             { type: EventType.ReviewedAndNeedsMajorRevision, date: thirdDate },
           ],
         });
@@ -458,11 +503,16 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
+          prerequisitesIterations: [{ id: "1234" }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
           eventHistory: [
-            { type: EventType.TaskIterationStarted, date: firstDate },
+            {
+              type: EventType.TaskIterationStarted,
+              date: firstDate,
+              prerequisitesVersion: 0,
+            },
             { type: EventType.ReviewedAndNeedsMinorRevision, date: secondDate },
           ],
         });
@@ -505,11 +555,16 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
+          prerequisitesIterations: [{ id: "1234" }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
           eventHistory: [
-            { type: EventType.TaskIterationStarted, date: secondDate },
+            {
+              type: EventType.TaskIterationStarted,
+              date: secondDate,
+              prerequisitesVersion: 0,
+            },
             { type: EventType.ReviewedAndNeedsMinorRevision, date: thirdDate },
           ],
         });
@@ -552,11 +607,16 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
+          prerequisitesIterations: [{ id: "1234" }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
           eventHistory: [
-            { type: EventType.TaskIterationStarted, date: firstDate },
+            {
+              type: EventType.TaskIterationStarted,
+              date: firstDate,
+              prerequisitesVersion: 0,
+            },
             { type: EventType.ReviewedAndNeedsRebuild, date: secondDate },
           ],
         });
@@ -608,11 +668,16 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
+          prerequisitesIterations: [{ id: "1234" }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
           eventHistory: [
-            { type: EventType.TaskIterationStarted, date: secondDate },
+            {
+              type: EventType.TaskIterationStarted,
+              date: secondDate,
+              prerequisitesVersion: 0,
+            },
             { type: EventType.ReviewedAndNeedsRebuild, date: thirdDate },
           ],
         });
@@ -672,6 +737,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
+                prerequisitesIterations: [{ id: "1234" }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -694,6 +760,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
+                prerequisitesIterations: [{ id: "1234" }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -716,6 +783,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
+                prerequisitesIterations: [{ id: "1234" }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -741,6 +809,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
+                prerequisitesIterations: [{ id: "1234" }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -766,6 +835,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
+                prerequisitesIterations: [{ id: "1234" }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -784,11 +854,16 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unitA = new TaskUnit({
           now,
+          prerequisitesIterations: [{ id: "1234" }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
           eventHistory: [
-            { type: EventType.TaskIterationStarted, date: firstDate },
+            {
+              type: EventType.TaskIterationStarted,
+              date: firstDate,
+              prerequisitesVersion: 0,
+            },
           ],
         });
       });
@@ -798,11 +873,15 @@ describe("TaskUnit", function (): void {
             new TaskUnit({
               now,
               name: "unit",
-              parentUnits: [unitA],
+              prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
               anticipatedStartDate: secondDate,
               anticipatedEndDate: thirdDate,
               eventHistory: [
-                { type: EventType.TaskIterationStarted, date: secondDate },
+                {
+                  type: EventType.TaskIterationStarted,
+                  date: secondDate,
+                  prerequisitesVersion: 0,
+                },
               ],
             })
         ).to.throw(PrematureTaskStartError);
@@ -813,6 +892,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unitA = new TaskUnit({
           now,
+          prerequisitesIterations: [{ id: "1234" }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -824,11 +904,15 @@ describe("TaskUnit", function (): void {
             new TaskUnit({
               now,
               name: "unit",
-              parentUnits: [unitA],
+              prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
               anticipatedStartDate: secondDate,
               anticipatedEndDate: thirdDate,
               eventHistory: [
-                { type: EventType.TaskIterationStarted, date: secondDate },
+                {
+                  type: EventType.TaskIterationStarted,
+                  date: secondDate,
+                  prerequisitesVersion: 0,
+                },
               ],
             })
         ).to.throw(PrematureTaskStartError);
@@ -839,6 +923,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unitA = new TaskUnit({
           now,
+          prerequisitesIterations: [{ id: "1234" }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -846,6 +931,7 @@ describe("TaskUnit", function (): void {
             {
               type: EventType.TaskIterationStarted,
               date: firstDate,
+              prerequisitesVersion: 0,
             },
             {
               type: EventType.ReviewedAndAccepted,
@@ -860,13 +946,14 @@ describe("TaskUnit", function (): void {
             new TaskUnit({
               now,
               name: "unit",
-              parentUnits: [unitA],
+              prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
               anticipatedStartDate: lateFirstDate,
               anticipatedEndDate: lateSecondDate,
               eventHistory: [
                 {
                   type: EventType.TaskIterationStarted,
                   date: lateFirstDate,
+                  prerequisitesVersion: 0,
                 },
               ],
             })
@@ -878,6 +965,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unitA = new TaskUnit({
           now,
+          prerequisitesIterations: [{ id: "1234" }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -885,6 +973,7 @@ describe("TaskUnit", function (): void {
             {
               type: EventType.TaskIterationStarted,
               date: firstDate,
+              prerequisitesVersion: 0,
             },
             {
               type: EventType.ReviewedAndAccepted,
@@ -899,13 +988,14 @@ describe("TaskUnit", function (): void {
             new TaskUnit({
               now,
               name: "unit",
-              parentUnits: [unitA],
+              prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
               anticipatedStartDate: lateFirstDate,
               anticipatedEndDate: lateSecondDate,
               eventHistory: [
                 {
                   type: EventType.TaskIterationStarted,
                   date: secondDate,
+                  prerequisitesVersion: 0,
                 },
               ],
             })
@@ -918,14 +1008,40 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
               eventHistory: [
-                { type: EventType.TaskIterationStarted, date: firstDate },
+                {
+                  type: EventType.TaskIterationStarted,
+                  date: firstDate,
+                  prerequisitesVersion: 0,
+                },
               ],
             })
         ).to.not.throw(Error);
+      });
+    });
+    describe("Starts With TaskIterationStarted Without Any Prerequisites Iterations", function (): void {
+      it("should throw PrematureTaskStartError", function (): void {
+        expect(
+          () =>
+            new TaskUnit({
+              now,
+              prerequisitesIterations: [],
+              name: "unit",
+              anticipatedStartDate: firstDate,
+              anticipatedEndDate: secondDate,
+              eventHistory: [
+                {
+                  type: EventType.TaskIterationStarted,
+                  date: firstDate,
+                  prerequisitesVersion: 0,
+                },
+              ],
+            })
+        ).to.throw(PrematureTaskStartError);
       });
     });
     describe("Starts With ReviewedAndAccepted", function (): void {
@@ -934,6 +1050,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -950,6 +1067,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -966,6 +1084,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -985,6 +1104,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1004,6 +1124,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1023,6 +1144,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1030,6 +1152,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndAccepted,
@@ -1046,6 +1169,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1053,6 +1177,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: secondDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndAccepted,
@@ -1069,6 +1194,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1076,6 +1202,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMajorRevision,
@@ -1092,6 +1219,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1099,6 +1227,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMinorRevision,
@@ -1115,6 +1244,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1122,6 +1252,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsRebuild,
@@ -1138,6 +1269,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1145,10 +1277,12 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.TaskIterationStarted,
                   date: secondDate,
+                  prerequisitesVersion: 0,
                 },
               ],
             })
@@ -1161,6 +1295,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1168,6 +1303,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.MinorRevisionComplete,
@@ -1184,6 +1320,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1191,6 +1328,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMajorRevision,
@@ -1211,6 +1349,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1218,6 +1357,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMajorRevision,
@@ -1238,6 +1378,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1245,6 +1386,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMajorRevision,
@@ -1265,6 +1407,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1272,6 +1415,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMajorRevision,
@@ -1287,11 +1431,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, TaskIterationStarted", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1299,6 +1444,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMajorRevision,
@@ -1307,6 +1453,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: thirdDate,
+                  prerequisitesVersion: 0,
                 },
               ],
             })
@@ -1314,11 +1461,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, MinorRevisionComplete", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1326,6 +1474,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMajorRevision,
@@ -1346,6 +1495,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1353,6 +1503,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMinorRevision,
@@ -1368,11 +1519,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, ReviewedAndNeedsMinorRevision", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1380,6 +1532,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMinorRevision,
@@ -1395,11 +1548,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, ReviewedAndNeedsMajorRevision", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1407,6 +1561,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMinorRevision,
@@ -1422,11 +1577,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, ReviewedAndNeedsRebuild", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1434,6 +1590,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMinorRevision,
@@ -1449,11 +1606,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, ReviewedAndAccepted", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1461,6 +1619,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMinorRevision,
@@ -1476,11 +1635,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, TaskIterationStarted", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1488,6 +1648,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMinorRevision,
@@ -1496,18 +1657,20 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: thirdDate,
+                  prerequisitesVersion: 0,
                 },
               ],
             })
         ).to.throw(EventHistoryInvalidError);
       });
     });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, TaskIterationStarted", function (): void {
-      it("should not throw Error", function (): void {
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, TaskIterationStarted With Sufficient Prerequisites Iterations", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }, { id: "4567" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1515,6 +1678,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsRebuild,
@@ -1523,18 +1687,20 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: thirdDate,
+                  prerequisitesVersion: 0,
                 },
               ],
             })
         ).to.not.throw(Error);
       });
     });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, MinorRevisionComplete", function (): void {
-      it("should not throw Error", function (): void {
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, TaskIterationStarted Without Available Second Prereq Iteration", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1542,6 +1708,37 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
+                },
+                {
+                  type: EventType.ReviewedAndNeedsRebuild,
+                  date: secondDate,
+                },
+                {
+                  type: EventType.TaskIterationStarted,
+                  date: thirdDate,
+                  prerequisitesVersion: 1,
+                },
+              ],
+            })
+        ).to.throw(EventHistoryInvalidError);
+      });
+    });
+    describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, MinorRevisionComplete", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
+        expect(
+          () =>
+            new TaskUnit({
+              now,
+              prerequisitesIterations: [{ id: "1234" }],
+              name: "unit",
+              anticipatedStartDate: firstDate,
+              anticipatedEndDate: secondDate,
+              eventHistory: [
+                {
+                  type: EventType.TaskIterationStarted,
+                  date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsRebuild,
@@ -1557,11 +1754,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, ReviewedAndNeedsMinorRevision", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1569,6 +1767,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsRebuild,
@@ -1584,11 +1783,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, ReviewedAndNeedsMajorRevision", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1596,6 +1796,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsRebuild,
@@ -1611,11 +1812,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, ReviewedAndNeedsRebuild", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1623,6 +1825,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsRebuild,
@@ -1638,11 +1841,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, ReviewedAndAccepted", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1650,6 +1854,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsRebuild,
@@ -1665,11 +1870,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndAccepted, ReviewedAndAccepted", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1677,6 +1883,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndAccepted,
@@ -1692,11 +1899,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndAccepted, MinorRevisionComplete", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1704,6 +1912,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndAccepted,
@@ -1719,11 +1928,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndAccepted, ReviewedAndNeedsMajorRevision", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1731,6 +1941,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndAccepted,
@@ -1746,11 +1957,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndAccepted, ReviewedAndNeedsMinorRevision", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1758,6 +1970,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndAccepted,
@@ -1773,11 +1986,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndAccepted, ReviewedAndNeedsRebuild", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1785,6 +1999,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndAccepted,
@@ -1800,11 +2015,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndAccepted, TaskIterationStarted", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1812,6 +2028,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndAccepted,
@@ -1820,6 +2037,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: thirdDate,
+                  prerequisitesVersion: 0,
                 },
               ],
             })
@@ -1827,11 +2045,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, ReviewedAndAccepted", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1839,6 +2058,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMinorRevision,
@@ -1858,11 +2078,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, MinorRevisionComplete", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1870,6 +2091,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMinorRevision,
@@ -1889,11 +2111,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, ReviewedAndNeedsMajorRevision", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1901,6 +2124,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMinorRevision,
@@ -1920,11 +2144,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, ReviewedAndNeedsMinorRevision", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1932,6 +2157,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMinorRevision,
@@ -1951,11 +2177,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, ReviewedAndNeedsRebuild", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1963,6 +2190,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMinorRevision,
@@ -1982,11 +2210,12 @@ describe("TaskUnit", function (): void {
       });
     });
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, TaskIterationStarted", function (): void {
-      it("should not throw Error", function (): void {
+      it("should throw EventHistoryInvalidError", function (): void {
         expect(
           () =>
             new TaskUnit({
               now,
+              prerequisitesIterations: [{ id: "1234" }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1994,6 +2223,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: firstDate,
+                  prerequisitesVersion: 0,
                 },
                 {
                   type: EventType.ReviewedAndNeedsMinorRevision,
@@ -2006,6 +2236,7 @@ describe("TaskUnit", function (): void {
                 {
                   type: EventType.TaskIterationStarted,
                   date: fourthDate,
+                  prerequisitesVersion: 0,
                 },
               ],
             })
@@ -2047,21 +2278,23 @@ describe("TaskUnit", function (): void {
 
     const unitB = new TaskUnit({
       now,
-      parentUnits: [unitA, unitC],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitC] }],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "B",
     });
     const unitD = new TaskUnit({
       now,
-      parentUnits: [unitA, unitC, unitF],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitA, unitC, unitF] },
+      ],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "D",
     });
     const unitG = new TaskUnit({
       now,
-      parentUnits: [unitC, unitF],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitF] }],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "G",
@@ -2069,14 +2302,16 @@ describe("TaskUnit", function (): void {
 
     const unitE = new TaskUnit({
       now,
-      parentUnits: [unitB, unitD, unitG],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitB, unitD, unitG] },
+      ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "E",
     });
     const unitH = new TaskUnit({
       now,
-      parentUnits: [unitD, unitG],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitD, unitG] }],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "H",
@@ -2166,11 +2401,11 @@ describe("TaskUnit", function (): void {
         H: 0,
       },
     };
-    for (let unit of units) {
+    for (const unit of units) {
       describe(`From ${unit.name}`, function (): void {
         const depCountMap = dependencyCountMapMap[unit.name];
         assertIsObject(depCountMap);
-        for (let depUnit of units) {
+        for (const depUnit of units) {
           const depCount = depCountMap[depUnit.name];
           assertIsNumber(depCount);
           it(`should have ${depCount} paths to ${depUnit.name}`, function (): void {
@@ -2207,21 +2442,23 @@ describe("TaskUnit", function (): void {
     });
     const unitB = new TaskUnit({
       now,
-      parentUnits: [unitA],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "B",
     });
     const unitC = new TaskUnit({
       now,
-      parentUnits: [unitA, unitB],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitB] }],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "C",
     });
     const unitD = new TaskUnit({
       now,
-      parentUnits: [unitA, unitB, unitC],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitA, unitB, unitC] },
+      ],
       anticipatedStartDate: seventhDate,
       anticipatedEndDate: eighthDate,
       name: "D",
@@ -2255,11 +2492,11 @@ describe("TaskUnit", function (): void {
         D: 0,
       },
     };
-    for (let unit of units) {
+    for (const unit of units) {
       describe(`From ${unit.name}`, function (): void {
         const depCountMap = dependencyCountMapMap[unit.name];
         assertIsObject(depCountMap);
-        for (let depUnit of units) {
+        for (const depUnit of units) {
           const depCount = depCountMap[depUnit.name];
           assertIsNumber(depCount);
           it(`should have ${depCount} paths to ${depUnit.name}`, function (): void {
@@ -2293,14 +2530,14 @@ describe("TaskUnit", function (): void {
 
     const unitB = new TaskUnit({
       now,
-      parentUnits: [unitA],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "B",
     });
     const unitF = new TaskUnit({
       now,
-      parentUnits: [unitA],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "F",
@@ -2308,14 +2545,14 @@ describe("TaskUnit", function (): void {
 
     const unitC = new TaskUnit({
       now,
-      parentUnits: [unitB, unitF],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitB, unitF] }],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "C",
     });
     const unitG = new TaskUnit({
       now,
-      parentUnits: [unitB, unitF],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitB, unitF] }],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "G",
@@ -2323,14 +2560,14 @@ describe("TaskUnit", function (): void {
 
     const unitD = new TaskUnit({
       now,
-      parentUnits: [unitC, unitG],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitG] }],
       anticipatedStartDate: seventhDate,
       anticipatedEndDate: eighthDate,
       name: "D",
     });
     const unitH = new TaskUnit({
       now,
-      parentUnits: [unitC, unitG],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitG] }],
       anticipatedStartDate: seventhDate,
       anticipatedEndDate: eighthDate,
       name: "H",
@@ -2338,7 +2575,7 @@ describe("TaskUnit", function (): void {
 
     const unitE = new TaskUnit({
       now,
-      parentUnits: [unitD, unitH],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitD, unitH] }],
       anticipatedStartDate: ninthDate,
       anticipatedEndDate: tenthDate,
       name: "E",
@@ -2427,11 +2664,11 @@ describe("TaskUnit", function (): void {
         H: 0,
       },
     };
-    for (let unit of units) {
+    for (const unit of units) {
       describe(`From ${unit.name}`, function (): void {
         const depCountMap = dependencyCountMapMap[unit.name];
         assertIsObject(depCountMap);
-        for (let depUnit of units) {
+        for (const depUnit of units) {
           const depCount = depCountMap[depUnit.name];
           assertIsNumber(depCount);
           it(`should have ${depCount} paths to ${depUnit.name}`, function (): void {
@@ -2502,21 +2739,21 @@ describe("TaskUnit", function (): void {
 
     const unitC = new TaskUnit({
       now,
-      parentUnits: [unitA],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "C",
     });
     const unitD = new TaskUnit({
       now,
-      parentUnits: [unitA, unitB],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitB] }],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "D",
     });
     const unitE = new TaskUnit({
       now,
-      parentUnits: [unitB],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitB] }],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "E",
@@ -2524,28 +2761,28 @@ describe("TaskUnit", function (): void {
 
     const unitF = new TaskUnit({
       now,
-      parentUnits: [unitC],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "F",
     });
     const unitG = new TaskUnit({
       now,
-      parentUnits: [unitC, unitD],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitD] }],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "G",
     });
     const unitH = new TaskUnit({
       now,
-      parentUnits: [unitD, unitE],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitD, unitE] }],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "H",
     });
     const unitI = new TaskUnit({
       now,
-      parentUnits: [unitE],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitE] }],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "I",
@@ -2553,35 +2790,35 @@ describe("TaskUnit", function (): void {
 
     const unitJ = new TaskUnit({
       now,
-      parentUnits: [unitF],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitF] }],
       anticipatedStartDate: seventhDate,
       anticipatedEndDate: eighthDate,
       name: "J",
     });
     const unitK = new TaskUnit({
       now,
-      parentUnits: [unitF, unitG],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitF, unitG] }],
       anticipatedStartDate: seventhDate,
       anticipatedEndDate: eighthDate,
       name: "K",
     });
     const unitL = new TaskUnit({
       now,
-      parentUnits: [unitG, unitH],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitG, unitH] }],
       anticipatedStartDate: seventhDate,
       anticipatedEndDate: eighthDate,
       name: "L",
     });
     const unitM = new TaskUnit({
       now,
-      parentUnits: [unitH, unitI],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitH, unitI] }],
       anticipatedStartDate: seventhDate,
       anticipatedEndDate: eighthDate,
       name: "M",
     });
     const unitN = new TaskUnit({
       now,
-      parentUnits: [unitI],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitI] }],
       anticipatedStartDate: seventhDate,
       anticipatedEndDate: eighthDate,
       name: "N",
@@ -2589,28 +2826,28 @@ describe("TaskUnit", function (): void {
 
     const unitO = new TaskUnit({
       now,
-      parentUnits: [unitJ, unitK],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitJ, unitK] }],
       anticipatedStartDate: ninthDate,
       anticipatedEndDate: tenthDate,
       name: "O",
     });
     const unitP = new TaskUnit({
       now,
-      parentUnits: [unitK, unitL],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitK, unitL] }],
       anticipatedStartDate: ninthDate,
       anticipatedEndDate: tenthDate,
       name: "P",
     });
     const unitQ = new TaskUnit({
       now,
-      parentUnits: [unitL, unitM],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitL, unitM] }],
       anticipatedStartDate: ninthDate,
       anticipatedEndDate: tenthDate,
       name: "Q",
     });
     const unitR = new TaskUnit({
       now,
-      parentUnits: [unitM, unitN],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitM, unitN] }],
       anticipatedStartDate: ninthDate,
       anticipatedEndDate: tenthDate,
       name: "R",
@@ -2618,28 +2855,28 @@ describe("TaskUnit", function (): void {
 
     const unitS = new TaskUnit({
       now,
-      parentUnits: [unitO, unitP],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitO, unitP] }],
       anticipatedStartDate: eleventhDate,
       anticipatedEndDate: twelfthDate,
       name: "S",
     });
     const unitT = new TaskUnit({
       now,
-      parentUnits: [unitP, unitQ],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitP, unitQ] }],
       anticipatedStartDate: eleventhDate,
       anticipatedEndDate: twelfthDate,
       name: "T",
     });
     const unitU = new TaskUnit({
       now,
-      parentUnits: [unitQ, unitR],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitQ, unitR] }],
       anticipatedStartDate: eleventhDate,
       anticipatedEndDate: twelfthDate,
       name: "U",
     });
     const unitV = new TaskUnit({
       now,
-      parentUnits: [unitR],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitR] }],
       anticipatedStartDate: eleventhDate,
       anticipatedEndDate: twelfthDate,
       name: "V",
@@ -2647,21 +2884,21 @@ describe("TaskUnit", function (): void {
 
     const unitW = new TaskUnit({
       now,
-      parentUnits: [unitS, unitT],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitS, unitT] }],
       anticipatedStartDate: thirteenthDate,
       anticipatedEndDate: fourteenthDate,
       name: "W",
     });
     const unitX = new TaskUnit({
       now,
-      parentUnits: [unitT, unitU],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitT, unitU] }],
       anticipatedStartDate: thirteenthDate,
       anticipatedEndDate: fourteenthDate,
       name: "X",
     });
     const unitY = new TaskUnit({
       now,
-      parentUnits: [unitU, unitV],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitU, unitV] }],
       anticipatedStartDate: thirteenthDate,
       anticipatedEndDate: fourteenthDate,
       name: "Y",
@@ -2778,11 +3015,11 @@ describe("TaskUnit", function (): void {
         Y: 0,
       },
     };
-    for (let unit of checkingUnits) {
+    for (const unit of checkingUnits) {
       describe(`From ${unit.name}`, function (): void {
         const depCountMap = dependencyCountMapMap[unit.name];
         assertIsObject(depCountMap);
-        for (let depUnit of allUnits) {
+        for (const depUnit of allUnits) {
           const depCount = depCountMap[depUnit.name];
           assertIsNumber(depCount);
           it(`should have ${depCount} paths to ${depUnit.name}`, function (): void {
@@ -2833,23 +3070,28 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unitA = new TaskUnit({
           now: innerNow,
+          prerequisitesIterations: [{ id: "1234" }],
           anticipatedStartDate: firstDate,
           anticipatedEndDate: fifthDate,
           name: "A",
           eventHistory: [
-            { type: EventType.TaskIterationStarted, date: thirdDate },
+            {
+              type: EventType.TaskIterationStarted,
+              date: thirdDate,
+              prerequisitesVersion: 0,
+            },
           ],
         });
         unitB = new TaskUnit({
           now: innerNow,
-          parentUnits: [unitA],
+          prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
           anticipatedStartDate: secondDate,
           anticipatedEndDate: thirdDate,
           name: "B",
         });
         unitC = new TaskUnit({
           now: innerNow,
-          parentUnits: [unitA],
+          prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
           anticipatedStartDate: seventhDate,
           anticipatedEndDate: eighthDate,
           name: "C",
@@ -2921,24 +3163,29 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unitA = new TaskUnit({
           now: innerNow,
+          prerequisitesIterations: [{ id: "1234" }],
           anticipatedStartDate: firstDate,
           anticipatedEndDate: fifthDate,
           name: "A",
           eventHistory: [
-            { type: EventType.TaskIterationStarted, date: firstDate },
+            {
+              type: EventType.TaskIterationStarted,
+              date: firstDate,
+              prerequisitesVersion: 0,
+            },
             { type: EventType.ReviewedAndNeedsMajorRevision, date: thirdDate },
           ],
         });
         unitB = new TaskUnit({
           now: innerNow,
-          parentUnits: [unitA],
+          prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
           anticipatedStartDate: secondDate,
           anticipatedEndDate: thirdDate,
           name: "B",
         });
         unitC = new TaskUnit({
           now: innerNow,
-          parentUnits: [unitA],
+          prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
           anticipatedStartDate: seventhDate,
           anticipatedEndDate: eighthDate,
           name: "C",

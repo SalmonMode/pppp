@@ -28,12 +28,14 @@ describe("React Integration: TaskUnitCard", function (): void {
 
     const unitA = new TaskUnit({
       now,
+      prerequisitesIterations: [{ id: "1234" }],
       anticipatedStartDate: firstDate,
       anticipatedEndDate: secondDate,
       name: "A",
       eventHistory: [
         {
           type: EventType.TaskIterationStarted,
+          prerequisitesVersion: 0,
           date: firstDate,
         },
         {
@@ -44,13 +46,14 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitB = new TaskUnit({
       now,
-      parentUnits: [unitA],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
       anticipatedStartDate: secondDate,
       anticipatedEndDate: thirdDate,
       name: "B",
       eventHistory: [
         {
           type: EventType.TaskIterationStarted,
+          prerequisitesVersion: 0,
           date: thirdDate,
         },
         {
@@ -65,12 +68,14 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitC = new TaskUnit({
       now,
+      prerequisitesIterations: [{ id: "1234" }],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "C",
       eventHistory: [
         {
           type: EventType.TaskIterationStarted,
+          prerequisitesVersion: 0,
           date: fifthDate,
         },
         {
@@ -81,13 +86,14 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitD = new TaskUnit({
       now,
-      parentUnits: [unitC],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
       anticipatedStartDate: sixthDate,
       anticipatedEndDate: seventhDate,
       name: "D",
       eventHistory: [
         {
           type: EventType.TaskIterationStarted,
+          prerequisitesVersion: 0,
           date: add(sixthDate, { hours: 4 }),
         },
         {
@@ -96,6 +102,7 @@ describe("React Integration: TaskUnitCard", function (): void {
         },
         {
           type: EventType.TaskIterationStarted,
+          prerequisitesVersion: 0,
           date: eighthDate,
         },
         {
@@ -107,12 +114,14 @@ describe("React Integration: TaskUnitCard", function (): void {
 
     const unitE = new TaskUnit({
       now,
+      prerequisitesIterations: [{ id: "1234" }],
       anticipatedStartDate: firstDate,
       anticipatedEndDate: secondDate,
       name: "E",
       eventHistory: [
         {
           type: EventType.TaskIterationStarted,
+          prerequisitesVersion: 0,
           date: firstDate,
         },
         {
@@ -123,13 +132,14 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitF = new TaskUnit({
       now,
-      parentUnits: [unitA, unitE],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitE] }],
       anticipatedStartDate: secondDate,
       anticipatedEndDate: thirdDate,
       name: "F",
       eventHistory: [
         {
           type: EventType.TaskIterationStarted,
+          prerequisitesVersion: 0,
           date: thirdDate,
         },
         {
@@ -140,13 +150,14 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitG = new TaskUnit({
       now,
-      parentUnits: [unitF],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitF] }],
       anticipatedStartDate: fourthDate,
       anticipatedEndDate: fifthDate,
       name: "G",
       eventHistory: [
         {
           type: EventType.TaskIterationStarted,
+          prerequisitesVersion: 0,
           date: fourthDate,
         },
         {
@@ -157,13 +168,14 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitH = new TaskUnit({
       now,
-      parentUnits: [unitC, unitG],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitG] }],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "H",
       eventHistory: [
         {
           type: EventType.TaskIterationStarted,
+          prerequisitesVersion: 0,
           date: add(sixthDate, { hours: 4 }),
         },
         {
@@ -179,12 +191,14 @@ describe("React Integration: TaskUnitCard", function (): void {
 
     const unitI = new TaskUnit({
       now,
+      prerequisitesIterations: [{ id: "1234" }],
       anticipatedStartDate: firstDate,
       anticipatedEndDate: secondDate,
       name: "I",
       eventHistory: [
         {
           type: EventType.TaskIterationStarted,
+          prerequisitesVersion: 0,
           date: firstDate,
         },
         {
@@ -195,13 +209,14 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitJ = new TaskUnit({
       now,
-      parentUnits: [unitA, unitI],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitI] }],
       anticipatedStartDate: secondDate,
       anticipatedEndDate: thirdDate,
       name: "J",
       eventHistory: [
         {
           type: EventType.TaskIterationStarted,
+          prerequisitesVersion: 0,
           date: thirdDate,
         },
         {
@@ -212,13 +227,14 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitK = new TaskUnit({
       now,
-      parentUnits: [unitJ],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitJ] }],
       anticipatedStartDate: fourthDate,
       anticipatedEndDate: fifthDate,
       name: "K",
       eventHistory: [
         {
           type: EventType.TaskIterationStarted,
+          prerequisitesVersion: 0,
           date: fourthDate,
         },
         {
@@ -229,13 +245,14 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitL = new TaskUnit({
       now,
-      parentUnits: [unitC, unitK],
+      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitK] }],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "L",
       eventHistory: [
         {
           type: EventType.TaskIterationStarted,
+          prerequisitesVersion: 0,
           date: add(sixthDate, { hours: 4 }),
         },
       ],

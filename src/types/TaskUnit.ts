@@ -1,24 +1,54 @@
 import type { RelationshipMapping } from "./Mapping";
 
-export interface ITaskUnitParameters {
+export interface ITaskUnitParametersWithoutHistory {
   now: Date;
-  parentUnits?: ITaskUnit[];
+  readonly anticipatedStartDate: Date;
+  readonly anticipatedEndDate: Date;
+  readonly name: string;
+  prerequisitesIterations?: never;
+  eventHistory?: never;
+}
+export interface ITaskUnitParametersWithHistory {
+  now: Date;
   readonly anticipatedStartDate: Date;
   readonly anticipatedEndDate: Date;
   readonly name: string;
   eventHistory?: TaskEvent[];
+  prerequisitesIterations: ITaskPrerequisites[];
+}
+export type ITaskUnitParameters =
+  | ITaskUnitParametersWithoutHistory
+  | ITaskUnitParametersWithHistory;
+
+export interface SerializableTaskPrerequisitesReference {
+  readonly id: string;
+}
+/**
+ * The prerequisites that must be in place for the task to be completed, such as:
+ * - requirements that serve as the measurement for the review
+ * - people who will need to be available to work on the task
+ * - necessary work that is supposed to be completed in earlier tasks
+ */
+export interface ITaskPrerequisites
+  extends SerializableTaskPrerequisitesReference {
+  parentUnits?: ITaskUnit[];
 }
 
 export interface ITaskUnit {
   readonly id: string;
   projectedHistory: TaskEvent[];
-  interpolatedEventHistory: InterpolatedTaskEvent[];
+  interpolatedEventHistory: TaskEvent[];
   readonly anticipatedStartDate: Date;
   readonly anticipatedEndDate: Date;
   readonly name: string;
   eventHistory: TaskEvent[];
   apparentEndDate: Date;
   apparentStartDate: Date;
+  /**
+   * An array of the versions of prerequisites for this task. The latest entry represents the latest version of the
+   * prerequisites.
+   */
+  prerequisitesIterations: ITaskPrerequisites[];
   /**
    * The amount of "presence" this unit would have on a graph.
    *
@@ -154,7 +184,9 @@ export interface TaskUnitDetails {
   apparentEndTime: number;
   trackIndex: number;
   name: string;
-  eventHistory: SerializableTaskEvent[];
+  explicitEventHistory: SerializableTaskEvent[];
+  projectedEventHistory: SerializableTaskEvent[];
+  prerequisitesIterations: SerializableTaskPrerequisitesReference[];
 }
 
 export enum EventType {
@@ -173,18 +205,97 @@ export enum ReviewType {
   NeedsRebuild,
 }
 
-export interface TaskEvent {
+export interface BaseTaskEvent {
   type: EventType;
   date: Date;
 }
-export interface InterpolatedTaskEvent extends TaskEvent {
-  projected: boolean;
+
+export interface TaskIterationStartedEvent extends BaseTaskEvent {
+  type: EventType.TaskIterationStarted;
+  /**
+   * The index of the prerequisites object from the task unit that this iteration is using. This number should directly
+   * reflect the number of times a complete rebuild was necessary. If this number is 0, then it should be the first
+   * iteration. If it is 1, then it should be the first iteration after the first rebuild.
+   */
+  prerequisitesVersion: number;
 }
-export interface SerializableTaskEvent {
+export interface MinorRevisionCompleteEvent extends BaseTaskEvent {
+  type: EventType.MinorRevisionComplete;
+}
+export interface ReviewedAndAcceptedEvent extends BaseTaskEvent {
+  type: EventType.ReviewedAndAccepted;
+}
+export interface ReviewedAndNeedsMinorRevisionEvent extends BaseTaskEvent {
+  type: EventType.ReviewedAndNeedsMinorRevision;
+}
+export interface ReviewedAndNeedsMajorRevisionEvent extends BaseTaskEvent {
+  type: EventType.ReviewedAndNeedsMajorRevision;
+}
+export interface ReviewedAndNeedsRebuildEvent extends BaseTaskEvent {
+  type: EventType.ReviewedAndNeedsRebuild;
+}
+
+export type TaskEvent =
+  | TaskIterationStartedEvent
+  | MinorRevisionCompleteEvent
+  | ReviewedAndAcceptedEvent
+  | ReviewedAndNeedsMinorRevisionEvent
+  | ReviewedAndNeedsMajorRevisionEvent
+  | ReviewedAndNeedsRebuildEvent;
+
+// export interface TaskEvent extends TaskEvent {
+//   projected: boolean;
+// }
+export interface BaseSerializableTaskEvent {
   type: EventType;
   time: number;
-  projected: boolean;
 }
+
+export interface SerializableTaskIterationStartedEvent
+  extends BaseSerializableTaskEvent {
+  type: EventType.TaskIterationStarted;
+  /**
+   * The index of the prerequisites object from the task unit that this iteration is using. This number should directly
+   * reflect the number of times a complete rebuild was necessary. If this number is 0, then it should be the first
+   * iteration. If it is 1, then it should be the first iteration after the first rebuild.
+   */
+  prerequisitesVersion: number;
+}
+export interface SerializableMinorRevisionCompleteEvent
+  extends BaseSerializableTaskEvent {
+  type: EventType.MinorRevisionComplete;
+}
+export interface SerializableReviewedAndAcceptedEvent
+  extends BaseSerializableTaskEvent {
+  type: EventType.ReviewedAndAccepted;
+}
+export interface SerializableReviewedAndNeedsMinorRevisionEvent
+  extends BaseSerializableTaskEvent {
+  type: EventType.ReviewedAndNeedsMinorRevision;
+}
+export interface SerializableReviewedAndNeedsMajorRevisionEvent
+  extends BaseSerializableTaskEvent {
+  type: EventType.ReviewedAndNeedsMajorRevision;
+}
+export interface SerializableReviewedAndNeedsRebuildEvent
+  extends BaseSerializableTaskEvent {
+  type: EventType.ReviewedAndNeedsRebuild;
+}
+
+export type SerializableTaskEvent =
+  | SerializableTaskIterationStartedEvent
+  | SerializableMinorRevisionCompleteEvent
+  | SerializableReviewedAndAcceptedEvent
+  | SerializableReviewedAndNeedsMinorRevisionEvent
+  | SerializableReviewedAndNeedsMajorRevisionEvent
+  | SerializableReviewedAndNeedsRebuildEvent;
+
+export type SerializableTaskReviewEvent =
+  | SerializableMinorRevisionCompleteEvent
+  | SerializableReviewedAndAcceptedEvent
+  | SerializableReviewedAndNeedsMinorRevisionEvent
+  | SerializableReviewedAndNeedsMajorRevisionEvent
+  | SerializableReviewedAndNeedsRebuildEvent;
 
 /**
  * Enum flags to help determine if task unit iterations are the first/last/only/middle.
