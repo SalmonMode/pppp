@@ -1,5 +1,14 @@
 import type { RelationshipMapping } from "./Mapping";
 
+export interface ITaskUnitParameters {
+  now: Date;
+  parentUnits?: ITaskUnit[];
+  readonly anticipatedStartDate: Date;
+  readonly anticipatedEndDate: Date;
+  readonly name: string;
+  eventHistory?: TaskEvent[];
+}
+
 export interface ITaskUnit {
   readonly id: string;
   projectedHistory: TaskEvent[];

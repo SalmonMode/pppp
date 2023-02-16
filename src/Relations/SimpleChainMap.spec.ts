@@ -22,7 +22,12 @@ describe("SimpleChainMap", function (): void {
     let unit: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unit = new TaskUnit(now, [], firstDate, secondDate);
+      unit = new TaskUnit({
+        now,
+        name: "unit",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
       chainMap = new SimpleChainMap([unit]);
     });
     it("should have one chain", function (): void {
@@ -35,14 +40,26 @@ describe("SimpleChainMap", function (): void {
     });
     it("should throw NoSuchChainError when getting chain of unrecognized unit", function (): void {
       expect(() =>
-        chainMap.getChainOfUnit(new TaskUnit(now, [], firstDate, secondDate))
+        chainMap.getChainOfUnit(
+          new TaskUnit({
+            now,
+            name: "unit",
+            anticipatedStartDate: firstDate,
+            anticipatedEndDate: secondDate,
+          })
+        )
       ).to.throw(NoSuchChainError);
     });
     it("should throw NoSuchChainError when getting chains connected to unrecognized chain", function (): void {
       expect(() =>
         chainMap.getChainsConnectedToChain(
           new IsolatedDependencyChain([
-            new TaskUnit(now, [], firstDate, secondDate),
+            new TaskUnit({
+              now,
+              name: "unit",
+              anticipatedStartDate: firstDate,
+              anticipatedEndDate: secondDate,
+            }),
           ])
         )
       ).to.throw(NoSuchChainError);
@@ -58,8 +75,19 @@ describe("SimpleChainMap", function (): void {
     let unitA: TaskUnit;
     let unitB: TaskUnit;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
     });
     it("should throw DependencyOrderError", function (): void {
       expect(() => new SimpleChainMap([unitA, unitB])).to.throw(
@@ -78,8 +106,19 @@ describe("SimpleChainMap", function (): void {
     let unitB: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
       chainMap = new SimpleChainMap([unitB]);
     });
     it("should have one chain", function (): void {
@@ -103,9 +142,26 @@ describe("SimpleChainMap", function (): void {
     let unitC: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
-      unitC = new TaskUnit(now, [unitB], thirdDate, fourthDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        parentUnits: [unitB],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
       chainMap = new SimpleChainMap([unitC]);
     });
     it("should have one chain", function (): void {
@@ -133,9 +189,26 @@ describe("SimpleChainMap", function (): void {
     let unitC: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
-      unitC = new TaskUnit(now, [unitA], secondDate, thirdDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
       chainMap = new SimpleChainMap([unitB, unitC]);
     });
     it("should have 3 chains", function (): void {
@@ -206,10 +279,33 @@ describe("SimpleChainMap", function (): void {
     let unitD: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
-      unitC = new TaskUnit(now, [unitB], thirdDate, fourthDate);
-      unitD = new TaskUnit(now, [unitB], thirdDate, fourthDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        parentUnits: [unitB],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
+      unitD = new TaskUnit({
+        now,
+        name: "D",
+        parentUnits: [unitB],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
       chainMap = new SimpleChainMap([unitC, unitD]);
     });
     it("should provide all units", function (): void {
@@ -351,11 +447,40 @@ describe("SimpleChainMap", function (): void {
     let unitE: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
-      unitC = new TaskUnit(now, [unitB], thirdDate, fourthDate);
-      unitD = new TaskUnit(now, [unitB], thirdDate, fourthDate);
-      unitE = new TaskUnit(now, [unitC], fourthDate, fifthDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        parentUnits: [unitB],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
+      unitD = new TaskUnit({
+        now,
+        name: "D",
+        parentUnits: [unitB],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
+      unitE = new TaskUnit({
+        now,
+        name: "E",
+        parentUnits: [unitC],
+        anticipatedStartDate: fourthDate,
+        anticipatedEndDate: fifthDate,
+      });
       chainMap = new SimpleChainMap([unitD, unitE]);
     });
     it("should have 4 chains", function (): void {
@@ -456,11 +581,40 @@ describe("SimpleChainMap", function (): void {
     let unitE: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
-      unitC = new TaskUnit(now, [unitB], thirdDate, fourthDate);
-      unitD = new TaskUnit(now, [unitB], thirdDate, fourthDate);
-      unitE = new TaskUnit(now, [unitD], fourthDate, fifthDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        parentUnits: [unitB],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
+      unitD = new TaskUnit({
+        now,
+        name: "D",
+        parentUnits: [unitB],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
+      unitE = new TaskUnit({
+        now,
+        name: "E",
+        parentUnits: [unitD],
+        anticipatedStartDate: fourthDate,
+        anticipatedEndDate: fifthDate,
+      });
       chainMap = new SimpleChainMap([unitC, unitE]);
     });
     it("should have 4 chains", function (): void {
@@ -559,9 +713,25 @@ describe("SimpleChainMap", function (): void {
     let unitC: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [], firstDate, secondDate);
-      unitC = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        parentUnits: [unitA, unitB],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
       chainMap = new SimpleChainMap([unitC]);
     });
     it("should have 3 chains", function (): void {
@@ -626,10 +796,32 @@ describe("SimpleChainMap", function (): void {
     let unitD: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [], secondDate, thirdDate);
-      unitC = new TaskUnit(now, [unitA, unitB], thirdDate, fourthDate);
-      unitD = new TaskUnit(now, [unitC], thirdDate, fourthDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        parentUnits: [unitA, unitB],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
+      unitD = new TaskUnit({
+        now,
+        name: "D",
+        parentUnits: [unitC],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
       chainMap = new SimpleChainMap([unitD]);
     });
     it("should have 4 chains", function (): void {
@@ -728,11 +920,39 @@ describe("SimpleChainMap", function (): void {
     let unitE: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [], firstDate, secondDate);
-      unitC = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
-      unitD = new TaskUnit(now, [unitC], thirdDate, fourthDate);
-      unitE = new TaskUnit(now, [unitC], thirdDate, fourthDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        parentUnits: [unitA, unitB],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitD = new TaskUnit({
+        now,
+        name: "D",
+        parentUnits: [unitC],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
+      unitE = new TaskUnit({
+        now,
+        name: "E",
+        parentUnits: [unitC],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
       chainMap = new SimpleChainMap([unitD, unitE]);
     });
     it("should have 5 chains", function (): void {
@@ -875,12 +1095,46 @@ describe("SimpleChainMap", function (): void {
     let unitF: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [], firstDate, secondDate);
-      unitC = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
-      unitD = new TaskUnit(now, [unitC], thirdDate, fourthDate);
-      unitE = new TaskUnit(now, [unitD], fourthDate, fifthDate);
-      unitF = new TaskUnit(now, [unitD], fourthDate, fifthDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        parentUnits: [unitA, unitB],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitD = new TaskUnit({
+        now,
+        name: "D",
+        parentUnits: [unitC],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
+      unitE = new TaskUnit({
+        now,
+        name: "E",
+        parentUnits: [unitD],
+        anticipatedStartDate: fourthDate,
+        anticipatedEndDate: fifthDate,
+      });
+      unitF = new TaskUnit({
+        now,
+        name: "F",
+        parentUnits: [unitD],
+        anticipatedStartDate: fourthDate,
+        anticipatedEndDate: fifthDate,
+      });
       chainMap = new SimpleChainMap([unitE, unitF]);
     });
     it("should have 6 chains", function (): void {
@@ -1069,13 +1323,53 @@ describe("SimpleChainMap", function (): void {
     let unitG: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [], firstDate, secondDate);
-      unitC = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
-      unitD = new TaskUnit(now, [unitC], thirdDate, fourthDate);
-      unitE = new TaskUnit(now, [unitD], fourthDate, fifthDate);
-      unitF = new TaskUnit(now, [unitE], fifthDate, sixthDate);
-      unitG = new TaskUnit(now, [unitE], fifthDate, sixthDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        parentUnits: [unitA, unitB],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitD = new TaskUnit({
+        now,
+        name: "D",
+        parentUnits: [unitC],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
+      unitE = new TaskUnit({
+        now,
+        name: "E",
+        parentUnits: [unitD],
+        anticipatedStartDate: fourthDate,
+        anticipatedEndDate: fifthDate,
+      });
+      unitF = new TaskUnit({
+        now,
+        name: "F",
+        parentUnits: [unitE],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+      });
+      unitG = new TaskUnit({
+        now,
+        name: "G",
+        parentUnits: [unitE],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+      });
       chainMap = new SimpleChainMap([unitF, unitG]);
     });
     it("should have 7 chains", function (): void {
@@ -1318,14 +1612,60 @@ describe("SimpleChainMap", function (): void {
     let unitH: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [], firstDate, secondDate);
-      unitC = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
-      unitD = new TaskUnit(now, [unitC], thirdDate, fourthDate);
-      unitE = new TaskUnit(now, [unitD], fourthDate, fifthDate);
-      unitF = new TaskUnit(now, [unitE], fifthDate, sixthDate);
-      unitG = new TaskUnit(now, [unitF], sixthDate, seventhDate);
-      unitH = new TaskUnit(now, [unitF], sixthDate, seventhDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        parentUnits: [unitA, unitB],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitD = new TaskUnit({
+        now,
+        name: "D",
+        parentUnits: [unitC],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
+      unitE = new TaskUnit({
+        now,
+        name: "E",
+        parentUnits: [unitD],
+        anticipatedStartDate: fourthDate,
+        anticipatedEndDate: fifthDate,
+      });
+      unitF = new TaskUnit({
+        now,
+        name: "F",
+        parentUnits: [unitE],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+      });
+      unitG = new TaskUnit({
+        now,
+        name: "G",
+        parentUnits: [unitF],
+        anticipatedStartDate: sixthDate,
+        anticipatedEndDate: seventhDate,
+      });
+      unitH = new TaskUnit({
+        now,
+        name: "H",
+        parentUnits: [unitF],
+        anticipatedStartDate: sixthDate,
+        anticipatedEndDate: seventhDate,
+      });
       chainMap = new SimpleChainMap([unitG, unitH]);
     });
     it("should have 7 chains", function (): void {
@@ -1583,10 +1923,33 @@ describe("SimpleChainMap", function (): void {
     let unitD: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
-      unitC = new TaskUnit(now, [unitA], secondDate, thirdDate);
-      unitD = new TaskUnit(now, [unitB, unitC], thirdDate, fourthDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitD = new TaskUnit({
+        now,
+        name: "D",
+        parentUnits: [unitB, unitC],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
       chainMap = new SimpleChainMap([unitD]);
     });
     it("should have 4 chains", function (): void {
@@ -1684,10 +2047,32 @@ describe("SimpleChainMap", function (): void {
     let unitD: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [], firstDate, secondDate);
-      unitC = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
-      unitD = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        parentUnits: [unitA, unitB],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitD = new TaskUnit({
+        now,
+        name: "D",
+        parentUnits: [unitA, unitB],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
       chainMap = new SimpleChainMap([unitC, unitD]);
     });
     it("should have 4 chains", function (): void {
@@ -1785,10 +2170,32 @@ describe("SimpleChainMap", function (): void {
     let unitD: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [], firstDate, secondDate);
-      unitC = new TaskUnit(now, [unitA], secondDate, thirdDate);
-      unitD = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitD = new TaskUnit({
+        now,
+        name: "D",
+        parentUnits: [unitA, unitB],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
       chainMap = new SimpleChainMap([unitC, unitD]);
     });
     it("should have 4 chains", function (): void {
@@ -1900,18 +2307,75 @@ describe("SimpleChainMap", function (): void {
     let unitJ: TaskUnit;
     let chainMap: SimpleChainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [], firstDate, secondDate);
-      unitC = new TaskUnit(now, [], firstDate, secondDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
 
-      unitD = new TaskUnit(now, [unitA], secondDate, thirdDate);
-      unitE = new TaskUnit(now, [unitA, unitB], secondDate, thirdDate);
-      unitF = new TaskUnit(now, [unitB, unitC], secondDate, thirdDate);
-      unitG = new TaskUnit(now, [unitC], secondDate, thirdDate);
+      unitD = new TaskUnit({
+        now,
+        name: "D",
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitE = new TaskUnit({
+        now,
+        name: "E",
+        parentUnits: [unitA, unitB],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitF = new TaskUnit({
+        now,
+        name: "F",
+        parentUnits: [unitB, unitC],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitG = new TaskUnit({
+        now,
+        name: "G",
+        parentUnits: [unitC],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
 
-      unitH = new TaskUnit(now, [unitD, unitE], thirdDate, fourthDate);
-      unitI = new TaskUnit(now, [unitE, unitF], thirdDate, fourthDate);
-      unitJ = new TaskUnit(now, [unitF, unitG], thirdDate, fourthDate);
+      unitH = new TaskUnit({
+        now,
+        name: "H",
+        parentUnits: [unitD, unitE],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
+      unitI = new TaskUnit({
+        now,
+        name: "I",
+        parentUnits: [unitE, unitF],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
+      unitJ = new TaskUnit({
+        now,
+        name: "J",
+        parentUnits: [unitF, unitG],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
       chainMap = new SimpleChainMap([unitH, unitI, unitJ]);
     });
     it("should have heads of I and J without A, D, and H", function (): void {

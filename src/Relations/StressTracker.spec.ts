@@ -23,73 +23,117 @@ describe("StressTracker", function (): void {
   describe("Simple Paths", function (): void {
     let stressTracker: StressTracker;
     before(function (): void {
-      const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
-      const unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
-      const unitC = new TaskUnit(now, [], firstDate, secondDate, "C");
-      const unitD = new TaskUnit(now, [], firstDate, secondDate, "D");
+      const unitA = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "A",
+      });
+      const unitB = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "B",
+      });
+      const unitC = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "C",
+      });
+      const unitD = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "D",
+      });
 
-      const unitE = new TaskUnit(
+      const unitE = new TaskUnit({
         now,
-        [unitA, unitB],
-        thirdDate,
-        fourthDate,
-        "E"
-      );
-      const unitF = new TaskUnit(
+        parentUnits: [unitA, unitB],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "E",
+      });
+      const unitF = new TaskUnit({
         now,
-        [unitA, unitB, unitD],
-        thirdDate,
-        fourthDate,
-        "F"
-      );
-      const unitG = new TaskUnit(now, [unitC], thirdDate, fourthDate, "G");
-      const unitH = new TaskUnit(
+        parentUnits: [unitA, unitB, unitD],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "F",
+      });
+      const unitG = new TaskUnit({
         now,
-        [unitC, unitD],
-        thirdDate,
-        fourthDate,
-        "H"
-      );
+        parentUnits: [unitC],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "G",
+      });
+      const unitH = new TaskUnit({
+        now,
+        parentUnits: [unitC, unitD],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "H",
+      });
 
-      const unitI = new TaskUnit(
+      const unitI = new TaskUnit({
         now,
-        [unitE, unitG],
-        fifthDate,
-        sixthDate,
-        "I"
-      );
-      const unitJ = new TaskUnit(
+        parentUnits: [unitE, unitG],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "I",
+      });
+      const unitJ = new TaskUnit({
         now,
-        [unitF, unitH],
-        fifthDate,
-        sixthDate,
-        "J"
-      );
-      const unitK = new TaskUnit(
+        parentUnits: [unitF, unitH],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "J",
+      });
+      const unitK = new TaskUnit({
         now,
-        [unitE, unitG],
-        fifthDate,
-        sixthDate,
-        "K"
-      );
-      const unitL = new TaskUnit(
+        parentUnits: [unitE, unitG],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "K",
+      });
+      const unitL = new TaskUnit({
         now,
-        [unitB, unitG, unitH],
-        fifthDate,
-        sixthDate,
-        "L"
-      );
+        parentUnits: [unitB, unitG, unitH],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "L",
+      });
 
-      const unitM = new TaskUnit(now, [unitI], seventhDate, eighthDate, "M");
-      const unitN = new TaskUnit(
+      const unitM = new TaskUnit({
         now,
-        [unitI, unitJ, unitL],
-        seventhDate,
-        eighthDate,
-        "N"
-      );
-      const unitO = new TaskUnit(now, [unitK], seventhDate, eighthDate, "O");
-      const unitP = new TaskUnit(now, [unitL], seventhDate, eighthDate, "P");
+        parentUnits: [unitI],
+        anticipatedStartDate: seventhDate,
+        anticipatedEndDate: eighthDate,
+        name: "M",
+      });
+      const unitN = new TaskUnit({
+        now,
+        parentUnits: [unitI, unitJ, unitL],
+        anticipatedStartDate: seventhDate,
+        anticipatedEndDate: eighthDate,
+        name: "N",
+      });
+      const unitO = new TaskUnit({
+        now,
+        parentUnits: [unitK],
+        anticipatedStartDate: seventhDate,
+        anticipatedEndDate: eighthDate,
+        name: "O",
+      });
+      const unitP = new TaskUnit({
+        now,
+        parentUnits: [unitL],
+        anticipatedStartDate: seventhDate,
+        anticipatedEndDate: eighthDate,
+        name: "P",
+      });
       const chainMap = new SimpleChainMap([unitM, unitN, unitO, unitP]);
       const pathA = new ChainPath([
         chainMap.getChainOfUnit(unitM),
@@ -148,62 +192,88 @@ describe("StressTracker", function (): void {
   describe("Simple Paths After Swap", function (): void {
     let stressTracker: StressTracker;
     before(function (): void {
-      const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
-      const unitB = new TaskUnit(now, [], firstDate, secondDate, "B");
-      const unitC = new TaskUnit(now, [], firstDate, secondDate, "C");
-      const unitD = new TaskUnit(now, [], firstDate, secondDate, "D");
+      const unitA = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "A",
+      });
+      const unitB = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "B",
+      });
+      const unitC = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "C",
+      });
+      const unitD = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "D",
+      });
 
-      const unitE = new TaskUnit(now, [unitA], thirdDate, fourthDate, "E");
-      const unitF = new TaskUnit(
+      const unitE = new TaskUnit({
         now,
-        [unitA, unitB, unitD],
-        thirdDate,
-        fourthDate,
-        "F"
-      );
-      const unitG = new TaskUnit(
+        parentUnits: [unitA],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "E",
+      });
+      const unitF = new TaskUnit({
         now,
-        [unitA, unitC, unitD],
-        thirdDate,
-        fourthDate,
-        "G"
-      );
-      const unitH = new TaskUnit(
+        parentUnits: [unitA, unitB, unitD],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "F",
+      });
+      const unitG = new TaskUnit({
         now,
-        [unitB, unitD],
-        thirdDate,
-        fourthDate,
-        "H"
-      );
+        parentUnits: [unitA, unitC, unitD],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "G",
+      });
+      const unitH = new TaskUnit({
+        now,
+        parentUnits: [unitB, unitD],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "H",
+      });
 
-      const unitI = new TaskUnit(
+      const unitI = new TaskUnit({
         now,
-        [unitE, unitF],
-        fifthDate,
-        sixthDate,
-        "I"
-      );
-      const unitJ = new TaskUnit(
+        parentUnits: [unitE, unitF],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "I",
+      });
+      const unitJ = new TaskUnit({
         now,
-        [unitE, unitF, unitH],
-        fifthDate,
-        sixthDate,
-        "J"
-      );
-      const unitK = new TaskUnit(
+        parentUnits: [unitE, unitF, unitH],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "J",
+      });
+      const unitK = new TaskUnit({
         now,
-        [unitE, unitG],
-        fifthDate,
-        sixthDate,
-        "K"
-      );
-      const unitL = new TaskUnit(
+        parentUnits: [unitE, unitG],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "K",
+      });
+      const unitL = new TaskUnit({
         now,
-        [unitF, unitG, unitH],
-        fifthDate,
-        sixthDate,
-        "L"
-      );
+        parentUnits: [unitF, unitG, unitH],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "L",
+      });
 
       const chainMap = new SimpleChainMap([unitI, unitJ, unitK, unitL]);
       const pathA = new ChainPath([
@@ -255,55 +325,87 @@ describe("StressTracker", function (): void {
   describe("Sharing Tracks", function (): void {
     let stressTracker: StressTracker;
     before(function (): void {
-      const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
-      const unitB = new TaskUnit(
+      const unitA = new TaskUnit({
         now,
-        [unitA],
-        new Date(firstDate.getTime() + 100),
-        new Date(secondDate.getTime() + 100),
-        "B"
-      );
-      const unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C");
-      const unitD = new TaskUnit(
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "A",
+      });
+      const unitB = new TaskUnit({
         now,
-        [unitC],
-        new Date(fifthDate.getTime() + 100),
-        new Date(sixthDate.getTime() + 100),
-        "D"
-      );
+        parentUnits: [unitA],
+        anticipatedStartDate: new Date(firstDate.getTime() + 100),
+        anticipatedEndDate: new Date(secondDate.getTime() + 100),
+        name: "B",
+      });
+      const unitC = new TaskUnit({
+        now,
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "C",
+      });
+      const unitD = new TaskUnit({
+        now,
+        parentUnits: [unitC],
+        anticipatedStartDate: new Date(fifthDate.getTime() + 100),
+        anticipatedEndDate: new Date(sixthDate.getTime() + 100),
+        name: "D",
+      });
 
-      const unitE = new TaskUnit(now, [], firstDate, secondDate, "E");
-      const unitF = new TaskUnit(
+      const unitE = new TaskUnit({
         now,
-        [unitA, unitE],
-        thirdDate,
-        fourthDate,
-        "F"
-      );
-      const unitG = new TaskUnit(now, [unitF], fifthDate, sixthDate, "G");
-      const unitH = new TaskUnit(
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "E",
+      });
+      const unitF = new TaskUnit({
         now,
-        [unitC, unitG],
-        seventhDate,
-        eighthDate,
-        "H"
-      );
-      const unitI = new TaskUnit(now, [], firstDate, secondDate, "I");
-      const unitJ = new TaskUnit(
+        parentUnits: [unitA, unitE],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "F",
+      });
+      const unitG = new TaskUnit({
         now,
-        [unitA, unitI],
-        thirdDate,
-        fourthDate,
-        "J"
-      );
-      const unitK = new TaskUnit(now, [unitJ], fifthDate, sixthDate, "K");
-      const unitL = new TaskUnit(
+        parentUnits: [unitF],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "G",
+      });
+      const unitH = new TaskUnit({
         now,
-        [unitC, unitK],
-        seventhDate,
-        eighthDate,
-        "L"
-      );
+        parentUnits: [unitC, unitG],
+        anticipatedStartDate: seventhDate,
+        anticipatedEndDate: eighthDate,
+        name: "H",
+      });
+      const unitI = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "I",
+      });
+      const unitJ = new TaskUnit({
+        now,
+        parentUnits: [unitA, unitI],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "J",
+      });
+      const unitK = new TaskUnit({
+        now,
+        parentUnits: [unitJ],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "K",
+      });
+      const unitL = new TaskUnit({
+        now,
+        parentUnits: [unitC, unitK],
+        anticipatedStartDate: seventhDate,
+        anticipatedEndDate: eighthDate,
+        name: "L",
+      });
 
       const chainMap = new SimpleChainMap([unitB, unitD, unitH, unitL]);
       const pathA = new ChainPath([
@@ -357,55 +459,87 @@ describe("StressTracker", function (): void {
   describe("Sharing Tracks After Swap", function (): void {
     let stressTracker: StressTracker;
     before(function (): void {
-      const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
-      const unitB = new TaskUnit(
+      const unitA = new TaskUnit({
         now,
-        [unitA],
-        new Date(firstDate.getTime() + 100),
-        new Date(secondDate.getTime() + 100),
-        "B"
-      );
-      const unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C");
-      const unitD = new TaskUnit(
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "A",
+      });
+      const unitB = new TaskUnit({
         now,
-        [unitC],
-        new Date(fifthDate.getTime() + 100),
-        new Date(sixthDate.getTime() + 100),
-        "D"
-      );
+        parentUnits: [unitA],
+        anticipatedStartDate: new Date(firstDate.getTime() + 100),
+        anticipatedEndDate: new Date(secondDate.getTime() + 100),
+        name: "B",
+      });
+      const unitC = new TaskUnit({
+        now,
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "C",
+      });
+      const unitD = new TaskUnit({
+        now,
+        parentUnits: [unitC],
+        anticipatedStartDate: new Date(fifthDate.getTime() + 100),
+        anticipatedEndDate: new Date(sixthDate.getTime() + 100),
+        name: "D",
+      });
 
-      const unitE = new TaskUnit(now, [], firstDate, secondDate, "E");
-      const unitF = new TaskUnit(
+      const unitE = new TaskUnit({
         now,
-        [unitA, unitE],
-        thirdDate,
-        fourthDate,
-        "F"
-      );
-      const unitG = new TaskUnit(now, [unitF], fifthDate, sixthDate, "G");
-      const unitH = new TaskUnit(
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "E",
+      });
+      const unitF = new TaskUnit({
         now,
-        [unitC, unitG],
-        seventhDate,
-        eighthDate,
-        "H"
-      );
-      const unitI = new TaskUnit(now, [], firstDate, secondDate, "I");
-      const unitJ = new TaskUnit(
+        parentUnits: [unitA, unitE],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "F",
+      });
+      const unitG = new TaskUnit({
         now,
-        [unitA, unitI],
-        thirdDate,
-        fourthDate,
-        "J"
-      );
-      const unitK = new TaskUnit(now, [unitJ], fifthDate, sixthDate, "K");
-      const unitL = new TaskUnit(
+        parentUnits: [unitF],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "G",
+      });
+      const unitH = new TaskUnit({
         now,
-        [unitC, unitK],
-        seventhDate,
-        eighthDate,
-        "L"
-      );
+        parentUnits: [unitC, unitG],
+        anticipatedStartDate: seventhDate,
+        anticipatedEndDate: eighthDate,
+        name: "H",
+      });
+      const unitI = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "I",
+      });
+      const unitJ = new TaskUnit({
+        now,
+        parentUnits: [unitA, unitI],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "J",
+      });
+      const unitK = new TaskUnit({
+        now,
+        parentUnits: [unitJ],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "K",
+      });
+      const unitL = new TaskUnit({
+        now,
+        parentUnits: [unitC, unitK],
+        anticipatedStartDate: seventhDate,
+        anticipatedEndDate: eighthDate,
+        name: "L",
+      });
 
       const chainMap = new SimpleChainMap([unitB, unitD, unitH, unitL]);
       const pathA = new ChainPath([
@@ -460,55 +594,87 @@ describe("StressTracker", function (): void {
   describe("Sharing Tracks After Move To Top", function (): void {
     let stressTracker: StressTracker;
     before(function (): void {
-      const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
-      const unitB = new TaskUnit(
+      const unitA = new TaskUnit({
         now,
-        [unitA],
-        new Date(firstDate.getTime() + 100),
-        new Date(secondDate.getTime() + 100),
-        "B"
-      );
-      const unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C");
-      const unitD = new TaskUnit(
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "A",
+      });
+      const unitB = new TaskUnit({
         now,
-        [unitC],
-        new Date(fifthDate.getTime() + 100),
-        new Date(sixthDate.getTime() + 100),
-        "D"
-      );
+        parentUnits: [unitA],
+        anticipatedStartDate: new Date(firstDate.getTime() + 100),
+        anticipatedEndDate: new Date(secondDate.getTime() + 100),
+        name: "B",
+      });
+      const unitC = new TaskUnit({
+        now,
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "C",
+      });
+      const unitD = new TaskUnit({
+        now,
+        parentUnits: [unitC],
+        anticipatedStartDate: new Date(fifthDate.getTime() + 100),
+        anticipatedEndDate: new Date(sixthDate.getTime() + 100),
+        name: "D",
+      });
 
-      const unitE = new TaskUnit(now, [], firstDate, secondDate, "E");
-      const unitF = new TaskUnit(
+      const unitE = new TaskUnit({
         now,
-        [unitA, unitE],
-        thirdDate,
-        fourthDate,
-        "F"
-      );
-      const unitG = new TaskUnit(now, [unitF], fifthDate, sixthDate, "G");
-      const unitH = new TaskUnit(
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "E",
+      });
+      const unitF = new TaskUnit({
         now,
-        [unitC, unitG],
-        seventhDate,
-        eighthDate,
-        "H"
-      );
-      const unitI = new TaskUnit(now, [], firstDate, secondDate, "I");
-      const unitJ = new TaskUnit(
+        parentUnits: [unitA, unitE],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "F",
+      });
+      const unitG = new TaskUnit({
         now,
-        [unitA, unitI],
-        thirdDate,
-        fourthDate,
-        "J"
-      );
-      const unitK = new TaskUnit(now, [unitJ], fifthDate, sixthDate, "K");
-      const unitL = new TaskUnit(
+        parentUnits: [unitF],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "G",
+      });
+      const unitH = new TaskUnit({
         now,
-        [unitC, unitK],
-        seventhDate,
-        eighthDate,
-        "L"
-      );
+        parentUnits: [unitC, unitG],
+        anticipatedStartDate: seventhDate,
+        anticipatedEndDate: eighthDate,
+        name: "H",
+      });
+      const unitI = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "I",
+      });
+      const unitJ = new TaskUnit({
+        now,
+        parentUnits: [unitA, unitI],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "J",
+      });
+      const unitK = new TaskUnit({
+        now,
+        parentUnits: [unitJ],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "K",
+      });
+      const unitL = new TaskUnit({
+        now,
+        parentUnits: [unitC, unitK],
+        anticipatedStartDate: seventhDate,
+        anticipatedEndDate: eighthDate,
+        name: "L",
+      });
 
       const chainMap = new SimpleChainMap([unitB, unitD, unitH, unitL]);
       const pathA = new ChainPath([
@@ -563,55 +729,87 @@ describe("StressTracker", function (): void {
   describe("Sharing Tracks After Move Below", function (): void {
     let stressTracker: StressTracker;
     before(function (): void {
-      const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
-      const unitB = new TaskUnit(
+      const unitA = new TaskUnit({
         now,
-        [unitA],
-        new Date(firstDate.getTime() + 100),
-        new Date(secondDate.getTime() + 100),
-        "B"
-      );
-      const unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C");
-      const unitD = new TaskUnit(
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "A",
+      });
+      const unitB = new TaskUnit({
         now,
-        [unitC],
-        new Date(fifthDate.getTime() + 100),
-        new Date(sixthDate.getTime() + 100),
-        "D"
-      );
+        parentUnits: [unitA],
+        anticipatedStartDate: new Date(firstDate.getTime() + 100),
+        anticipatedEndDate: new Date(secondDate.getTime() + 100),
+        name: "B",
+      });
+      const unitC = new TaskUnit({
+        now,
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "C",
+      });
+      const unitD = new TaskUnit({
+        now,
+        parentUnits: [unitC],
+        anticipatedStartDate: new Date(fifthDate.getTime() + 100),
+        anticipatedEndDate: new Date(sixthDate.getTime() + 100),
+        name: "D",
+      });
 
-      const unitE = new TaskUnit(now, [], firstDate, secondDate, "E");
-      const unitF = new TaskUnit(
+      const unitE = new TaskUnit({
         now,
-        [unitA, unitE],
-        thirdDate,
-        fourthDate,
-        "F"
-      );
-      const unitG = new TaskUnit(now, [unitF], fifthDate, sixthDate, "G");
-      const unitH = new TaskUnit(
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "E",
+      });
+      const unitF = new TaskUnit({
         now,
-        [unitC, unitG],
-        seventhDate,
-        eighthDate,
-        "H"
-      );
-      const unitI = new TaskUnit(now, [], firstDate, secondDate, "I");
-      const unitJ = new TaskUnit(
+        parentUnits: [unitA, unitE],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "F",
+      });
+      const unitG = new TaskUnit({
         now,
-        [unitA, unitI],
-        thirdDate,
-        fourthDate,
-        "J"
-      );
-      const unitK = new TaskUnit(now, [unitJ], fifthDate, sixthDate, "K");
-      const unitL = new TaskUnit(
+        parentUnits: [unitF],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "G",
+      });
+      const unitH = new TaskUnit({
         now,
-        [unitC, unitK],
-        seventhDate,
-        eighthDate,
-        "L"
-      );
+        parentUnits: [unitC, unitG],
+        anticipatedStartDate: seventhDate,
+        anticipatedEndDate: eighthDate,
+        name: "H",
+      });
+      const unitI = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "I",
+      });
+      const unitJ = new TaskUnit({
+        now,
+        parentUnits: [unitA, unitI],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "J",
+      });
+      const unitK = new TaskUnit({
+        now,
+        parentUnits: [unitJ],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "K",
+      });
+      const unitL = new TaskUnit({
+        now,
+        parentUnits: [unitC, unitK],
+        anticipatedStartDate: seventhDate,
+        anticipatedEndDate: eighthDate,
+        name: "L",
+      });
 
       const chainMap = new SimpleChainMap([unitB, unitD, unitH, unitL]);
       const pathA = new ChainPath([
@@ -666,55 +864,87 @@ describe("StressTracker", function (): void {
   describe("Sharing Tracks After Converge", function (): void {
     let stressTracker: StressTracker;
     before(function (): void {
-      const unitA = new TaskUnit(now, [], firstDate, secondDate, "A");
-      const unitB = new TaskUnit(
+      const unitA = new TaskUnit({
         now,
-        [unitA],
-        new Date(firstDate.getTime() + 100),
-        new Date(secondDate.getTime() + 100),
-        "B"
-      );
-      const unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C");
-      const unitD = new TaskUnit(
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "A",
+      });
+      const unitB = new TaskUnit({
         now,
-        [unitC],
-        new Date(fifthDate.getTime() + 100),
-        new Date(sixthDate.getTime() + 100),
-        "D"
-      );
+        parentUnits: [unitA],
+        anticipatedStartDate: new Date(firstDate.getTime() + 100),
+        anticipatedEndDate: new Date(secondDate.getTime() + 100),
+        name: "B",
+      });
+      const unitC = new TaskUnit({
+        now,
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "C",
+      });
+      const unitD = new TaskUnit({
+        now,
+        parentUnits: [unitC],
+        anticipatedStartDate: new Date(fifthDate.getTime() + 100),
+        anticipatedEndDate: new Date(sixthDate.getTime() + 100),
+        name: "D",
+      });
 
-      const unitE = new TaskUnit(now, [], firstDate, secondDate, "E");
-      const unitF = new TaskUnit(
+      const unitE = new TaskUnit({
         now,
-        [unitA, unitE],
-        thirdDate,
-        fourthDate,
-        "F"
-      );
-      const unitG = new TaskUnit(now, [unitF], fifthDate, sixthDate, "G");
-      const unitH = new TaskUnit(
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "E",
+      });
+      const unitF = new TaskUnit({
         now,
-        [unitC, unitG],
-        seventhDate,
-        eighthDate,
-        "H"
-      );
-      const unitI = new TaskUnit(now, [], firstDate, secondDate, "I");
-      const unitJ = new TaskUnit(
+        parentUnits: [unitA, unitE],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "F",
+      });
+      const unitG = new TaskUnit({
         now,
-        [unitA, unitI],
-        thirdDate,
-        fourthDate,
-        "J"
-      );
-      const unitK = new TaskUnit(now, [unitJ], fifthDate, sixthDate, "K");
-      const unitL = new TaskUnit(
+        parentUnits: [unitF],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "G",
+      });
+      const unitH = new TaskUnit({
         now,
-        [unitC, unitK],
-        seventhDate,
-        eighthDate,
-        "L"
-      );
+        parentUnits: [unitC, unitG],
+        anticipatedStartDate: seventhDate,
+        anticipatedEndDate: eighthDate,
+        name: "H",
+      });
+      const unitI = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "I",
+      });
+      const unitJ = new TaskUnit({
+        now,
+        parentUnits: [unitA, unitI],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "J",
+      });
+      const unitK = new TaskUnit({
+        now,
+        parentUnits: [unitJ],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "K",
+      });
+      const unitL = new TaskUnit({
+        now,
+        parentUnits: [unitC, unitK],
+        anticipatedStartDate: seventhDate,
+        anticipatedEndDate: eighthDate,
+        name: "L",
+      });
 
       const chainMap = new SimpleChainMap([unitB, unitD, unitH, unitL]);
       const pathA = new ChainPath([

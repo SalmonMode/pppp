@@ -21,7 +21,12 @@ describe("ChainStrainMap", function (): void {
     let strainMap: ChainStrainMap;
     let unit: TaskUnit;
     before(function (): void {
-      unit = new TaskUnit(now, [], new Date(), new Date());
+      unit = new TaskUnit({
+        now,
+        name: "unit",
+        anticipatedStartDate: new Date(),
+        anticipatedEndDate: new Date(),
+      });
       chainMap = new SimpleChainMap([unit]);
       strainMap = new ChainStrainMap(chainMap);
     });
@@ -29,7 +34,12 @@ describe("ChainStrainMap", function (): void {
       expect(() =>
         strainMap.getStrainOfChain(
           new IsolatedDependencyChain([
-            new TaskUnit(now, [], new Date(), new Date()),
+            new TaskUnit({
+              now,
+              name: "unit",
+              anticipatedStartDate: new Date(),
+              anticipatedEndDate: new Date(),
+            }),
           ])
         )
       ).to.throw(NoSuchChainError);
@@ -48,10 +58,33 @@ describe("ChainStrainMap", function (): void {
     let chainMap: SimpleChainMap;
     let strainMap: ChainStrainMap;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
-      unitC = new TaskUnit(now, [unitA], secondDate, thirdDate);
-      unitD = new TaskUnit(now, [unitB, unitC], thirdDate, fourthDate);
+      unitA = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "A",
+      });
+      unitB = new TaskUnit({
+        now,
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+        name: "B",
+      });
+      unitC = new TaskUnit({
+        now,
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+        name: "C",
+      });
+      unitD = new TaskUnit({
+        now,
+        parentUnits: [unitB, unitC],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "D",
+      });
       chainMap = new SimpleChainMap([unitD]);
       strainMap = new ChainStrainMap(chainMap);
     });
@@ -97,15 +130,56 @@ describe("ChainStrainMap", function (): void {
     let chainMap: SimpleChainMap;
     let strainMap: ChainStrainMap;
     before(function (): void {
-      const unitA = new TaskUnit(now, [], firstDate, secondDate);
+      const unitA = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "A",
+      });
 
-      const unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
-      const unitC = new TaskUnit(now, [unitA], thirdDate, fourthDate);
+      const unitB = new TaskUnit({
+        now,
+        parentUnits: [unitA],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "B",
+      });
+      const unitC = new TaskUnit({
+        now,
+        parentUnits: [unitA],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "C",
+      });
 
-      const unitD = new TaskUnit(now, [unitB], fifthDate, sixthDate);
-      const unitE = new TaskUnit(now, [unitB], fifthDate, sixthDate);
-      const unitF = new TaskUnit(now, [unitB, unitC], fifthDate, sixthDate);
-      const unitG = new TaskUnit(now, [unitC], fifthDate, sixthDate);
+      const unitD = new TaskUnit({
+        now,
+        parentUnits: [unitB],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "D",
+      });
+      const unitE = new TaskUnit({
+        now,
+        parentUnits: [unitB],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "E",
+      });
+      const unitF = new TaskUnit({
+        now,
+        parentUnits: [unitB, unitC],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "F",
+      });
+      const unitG = new TaskUnit({
+        now,
+        parentUnits: [unitC],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+        name: "G",
+      });
 
       chainMap = new SimpleChainMap([unitD, unitE, unitF, unitG]);
       chainB = chainMap.getChainOfUnit(unitB);

@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { DependencyOrderError } from "../errors/Error";
 import ChainPath from "./ChainPath";
 import IsolatedDependencyChain from "./IsolatedDependencyChain";
-import TaskUnit from "./TaskUnit";
+import TaskUnit from "../TaskUnit/TaskUnit";
 
 const now = new Date();
 const firstDate = new Date(now.getTime() + 100000);
@@ -21,8 +21,19 @@ describe("ChainPath", function (): void {
     let chainB: IsolatedDependencyChain;
     let path: ChainPath;
     before(function (): void {
-      const unitA = new TaskUnit(now, [], firstDate, secondDate);
-      const unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
+      const unitA = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "A",
+      });
+      const unitB = new TaskUnit({
+        now,
+        parentUnits: [unitA],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        name: "B",
+      });
       chainA = new IsolatedDependencyChain([unitA]);
       chainB = new IsolatedDependencyChain([unitB]);
       path = new ChainPath([chainB, chainA]);
@@ -54,8 +65,18 @@ describe("ChainPath", function (): void {
     let chainA: IsolatedDependencyChain;
     let chainB: IsolatedDependencyChain;
     before(function (): void {
-      const unitA = new TaskUnit(now, [], firstDate, secondDate);
-      const unitB = new TaskUnit(now, [], secondDate, thirdDate);
+      const unitA = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "A",
+      });
+      const unitB = new TaskUnit({
+        now,
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+        name: "B",
+      });
       chainA = new IsolatedDependencyChain([unitA]);
       chainB = new IsolatedDependencyChain([unitB]);
     });
@@ -69,8 +90,19 @@ describe("ChainPath", function (): void {
     let chainA: IsolatedDependencyChain;
     let chainB: IsolatedDependencyChain;
     before(function (): void {
-      const unitA = new TaskUnit(now, [], firstDate, secondDate);
-      const unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
+      const unitA = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "A",
+      });
+      const unitB = new TaskUnit({
+        now,
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+        name: "B",
+      });
       chainA = new IsolatedDependencyChain([unitA]);
       chainB = new IsolatedDependencyChain([unitB]);
     });

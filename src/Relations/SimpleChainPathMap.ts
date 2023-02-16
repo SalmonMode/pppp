@@ -1,18 +1,14 @@
 import { NoSuchChainPathError } from "../errors/Error";
 import type {
   InterconnectionStrengthMapping,
+  ITaskUnit,
   RelationshipMapping,
   ResourceMap,
 } from "../types";
-import type {
-  ChainPath,
-  IsolatedDependencyChain,
-  SimpleChainMap,
-  TaskUnit,
-} from "./";
+import type { ChainPath, IsolatedDependencyChain, SimpleChainMap } from "./";
 
 /**
- * A collection of interconnected {@link TaskUnit}s, along with helpful functions to make reasoning about them easier.
+ * A collection of interconnected {@link ITaskUnit}s, along with helpful functions to make reasoning about them easier.
  *
  * Organizing the many units in a coherent way on a graph will require some work to figure out. There needs to be an
  * orchestrating mechanism between the units and chains, and that's what this class does.
@@ -82,7 +78,7 @@ export default class SimpleChainPathMap {
               // set of connected units (to speed up the next iterations), and then move on to the next otherPath.
               mapping[otherPath.id] = otherPathRelationshipToPath;
               const otherPathsUnits = this._getUnitsInPath(otherPath);
-              otherPathsUnits.forEach((unit: TaskUnit): void => {
+              otherPathsUnits.forEach((unit: ITaskUnit): void => {
                 unitsConnectedToUnitsInPath.delete(unit);
               });
             } else {
@@ -128,9 +124,9 @@ export default class SimpleChainPathMap {
    * @param path
    * @returns a set of units not in the provided path that have a direct connection to/from the units in the path
    */
-  private _getUnitsConnectedToPath(path: ChainPath): Set<TaskUnit> {
+  private _getUnitsConnectedToPath(path: ChainPath): Set<ITaskUnit> {
     const unitsInPath = this._getUnitsInPath(path);
-    const unitsConnectedToUnitsInPath = new Set<TaskUnit>();
+    const unitsConnectedToUnitsInPath = new Set<ITaskUnit>();
     for (const unit of unitsInPath) {
       const connectedUnitsOfUnit =
         this.chainMap.unitPathMatrix.getUnitsConnectedToUnit(unit);
@@ -150,10 +146,10 @@ export default class SimpleChainPathMap {
    * @param path
    * @returns A set of task units that are a part of the provided path
    */
-  private _getUnitsInPath(path: ChainPath): Set<TaskUnit> {
-    return new Set<TaskUnit>(
-      path.chains.reduce<TaskUnit[]>(
-        (acc: TaskUnit[], chain: IsolatedDependencyChain): TaskUnit[] => [
+  private _getUnitsInPath(path: ChainPath): Set<ITaskUnit> {
+    return new Set<ITaskUnit>(
+      path.chains.reduce<ITaskUnit[]>(
+        (acc: ITaskUnit[], chain: IsolatedDependencyChain): ITaskUnit[] => [
           ...acc,
           ...chain.units,
         ],

@@ -1,5 +1,5 @@
 import { Matrix } from "../matrix";
-import type { TaskUnit } from "./";
+import type { ITaskUnit } from "../types";
 
 /**
  * A simple abstraction around a matrix of the unit relations to perform helpful operations.
@@ -14,7 +14,7 @@ export default class UnitPathMatrix {
    * For matrix subsets, new arrays will be made containing the subset of units, and the indexes will inherently be
    * different, but the principle is the same.
    */
-  private _unitsSortedById: TaskUnit[];
+  private _unitsSortedById: ITaskUnit[];
   /**
    * The matrix only understands integers for its column and row indexes. So we need to track the order of all the units
    * according to their sorted ID order. The index of their ID in this list represents the index of their column and row
@@ -33,10 +33,10 @@ export default class UnitPathMatrix {
    * have been eliminated.
    */
   private _singleStepMatrix: Matrix;
-  constructor(units: TaskUnit[]) {
+  constructor(units: ITaskUnit[]) {
     const firstUnit = units[0];
     if (firstUnit === undefined) {
-      throw new RangeError("Must provide at least 1 TaskUnit");
+      throw new RangeError("Must provide at least 1 ITaskUnit");
     }
     this._unitsSortedById = this._getAllUnitsSortedById(units);
     this._pathMatrixKeys = this._getPathMatrixKeys();
@@ -49,8 +49,8 @@ export default class UnitPathMatrix {
    * @param units the units to sort
    * @returns a new array of units sorted according to their IDs
    */
-  private _getAllUnitsSortedById(units: TaskUnit[]): TaskUnit[] {
-    return [...units].sort((prev: TaskUnit, next: TaskUnit): number =>
+  private _getAllUnitsSortedById(units: ITaskUnit[]): ITaskUnit[] {
+    return [...units].sort((prev: ITaskUnit, next: ITaskUnit): number =>
       prev.id.localeCompare(next.id)
     );
   }
@@ -64,7 +64,7 @@ export default class UnitPathMatrix {
    */
   private _getPathMatrixKeys(): string[] {
     return this._unitsSortedById
-      .map((unit: TaskUnit): string => unit.id)
+      .map((unit: ITaskUnit): string => unit.id)
       .sort();
   }
   /**
@@ -82,7 +82,7 @@ export default class UnitPathMatrix {
    * @param unit
    * @returns The index in the path and single step matrices that correspond with the row and column index of the unit.
    */
-  getMatrixIndexForUnit(unit: TaskUnit): number {
+  getMatrixIndexForUnit(unit: ITaskUnit): number {
     return this._pathMatrixKeys.indexOf(unit.id);
   }
   /**
@@ -119,10 +119,10 @@ export default class UnitPathMatrix {
    * @param sortedUnits
    * @returns a matrix showing which units each unit can reach in a single step (i.e. their direct dependencies)
    */
-  private _buildSubsetSingleStepMatrix(sortedUnits: TaskUnit[]): Matrix {
+  private _buildSubsetSingleStepMatrix(sortedUnits: ITaskUnit[]): Matrix {
     // get slice of single step for relevant units
     const matrixData: number[][] = [];
-    const sliceIndexes = sortedUnits.map((unit: TaskUnit): number =>
+    const sliceIndexes = sortedUnits.map((unit: ITaskUnit): number =>
       this.getMatrixIndexForUnit(unit)
     );
     for (const row of sliceIndexes) {
@@ -140,9 +140,9 @@ export default class UnitPathMatrix {
    * @param isolatedUnits the units that have already been isolated, and thus can't be heads
    * @returns a list of the head units that no other units can reach without using any isolated units
    */
-  getHeadUnitsWithoutIsolatedUnit(isolatedUnits: TaskUnit[]): TaskUnit[] {
+  getHeadUnitsWithoutIsolatedUnit(isolatedUnits: ITaskUnit[]): ITaskUnit[] {
     const allowedUnits = this._unitsSortedById.filter(
-      (unit: TaskUnit): boolean => !isolatedUnits.includes(unit)
+      (unit: ITaskUnit): boolean => !isolatedUnits.includes(unit)
     );
     if (allowedUnits.length === 0) {
       // must not be any more available heads, so return empty list.
@@ -161,10 +161,10 @@ export default class UnitPathMatrix {
    * @returns the units that no other available units directly depend on
    */
   private _getHeadsUsingMatrix(
-    sortedAllowedUnits: TaskUnit[],
+    sortedAllowedUnits: ITaskUnit[],
     matrix: Matrix
-  ): TaskUnit[] {
-    const headUnits: TaskUnit[] = [];
+  ): ITaskUnit[] {
+    const headUnits: ITaskUnit[] = [];
     for (const [indexAsString, unit] of Object.entries(sortedAllowedUnits)) {
       const index = Number(indexAsString);
       // get the index associated with
@@ -179,7 +179,7 @@ export default class UnitPathMatrix {
     }
     return headUnits;
   }
-  getUnitForMatrixIndex(index: number): TaskUnit {
+  getUnitForMatrixIndex(index: number): ITaskUnit {
     const unit = this._unitsSortedById[index];
     if (!unit) {
       throw new RangeError(`No unit exsts for matrix index ${index}`);
@@ -193,8 +193,8 @@ export default class UnitPathMatrix {
    * @param unit the unit to find the connected units of
    * @returns a set of units that have a connection to the passed unit
    */
-  getUnitsConnectedToUnit(unit: TaskUnit): Set<TaskUnit> {
-    const connectedUnits = new Set<TaskUnit>();
+  getUnitsConnectedToUnit(unit: ITaskUnit): Set<ITaskUnit> {
+    const connectedUnits = new Set<ITaskUnit>();
     const unitIndex = this.getMatrixIndexForUnit(unit);
     const connectionsRow = this.taskUnitInterconnections.getRow(unitIndex);
     connectionsRow.forEach((walks: number, connectionIndex: number): void => {

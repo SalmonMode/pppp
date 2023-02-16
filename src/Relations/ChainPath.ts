@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { DependencyOrderError } from "../errors/Error";
-import type { ITaskUnit } from "../types/TaskUnit";
+import type { ITaskUnit } from "../types";
 import type IsolatedDependencyChain from "./IsolatedDependencyChain";
 
 /**

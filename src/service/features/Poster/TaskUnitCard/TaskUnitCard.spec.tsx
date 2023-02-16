@@ -26,76 +26,108 @@ describe("React Integration: TaskUnitCard", function (): void {
   describe("Chaotic Tracks", function (): void {
     let initialState: TaskUnitsLoadingCompleteState;
 
-    const unitA = new TaskUnit(now, [], firstDate, secondDate, "A", [
-      {
-        type: EventType.TaskIterationStarted,
-        date: firstDate,
-      },
-      {
-        type: EventType.ReviewedAndAccepted,
-        date: thirdDate,
-      },
-    ]);
-    const unitB = new TaskUnit(now, [unitA], secondDate, thirdDate, "B", [
-      {
-        type: EventType.TaskIterationStarted,
-        date: thirdDate,
-      },
-      {
-        type: EventType.ReviewedAndNeedsMinorRevision,
-        date: fourthDate,
-      },
-      {
-        type: EventType.MinorRevisionComplete,
-        date: fifthDate,
-      },
-    ]);
-    const unitC = new TaskUnit(now, [], fifthDate, sixthDate, "C", [
-      {
-        type: EventType.TaskIterationStarted,
-        date: fifthDate,
-      },
-      {
-        type: EventType.ReviewedAndAccepted,
-        date: add(sixthDate, { hours: 4 }),
-      },
-    ]);
-    const unitD = new TaskUnit(now, [unitC], sixthDate, seventhDate, "D", [
-      {
-        type: EventType.TaskIterationStarted,
-        date: add(sixthDate, { hours: 4 }),
-      },
-      {
-        type: EventType.ReviewedAndNeedsRebuild,
-        date: add(seventhDate, { hours: 4 }),
-      },
-      {
-        type: EventType.TaskIterationStarted,
-        date: eighthDate,
-      },
-      {
-        type: EventType.ReviewedAndNeedsMajorRevision,
-        date: ninthDate,
-      },
-    ]);
-
-    const unitE = new TaskUnit(now, [], firstDate, secondDate, "E", [
-      {
-        type: EventType.TaskIterationStarted,
-        date: firstDate,
-      },
-      {
-        type: EventType.ReviewedAndAccepted,
-        date: secondDate,
-      },
-    ]);
-    const unitF = new TaskUnit(
+    const unitA = new TaskUnit({
       now,
-      [unitA, unitE],
-      secondDate,
-      thirdDate,
-      "F",
-      [
+      anticipatedStartDate: firstDate,
+      anticipatedEndDate: secondDate,
+      name: "A",
+      eventHistory: [
+        {
+          type: EventType.TaskIterationStarted,
+          date: firstDate,
+        },
+        {
+          type: EventType.ReviewedAndAccepted,
+          date: thirdDate,
+        },
+      ],
+    });
+    const unitB = new TaskUnit({
+      now,
+      parentUnits: [unitA],
+      anticipatedStartDate: secondDate,
+      anticipatedEndDate: thirdDate,
+      name: "B",
+      eventHistory: [
+        {
+          type: EventType.TaskIterationStarted,
+          date: thirdDate,
+        },
+        {
+          type: EventType.ReviewedAndNeedsMinorRevision,
+          date: fourthDate,
+        },
+        {
+          type: EventType.MinorRevisionComplete,
+          date: fifthDate,
+        },
+      ],
+    });
+    const unitC = new TaskUnit({
+      now,
+      anticipatedStartDate: fifthDate,
+      anticipatedEndDate: sixthDate,
+      name: "C",
+      eventHistory: [
+        {
+          type: EventType.TaskIterationStarted,
+          date: fifthDate,
+        },
+        {
+          type: EventType.ReviewedAndAccepted,
+          date: add(sixthDate, { hours: 4 }),
+        },
+      ],
+    });
+    const unitD = new TaskUnit({
+      now,
+      parentUnits: [unitC],
+      anticipatedStartDate: sixthDate,
+      anticipatedEndDate: seventhDate,
+      name: "D",
+      eventHistory: [
+        {
+          type: EventType.TaskIterationStarted,
+          date: add(sixthDate, { hours: 4 }),
+        },
+        {
+          type: EventType.ReviewedAndNeedsRebuild,
+          date: add(seventhDate, { hours: 4 }),
+        },
+        {
+          type: EventType.TaskIterationStarted,
+          date: eighthDate,
+        },
+        {
+          type: EventType.ReviewedAndNeedsMajorRevision,
+          date: ninthDate,
+        },
+      ],
+    });
+
+    const unitE = new TaskUnit({
+      now,
+      anticipatedStartDate: firstDate,
+      anticipatedEndDate: secondDate,
+      name: "E",
+      eventHistory: [
+        {
+          type: EventType.TaskIterationStarted,
+          date: firstDate,
+        },
+        {
+          type: EventType.ReviewedAndAccepted,
+          date: secondDate,
+        },
+      ],
+    });
+    const unitF = new TaskUnit({
+      now,
+      parentUnits: [unitA, unitE],
+      anticipatedStartDate: secondDate,
+      anticipatedEndDate: thirdDate,
+      name: "F",
+      eventHistory: [
         {
           type: EventType.TaskIterationStarted,
           date: thirdDate,
@@ -104,50 +136,70 @@ describe("React Integration: TaskUnitCard", function (): void {
           type: EventType.ReviewedAndAccepted,
           date: fourthDate,
         },
-      ]
-    );
-    const unitG = new TaskUnit(now, [unitF], fourthDate, fifthDate, "G", [
-      {
-        type: EventType.TaskIterationStarted,
-        date: fourthDate,
-      },
-      {
-        type: EventType.ReviewedAndAccepted,
-        date: fifthDate,
-      },
-    ]);
-    const unitH = new TaskUnit(now, [unitC, unitG], fifthDate, sixthDate, "H", [
-      {
-        type: EventType.TaskIterationStarted,
-        date: add(sixthDate, { hours: 4 }),
-      },
-      {
-        type: EventType.ReviewedAndNeedsMajorRevision,
-        date: add(seventhDate, { hours: 4 }),
-      },
-      {
-        type: EventType.ReviewedAndNeedsRebuild,
-        date: eighthDate,
-      },
-    ]);
-
-    const unitI = new TaskUnit(now, [], firstDate, secondDate, "I", [
-      {
-        type: EventType.TaskIterationStarted,
-        date: firstDate,
-      },
-      {
-        type: EventType.ReviewedAndAccepted,
-        date: secondDate,
-      },
-    ]);
-    const unitJ = new TaskUnit(
+      ],
+    });
+    const unitG = new TaskUnit({
       now,
-      [unitA, unitI],
-      secondDate,
-      thirdDate,
-      "J",
-      [
+      parentUnits: [unitF],
+      anticipatedStartDate: fourthDate,
+      anticipatedEndDate: fifthDate,
+      name: "G",
+      eventHistory: [
+        {
+          type: EventType.TaskIterationStarted,
+          date: fourthDate,
+        },
+        {
+          type: EventType.ReviewedAndAccepted,
+          date: fifthDate,
+        },
+      ],
+    });
+    const unitH = new TaskUnit({
+      now,
+      parentUnits: [unitC, unitG],
+      anticipatedStartDate: fifthDate,
+      anticipatedEndDate: sixthDate,
+      name: "H",
+      eventHistory: [
+        {
+          type: EventType.TaskIterationStarted,
+          date: add(sixthDate, { hours: 4 }),
+        },
+        {
+          type: EventType.ReviewedAndNeedsMajorRevision,
+          date: add(seventhDate, { hours: 4 }),
+        },
+        {
+          type: EventType.ReviewedAndNeedsRebuild,
+          date: eighthDate,
+        },
+      ],
+    });
+
+    const unitI = new TaskUnit({
+      now,
+      anticipatedStartDate: firstDate,
+      anticipatedEndDate: secondDate,
+      name: "I",
+      eventHistory: [
+        {
+          type: EventType.TaskIterationStarted,
+          date: firstDate,
+        },
+        {
+          type: EventType.ReviewedAndAccepted,
+          date: secondDate,
+        },
+      ],
+    });
+    const unitJ = new TaskUnit({
+      now,
+      parentUnits: [unitA, unitI],
+      anticipatedStartDate: secondDate,
+      anticipatedEndDate: thirdDate,
+      name: "J",
+      eventHistory: [
         {
           type: EventType.TaskIterationStarted,
           date: thirdDate,
@@ -156,24 +208,38 @@ describe("React Integration: TaskUnitCard", function (): void {
           type: EventType.ReviewedAndAccepted,
           date: fourthDate,
         },
-      ]
-    );
-    const unitK = new TaskUnit(now, [unitJ], fourthDate, fifthDate, "K", [
-      {
-        type: EventType.TaskIterationStarted,
-        date: fourthDate,
-      },
-      {
-        type: EventType.ReviewedAndAccepted,
-        date: fifthDate,
-      },
-    ]);
-    const unitL = new TaskUnit(now, [unitC, unitK], fifthDate, sixthDate, "L", [
-      {
-        type: EventType.TaskIterationStarted,
-        date: add(sixthDate, { hours: 4 }),
-      },
-    ]);
+      ],
+    });
+    const unitK = new TaskUnit({
+      now,
+      parentUnits: [unitJ],
+      anticipatedStartDate: fourthDate,
+      anticipatedEndDate: fifthDate,
+      name: "K",
+      eventHistory: [
+        {
+          type: EventType.TaskIterationStarted,
+          date: fourthDate,
+        },
+        {
+          type: EventType.ReviewedAndAccepted,
+          date: fifthDate,
+        },
+      ],
+    });
+    const unitL = new TaskUnit({
+      now,
+      parentUnits: [unitC, unitK],
+      anticipatedStartDate: fifthDate,
+      anticipatedEndDate: sixthDate,
+      name: "L",
+      eventHistory: [
+        {
+          type: EventType.TaskIterationStarted,
+          date: add(sixthDate, { hours: 4 }),
+        },
+      ],
+    });
 
     before(function (): void {
       const cluster = new TaskUnitCluster([unitB, unitD, unitH, unitL]);

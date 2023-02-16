@@ -8,7 +8,12 @@ describe("UnitPathMatrix", function (): void {
       const now = new Date();
       const startDate = new Date(now.getTime());
       const endDate = new Date(startDate.getTime() + 1000);
-      const unit = new TaskUnit(now, [], startDate, endDate);
+      const unit = new TaskUnit({
+        now,
+        name: "unit",
+        anticipatedStartDate: startDate,
+        anticipatedEndDate: endDate,
+      });
       unitPathMatrix = new UnitPathMatrix([unit]);
     });
     it("should throw RangeError when trying to find unit for matrix ID that doesn't exist", function (): void {

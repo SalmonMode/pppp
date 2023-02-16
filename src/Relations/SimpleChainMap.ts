@@ -1,10 +1,10 @@
 import { DependencyOrderError, NoSuchChainError } from "../errors/Error";
 import type { ConnectedResourcesSetMap, ResourceMap } from "../types";
-import type { TaskUnit } from "./";
+import type { ITaskUnit } from "../types";
 import { IsolatedDependencyChain, UnitPathMatrix } from "./";
 
 /**
- * A collection of interconnected {@link TaskUnit}s, along with helpful functions to make reasoning about them easier.
+ * A collection of interconnected {@link ITaskUnit}s, along with helpful functions to make reasoning about them easier.
  *
  * Organizing the many units in a coherent way on a graph will require some work to figure out. There needs to be an
  * orchestrating mechanism between the units and chains, and that's what this class does.
@@ -22,9 +22,9 @@ export default class SimpleChainMap {
     {};
   unitPathMatrix: UnitPathMatrix;
   private _headChains: IsolatedDependencyChain[];
-  private _heads: Set<TaskUnit>;
-  private _units: Set<TaskUnit>;
-  constructor(heads: TaskUnit[]) {
+  private _heads: Set<ITaskUnit>;
+  private _units: Set<ITaskUnit>;
+  constructor(heads: ITaskUnit[]) {
     this._heads = new Set(heads);
     this._units = this._getAllUnits();
     this.unitPathMatrix = new UnitPathMatrix([...this._units]);
@@ -34,7 +34,7 @@ export default class SimpleChainMap {
     this._buildChainConnections();
   }
 
-  get units(): TaskUnit[] {
+  get units(): ITaskUnit[] {
     return [...this._units];
   }
   /**
@@ -63,7 +63,7 @@ export default class SimpleChainMap {
    * @param heads The heads to check for interconnectivity
    * @returns true, if the heads are all interconnected somehow, false, if not
    */
-  get heads(): TaskUnit[] {
+  get heads(): ITaskUnit[] {
     return [...this._heads];
   }
   get chains(): IsolatedDependencyChain[] {
@@ -73,8 +73,8 @@ export default class SimpleChainMap {
    *
    * @returns The units that no other units are dependent on
    */
-  private _getAllUnits(): Set<TaskUnit> {
-    const allUnits = new Set<TaskUnit>();
+  private _getAllUnits(): Set<ITaskUnit> {
+    const allUnits = new Set<ITaskUnit>();
     for (const head of this.heads) {
       allUnits.add(head);
       for (const dep of head.getAllDependencies()) {
@@ -95,7 +95,7 @@ export default class SimpleChainMap {
       this._chainMap[chain.id] = chain;
     }
   }
-  getHeadUnits(): TaskUnit[] {
+  getHeadUnits(): ITaskUnit[] {
     return [...this._heads];
   }
   getHeadChains(): IsolatedDependencyChain[] {
@@ -107,7 +107,7 @@ export default class SimpleChainMap {
    */
   private _getHeadChains(): IsolatedDependencyChain[] {
     return this.getHeadUnits().map(
-      (unit: TaskUnit): IsolatedDependencyChain => this.getChainOfUnit(unit)
+      (unit: ITaskUnit): IsolatedDependencyChain => this.getChainOfUnit(unit)
     );
   }
   /**
@@ -137,8 +137,8 @@ export default class SimpleChainMap {
    * @returns true, if there is onlya straight line from the ancestorUnit to the descendentUnit, false, if not
    */
   unitIsOnlyPureLineageOfUnit(
-    descendentUnit: TaskUnit,
-    ancestorUnit: TaskUnit
+    descendentUnit: ITaskUnit,
+    ancestorUnit: ITaskUnit
   ): boolean {
     const pathsDiff =
       this.getNumberOfPathsToUnit(ancestorUnit) -
@@ -150,15 +150,15 @@ export default class SimpleChainMap {
   /**
    * Get the number of paths to the unit from all head units.
    *
-   * {@link TaskUnit}s "fork" when other {@link TaskUnit}s are dependent on them. "Heads" are the {@link TaskUnit}s that
-   * no other {@link TaskUnit} depends on. This follows those forks from the heads and all their dependencies to the
-   * target unit, and counts the number of possible ways one could navigate to the target unit.
+   * {@link ITaskUnit}s "fork" when other {@link ITaskUnit}s are dependent on them. "Heads" are the {@link ITaskUnit}s
+   * that no other {@link ITaskUnit} depends on. This follows those forks from the heads and all their dependencies to
+   * the target unit, and counts the number of possible ways one could navigate to the target unit.
    *
    * A 1 is hardcoded for head units, because no heads lead to them, so this would result in a 0 otherwise, which would
    * be misleading.
    *
-   * This may seem expensive, but the values are cached by the {@link TaskUnit}s themselves when they're instantiated by
-   * marking 1 path to their direct dependencies and then for each of those direct dependencies, putting together the
+   * This may seem expensive, but the values are cached by the {@link ITaskUnit}s themselves when they're instantiated
+   * by marking 1 path to their direct dependencies and then for each of those direct dependencies, putting together the
    * paths each of them had to all of their dependencies. They can do this, because dependencies need to be instantiated
    * before the units that depend on them.
    *
@@ -201,12 +201,12 @@ export default class SimpleChainMap {
    * @param unit The unit to find the number of paths to
    * @returns how many paths there are to the unit from all heads
    */
-  getNumberOfPathsToUnit(unit: TaskUnit): number {
+  getNumberOfPathsToUnit(unit: ITaskUnit): number {
     if (this._heads.has(unit)) {
       return 1;
     }
     return [...this._heads].reduce<number>(
-      (sum: number, head: TaskUnit): number =>
+      (sum: number, head: ITaskUnit): number =>
         sum + head.getNumberOfPathsToDependency(unit),
       0
     );
@@ -218,9 +218,9 @@ export default class SimpleChainMap {
    * @param discoveringUnit The unit just before the possible tail (used for determining purity of lineage)
    */
   private _buildForklessChains(
-    possibleTail: TaskUnit,
-    bufferedChainSoFar: TaskUnit[],
-    discoveringUnit?: TaskUnit
+    possibleTail: ITaskUnit,
+    bufferedChainSoFar: ITaskUnit[],
+    discoveringUnit?: ITaskUnit
   ): void {
     const alreadyProcessedPossibleTail =
       !!this._unitToChainMap[possibleTail.id];
@@ -308,7 +308,7 @@ export default class SimpleChainMap {
       // went on for at least one unit prior to the possibleTail, or the possibleTail is a standalone head with no
       // dependencies and no units that are dependent on it.
       const bufferedChain = new IsolatedDependencyChain(bufferedChainSoFar);
-      bufferedChainSoFar.forEach((unit: TaskUnit): void => {
+      bufferedChainSoFar.forEach((unit: ITaskUnit): void => {
         this._unitToChainMap[unit.id] = bufferedChain;
       });
     }
@@ -334,7 +334,7 @@ export default class SimpleChainMap {
    * @param unit The unit to get the chain for
    * @returns the chain that the passed unit is a part of
    */
-  getChainOfUnit(unit: TaskUnit): IsolatedDependencyChain {
+  getChainOfUnit(unit: ITaskUnit): IsolatedDependencyChain {
     const chain = this._unitToChainMap[unit.id];
     if (chain === undefined) {
       throw new NoSuchChainError(`No chain found for unit with ID: ${unit.id}`);
@@ -354,7 +354,7 @@ export default class SimpleChainMap {
     const allDependencyUnits = chain.lastUnit.getAllDependencies();
     return new Set<IsolatedDependencyChain>(
       [...allDependencyUnits].map(
-        (unit: TaskUnit): IsolatedDependencyChain => this.getChainOfUnit(unit)
+        (unit: ITaskUnit): IsolatedDependencyChain => this.getChainOfUnit(unit)
       )
     );
   }
@@ -368,7 +368,7 @@ export default class SimpleChainMap {
   ): Set<IsolatedDependencyChain> {
     return new Set(
       [...chain.lastUnit.directDependencies].map(
-        (unit: TaskUnit): IsolatedDependencyChain => this.getChainOfUnit(unit)
+        (unit: ITaskUnit): IsolatedDependencyChain => this.getChainOfUnit(unit)
       )
     );
   }

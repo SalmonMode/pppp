@@ -2,7 +2,8 @@ import { v4 as uuidv4 } from "uuid";
 import { NoSuchChainPathError } from "../errors/Error";
 import { assertIsObject } from "primitive-predicates";
 import type { ResourceMap } from "../types";
-import type { ChainPath, IsolatedDependencyChain, TaskUnit } from "./";
+import type { ChainPath, IsolatedDependencyChain } from "./";
+import type { ITaskUnit } from "../types";
 import {
   ChainStrainMap,
   SimpleChainMap,
@@ -12,7 +13,7 @@ import {
 } from "./";
 
 /**
- * A collection of interconnected {@link TaskUnit}s, along with helpful functions to make reasoning about them easier.
+ * A collection of interconnected {@link ITaskUnit}s, along with helpful functions to make reasoning about them easier.
  *
  * Organizing the many units in a coherent way on a graph will require some work to figure out. There needs to be an
  * orchestrating mechanism between the units and chains, and that's what this class does.
@@ -32,7 +33,7 @@ export default class TaskUnitCluster {
   private _simplePathMap: SimpleChainPathMap;
   stressTracker: StressTracker;
   stressManager: StressManager;
-  constructor(public readonly heads: TaskUnit[]) {
+  constructor(public readonly heads: ITaskUnit[]) {
     this.id = uuidv4();
     this.chainMap = new SimpleChainMap(heads);
     this.strainMap = new ChainStrainMap(this.chainMap);
@@ -81,8 +82,8 @@ export default class TaskUnitCluster {
   getHeadsWithoutChains(
     unavailableChains: IsolatedDependencyChain[]
   ): IsolatedDependencyChain[] {
-    const unavailableUnits: TaskUnit[] = unavailableChains.reduce<TaskUnit[]>(
-      (acc: TaskUnit[], chain: IsolatedDependencyChain): TaskUnit[] => {
+    const unavailableUnits: ITaskUnit[] = unavailableChains.reduce<ITaskUnit[]>(
+      (acc: ITaskUnit[], chain: IsolatedDependencyChain): ITaskUnit[] => {
         return [...acc, ...chain.units];
       },
       []
@@ -92,7 +93,7 @@ export default class TaskUnitCluster {
         unavailableUnits
       );
     const headChains = headUnits.map(
-      (unit: TaskUnit): IsolatedDependencyChain =>
+      (unit: ITaskUnit): IsolatedDependencyChain =>
         this.strainMap.chainMap.getChainOfUnit(unit)
     );
     return headChains;

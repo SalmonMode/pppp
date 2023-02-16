@@ -23,7 +23,12 @@ describe("IsolatedDependencyChain", function (): void {
     let unit: TaskUnit;
     let chain: IsolatedDependencyChain;
     before(function (): void {
-      unit = new TaskUnit(now, [], firstDate, secondDate);
+      unit = new TaskUnit({
+        now,
+        name: "unit",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
       chain = new IsolatedDependencyChain([unit]);
     });
     it("should have same presence as its unit", function (): void {
@@ -56,8 +61,19 @@ describe("IsolatedDependencyChain", function (): void {
     let unitB: TaskUnit;
     let chain: IsolatedDependencyChain;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
       chain = new IsolatedDependencyChain([unitB, unitA]);
     });
     it("should have same presence as its units", function (): void {
@@ -96,9 +112,26 @@ describe("IsolatedDependencyChain", function (): void {
     let unitC: TaskUnit;
     let chain: IsolatedDependencyChain;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [unitA], secondDate, thirdDate);
-      unitC = new TaskUnit(now, [unitB], thirdDate, fourthDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        parentUnits: [unitB],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
       chain = new IsolatedDependencyChain([unitC, unitB, unitA]);
     });
     it("should have same presence as its units", function (): void {
@@ -140,12 +173,47 @@ describe("IsolatedDependencyChain", function (): void {
     let unitF: TaskUnit;
     let chain: IsolatedDependencyChain;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
-      unitC = new TaskUnit(now, [unitA], thirdDate, fourthDate);
-      unitD = new TaskUnit(now, [unitB, unitC], fifthDate, sixthDate);
-      unitE = new TaskUnit(now, [unitD], seventhDate, eighthDate);
-      unitF = new TaskUnit(now, [unitE], eighthDate, ninthDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        parentUnits: [unitA],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        parentUnits: [unitA],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
+      unitD = new TaskUnit({
+        now,
+        name: "D",
+        parentUnits: [unitB, unitC],
+        anticipatedStartDate: fifthDate,
+        anticipatedEndDate: sixthDate,
+      });
+      unitE = new TaskUnit({
+        now,
+        name: "E",
+        parentUnits: [unitD],
+        anticipatedStartDate: seventhDate,
+        anticipatedEndDate: eighthDate,
+      });
+      unitF = new TaskUnit({
+        now,
+        name: "F",
+        parentUnits: [unitE],
+        anticipatedStartDate: eighthDate,
+        anticipatedEndDate: ninthDate,
+      });
       chain = new IsolatedDependencyChain([unitF, unitE]);
     });
     it("should have same presence as its units", function (): void {
@@ -230,8 +298,19 @@ describe("IsolatedDependencyChain", function (): void {
     let unitB: TaskUnit;
     let chain: IsolatedDependencyChain;
     before(function (): void {
-      unitA = new TaskUnit(now, [], firstDate, secondDate);
-      unitB = new TaskUnit(now, [unitA], thirdDate, fourthDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        parentUnits: [unitA],
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+      });
       chain = new IsolatedDependencyChain([unitB, unitA]);
     });
     it("should have same presence as its units", function (): void {
@@ -271,8 +350,19 @@ describe("IsolatedDependencyChain", function (): void {
     before(function (): void {
       // Pretending A should've only taken 1000 ms, but actually took 2000
       // Even though B took 1000 ms once started, we're pretending it got delayed by 1000 ms because of A.
-      unitA = new TaskUnit(now, [], firstDate, thirdDate);
-      unitB = new TaskUnit(now, [unitA], secondDate, fourthDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: fourthDate,
+      });
       chain = new IsolatedDependencyChain([unitB, unitA]);
     });
     it("should have same presence as its units", function (): void {
@@ -310,8 +400,19 @@ describe("IsolatedDependencyChain", function (): void {
     before(function (): void {
       // Pretending A should've only taken 1000 ms, but actually took 2000
       // Even though B took 1000 ms once started, we're pretending it got delayed by 1000 ms because of A.
-      unitA = new TaskUnit(now, [], firstDate, thirdDate);
-      unitB = new TaskUnit(now, [unitA], secondDate, fourthDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        parentUnits: [unitA],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: fourthDate,
+      });
     });
     it("should throw DependencyOrderError", function (): void {
       expect(() => new IsolatedDependencyChain([unitA, unitB])).to.throw(
@@ -325,8 +426,18 @@ describe("IsolatedDependencyChain", function (): void {
     before(function (): void {
       // Pretending A should've only taken 1000 ms, but actually took 2000
       // Even though B took 1000 ms once started, we're pretending it got delayed by 1000 ms because of A.
-      unitA = new TaskUnit(now, [], firstDate, thirdDate);
-      unitB = new TaskUnit(now, [], secondDate, fourthDate);
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: thirdDate,
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: fourthDate,
+      });
     });
     it("should throw DependencyOrderError", function (): void {
       expect(() => new IsolatedDependencyChain([unitB, unitA])).to.throw(

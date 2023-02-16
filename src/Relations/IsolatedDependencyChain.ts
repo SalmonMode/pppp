@@ -1,18 +1,18 @@
 import { v4 as uuidv4 } from "uuid";
 import { DependencyOrderError } from "../errors/Error";
-import type { TaskUnit } from "./";
+import type { ITaskUnit } from "../types";
 
 /**
- * A set of {@link TaskUnit}s that comprise a single "chain", i.e., one that will be positioned on the graph as a row.
+ * A set of {@link ITaskUnit}s that comprise a single "chain", i.e., one that will be positioned on the graph as a row.
  *
- * In order to make visualizing the dependencies coherent and as organized as possible, the {@link TaskUnit}s must first
- * be broken apart into "isolated" rows that can show a linear dependency between each other. Because there will be
- * issues with this, given that each {@link TaskUnit} can have multiple dependencies, there must be some way to decide
- * how to break things up. The method chosen is to focus on "visual density", with more dense chains being given
+ * In order to make visualizing the dependencies coherent and as organized as possible, the {@link ITaskUnit}s must
+ * first be broken apart into "isolated" rows that can show a linear dependency between each other. Because there will
+ * be issues with this, given that each {@link ITaskUnit} can have multiple dependencies, there must be some way to
+ * decide how to break things up. The method chosen is to focus on "visual density", with more dense chains being given
  * priority for maintaining their linear sequence.
  *
- * "Chains" are the path from a "head" to the end of a "tail". Heads are {@link TaskUnit}s that either no other
- * {@link TaskUnit} is dependent on, or the ones that depend on it are already used in other chains, making them
+ * "Chains" are the path from a "head" to the end of a "tail". Heads are {@link ITaskUnit}s that either no other
+ * {@link ITaskUnit} is dependent on, or the ones that depend on it are already used in other chains, making them
  * "unavailable". The ends of tails are the furthest possible task unit in the chain of dependencies that either has no
  * other dependencies, or it is dependent on only units that are already used in other chains.
  *
@@ -42,19 +42,19 @@ import type { TaskUnit } from "./";
 export default class IsolatedDependencyChain {
   public readonly id: string;
   private _chainAnticipatedStartDate: Date;
-  private _head: TaskUnit;
-  private _tail: TaskUnit[];
-  private _lastUnit: TaskUnit;
+  private _head: ITaskUnit;
+  private _tail: ITaskUnit[];
+  private _lastUnit: ITaskUnit;
   private _chainTotalTime: number;
   private _chainPresenceTime: number;
-  private _externalDependencies: Set<TaskUnit>;
-  constructor(public readonly units: TaskUnit[]) {
+  private _externalDependencies: Set<ITaskUnit>;
+  constructor(public readonly units: ITaskUnit[]) {
     this.id = uuidv4();
     this._verifyUnitsAreUnbrokenChain();
     const copyOfUnits = [...this.units];
     const unit = copyOfUnits.shift();
     if (unit === undefined) {
-      throw new RangeError("Must provide at least 1 TaskUnit");
+      throw new RangeError("Must provide at least 1 ITaskUnit");
     }
     this._head = unit;
     this._tail = copyOfUnits;
@@ -64,17 +64,17 @@ export default class IsolatedDependencyChain {
     this._chainTotalTime =
       this.endDate.getTime() - this.anticipatedStartDate.getTime();
     this._chainPresenceTime = this.units.reduce<number>(
-      (sum: number, curr: TaskUnit): number => sum + curr.presenceTime,
+      (sum: number, curr: ITaskUnit): number => sum + curr.presenceTime,
       0
     );
     this._externalDependencies = this._getExternalDependencies();
   }
   /**
-   * The latest {@link TaskUnit} in the chain.
+   * The latest {@link ITaskUnit} in the chain.
    *
    * Where the chain ends, is where this unit ends as well. This unit depends on all other units in this chain.
    */
-  get head(): TaskUnit {
+  get head(): ITaskUnit {
     return this._head;
   }
   /**
@@ -104,7 +104,7 @@ export default class IsolatedDependencyChain {
     return this.head.apparentEndDate;
   }
   /**
-   * The earliest point in time for this chain of {@link TaskUnit}s that has presence.
+   * The earliest point in time for this chain of {@link ITaskUnit}s that has presence.
    */
   get anticipatedStartDate(): Date {
     return this._chainAnticipatedStartDate;
@@ -163,7 +163,7 @@ export default class IsolatedDependencyChain {
     return this.presenceTime / this.timeSpan;
   }
   /**
-   * All the {@link TaskUnit}s not in this chain that the units in this chain are directly dependent on.
+   * All the {@link ITaskUnit}s not in this chain that the units in this chain are directly dependent on.
    *
    * For example, given the following chains:
    *
@@ -180,8 +180,8 @@ export default class IsolatedDependencyChain {
    *
    * This is only used in the constructor to get a cached version of this set.
    */
-  private _getExternalDependencies(): Set<TaskUnit> {
-    const dependencies: Set<TaskUnit> = new Set<TaskUnit>();
+  private _getExternalDependencies(): Set<ITaskUnit> {
+    const dependencies: Set<ITaskUnit> = new Set<ITaskUnit>();
     for (const unit of this.units) {
       const unitParents = unit.directDependencies;
       for (const parentalUnit of unitParents) {
@@ -193,7 +193,7 @@ export default class IsolatedDependencyChain {
     return dependencies;
   }
   /**
-   * All the {@link TaskUnit}s not in this chain that the units in this chain are directly dependent on.
+   * All the {@link ITaskUnit}s not in this chain that the units in this chain are directly dependent on.
    *
    * For example, given the following chains:
    *
@@ -208,10 +208,10 @@ export default class IsolatedDependencyChain {
    * Chain 3 is dependent on `C`. It's also connected to Chain 2 through `D`'s dependency on H, but the list of external
    * dependencies for Chain 3 would only include `C`.
    */
-  getExternalDependencies(): Set<TaskUnit> {
+  getExternalDependencies(): Set<ITaskUnit> {
     return this._externalDependencies;
   }
-  get lastUnit(): TaskUnit {
+  get lastUnit(): ITaskUnit {
     return this._lastUnit;
   }
   get attachmentToDependencies(): number {
@@ -229,7 +229,7 @@ export default class IsolatedDependencyChain {
   isDirectlyDependentOn(chain: IsolatedDependencyChain): boolean {
     return this.unitsDirectlyDependentOn.has(chain.head);
   }
-  get unitsDirectlyDependentOn(): Set<TaskUnit> {
+  get unitsDirectlyDependentOn(): Set<ITaskUnit> {
     return this.lastUnit.directDependencies;
   }
 }
