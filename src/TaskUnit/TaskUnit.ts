@@ -147,8 +147,8 @@ export default class TaskUnit implements ITaskUnit {
     const now = new Date();
     this.explicitEventHistory.forEach(
       (event: TaskEvent, index: number): void => {
-        // Don't check the next event if it can be helped, because if there is a next event, it'll have its turn to check
-        // previous events, and that presents much narrower criteria to check.
+        // Don't check the next event if it can be helped, because if there is a next event, it'll have its turn to
+        // check previous events, and that presents much narrower criteria to check.
         const prevEvent = this.explicitEventHistory[index - 1];
         if (prevEvent) {
           // Make sure the dates are in order.
@@ -170,7 +170,8 @@ export default class TaskUnit implements ITaskUnit {
             ) {
               // This task was supposedly started without having the necessary prerequisites.
               throw new EventHistoryInvalidError(
-                `The prerequisites iteration (${event.prerequisitesVersion}) specified by the TaskIterationStarted event could not be found.`
+                `The prerequisites iteration (${event.prerequisitesVersion}) specified by the TaskIterationStarted ` +
+                  `event could not be found.`
               );
             }
             if (prevEvent) {
@@ -184,8 +185,8 @@ export default class TaskUnit implements ITaskUnit {
                 // the task has started again, so it's all good.
               }
             } else {
-              // Nothing was before this event, so it's all good, since this means the task has only started for the first
-              // time.
+              // Nothing was before this event, so it's all good, since this means the task has only started for the
+              // first time.
             }
             break;
           case EventType.MinorRevisionComplete:
@@ -196,8 +197,8 @@ export default class TaskUnit implements ITaskUnit {
                 break;
               }
             }
-            // There either was no previous event, or the previous event was not a ReviewedAndNeedsMinorRevision event, so
-            // a MinorRevisionComplete event here doesn't make any sense.
+            // There either was no previous event, or the previous event was not a ReviewedAndNeedsMinorRevision event,
+            // so a MinorRevisionComplete event here doesn't make any sense.
             throw new EventHistoryInvalidError(
               "MinorRevisionComplete event can only be after a ReviewedAndNeedsMinorRevision event."
             );
@@ -211,8 +212,8 @@ export default class TaskUnit implements ITaskUnit {
                 prevEvent.type === EventType.ReviewedAndNeedsMajorRevision ||
                 prevEvent.type === EventType.TaskIterationStarted
               ) {
-                // The previous event was either a TaskIterationStarted or ReviewedAndNeedsMajorRevision event, so this is
-                // all good.
+                // The previous event was either a TaskIterationStarted or ReviewedAndNeedsMajorRevision event, so this
+                // is all good.
                 break;
               }
             }

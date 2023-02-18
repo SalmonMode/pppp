@@ -1343,268 +1343,304 @@ describe("TaskUnit", function (): void {
         ).to.not.throw(Error);
       });
     });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, ReviewedAndNeedsMajorRevision", function (): void {
-      it("should not throw Error", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMajorRevision,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMajorRevision,
-                  date: thirdDate,
-                },
-              ],
-            })
-        ).to.not.throw(Error);
-      });
-    });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, ReviewedAndNeedsMinorRevision", function (): void {
-      it("should not throw Error", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMajorRevision,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMinorRevision,
-                  date: thirdDate,
-                },
-              ],
-            })
-        ).to.not.throw(Error);
-      });
-    });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, ReviewedAndNeedsRebuild", function (): void {
-      it("should not throw Error", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMajorRevision,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsRebuild,
-                  date: thirdDate,
-                },
-              ],
-            })
-        ).to.not.throw(Error);
-      });
-    });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, TaskIterationStarted", function (): void {
-      it("should throw EventHistoryInvalidError", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMajorRevision,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: thirdDate,
-                  prerequisitesVersion: 0,
-                },
-              ],
-            })
-        ).to.throw(EventHistoryInvalidError);
-      });
-    });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, MinorRevisionComplete", function (): void {
-      it("should throw EventHistoryInvalidError", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMajorRevision,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.MinorRevisionComplete,
-                  date: thirdDate,
-                },
-              ],
-            })
-        ).to.throw(EventHistoryInvalidError);
-      });
-    });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete", function (): void {
-      it("should not throw Error", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMinorRevision,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.MinorRevisionComplete,
-                  date: thirdDate,
-                },
-              ],
-            })
-        ).to.not.throw(Error);
-      });
-    });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, ReviewedAndNeedsMinorRevision", function (): void {
-      it("should throw EventHistoryInvalidError", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMinorRevision,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMinorRevision,
-                  date: thirdDate,
-                },
-              ],
-            })
-        ).to.throw(EventHistoryInvalidError);
-      });
-    });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, ReviewedAndNeedsMajorRevision", function (): void {
-      it("should throw EventHistoryInvalidError", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMinorRevision,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMajorRevision,
-                  date: thirdDate,
-                },
-              ],
-            })
-        ).to.throw(EventHistoryInvalidError);
-      });
-    });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, ReviewedAndNeedsRebuild", function (): void {
-      it("should throw EventHistoryInvalidError", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMinorRevision,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsRebuild,
-                  date: thirdDate,
-                },
-              ],
-            })
-        ).to.throw(EventHistoryInvalidError);
-      });
-    });
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, " +
+        "ReviewedAndNeedsMajorRevision",
+      function (): void {
+        it("should not throw Error", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMajorRevision,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMajorRevision,
+                    date: thirdDate,
+                  },
+                ],
+              })
+          ).to.not.throw(Error);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, " +
+        "ReviewedAndNeedsMinorRevision",
+      function (): void {
+        it("should not throw Error", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMajorRevision,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMinorRevision,
+                    date: thirdDate,
+                  },
+                ],
+              })
+          ).to.not.throw(Error);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, " +
+        "ReviewedAndNeedsRebuild",
+      function (): void {
+        it("should not throw Error", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMajorRevision,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsRebuild,
+                    date: thirdDate,
+                  },
+                ],
+              })
+          ).to.not.throw(Error);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, " +
+        "TaskIterationStarted",
+      function (): void {
+        it("should throw EventHistoryInvalidError", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMajorRevision,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: thirdDate,
+                    prerequisitesVersion: 0,
+                  },
+                ],
+              })
+          ).to.throw(EventHistoryInvalidError);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsMajorRevision, " +
+        "MinorRevisionComplete",
+      function (): void {
+        it("should throw EventHistoryInvalidError", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMajorRevision,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.MinorRevisionComplete,
+                    date: thirdDate,
+                  },
+                ],
+              })
+          ).to.throw(EventHistoryInvalidError);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, " +
+        "MinorRevisionComplete",
+      function (): void {
+        it("should not throw Error", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMinorRevision,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.MinorRevisionComplete,
+                    date: thirdDate,
+                  },
+                ],
+              })
+          ).to.not.throw(Error);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, " +
+        "ReviewedAndNeedsMinorRevision",
+      function (): void {
+        it("should throw EventHistoryInvalidError", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMinorRevision,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMinorRevision,
+                    date: thirdDate,
+                  },
+                ],
+              })
+          ).to.throw(EventHistoryInvalidError);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, " +
+        "ReviewedAndNeedsMajorRevision",
+      function (): void {
+        it("should throw EventHistoryInvalidError", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMinorRevision,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMajorRevision,
+                    date: thirdDate,
+                  },
+                ],
+              })
+          ).to.throw(EventHistoryInvalidError);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, " +
+        "ReviewedAndNeedsRebuild",
+      function (): void {
+        it("should throw EventHistoryInvalidError", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMinorRevision,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsRebuild,
+                    date: thirdDate,
+                  },
+                ],
+              })
+          ).to.throw(EventHistoryInvalidError);
+        });
+      }
+    );
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, ReviewedAndAccepted", function (): void {
       it("should throw EventHistoryInvalidError", function (): void {
         expect(
@@ -1634,96 +1670,108 @@ describe("TaskUnit", function (): void {
         ).to.throw(EventHistoryInvalidError);
       });
     });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, TaskIterationStarted", function (): void {
-      it("should throw EventHistoryInvalidError", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMinorRevision,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: thirdDate,
-                  prerequisitesVersion: 0,
-                },
-              ],
-            })
-        ).to.throw(EventHistoryInvalidError);
-      });
-    });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, TaskIterationStarted With Sufficient Prerequisites Iterations", function (): void {
-      it("should throw EventHistoryInvalidError", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }, { id: "4567" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsRebuild,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: thirdDate,
-                  prerequisitesVersion: 0,
-                },
-              ],
-            })
-        ).to.not.throw(Error);
-      });
-    });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, TaskIterationStarted Without Available Second Prereq Iteration", function (): void {
-      it("should throw EventHistoryInvalidError", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsRebuild,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: thirdDate,
-                  prerequisitesVersion: 1,
-                },
-              ],
-            })
-        ).to.throw(EventHistoryInvalidError);
-      });
-    });
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, " +
+        "TaskIterationStarted",
+      function (): void {
+        it("should throw EventHistoryInvalidError", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMinorRevision,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: thirdDate,
+                    prerequisitesVersion: 0,
+                  },
+                ],
+              })
+          ).to.throw(EventHistoryInvalidError);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, " +
+        "TaskIterationStarted With Sufficient Prerequisites Iterations",
+      function (): void {
+        it("should throw EventHistoryInvalidError", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }, { id: "4567" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsRebuild,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: thirdDate,
+                    prerequisitesVersion: 0,
+                  },
+                ],
+              })
+          ).to.not.throw(Error);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, " +
+        "TaskIterationStarted Without Available Second Prereq Iteration",
+      function (): void {
+        it("should throw EventHistoryInvalidError", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsRebuild,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: thirdDate,
+                    prerequisitesVersion: 1,
+                  },
+                ],
+              })
+          ).to.throw(EventHistoryInvalidError);
+        });
+      }
+    );
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, MinorRevisionComplete", function (): void {
       it("should throw EventHistoryInvalidError", function (): void {
         expect(
@@ -1753,64 +1801,72 @@ describe("TaskUnit", function (): void {
         ).to.throw(EventHistoryInvalidError);
       });
     });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, ReviewedAndNeedsMinorRevision", function (): void {
-      it("should throw EventHistoryInvalidError", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsRebuild,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMinorRevision,
-                  date: thirdDate,
-                },
-              ],
-            })
-        ).to.throw(EventHistoryInvalidError);
-      });
-    });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, ReviewedAndNeedsMajorRevision", function (): void {
-      it("should throw EventHistoryInvalidError", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsRebuild,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMajorRevision,
-                  date: thirdDate,
-                },
-              ],
-            })
-        ).to.throw(EventHistoryInvalidError);
-      });
-    });
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, " +
+        "ReviewedAndNeedsMinorRevision",
+      function (): void {
+        it("should throw EventHistoryInvalidError", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsRebuild,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMinorRevision,
+                    date: thirdDate,
+                  },
+                ],
+              })
+          ).to.throw(EventHistoryInvalidError);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, " +
+        "ReviewedAndNeedsMajorRevision",
+      function (): void {
+        it("should throw EventHistoryInvalidError", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsRebuild,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMajorRevision,
+                    date: thirdDate,
+                  },
+                ],
+              })
+          ).to.throw(EventHistoryInvalidError);
+        });
+      }
+    );
     describe("Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, ReviewedAndNeedsRebuild", function (): void {
       it("should throw EventHistoryInvalidError", function (): void {
         expect(
@@ -2044,205 +2100,229 @@ describe("TaskUnit", function (): void {
         ).to.throw(EventHistoryInvalidError);
       });
     });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, ReviewedAndAccepted", function (): void {
-      it("should throw EventHistoryInvalidError", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMinorRevision,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.MinorRevisionComplete,
-                  date: thirdDate,
-                },
-                {
-                  type: EventType.ReviewedAndAccepted,
-                  date: fourthDate,
-                },
-              ],
-            })
-        ).to.throw(EventHistoryInvalidError);
-      });
-    });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, MinorRevisionComplete", function (): void {
-      it("should throw EventHistoryInvalidError", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMinorRevision,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.MinorRevisionComplete,
-                  date: thirdDate,
-                },
-                {
-                  type: EventType.MinorRevisionComplete,
-                  date: fourthDate,
-                },
-              ],
-            })
-        ).to.throw(EventHistoryInvalidError);
-      });
-    });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, ReviewedAndNeedsMajorRevision", function (): void {
-      it("should throw EventHistoryInvalidError", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMinorRevision,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.MinorRevisionComplete,
-                  date: thirdDate,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMajorRevision,
-                  date: fourthDate,
-                },
-              ],
-            })
-        ).to.throw(EventHistoryInvalidError);
-      });
-    });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, ReviewedAndNeedsMinorRevision", function (): void {
-      it("should throw EventHistoryInvalidError", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMinorRevision,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.MinorRevisionComplete,
-                  date: thirdDate,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMinorRevision,
-                  date: fourthDate,
-                },
-              ],
-            })
-        ).to.throw(EventHistoryInvalidError);
-      });
-    });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, ReviewedAndNeedsRebuild", function (): void {
-      it("should throw EventHistoryInvalidError", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMinorRevision,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.MinorRevisionComplete,
-                  date: thirdDate,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsRebuild,
-                  date: fourthDate,
-                },
-              ],
-            })
-        ).to.throw(EventHistoryInvalidError);
-      });
-    });
-    describe("Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, MinorRevisionComplete, TaskIterationStarted", function (): void {
-      it("should throw EventHistoryInvalidError", function (): void {
-        expect(
-          () =>
-            new TaskUnit({
-              now,
-              prerequisitesIterations: [{ id: "1234" }],
-              name: "unit",
-              anticipatedStartDate: firstDate,
-              anticipatedEndDate: secondDate,
-              eventHistory: [
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: firstDate,
-                  prerequisitesVersion: 0,
-                },
-                {
-                  type: EventType.ReviewedAndNeedsMinorRevision,
-                  date: secondDate,
-                },
-                {
-                  type: EventType.MinorRevisionComplete,
-                  date: thirdDate,
-                },
-                {
-                  type: EventType.TaskIterationStarted,
-                  date: fourthDate,
-                  prerequisitesVersion: 0,
-                },
-              ],
-            })
-        ).to.throw(EventHistoryInvalidError);
-      });
-    });
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, " +
+        "MinorRevisionComplete, ReviewedAndAccepted",
+      function (): void {
+        it("should throw EventHistoryInvalidError", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMinorRevision,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.MinorRevisionComplete,
+                    date: thirdDate,
+                  },
+                  {
+                    type: EventType.ReviewedAndAccepted,
+                    date: fourthDate,
+                  },
+                ],
+              })
+          ).to.throw(EventHistoryInvalidError);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, " +
+        "MinorRevisionComplete, MinorRevisionComplete",
+      function (): void {
+        it("should throw EventHistoryInvalidError", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMinorRevision,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.MinorRevisionComplete,
+                    date: thirdDate,
+                  },
+                  {
+                    type: EventType.MinorRevisionComplete,
+                    date: fourthDate,
+                  },
+                ],
+              })
+          ).to.throw(EventHistoryInvalidError);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, " +
+        "MinorRevisionComplete, ReviewedAndNeedsMajorRevision",
+      function (): void {
+        it("should throw EventHistoryInvalidError", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMinorRevision,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.MinorRevisionComplete,
+                    date: thirdDate,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMajorRevision,
+                    date: fourthDate,
+                  },
+                ],
+              })
+          ).to.throw(EventHistoryInvalidError);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, " +
+        "MinorRevisionComplete, ReviewedAndNeedsMinorRevision",
+      function (): void {
+        it("should throw EventHistoryInvalidError", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMinorRevision,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.MinorRevisionComplete,
+                    date: thirdDate,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMinorRevision,
+                    date: fourthDate,
+                  },
+                ],
+              })
+          ).to.throw(EventHistoryInvalidError);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, " +
+        "MinorRevisionComplete, ReviewedAndNeedsRebuild",
+      function (): void {
+        it("should throw EventHistoryInvalidError", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMinorRevision,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.MinorRevisionComplete,
+                    date: thirdDate,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsRebuild,
+                    date: fourthDate,
+                  },
+                ],
+              })
+          ).to.throw(EventHistoryInvalidError);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsMinorRevision, " +
+        "MinorRevisionComplete, TaskIterationStarted",
+      function (): void {
+        it("should throw EventHistoryInvalidError", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [{ id: "1234" }],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsMinorRevision,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.MinorRevisionComplete,
+                    date: thirdDate,
+                  },
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: fourthDate,
+                    prerequisitesVersion: 0,
+                  },
+                ],
+              })
+          ).to.throw(EventHistoryInvalidError);
+        });
+      }
+    );
   });
   describe("Complex Interconnections", function (): void {
     /**

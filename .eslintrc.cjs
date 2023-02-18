@@ -7,6 +7,7 @@ module.exports = {
     node: true,
   },
   rules: {
+    "max-len": ["error", {code: 120}],
     "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "@typescript-eslint/explicit-function-return-type": "error"
   }

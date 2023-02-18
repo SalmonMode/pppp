@@ -266,8 +266,8 @@ describe("React Integration: TaskUnitCard", function (): void {
     describe("Cards", function (): void {
       describe("Standard Cards", function (): void {
         /**
-         * Units with a simple history. These only have 2 events: TaskIterationStarted, and ReviewedAndAccepted. As such,
-         * their test structures are identical.
+         * Units with a simple history. These only have 2 events: TaskIterationStarted, and ReviewedAndAccepted. As
+         * such, their test structures are identical.
          */
         const standardUnits = [
           unitA,
@@ -358,75 +358,91 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be first child", function (): void {
             expect(firstIterationIndex).to.equal(0);
           });
-          it("should have width according to actual duration of first iteration minus one border width", function (): void {
-            const reviewEvent = relevantUnit.explicitEventHistory[0];
-            const startedEvent = relevantUnit.explicitEventHistory[1];
-            assertIsObject(reviewEvent);
-            assertIsObject(startedEvent);
-            expect(
-              Number(firstIterationWrapperComputedStyles.width.slice(0, -2))
-            ).to.equal(
-              getPixelGapBetweenTimes(
-                startedEvent.date.getTime(),
-                reviewEvent.date.getTime()
-              ) - theme.borderWidth
-            );
-          });
-          it("should have static, minor review, and prereq included class name and not the other variant names", function (): void {
-            expect(firstIterationClassNames)
-              .to.contain.members([
-                "staticTaskBox",
-                "prereqsBoxIncluded",
-                "prereqsAccepted",
-                "needsMinorRevisionReview",
-              ])
-              .and.not.to.contain.members([
-                "activeTaskBox",
-                "prereqsBoxNotIncluded",
-                "prereqsPending",
-                "pendingReview",
-                "acceptedReview",
-                "needsMajorRevisionReview",
-                "needsRebuildReview",
-              ]);
-          });
+          it(
+            "should have width according to actual duration of first iteration minus one border " +
+              "width",
+            function (): void {
+              const reviewEvent = relevantUnit.explicitEventHistory[0];
+              const startedEvent = relevantUnit.explicitEventHistory[1];
+              assertIsObject(reviewEvent);
+              assertIsObject(startedEvent);
+              expect(
+                Number(firstIterationWrapperComputedStyles.width.slice(0, -2))
+              ).to.equal(
+                getPixelGapBetweenTimes(
+                  startedEvent.date.getTime(),
+                  reviewEvent.date.getTime()
+                ) - theme.borderWidth
+              );
+            }
+          );
+          it(
+            "should have static, minor review, and prereq included class name and not the other variant " +
+              "names",
+            function (): void {
+              expect(firstIterationClassNames)
+                .to.contain.members([
+                  "staticTaskBox",
+                  "prereqsBoxIncluded",
+                  "prereqsAccepted",
+                  "needsMinorRevisionReview",
+                ])
+                .and.not.to.contain.members([
+                  "activeTaskBox",
+                  "prereqsBoxNotIncluded",
+                  "prereqsPending",
+                  "pendingReview",
+                  "acceptedReview",
+                  "needsMajorRevisionReview",
+                  "needsRebuildReview",
+                ]);
+            }
+          );
         });
         describe("Second Iteration", function (): void {
           it("should be second child", function (): void {
             expect(secondIterationIndex).to.equal(1);
           });
-          it("should have width according to actual duration of second iteration minus one border width", function (): void {
-            const reviewEvent = relevantUnit.explicitEventHistory[1];
-            const startedEvent = relevantUnit.explicitEventHistory[2];
-            assertIsObject(reviewEvent);
-            assertIsObject(startedEvent);
-            expect(
-              Number(secondIterationWrapperComputedStyles.width.slice(0, -2))
-            ).to.equal(
-              getPixelGapBetweenTimes(
-                startedEvent.date.getTime(),
-                reviewEvent.date.getTime()
-              ) - theme.borderWidth
-            );
-          });
-          it("should have static, accepted review, and prereqs not included class name and not the other variant names", function (): void {
-            expect(secondIterationClassNames)
-              .to.contain.members([
-                "staticTaskBox",
-                "prereqsBoxNotIncluded",
-                "acceptedReview",
-              ])
-              .and.not.to.contain.members([
-                "activeTaskBox",
-                "prereqsBoxIncluded",
-                "prereqsAccepted",
-                "prereqsPending",
-                "pendingReview",
-                "needsMinorRevisionReview",
-                "needsMajorRevisionReview",
-                "needsRebuildReview",
-              ]);
-          });
+          it(
+            "should have width according to actual duration of second iteration minus one border " +
+              "width",
+            function (): void {
+              const reviewEvent = relevantUnit.explicitEventHistory[1];
+              const startedEvent = relevantUnit.explicitEventHistory[2];
+              assertIsObject(reviewEvent);
+              assertIsObject(startedEvent);
+              expect(
+                Number(secondIterationWrapperComputedStyles.width.slice(0, -2))
+              ).to.equal(
+                getPixelGapBetweenTimes(
+                  startedEvent.date.getTime(),
+                  reviewEvent.date.getTime()
+                ) - theme.borderWidth
+              );
+            }
+          );
+          it(
+            "should have static, accepted review, and prereqs not included class name and not the other variant " +
+              "names",
+            function (): void {
+              expect(secondIterationClassNames)
+                .to.contain.members([
+                  "staticTaskBox",
+                  "prereqsBoxNotIncluded",
+                  "acceptedReview",
+                ])
+                .and.not.to.contain.members([
+                  "activeTaskBox",
+                  "prereqsBoxIncluded",
+                  "prereqsAccepted",
+                  "prereqsPending",
+                  "pendingReview",
+                  "needsMinorRevisionReview",
+                  "needsMajorRevisionReview",
+                  "needsRebuildReview",
+                ]);
+            }
+          );
         });
       });
       describe("D", function (): void {
@@ -489,131 +505,161 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be first child", function (): void {
             expect(firstIterationIndex).to.equal(0);
           });
-          it("should have width according to actual duration of first iteration minus one border width", function (): void {
-            const reviewEvent = relevantUnit.explicitEventHistory[0];
-            const startedEvent = relevantUnit.explicitEventHistory[1];
-            assertIsObject(reviewEvent);
-            assertIsObject(startedEvent);
-            expect(
-              Number(firstIterationWrapperComputedStyles.width.slice(0, -2))
-            ).to.equal(
-              getPixelGapBetweenTimes(
-                startedEvent.date.getTime(),
-                reviewEvent.date.getTime()
-              ) - theme.borderWidth
-            );
-          });
-          it("should have static, rebuild review, prereqs accepted, and prereq included class name and not the other variant names", function (): void {
-            expect(firstIterationClassNames)
-              .to.contain.members([
-                "staticTaskBox",
-                "prereqsBoxIncluded",
-                "prereqsAccepted",
-                "needsRebuildReview",
-              ])
-              .and.not.to.contain.members([
-                "activeTaskBox",
-                "prereqsBoxNotIncluded",
-                "prereqsPending",
-                "pendingReview",
-                "acceptedReview",
-                "needsMinorRevisionReview",
-                "needsMajorRevisionReview",
-              ]);
-          });
+          it(
+            "should have width according to actual duration of first iteration minus one border " +
+              "width",
+            function (): void {
+              const reviewEvent = relevantUnit.explicitEventHistory[0];
+              const startedEvent = relevantUnit.explicitEventHistory[1];
+              assertIsObject(reviewEvent);
+              assertIsObject(startedEvent);
+              expect(
+                Number(firstIterationWrapperComputedStyles.width.slice(0, -2))
+              ).to.equal(
+                getPixelGapBetweenTimes(
+                  startedEvent.date.getTime(),
+                  reviewEvent.date.getTime()
+                ) - theme.borderWidth
+              );
+            }
+          );
+          it(
+            "should have static, rebuild review, prereqs accepted, and prereq included class name and not the other " +
+              "variant names",
+            function (): void {
+              expect(firstIterationClassNames)
+                .to.contain.members([
+                  "staticTaskBox",
+                  "prereqsBoxIncluded",
+                  "prereqsAccepted",
+                  "needsRebuildReview",
+                ])
+                .and.not.to.contain.members([
+                  "activeTaskBox",
+                  "prereqsBoxNotIncluded",
+                  "prereqsPending",
+                  "pendingReview",
+                  "acceptedReview",
+                  "needsMinorRevisionReview",
+                  "needsMajorRevisionReview",
+                ]);
+            }
+          );
         });
         describe("Extension Trail", function (): void {
           it("should be second child", function (): void {
             expect(extensionTrailIndex).to.equal(1);
           });
-          it("should have width according to actual duration of second iteration minus neither borders width", function (): void {
-            const reviewEvent = relevantUnit.explicitEventHistory[1];
-            const startedEvent = relevantUnit.explicitEventHistory[2];
-            assertIsObject(reviewEvent);
-            assertIsObject(startedEvent);
-            expect(Number(extensionComputedStyles.width.slice(0, -2))).to.equal(
-              getPixelGapBetweenTimes(
-                startedEvent.date.getTime(),
-                reviewEvent.date.getTime()
-              )
-            );
-          });
+          it(
+            "should have width according to actual duration of second iteration minus neither borders " +
+              "width",
+            function (): void {
+              const reviewEvent = relevantUnit.explicitEventHistory[1];
+              const startedEvent = relevantUnit.explicitEventHistory[2];
+              assertIsObject(reviewEvent);
+              assertIsObject(startedEvent);
+              expect(
+                Number(extensionComputedStyles.width.slice(0, -2))
+              ).to.equal(
+                getPixelGapBetweenTimes(
+                  startedEvent.date.getTime(),
+                  reviewEvent.date.getTime()
+                )
+              );
+            }
+          );
         });
         describe("Second Iteration", function (): void {
           it("should be third child", function (): void {
             expect(secondIterationIndex).to.equal(2);
           });
-          it("should have width according to actual duration of second iteration minus neither borders width", function (): void {
-            const reviewEvent = relevantUnit.explicitEventHistory[2];
-            const startedEvent = relevantUnit.explicitEventHistory[3];
-            assertIsObject(reviewEvent);
-            assertIsObject(startedEvent);
-            expect(
-              Number(secondIterationWrapperComputedStyles.width.slice(0, -2))
-            ).to.equal(
-              getPixelGapBetweenTimes(
-                startedEvent.date.getTime(),
-                reviewEvent.date.getTime()
-              )
-            );
-          });
-          it("should have static, major review, prereqs accepted, and prereq included class name and not the other variant names", function (): void {
-            expect(secondIterationClassNames)
-              .to.contain.members([
-                "staticTaskBox",
-                "prereqsBoxIncluded",
-                "prereqsAccepted",
-                "needsMajorRevisionReview",
-              ])
-              .and.not.to.contain.members([
-                "activeTaskBox",
-                "prereqsBoxNotIncluded",
-                "prereqsPending",
-                "pendingReview",
-                "acceptedReview",
-                "needsMinorRevisionReview",
-                "needsRebuildReview",
-              ]);
-          });
+          it(
+            "should have width according to actual duration of second iteration minus neither borders " +
+              "width",
+            function (): void {
+              const reviewEvent = relevantUnit.explicitEventHistory[2];
+              const startedEvent = relevantUnit.explicitEventHistory[3];
+              assertIsObject(reviewEvent);
+              assertIsObject(startedEvent);
+              expect(
+                Number(secondIterationWrapperComputedStyles.width.slice(0, -2))
+              ).to.equal(
+                getPixelGapBetweenTimes(
+                  startedEvent.date.getTime(),
+                  reviewEvent.date.getTime()
+                )
+              );
+            }
+          );
+          it(
+            "should have static, major review, prereqs accepted, and prereq included class name and not the other " +
+              "variant names",
+            function (): void {
+              expect(secondIterationClassNames)
+                .to.contain.members([
+                  "staticTaskBox",
+                  "prereqsBoxIncluded",
+                  "prereqsAccepted",
+                  "needsMajorRevisionReview",
+                ])
+                .and.not.to.contain.members([
+                  "activeTaskBox",
+                  "prereqsBoxNotIncluded",
+                  "prereqsPending",
+                  "pendingReview",
+                  "acceptedReview",
+                  "needsMinorRevisionReview",
+                  "needsRebuildReview",
+                ]);
+            }
+          );
         });
         describe("Third Iteration", function (): void {
           it("should be fourth child", function (): void {
             expect(thirdIterationIndex).to.equal(3);
           });
-          it("should have width according to apparent duration of third iteration plus review box width minus one border width", function (): void {
-            const reviewEvent = relevantUnit.explicitEventHistory[3];
-            const startedEvent = relevantUnit.projectedEventHistory[0];
-            assertIsObject(reviewEvent);
-            assertIsObject(startedEvent);
-            expect(
-              Number(thirdIterationWrapperComputedStyles.width.slice(0, -2))
-            ).to.equal(
-              getPixelGapBetweenTimes(
-                startedEvent.date.getTime(),
-                reviewEvent.date.getTime()
-              ) +
-                theme.reviewBoxWidth -
-                theme.borderWidth
-            );
-          });
-          it("should have active, pending review, and prereq not included class name and not the other variant names", function (): void {
-            expect(thirdIterationClassNames)
-              .to.contain.members([
-                "activeTaskBox",
-                "prereqsBoxNotIncluded",
-                "pendingReview",
-              ])
-              .and.not.to.contain.members([
-                "staticTaskBox",
-                "prereqsBoxIncluded",
-                "prereqsAccepted",
-                "prereqsPending",
-                "acceptedReview",
-                "needsMinorRevisionReview",
-                "needsMajorRevisionReview",
-                "needsRebuildReview",
-              ]);
-          });
+          it(
+            "should have width according to apparent duration of third iteration plus review box width minus one " +
+              "border width",
+            function (): void {
+              const reviewEvent = relevantUnit.explicitEventHistory[3];
+              const startedEvent = relevantUnit.projectedEventHistory[0];
+              assertIsObject(reviewEvent);
+              assertIsObject(startedEvent);
+              expect(
+                Number(thirdIterationWrapperComputedStyles.width.slice(0, -2))
+              ).to.equal(
+                getPixelGapBetweenTimes(
+                  startedEvent.date.getTime(),
+                  reviewEvent.date.getTime()
+                ) +
+                  theme.reviewBoxWidth -
+                  theme.borderWidth
+              );
+            }
+          );
+          it(
+            "should have active, pending review, and prereq not included class name and not the other variant " +
+              "names",
+            function (): void {
+              expect(thirdIterationClassNames)
+                .to.contain.members([
+                  "activeTaskBox",
+                  "prereqsBoxNotIncluded",
+                  "pendingReview",
+                ])
+                .and.not.to.contain.members([
+                  "staticTaskBox",
+                  "prereqsBoxIncluded",
+                  "prereqsAccepted",
+                  "prereqsPending",
+                  "acceptedReview",
+                  "needsMinorRevisionReview",
+                  "needsMajorRevisionReview",
+                  "needsRebuildReview",
+                ]);
+            }
+          );
         });
       });
       describe("H", function (): void {
@@ -676,130 +722,160 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be first child", function (): void {
             expect(firstIterationIndex).to.equal(0);
           });
-          it("should have width according to actual duration of first iteration minus one border width", function (): void {
-            const reviewEvent = relevantUnit.explicitEventHistory[0];
-            const startedEvent = relevantUnit.explicitEventHistory[1];
-            assertIsObject(reviewEvent);
-            assertIsObject(startedEvent);
-            expect(
-              Number(firstIterationWrapperComputedStyles.width.slice(0, -2))
-            ).to.equal(
-              getPixelGapBetweenTimes(
-                startedEvent.date.getTime(),
-                reviewEvent.date.getTime()
-              ) - theme.borderWidth
-            );
-          });
-          it("should have static, major review, accepted prereqs, and prereq included class name and not the other variant names", function (): void {
-            expect(firstIterationClassNames)
-              .to.contain.members([
-                "taskIteration",
-                "staticTaskBox",
-                "prereqsBoxIncluded",
-                "prereqsAccepted",
-                "needsMajorRevisionReview",
-              ])
-              .and.not.to.contain.members([
-                "activeTaskBox",
-                "prereqsBoxNotIncluded",
-                "prereqsPending",
-                "pendingReview",
-                "acceptedReview",
-                "needsMinorRevisionReview",
-                "needsRebuildReview",
-              ]);
-          });
+          it(
+            "should have width according to actual duration of first iteration minus one border " +
+              "width",
+            function (): void {
+              const reviewEvent = relevantUnit.explicitEventHistory[0];
+              const startedEvent = relevantUnit.explicitEventHistory[1];
+              assertIsObject(reviewEvent);
+              assertIsObject(startedEvent);
+              expect(
+                Number(firstIterationWrapperComputedStyles.width.slice(0, -2))
+              ).to.equal(
+                getPixelGapBetweenTimes(
+                  startedEvent.date.getTime(),
+                  reviewEvent.date.getTime()
+                ) - theme.borderWidth
+              );
+            }
+          );
+          it(
+            "should have static, major review, accepted prereqs, and prereq included class name and not the other " +
+              "variant names",
+            function (): void {
+              expect(firstIterationClassNames)
+                .to.contain.members([
+                  "taskIteration",
+                  "staticTaskBox",
+                  "prereqsBoxIncluded",
+                  "prereqsAccepted",
+                  "needsMajorRevisionReview",
+                ])
+                .and.not.to.contain.members([
+                  "activeTaskBox",
+                  "prereqsBoxNotIncluded",
+                  "prereqsPending",
+                  "pendingReview",
+                  "acceptedReview",
+                  "needsMinorRevisionReview",
+                  "needsRebuildReview",
+                ]);
+            }
+          );
         });
         describe("Second Iteration", function (): void {
           it("should be second child", function (): void {
             expect(secondIterationIndex).to.equal(1);
           });
-          it("should have width according to actual duration of second iteration minus neither borders width", function (): void {
-            const reviewEvent = relevantUnit.explicitEventHistory[1];
-            const startedEvent = relevantUnit.explicitEventHistory[2];
-            assertIsObject(reviewEvent);
-            assertIsObject(startedEvent);
-            expect(
-              Number(secondIterationWrapperComputedStyles.width.slice(0, -2))
-            ).to.equal(
-              getPixelGapBetweenTimes(
-                startedEvent.date.getTime(),
-                reviewEvent.date.getTime()
-              )
-            );
-          });
-          it("should have static, rebuild review, and prereq not included class name and not the other variant names", function (): void {
-            expect(secondIterationClassNames)
-              .to.contain.members([
-                "staticTaskBox",
-                "prereqsBoxNotIncluded",
-                "needsRebuildReview",
-              ])
-              .and.not.to.contain.members([
-                "activeTaskBox",
-                "prereqsBoxIncluded",
-                "prereqsAccepted",
-                "prereqsPending",
-                "pendingReview",
-                "acceptedReview",
-                "needsMinorRevisionReview",
-                "needsMajorRevisionReview",
-              ]);
-          });
+          it(
+            "should have width according to actual duration of second iteration minus neither borders " +
+              "width",
+            function (): void {
+              const reviewEvent = relevantUnit.explicitEventHistory[1];
+              const startedEvent = relevantUnit.explicitEventHistory[2];
+              assertIsObject(reviewEvent);
+              assertIsObject(startedEvent);
+              expect(
+                Number(secondIterationWrapperComputedStyles.width.slice(0, -2))
+              ).to.equal(
+                getPixelGapBetweenTimes(
+                  startedEvent.date.getTime(),
+                  reviewEvent.date.getTime()
+                )
+              );
+            }
+          );
+          it(
+            "should have static, rebuild review, and prereq not included class name and not the other variant " +
+              "names",
+            function (): void {
+              expect(secondIterationClassNames)
+                .to.contain.members([
+                  "staticTaskBox",
+                  "prereqsBoxNotIncluded",
+                  "needsRebuildReview",
+                ])
+                .and.not.to.contain.members([
+                  "activeTaskBox",
+                  "prereqsBoxIncluded",
+                  "prereqsAccepted",
+                  "prereqsPending",
+                  "pendingReview",
+                  "acceptedReview",
+                  "needsMinorRevisionReview",
+                  "needsMajorRevisionReview",
+                ]);
+            }
+          );
         });
         describe("Extension Trail", function (): void {
           it("should be third child", function (): void {
             expect(extensionTrailIndex).to.equal(2);
           });
-          it("should have width according to actual duration of second iteration minus neither borders width", function (): void {
-            const reviewEvent = relevantUnit.explicitEventHistory[2];
-            const startedEvent = relevantUnit.projectedEventHistory[0];
-            assertIsObject(reviewEvent);
-            assertIsObject(startedEvent);
-            expect(Number(extensionComputedStyles.width.slice(0, -2))).to.equal(
-              getPixelGapBetweenTimes(
-                startedEvent.date.getTime(),
-                reviewEvent.date.getTime()
-              )
-            );
-          });
+          it(
+            "should have width according to actual duration of second iteration minus neither borders " +
+              "width",
+            function (): void {
+              const reviewEvent = relevantUnit.explicitEventHistory[2];
+              const startedEvent = relevantUnit.projectedEventHistory[0];
+              assertIsObject(reviewEvent);
+              assertIsObject(startedEvent);
+              expect(
+                Number(extensionComputedStyles.width.slice(0, -2))
+              ).to.equal(
+                getPixelGapBetweenTimes(
+                  startedEvent.date.getTime(),
+                  reviewEvent.date.getTime()
+                )
+              );
+            }
+          );
         });
         describe("Third Iteration", function (): void {
           it("should be fourth child", function (): void {
             expect(thirdIterationIndex).to.equal(3);
           });
-          it("should have width according to apparent duration of third iteration minus one borders width", function (): void {
-            const reviewEvent = relevantUnit.projectedEventHistory[0];
-            const startedEvent = relevantUnit.projectedEventHistory[1];
-            assertIsObject(reviewEvent);
-            assertIsObject(startedEvent);
-            expect(
-              Number(thirdIterationWrapperComputedStyles.width.slice(0, -2))
-            ).to.equal(
-              getPixelGapBetweenTimes(
-                startedEvent.date.getTime(),
-                reviewEvent.date.getTime()
-              ) - theme.borderWidth
-            );
-          });
-          it("should have static, pending review, pending prereqs, and prereq included class name and not the other variant names", function (): void {
-            expect(thirdIterationClassNames)
-              .to.contain.members([
-                "staticTaskBox",
-                "prereqsBoxIncluded",
-                "prereqsPending",
-                "pendingReview",
-              ])
-              .and.not.to.contain.members([
-                "staticTaskBox",
-                "prereqsBoxNotIncluded",
-                "prereqsAccepted",
-                "acceptedReview",
-                "needsMinorRevisionReview",
-                "needsMajorRevisionReview",
-                "needsRebuildReview",
-              ]);
-          });
+          it(
+            "should have width according to apparent duration of third iteration minus one borders " +
+              "width",
+            function (): void {
+              const reviewEvent = relevantUnit.projectedEventHistory[0];
+              const startedEvent = relevantUnit.projectedEventHistory[1];
+              assertIsObject(reviewEvent);
+              assertIsObject(startedEvent);
+              expect(
+                Number(thirdIterationWrapperComputedStyles.width.slice(0, -2))
+              ).to.equal(
+                getPixelGapBetweenTimes(
+                  startedEvent.date.getTime(),
+                  reviewEvent.date.getTime()
+                ) - theme.borderWidth
+              );
+            }
+          );
+          it(
+            "should have static, pending review, pending prereqs, and prereq included class name and not the other " +
+              "variant names",
+            function (): void {
+              expect(thirdIterationClassNames)
+                .to.contain.members([
+                  "staticTaskBox",
+                  "prereqsBoxIncluded",
+                  "prereqsPending",
+                  "pendingReview",
+                ])
+                .and.not.to.contain.members([
+                  "staticTaskBox",
+                  "prereqsBoxNotIncluded",
+                  "prereqsAccepted",
+                  "acceptedReview",
+                  "needsMinorRevisionReview",
+                  "needsMajorRevisionReview",
+                  "needsRebuildReview",
+                ]);
+            }
+          );
         });
       });
       describe("L", function (): void {
@@ -841,52 +917,64 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be first child", function (): void {
             expect(firstIterationIndex).to.equal(0);
           });
-          it("should have width according to actual duration of first iteration plus review box width minus both borders width", function (): void {
-            const reviewEvent = relevantUnit.explicitEventHistory[0];
-            const startedEvent = relevantUnit.projectedEventHistory[0];
-            assertIsObject(reviewEvent);
-            assertIsObject(startedEvent);
-            expect(
-              Number(firstIterationWrapperComputedStyles.width.slice(0, -2))
-            ).to.equal(
-              getPixelGapBetweenTimes(
-                startedEvent.date.getTime(),
-                reviewEvent.date.getTime()
-              ) +
-                theme.reviewBoxWidth -
-                theme.borderWidth * 2
-            );
-          });
-          it("should have width according to actual duration plus review box width minus both borders width", function (): void {
-            expect(
-              Number(firstIterationWrapperComputedStyles.width.slice(0, -2))
-            ).to.equal(
-              getPixelGapBetweenTimes(
-                relevantUnit.apparentEndDate.getTime(),
-                relevantUnit.apparentStartDate.getTime()
-              ) +
-                theme.reviewBoxWidth -
-                theme.borderWidth * 2
-            );
-          });
-          it("should have static, pending review, prereqs accepted, and prereq included class name and not the other variant names", function (): void {
-            expect(firstIterationClassNames)
-              .to.contain.members([
-                "activeTaskBox",
-                "prereqsBoxIncluded",
-                "prereqsAccepted",
-                "pendingReview",
-              ])
-              .and.not.to.contain.members([
-                "staticTaskBox",
-                "prereqsBoxNotIncluded",
-                "prereqsPending",
-                "acceptedReview",
-                "needsMinorRevisionReview",
-                "needsMajorRevisionReview",
-                "needsRebuildReview",
-              ]);
-          });
+          it(
+            "should have width according to actual duration of first iteration plus review box width minus both " +
+              "borders width",
+            function (): void {
+              const reviewEvent = relevantUnit.explicitEventHistory[0];
+              const startedEvent = relevantUnit.projectedEventHistory[0];
+              assertIsObject(reviewEvent);
+              assertIsObject(startedEvent);
+              expect(
+                Number(firstIterationWrapperComputedStyles.width.slice(0, -2))
+              ).to.equal(
+                getPixelGapBetweenTimes(
+                  startedEvent.date.getTime(),
+                  reviewEvent.date.getTime()
+                ) +
+                  theme.reviewBoxWidth -
+                  theme.borderWidth * 2
+              );
+            }
+          );
+          it(
+            "should have width according to actual duration plus review box width minus both borders " +
+              "width",
+            function (): void {
+              expect(
+                Number(firstIterationWrapperComputedStyles.width.slice(0, -2))
+              ).to.equal(
+                getPixelGapBetweenTimes(
+                  relevantUnit.apparentEndDate.getTime(),
+                  relevantUnit.apparentStartDate.getTime()
+                ) +
+                  theme.reviewBoxWidth -
+                  theme.borderWidth * 2
+              );
+            }
+          );
+          it(
+            "should have static, pending review, prereqs accepted, and prereq included class name and not the other " +
+              "variant names",
+            function (): void {
+              expect(firstIterationClassNames)
+                .to.contain.members([
+                  "activeTaskBox",
+                  "prereqsBoxIncluded",
+                  "prereqsAccepted",
+                  "pendingReview",
+                ])
+                .and.not.to.contain.members([
+                  "staticTaskBox",
+                  "prereqsBoxNotIncluded",
+                  "prereqsPending",
+                  "acceptedReview",
+                  "needsMinorRevisionReview",
+                  "needsMajorRevisionReview",
+                  "needsRebuildReview",
+                ]);
+            }
+          );
         });
       });
     });
