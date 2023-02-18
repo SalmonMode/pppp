@@ -63,25 +63,7 @@ export default class TaskUnit implements ITaskUnit {
     this._directDependencies = this._getTrueDirectDependencies();
     this._earliestPossibleStartTime = this._getEarliestPossibleStartTime();
     this._validateEventHistory();
-    // Figure out the apparent start date
-
-    // If the first event exists it must be TaskIterationStarted. If that's the case, use that date for the apparent
-    // start date. If not, base it off of either the latest dependency apparent end date, or this unit's anticipated
-    // start date. Whichever is later.
-    const firstEvent = this.explicitEventHistory[0];
-    if (firstEvent) {
-      this._apparentStartDate = firstEvent.date;
-    } else {
-      const now = new Date();
-      const latestRequiredDate = new Date(
-        Math.max(
-          this._earliestPossibleStartTime,
-          now.getTime(),
-          this.anticipatedStartDate.getTime()
-        )
-      );
-      this._apparentStartDate = latestRequiredDate;
-    }
+    this._apparentStartDate = this._determineApparentStartDate();
 
     this._buildProjectedHistory(now);
     const lastConceivedEvent = [
@@ -535,6 +517,30 @@ export default class TaskUnit implements ITaskUnit {
       return true;
     }
     return false;
+  }
+  /**
+   * Determine and return the apparent start date.
+   *
+   * If the first event exists it must be TaskIterationStarted. If that's the case, use that date for the apparent start
+   * date. If not, base it off of either the latest dependency apparent end date, or this unit's anticipated start date.
+   * Whichever is later.
+   *
+   */
+  private _determineApparentStartDate(): Date {
+    const firstEvent = this.explicitEventHistory[0];
+    if (firstEvent) {
+      return firstEvent.date;
+    } else {
+      const now = new Date();
+      const latestRequiredDate = new Date(
+        Math.max(
+          this._earliestPossibleStartTime,
+          now.getTime(),
+          this.anticipatedStartDate.getTime()
+        )
+      );
+      return latestRequiredDate;
+    }
   }
   /**
    *
