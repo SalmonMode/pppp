@@ -19,10 +19,11 @@ export default class TaskUnit implements ITaskUnit {
   public anticipatedEndDate: Date;
   public anticipatedStartDate: Date;
   public name: string;
-  public eventHistory: TaskEvent[];
+  public explicitEventHistory: TaskEvent[];
   public prerequisitesIterations: ITaskPrerequisites[];
   /**
-   * The direct dependencies of this {@link TaskUnit}.
+   * The direct dependencies of this {@link TaskUnit} as provided to the constructor. These may not be the true direct
+   * dependencies, but it can be helpful to have this information.
    */
   private _providedDirectDependencies: ITaskUnit[];
   private _directDependencies: Set<ITaskUnit>;
@@ -37,8 +38,7 @@ export default class TaskUnit implements ITaskUnit {
   private _earliestPossibleStartTime: number;
   private _apparentStartDate: Date;
   private _apparentEndDate: Date;
-  public projectedHistory: TaskEvent[] = [];
-  public interpolatedEventHistory: TaskEvent[];
+  public projectedEventHistory: TaskEvent[] = [];
   constructor({
     now,
     anticipatedEndDate,
@@ -50,7 +50,7 @@ export default class TaskUnit implements ITaskUnit {
     this.anticipatedEndDate = anticipatedEndDate;
     this.anticipatedStartDate = anticipatedStartDate;
     this.name = name;
-    this.eventHistory = eventHistory;
+    this.explicitEventHistory = eventHistory;
     this.prerequisitesIterations = prerequisitesIterations;
     this.id = uuidv4();
     const latestPrereqsIteration =
@@ -68,7 +68,7 @@ export default class TaskUnit implements ITaskUnit {
     // If the first event exists it must be TaskIterationStarted. If that's the case, use that date for the apparent
     // start date. If not, base it off of either the latest dependency apparent end date, or this unit's anticipated
     // start date. Whichever is later.
-    const firstEvent = this.eventHistory[0];
+    const firstEvent = this.explicitEventHistory[0];
     if (firstEvent) {
       this._apparentStartDate = firstEvent.date;
     } else {
@@ -84,21 +84,10 @@ export default class TaskUnit implements ITaskUnit {
     }
 
     this._buildProjectedHistory(now);
-    this.interpolatedEventHistory = [
-      ...this.eventHistory.map(
-        (e: TaskEvent): TaskEvent => ({
-          ...e,
-        })
-      ),
-      ...this.projectedHistory.map(
-        (e: TaskEvent): TaskEvent => ({
-          ...e,
-        })
-      ),
-    ];
-    const lastConceivedEvent = [...this.eventHistory, ...this.projectedHistory][
-      this.eventHistory.length + this.projectedHistory.length - 1
-    ];
+    const lastConceivedEvent = [
+      ...this.explicitEventHistory,
+      ...this.projectedEventHistory,
+    ][this.explicitEventHistory.length + this.projectedEventHistory.length - 1];
     assertIsObject(lastConceivedEvent);
     this._apparentEndDate = lastConceivedEvent.date;
     this._presenceTime =
@@ -139,7 +128,7 @@ export default class TaskUnit implements ITaskUnit {
    *    been accepted yet) or a TaskIterationStarted event (and possibly other events according to the other rules).
    */
   private _validateEventHistory(): void {
-    const firstEvent = this.eventHistory[0];
+    const firstEvent = this.explicitEventHistory[0];
     if (firstEvent) {
       if (
         !this._shouldBeAbleToStart() ||
@@ -156,102 +145,104 @@ export default class TaskUnit implements ITaskUnit {
       // This task hasn't been started yet, so there's no need to check if it was started before it should have.
     }
     const now = new Date();
-    this.eventHistory.forEach((event: TaskEvent, index: number): void => {
-      // Don't check the next event if it can be helped, because if there is a next event, it'll have its turn to check
-      // previous events, and that presents much narrower criteria to check.
-      const prevEvent = this.eventHistory[index - 1];
-      if (prevEvent) {
-        // Make sure the dates are in order.
-        if (prevEvent.date >= event.date) {
-          throw new EventHistoryInvalidError(
-            "Events must be provided in chronological order."
-          );
-        }
-      }
-      if (event.date > now) {
-        throw new EventHistoryInvalidError("Events cannot be in the future.");
-      }
-      switch (event.type) {
-        case EventType.TaskIterationStarted:
-          if (
-            isUndefined(
-              this.prerequisitesIterations[event.prerequisitesVersion]
-            )
-          ) {
-            // This task was supposedly started without having the necessary prerequisites.
+    this.explicitEventHistory.forEach(
+      (event: TaskEvent, index: number): void => {
+        // Don't check the next event if it can be helped, because if there is a next event, it'll have its turn to check
+        // previous events, and that presents much narrower criteria to check.
+        const prevEvent = this.explicitEventHistory[index - 1];
+        if (prevEvent) {
+          // Make sure the dates are in order.
+          if (prevEvent.date >= event.date) {
             throw new EventHistoryInvalidError(
-              `The prerequisites iteration (${event.prerequisitesVersion}) specified by the TaskIterationStarted event could not be found.`
+              "Events must be provided in chronological order."
             );
           }
-          if (prevEvent) {
-            if (prevEvent.type !== EventType.ReviewedAndNeedsRebuild) {
-              // The previous event was not a ReviewedAndNeedsRebuild event, so this event doesn't make sense.
-              throw new EventHistoryInvalidError(
-                "TaskIterationStarted event can only be the first event or follow a ReviewedAndNeedsRebuild event."
-              );
-            } else {
-              // This event follows a ReviewedAndNeedsRebuild event, which means the updated prereqs were accepted and
-              // the task has started again, so it's all good.
-            }
-          } else {
-            // Nothing was before this event, so it's all good, since this means the task has only started for the first
-            // time.
-          }
-          break;
-        case EventType.MinorRevisionComplete:
-          if (prevEvent) {
-            if (prevEvent.type === EventType.ReviewedAndNeedsMinorRevision) {
-              // The previous event was a ReviewedAndNeedsMinorRevision event, so this event means the task should be
-              // completely finished.
-              break;
-            }
-          }
-          // There either was no previous event, or the previous event was not a ReviewedAndNeedsMinorRevision event, so
-          // a MinorRevisionComplete event here doesn't make any sense.
-          throw new EventHistoryInvalidError(
-            "MinorRevisionComplete event can only be after a ReviewedAndNeedsMinorRevision event."
-          );
-        case EventType.ReviewedAndAccepted:
-        case EventType.ReviewedAndNeedsMajorRevision:
-        case EventType.ReviewedAndNeedsMinorRevision:
-        case EventType.ReviewedAndNeedsRebuild:
-          // Review results events
-          if (prevEvent) {
-            if (
-              prevEvent.type === EventType.ReviewedAndNeedsMajorRevision ||
-              prevEvent.type === EventType.TaskIterationStarted
-            ) {
-              // The previous event was either a TaskIterationStarted or ReviewedAndNeedsMajorRevision event, so this is
-              // all good.
-              break;
-            }
-          }
-          // There either was no previous event, or the previous event was not a TaskIterationStarted event nor a
-          // ReviewedAndNeedsMajorRevision event, so a review event here doesn't make any sense.
-          throw new EventHistoryInvalidError(
-            "Review events can only be after a TaskIterationStarted or ReviewedAndNeedsMajorRevision event."
-          );
-      }
-      if (
-        event.type === EventType.MinorRevisionComplete ||
-        event.type === EventType.ReviewedAndAccepted
-      ) {
-        // These events signal the absolute end of all work for this task. It should have no events after either of
-        // these events if they are present.
-        const nextEvent = this.eventHistory[index + 1];
-        if (nextEvent) {
-          // An event was found after the review was accepted.
-          throw new EventHistoryInvalidError(
-            "Once the review has been accepted or the minor revision completed, nothing else can happen."
-          );
-        } else {
-          // Nothing exists after this event so it's all good, since this means all work is done with this task.
         }
-      } else {
-        // There's still more work to be done after this event, so if there are other events, it's sometimes ok, and
-        // they'll be evaluated in the next iteration of this loop.
+        if (event.date > now) {
+          throw new EventHistoryInvalidError("Events cannot be in the future.");
+        }
+        switch (event.type) {
+          case EventType.TaskIterationStarted:
+            if (
+              isUndefined(
+                this.prerequisitesIterations[event.prerequisitesVersion]
+              )
+            ) {
+              // This task was supposedly started without having the necessary prerequisites.
+              throw new EventHistoryInvalidError(
+                `The prerequisites iteration (${event.prerequisitesVersion}) specified by the TaskIterationStarted event could not be found.`
+              );
+            }
+            if (prevEvent) {
+              if (prevEvent.type !== EventType.ReviewedAndNeedsRebuild) {
+                // The previous event was not a ReviewedAndNeedsRebuild event, so this event doesn't make sense.
+                throw new EventHistoryInvalidError(
+                  "TaskIterationStarted event can only be the first event or follow a ReviewedAndNeedsRebuild event."
+                );
+              } else {
+                // This event follows a ReviewedAndNeedsRebuild event, which means the updated prereqs were accepted and
+                // the task has started again, so it's all good.
+              }
+            } else {
+              // Nothing was before this event, so it's all good, since this means the task has only started for the first
+              // time.
+            }
+            break;
+          case EventType.MinorRevisionComplete:
+            if (prevEvent) {
+              if (prevEvent.type === EventType.ReviewedAndNeedsMinorRevision) {
+                // The previous event was a ReviewedAndNeedsMinorRevision event, so this event means the task should be
+                // completely finished.
+                break;
+              }
+            }
+            // There either was no previous event, or the previous event was not a ReviewedAndNeedsMinorRevision event, so
+            // a MinorRevisionComplete event here doesn't make any sense.
+            throw new EventHistoryInvalidError(
+              "MinorRevisionComplete event can only be after a ReviewedAndNeedsMinorRevision event."
+            );
+          case EventType.ReviewedAndAccepted:
+          case EventType.ReviewedAndNeedsMajorRevision:
+          case EventType.ReviewedAndNeedsMinorRevision:
+          case EventType.ReviewedAndNeedsRebuild:
+            // Review results events
+            if (prevEvent) {
+              if (
+                prevEvent.type === EventType.ReviewedAndNeedsMajorRevision ||
+                prevEvent.type === EventType.TaskIterationStarted
+              ) {
+                // The previous event was either a TaskIterationStarted or ReviewedAndNeedsMajorRevision event, so this is
+                // all good.
+                break;
+              }
+            }
+            // There either was no previous event, or the previous event was not a TaskIterationStarted event nor a
+            // ReviewedAndNeedsMajorRevision event, so a review event here doesn't make any sense.
+            throw new EventHistoryInvalidError(
+              "Review events can only be after a TaskIterationStarted or ReviewedAndNeedsMajorRevision event."
+            );
+        }
+        if (
+          event.type === EventType.MinorRevisionComplete ||
+          event.type === EventType.ReviewedAndAccepted
+        ) {
+          // These events signal the absolute end of all work for this task. It should have no events after either of
+          // these events if they are present.
+          const nextEvent = this.explicitEventHistory[index + 1];
+          if (nextEvent) {
+            // An event was found after the review was accepted.
+            throw new EventHistoryInvalidError(
+              "Once the review has been accepted or the minor revision completed, nothing else can happen."
+            );
+          } else {
+            // Nothing exists after this event so it's all good, since this means all work is done with this task.
+          }
+        } else {
+          // There's still more work to be done after this event, so if there are other events, it's sometimes ok, and
+          // they'll be evaluated in the next iteration of this loop.
+        }
       }
-    });
+    );
   }
   /**
    * Sometimes, provided dependencies may be redundant. This can occur if a provided direct dependency is provided by
@@ -322,7 +313,8 @@ export default class TaskUnit implements ITaskUnit {
     };
     // If the last event is EventType.ReviewedAndAccepted, then update the apparent end date to that date. Otherwise,
     // estimate the apparent end date relative to the apparent start date.
-    const lastEvent = this.eventHistory[this.eventHistory.length - 1];
+    const lastEvent =
+      this.explicitEventHistory[this.explicitEventHistory.length - 1];
     if (lastEvent) {
       switch (lastEvent.type) {
         case EventType.MinorRevisionComplete:
@@ -334,7 +326,7 @@ export default class TaskUnit implements ITaskUnit {
           // needs to start the task (which implies getting new reqs) and then pass review
 
           const reqFinishedDate = max([now, lastEvent.date]);
-          this.projectedHistory.push({
+          this.projectedEventHistory.push({
             type: EventType.TaskIterationStarted,
             date: reqFinishedDate,
             /**
@@ -344,7 +336,7 @@ export default class TaskUnit implements ITaskUnit {
             prerequisitesVersion: this.prerequisitesIterations.length,
           });
           const taskEndDate = add(reqFinishedDate, estimatedTaskDuration);
-          this.projectedHistory.push({
+          this.projectedEventHistory.push({
             type: EventType.ReviewedAndAccepted,
             date: taskEndDate,
           });
@@ -358,7 +350,7 @@ export default class TaskUnit implements ITaskUnit {
             estimatedTaskDuration
           );
           const taskEndDate = max([now, lastEventTimePlusBuffer]);
-          this.projectedHistory.push({
+          this.projectedEventHistory.push({
             type: EventType.ReviewedAndAccepted,
             date: taskEndDate,
           });
@@ -371,7 +363,7 @@ export default class TaskUnit implements ITaskUnit {
             estimatedTaskDuration
           );
           const taskEndDate = max([now, lastEventTimePlusBuffer]);
-          this.projectedHistory.push({
+          this.projectedEventHistory.push({
             type: EventType.MinorRevisionComplete,
             date: taskEndDate,
           });
@@ -384,7 +376,7 @@ export default class TaskUnit implements ITaskUnit {
             estimatedTaskDuration
           );
           const taskEndDate = max([now, lastEventTimePlusBuffer]);
-          this.projectedHistory.push({
+          this.projectedEventHistory.push({
             type: EventType.ReviewedAndAccepted,
             date: taskEndDate,
           });
@@ -394,7 +386,7 @@ export default class TaskUnit implements ITaskUnit {
     } else {
       // literally no history
       // add task started event
-      this.projectedHistory.push({
+      this.projectedEventHistory.push({
         type: EventType.TaskIterationStarted,
         date: this.apparentStartDate,
         /**
@@ -405,7 +397,7 @@ export default class TaskUnit implements ITaskUnit {
         prerequisitesVersion: 0,
       });
       const taskEndDate = add(this._apparentStartDate, estimatedTaskDuration);
-      this.projectedHistory.push({
+      this.projectedEventHistory.push({
         type: EventType.ReviewedAndAccepted,
         date: taskEndDate,
       });
@@ -536,7 +528,8 @@ export default class TaskUnit implements ITaskUnit {
     return this._allDependencies.has(unit);
   }
   isComplete(): boolean {
-    const lastEvent = this.eventHistory[this.eventHistory.length - 1];
+    const lastEvent =
+      this.explicitEventHistory[this.explicitEventHistory.length - 1];
     if (lastEvent && lastEvent.type === EventType.ReviewedAndAccepted) {
       return true;
     }

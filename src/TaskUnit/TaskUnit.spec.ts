@@ -90,7 +90,7 @@ describe("TaskUnit", function (): void {
       expect(unit.getAllDependencies()).to.be.empty;
     });
     it("should have projected history", function (): void {
-      expect(unit.projectedHistory).to.deep.equal([
+      expect(unit.projectedEventHistory).to.deep.equal([
         {
           type: EventType.TaskIterationStarted,
           date: firstDate,
@@ -159,7 +159,7 @@ describe("TaskUnit", function (): void {
       expect(unit.getAllDependencies()).to.be.empty;
     });
     it("should have projected history", function (): void {
-      expect(unit.projectedHistory).to.deep.equal([
+      expect(unit.projectedEventHistory).to.deep.equal([
         {
           type: EventType.TaskIterationStarted,
           date: firstDate,
@@ -207,7 +207,7 @@ describe("TaskUnit", function (): void {
         expect(unit.apparentEndDate).to.deep.equal(thirdDate);
       });
       it("should have no projected history", function (): void {
-        expect(unit.projectedHistory).to.deep.equal([]);
+        expect(unit.projectedEventHistory).to.deep.equal([]);
       });
     });
     describe("Ends With TaskIterationStarted Event", function (): void {
@@ -230,7 +230,7 @@ describe("TaskUnit", function (): void {
       });
       it("should have presence from anticipated date to date of last projected event", function (): void {
         const lastProjectedEvent =
-          unit.projectedHistory[unit.projectedHistory.length - 1];
+          unit.projectedEventHistory[unit.projectedEventHistory.length - 1];
         assertIsObject(lastProjectedEvent);
         expect(unit.presenceTime).to.equal(
           lastProjectedEvent.date.getTime() -
@@ -248,12 +248,12 @@ describe("TaskUnit", function (): void {
       });
       it("should have apparent end date equal to date of last projected event", function (): void {
         const lastProjectedEvent =
-          unit.projectedHistory[unit.projectedHistory.length - 1];
+          unit.projectedEventHistory[unit.projectedEventHistory.length - 1];
         assertIsObject(lastProjectedEvent);
         expect(unit.apparentEndDate).to.deep.equal(lastProjectedEvent.date);
       });
       it("should have projected history with ReviewedAndAccepted", function (): void {
-        const projectedEventHistoryTypes = unit.projectedHistory.map(
+        const projectedEventHistoryTypes = unit.projectedEventHistory.map(
           (event) => event.type
         );
         expect(projectedEventHistoryTypes).to.deep.equal([
@@ -281,7 +281,7 @@ describe("TaskUnit", function (): void {
       });
       it("should have presence from anticipated date to date of last projected event", function (): void {
         const lastProjectedEvent =
-          unit.projectedHistory[unit.projectedHistory.length - 1];
+          unit.projectedEventHistory[unit.projectedEventHistory.length - 1];
         assertIsObject(lastProjectedEvent);
         expect(unit.presenceTime).to.equal(
           lastProjectedEvent.date.getTime() -
@@ -299,12 +299,12 @@ describe("TaskUnit", function (): void {
       });
       it("should have apparent end date equal to date of last projected event", function (): void {
         const lastProjectedEvent =
-          unit.projectedHistory[unit.projectedHistory.length - 1];
+          unit.projectedEventHistory[unit.projectedEventHistory.length - 1];
         assertIsObject(lastProjectedEvent);
         expect(unit.apparentEndDate).to.deep.equal(lastProjectedEvent.date);
       });
       it("should have projected history with ReviewedAndAccepted", function (): void {
-        const projectedEventHistoryTypes = unit.projectedHistory.map(
+        const projectedEventHistoryTypes = unit.projectedEventHistory.map(
           (event) => event.type
         );
         expect(projectedEventHistoryTypes).to.deep.equal([
@@ -350,7 +350,7 @@ describe("TaskUnit", function (): void {
         expect(unit.apparentEndDate).to.deep.equal(thirdDate);
       });
       it("should have no projected history", function (): void {
-        expect(unit.projectedHistory).to.deep.equal([]);
+        expect(unit.projectedEventHistory).to.deep.equal([]);
       });
     });
     describe("Ends With Delayed MinorRevisionComplete Event", function (): void {
@@ -391,7 +391,7 @@ describe("TaskUnit", function (): void {
         expect(unit.apparentEndDate).to.deep.equal(fourthDate);
       });
       it("should have no projected history", function (): void {
-        expect(unit.projectedHistory).to.deep.equal([]);
+        expect(unit.projectedEventHistory).to.deep.equal([]);
       });
     });
     describe("Ends With ReviewedAndNeedsMajorRevision Event", function (): void {
@@ -415,7 +415,7 @@ describe("TaskUnit", function (): void {
       });
       it("should have presence from anticipated date to date of last projected event", function (): void {
         const lastProjectedEvent =
-          unit.projectedHistory[unit.projectedHistory.length - 1];
+          unit.projectedEventHistory[unit.projectedEventHistory.length - 1];
         assertIsObject(lastProjectedEvent);
         expect(unit.presenceTime).to.equal(
           lastProjectedEvent.date.getTime() -
@@ -433,12 +433,12 @@ describe("TaskUnit", function (): void {
       });
       it("should have apparent end date equal to date of last projected event", function (): void {
         const lastProjectedEvent =
-          unit.projectedHistory[unit.projectedHistory.length - 1];
+          unit.projectedEventHistory[unit.projectedEventHistory.length - 1];
         assertIsObject(lastProjectedEvent);
         expect(unit.apparentEndDate).to.deep.equal(lastProjectedEvent.date);
       });
       it("should have projected history with ReviewedAndAccepted", function (): void {
-        const projectedEventHistoryTypes = unit.projectedHistory.map(
+        const projectedEventHistoryTypes = unit.projectedEventHistory.map(
           (event) => event.type
         );
         expect(projectedEventHistoryTypes).to.deep.equal([
@@ -467,7 +467,7 @@ describe("TaskUnit", function (): void {
       });
       it("should have presence from anticipated date to date of last projected event", function (): void {
         const lastProjectedEvent =
-          unit.projectedHistory[unit.projectedHistory.length - 1];
+          unit.projectedEventHistory[unit.projectedEventHistory.length - 1];
         assertIsObject(lastProjectedEvent);
         expect(unit.presenceTime).to.equal(
           lastProjectedEvent.date.getTime() -
@@ -485,12 +485,12 @@ describe("TaskUnit", function (): void {
       });
       it("should have apparent end date equal to date of last projected event", function (): void {
         const lastProjectedEvent =
-          unit.projectedHistory[unit.projectedHistory.length - 1];
+          unit.projectedEventHistory[unit.projectedEventHistory.length - 1];
         assertIsObject(lastProjectedEvent);
         expect(unit.apparentEndDate).to.deep.equal(lastProjectedEvent.date);
       });
       it("should have projected history with ReviewedAndAccepted", function (): void {
-        const projectedEventHistoryTypes = unit.projectedHistory.map(
+        const projectedEventHistoryTypes = unit.projectedEventHistory.map(
           (event) => event.type
         );
         expect(projectedEventHistoryTypes).to.deep.equal([
@@ -519,7 +519,7 @@ describe("TaskUnit", function (): void {
       });
       it("should have presence from anticipated date to date of last projected event", function (): void {
         const lastProjectedEvent =
-          unit.projectedHistory[unit.projectedHistory.length - 1];
+          unit.projectedEventHistory[unit.projectedEventHistory.length - 1];
         assertIsObject(lastProjectedEvent);
         expect(unit.presenceTime).to.equal(
           lastProjectedEvent.date.getTime() -
@@ -537,12 +537,12 @@ describe("TaskUnit", function (): void {
       });
       it("should have apparent end date equal to date of last projected event", function (): void {
         const lastProjectedEvent =
-          unit.projectedHistory[unit.projectedHistory.length - 1];
+          unit.projectedEventHistory[unit.projectedEventHistory.length - 1];
         assertIsObject(lastProjectedEvent);
         expect(unit.apparentEndDate).to.deep.equal(lastProjectedEvent.date);
       });
       it("should have projected history with MinorRevisionComplete", function (): void {
-        const projectedEventHistoryTypes = unit.projectedHistory.map(
+        const projectedEventHistoryTypes = unit.projectedEventHistory.map(
           (event) => event.type
         );
         expect(projectedEventHistoryTypes).to.deep.equal([
@@ -571,7 +571,7 @@ describe("TaskUnit", function (): void {
       });
       it("should have presence from anticipated date to date of last projected event", function (): void {
         const lastProjectedEvent =
-          unit.projectedHistory[unit.projectedHistory.length - 1];
+          unit.projectedEventHistory[unit.projectedEventHistory.length - 1];
         assertIsObject(lastProjectedEvent);
         expect(unit.presenceTime).to.equal(
           lastProjectedEvent.date.getTime() -
@@ -589,12 +589,12 @@ describe("TaskUnit", function (): void {
       });
       it("should have apparent end date equal to date of last projected event", function (): void {
         const lastProjectedEvent =
-          unit.projectedHistory[unit.projectedHistory.length - 1];
+          unit.projectedEventHistory[unit.projectedEventHistory.length - 1];
         assertIsObject(lastProjectedEvent);
         expect(unit.apparentEndDate).to.deep.equal(lastProjectedEvent.date);
       });
       it("should have projected history with MinorRevisionComplete", function (): void {
-        const projectedEventHistoryTypes = unit.projectedHistory.map(
+        const projectedEventHistoryTypes = unit.projectedEventHistory.map(
           (event) => event.type
         );
         expect(projectedEventHistoryTypes).to.deep.equal([
@@ -623,7 +623,7 @@ describe("TaskUnit", function (): void {
       });
       it("should have presence from anticipated date to date of last projected event", function (): void {
         const lastProjectedEvent =
-          unit.projectedHistory[unit.projectedHistory.length - 1];
+          unit.projectedEventHistory[unit.projectedEventHistory.length - 1];
         assertIsObject(lastProjectedEvent);
         expect(unit.presenceTime).to.equal(
           lastProjectedEvent.date.getTime() -
@@ -641,12 +641,12 @@ describe("TaskUnit", function (): void {
       });
       it("should have apparent end date equal to date of last projected event", function (): void {
         const lastProjectedEvent =
-          unit.projectedHistory[unit.projectedHistory.length - 1];
+          unit.projectedEventHistory[unit.projectedEventHistory.length - 1];
         assertIsObject(lastProjectedEvent);
         expect(unit.apparentEndDate).to.deep.equal(lastProjectedEvent.date);
       });
       it("should have projected history with TaskIterationStarted, and ReviewedAndAccepted", function (): void {
-        const projectedEventHistoryTypes = unit.projectedHistory.map(
+        const projectedEventHistoryTypes = unit.projectedEventHistory.map(
           (event) => event.type
         );
         expect(projectedEventHistoryTypes).to.deep.equal([
@@ -655,7 +655,7 @@ describe("TaskUnit", function (): void {
         ]);
       });
       it("should have projected history in chronological order", function (): void {
-        const projectedEventHistoryDates = unit.projectedHistory.map(
+        const projectedEventHistoryDates = unit.projectedEventHistory.map(
           (event) => event.date
         );
         expect(projectedEventHistoryDates).to.deep.equal(
@@ -684,7 +684,7 @@ describe("TaskUnit", function (): void {
       });
       it("should have presence from anticipated date to date of last projected event", function (): void {
         const lastProjectedEvent =
-          unit.projectedHistory[unit.projectedHistory.length - 1];
+          unit.projectedEventHistory[unit.projectedEventHistory.length - 1];
         assertIsObject(lastProjectedEvent);
         expect(unit.presenceTime).to.equal(
           lastProjectedEvent.date.getTime() -
@@ -702,12 +702,12 @@ describe("TaskUnit", function (): void {
       });
       it("should have apparent end date equal to date of last projected event", function (): void {
         const lastProjectedEvent =
-          unit.projectedHistory[unit.projectedHistory.length - 1];
+          unit.projectedEventHistory[unit.projectedEventHistory.length - 1];
         assertIsObject(lastProjectedEvent);
         expect(unit.apparentEndDate).to.deep.equal(lastProjectedEvent.date);
       });
       it("should have projected history with TaskIterationStarted, and ReviewedAndAccepted", function (): void {
-        const projectedEventHistoryTypes = unit.projectedHistory.map(
+        const projectedEventHistoryTypes = unit.projectedEventHistory.map(
           (event) => event.type
         );
         expect(projectedEventHistoryTypes).to.deep.equal([
@@ -716,7 +716,7 @@ describe("TaskUnit", function (): void {
         ]);
       });
       it("should have projected history in chronological order", function (): void {
-        const projectedEventHistoryDates = unit.projectedHistory.map(
+        const projectedEventHistoryDates = unit.projectedEventHistory.map(
           (event) => event.date
         );
         expect(projectedEventHistoryDates).to.deep.equal(

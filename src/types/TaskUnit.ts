@@ -35,15 +35,56 @@ export interface ITaskPrerequisites
 }
 
 export interface ITaskUnit {
+  /**
+   * The unique ID for the task.
+   */
   readonly id: string;
-  projectedHistory: TaskEvent[];
-  interpolatedEventHistory: TaskEvent[];
+  /**
+   * A short summary of the task.
+   */
+  name: string;
+  /**
+   * When the task was originally planned to start being worked on.
+   *
+   * When combined with the {@link anticipatedEndDate}, provides the anticipated duration of the task.
+   */
   readonly anticipatedStartDate: Date;
+  /**
+   * When the task was originally anticipated to be completed by.
+   *
+   * When combined with the {@link anticipatedStartDate}, provides the anticipated duration of the task.
+   */
   readonly anticipatedEndDate: Date;
-  readonly name: string;
-  eventHistory: TaskEvent[];
-  apparentEndDate: Date;
+  /**
+   * When the task seems like it will first be started, or when it has already started.
+   *
+   * This is based off of the original anticipated start date and
+   */
   apparentStartDate: Date;
+  /**
+   * When the task seems like it will be completed, or when it has already completed.
+   *
+   * This is based off a number of factors, including when the perceived final task iteration can start or has already
+   * started, what events have already occurred for the task (if any), and how long the original anticipated duration
+   * was.
+   *
+   */
+  apparentEndDate: Date;
+  /**
+   * The series of events that have already happened.
+   */
+  explicitEventHistory: TaskEvent[];
+  /**
+   * The series of events that are projected to happen in the future using the {@link anticipatedEndDate} and
+   * {@link anticipatedStartDate} (which gives the anticipated duration), along with the latest apparent end date of its
+   * direct dependencies, to determine a reasonable best case scenario for how how the task will play out.
+   *
+   * For example, if the task has just had an {@link EventType.ReviewedAndNeedsRebuild} event, the projected history
+   * would be an {@link EventType.TaskIterationStarted} event at the current date and time (because it is assuming the
+   * new prerequisites will be signed off on at any moment), and then an {@link EventType.ReviewedAndAccepted} event at
+   * the date and time after that date that reflects the original anticipated duration of the task.
+   */
+  projectedEventHistory: TaskEvent[];
   /**
    * An array of the versions of prerequisites for this task. The latest entry represents the latest version of the
    * prerequisites.
@@ -182,10 +223,39 @@ export interface TaskUnitDetails {
    * then it means the task was actually finished at that time.
    */
   apparentEndTime: number;
+  /**
+   * The index of the track this unit should be placed on.
+   */
   trackIndex: number;
+  /**
+   * A short description of the task.
+   */
   name: string;
+  /**
+   * The series of events that have already happened.
+   *
+   * This is similar to {@link ITaskUnit.explicitEventHistory}, except it's serializable, so it can be used safely in a
+   * redux store.
+   */
   explicitEventHistory: SerializableTaskEvent[];
+  /**
+   * The series of events that are projected to happen in the future using the {@link anticipatedEndDate} and
+   * {@link anticipatedStartDate} (which gives the anticipated duration), along with the latest apparent end date of its
+   * direct dependencies, to determine a reasonable best case scenario for how how the task will play out.
+   *
+   * For example, if the task has just had an {@link EventType.ReviewedAndNeedsRebuild} event, the projected history
+   * would be an {@link EventType.TaskIterationStarted} event at the current date and time (because it is assuming the
+   * new prerequisites will be signed off on at any moment), and then an {@link EventType.ReviewedAndAccepted} event at
+   * the date and time after that date that reflects the original anticipated duration of the task.
+   *
+   * This is similar to {@link ITaskUnit.projectedEventHistory}, except it's serializable, so it can be used safely in a
+   * redux store.
+   */
   projectedEventHistory: SerializableTaskEvent[];
+  /**
+   * An array of the versions IDs of prerequisites for this task. The latest entry represents the ID of the latest
+   * version of the prerequisites.
+   */
   prerequisitesIterations: SerializableTaskPrerequisitesReference[];
 }
 
@@ -243,9 +313,6 @@ export type TaskEvent =
   | ReviewedAndNeedsMajorRevisionEvent
   | ReviewedAndNeedsRebuildEvent;
 
-// export interface TaskEvent extends TaskEvent {
-//   projected: boolean;
-// }
 export interface BaseSerializableTaskEvent {
   type: EventType;
   time: number;

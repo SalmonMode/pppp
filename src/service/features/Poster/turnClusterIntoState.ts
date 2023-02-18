@@ -83,7 +83,7 @@ export function turnClusterIntoState(
               directDependencies: [...unit.directDependencies].map(
                 (u: ITaskUnit): string => u.id
               ),
-              explicitEventHistory: unit.eventHistory.map(
+              explicitEventHistory: unit.explicitEventHistory.map(
                 (event: TaskEvent): SerializableTaskEvent => {
                   const time = event.date.getTime();
                   if (event.type === EventType.TaskIterationStarted) {
@@ -99,7 +99,7 @@ export function turnClusterIntoState(
                   };
                 }
               ),
-              projectedEventHistory: unit.projectedHistory.map(
+              projectedEventHistory: unit.projectedEventHistory.map(
                 (event: TaskEvent): SerializableTaskEvent => {
                   const time = event.date.getTime();
                   if (event.type === EventType.TaskIterationStarted) {

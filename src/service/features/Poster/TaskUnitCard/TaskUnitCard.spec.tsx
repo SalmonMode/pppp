@@ -359,8 +359,8 @@ describe("React Integration: TaskUnitCard", function (): void {
             expect(firstIterationIndex).to.equal(0);
           });
           it("should have width according to actual duration of first iteration minus one border width", function (): void {
-            const reviewEvent = relevantUnit.interpolatedEventHistory[0];
-            const startedEvent = relevantUnit.interpolatedEventHistory[1];
+            const reviewEvent = relevantUnit.explicitEventHistory[0];
+            const startedEvent = relevantUnit.explicitEventHistory[1];
             assertIsObject(reviewEvent);
             assertIsObject(startedEvent);
             expect(
@@ -396,8 +396,8 @@ describe("React Integration: TaskUnitCard", function (): void {
             expect(secondIterationIndex).to.equal(1);
           });
           it("should have width according to actual duration of second iteration minus one border width", function (): void {
-            const reviewEvent = relevantUnit.interpolatedEventHistory[1];
-            const startedEvent = relevantUnit.interpolatedEventHistory[2];
+            const reviewEvent = relevantUnit.explicitEventHistory[1];
+            const startedEvent = relevantUnit.explicitEventHistory[2];
             assertIsObject(reviewEvent);
             assertIsObject(startedEvent);
             expect(
@@ -490,8 +490,8 @@ describe("React Integration: TaskUnitCard", function (): void {
             expect(firstIterationIndex).to.equal(0);
           });
           it("should have width according to actual duration of first iteration minus one border width", function (): void {
-            const reviewEvent = relevantUnit.interpolatedEventHistory[0];
-            const startedEvent = relevantUnit.interpolatedEventHistory[1];
+            const reviewEvent = relevantUnit.explicitEventHistory[0];
+            const startedEvent = relevantUnit.explicitEventHistory[1];
             assertIsObject(reviewEvent);
             assertIsObject(startedEvent);
             expect(
@@ -527,8 +527,8 @@ describe("React Integration: TaskUnitCard", function (): void {
             expect(extensionTrailIndex).to.equal(1);
           });
           it("should have width according to actual duration of second iteration minus neither borders width", function (): void {
-            const reviewEvent = relevantUnit.interpolatedEventHistory[1];
-            const startedEvent = relevantUnit.interpolatedEventHistory[2];
+            const reviewEvent = relevantUnit.explicitEventHistory[1];
+            const startedEvent = relevantUnit.explicitEventHistory[2];
             assertIsObject(reviewEvent);
             assertIsObject(startedEvent);
             expect(Number(extensionComputedStyles.width.slice(0, -2))).to.equal(
@@ -544,8 +544,8 @@ describe("React Integration: TaskUnitCard", function (): void {
             expect(secondIterationIndex).to.equal(2);
           });
           it("should have width according to actual duration of second iteration minus neither borders width", function (): void {
-            const reviewEvent = relevantUnit.interpolatedEventHistory[2];
-            const startedEvent = relevantUnit.interpolatedEventHistory[3];
+            const reviewEvent = relevantUnit.explicitEventHistory[2];
+            const startedEvent = relevantUnit.explicitEventHistory[3];
             assertIsObject(reviewEvent);
             assertIsObject(startedEvent);
             expect(
@@ -580,9 +580,9 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be fourth child", function (): void {
             expect(thirdIterationIndex).to.equal(3);
           });
-          it("should have width according to actual duration of third iteration plus review box width minus one border width", function (): void {
-            const reviewEvent = relevantUnit.interpolatedEventHistory[3];
-            const startedEvent = relevantUnit.interpolatedEventHistory[4];
+          it("should have width according to apparent duration of third iteration plus review box width minus one border width", function (): void {
+            const reviewEvent = relevantUnit.explicitEventHistory[3];
+            const startedEvent = relevantUnit.projectedEventHistory[0];
             assertIsObject(reviewEvent);
             assertIsObject(startedEvent);
             expect(
@@ -677,8 +677,8 @@ describe("React Integration: TaskUnitCard", function (): void {
             expect(firstIterationIndex).to.equal(0);
           });
           it("should have width according to actual duration of first iteration minus one border width", function (): void {
-            const reviewEvent = relevantUnit.interpolatedEventHistory[0];
-            const startedEvent = relevantUnit.interpolatedEventHistory[1];
+            const reviewEvent = relevantUnit.explicitEventHistory[0];
+            const startedEvent = relevantUnit.explicitEventHistory[1];
             assertIsObject(reviewEvent);
             assertIsObject(startedEvent);
             expect(
@@ -715,8 +715,8 @@ describe("React Integration: TaskUnitCard", function (): void {
             expect(secondIterationIndex).to.equal(1);
           });
           it("should have width according to actual duration of second iteration minus neither borders width", function (): void {
-            const reviewEvent = relevantUnit.interpolatedEventHistory[1];
-            const startedEvent = relevantUnit.interpolatedEventHistory[2];
+            const reviewEvent = relevantUnit.explicitEventHistory[1];
+            const startedEvent = relevantUnit.explicitEventHistory[2];
             assertIsObject(reviewEvent);
             assertIsObject(startedEvent);
             expect(
@@ -752,8 +752,8 @@ describe("React Integration: TaskUnitCard", function (): void {
             expect(extensionTrailIndex).to.equal(2);
           });
           it("should have width according to actual duration of second iteration minus neither borders width", function (): void {
-            const reviewEvent = relevantUnit.interpolatedEventHistory[2];
-            const startedEvent = relevantUnit.interpolatedEventHistory[3];
+            const reviewEvent = relevantUnit.explicitEventHistory[2];
+            const startedEvent = relevantUnit.projectedEventHistory[0];
             assertIsObject(reviewEvent);
             assertIsObject(startedEvent);
             expect(Number(extensionComputedStyles.width.slice(0, -2))).to.equal(
@@ -768,9 +768,9 @@ describe("React Integration: TaskUnitCard", function (): void {
           it("should be fourth child", function (): void {
             expect(thirdIterationIndex).to.equal(3);
           });
-          it("should have width according to actual duration of third iteration minus one borders width", function (): void {
-            const reviewEvent = relevantUnit.interpolatedEventHistory[3];
-            const startedEvent = relevantUnit.interpolatedEventHistory[4];
+          it("should have width according to apparent duration of third iteration minus one borders width", function (): void {
+            const reviewEvent = relevantUnit.projectedEventHistory[0];
+            const startedEvent = relevantUnit.projectedEventHistory[1];
             assertIsObject(reviewEvent);
             assertIsObject(startedEvent);
             expect(
@@ -842,8 +842,8 @@ describe("React Integration: TaskUnitCard", function (): void {
             expect(firstIterationIndex).to.equal(0);
           });
           it("should have width according to actual duration of first iteration plus review box width minus both borders width", function (): void {
-            const reviewEvent = relevantUnit.interpolatedEventHistory[0];
-            const startedEvent = relevantUnit.interpolatedEventHistory[1];
+            const reviewEvent = relevantUnit.explicitEventHistory[0];
+            const startedEvent = relevantUnit.projectedEventHistory[0];
             assertIsObject(reviewEvent);
             assertIsObject(startedEvent);
             expect(
