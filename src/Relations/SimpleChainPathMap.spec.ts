@@ -65,7 +65,7 @@ describe("SimpleChainPathMap", function (): void {
       const unitG = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", parentUnits: [unitA, unitC, unitF] },
+          { id: "1234", approved: true, parentUnits: [unitA, unitC, unitF] },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -73,7 +73,9 @@ describe("SimpleChainPathMap", function (): void {
       });
       const unitH = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB, unitD] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitB, unitD] },
+        ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "H",
@@ -81,7 +83,7 @@ describe("SimpleChainPathMap", function (): void {
       const unitI = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", parentUnits: [unitB, unitC, unitE] },
+          { id: "1234", approved: true, parentUnits: [unitB, unitC, unitE] },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -90,7 +92,11 @@ describe("SimpleChainPathMap", function (): void {
       const unitJ = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", parentUnits: [unitA, unitB, unitD, unitE] },
+          {
+            id: "1234",
+            approved: true,
+            parentUnits: [unitA, unitB, unitD, unitE],
+          },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -99,7 +105,7 @@ describe("SimpleChainPathMap", function (): void {
       const unitK = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", parentUnits: [unitC, unitD, unitE] },
+          { id: "1234", approved: true, parentUnits: [unitC, unitD, unitE] },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -108,7 +114,7 @@ describe("SimpleChainPathMap", function (): void {
       const unitL = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", parentUnits: [unitA, unitC, unitF] },
+          { id: "1234", approved: true, parentUnits: [unitA, unitC, unitF] },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -118,7 +124,7 @@ describe("SimpleChainPathMap", function (): void {
       const unitM = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", parentUnits: [unitG, unitI, unitL] },
+          { id: "1234", approved: true, parentUnits: [unitG, unitI, unitL] },
         ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
@@ -127,7 +133,7 @@ describe("SimpleChainPathMap", function (): void {
       const unitN = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", parentUnits: [unitH, unitI, unitJ] },
+          { id: "1234", approved: true, parentUnits: [unitH, unitI, unitJ] },
         ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
@@ -135,7 +141,9 @@ describe("SimpleChainPathMap", function (): void {
       });
       const unitO = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitH, unitI] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitH, unitI] },
+        ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "O",
@@ -143,7 +151,11 @@ describe("SimpleChainPathMap", function (): void {
       const unitP = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", parentUnits: [unitH, unitJ, unitK, unitL] },
+          {
+            id: "1234",
+            approved: true,
+            parentUnits: [unitH, unitJ, unitK, unitL],
+          },
         ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
@@ -152,7 +164,7 @@ describe("SimpleChainPathMap", function (): void {
       const unitQ = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", parentUnits: [unitF, unitI, unitK] },
+          { id: "1234", approved: true, parentUnits: [unitF, unitI, unitK] },
         ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
@@ -160,7 +172,9 @@ describe("SimpleChainPathMap", function (): void {
       });
       const unitR = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitG, unitL] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitG, unitL] },
+        ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "R",

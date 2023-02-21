@@ -66,21 +66,27 @@ describe("ChainStrainMap", function (): void {
       });
       unitB = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitA] },
+        ],
         anticipatedStartDate: secondDate,
         anticipatedEndDate: thirdDate,
         name: "B",
       });
       unitC = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitA] },
+        ],
         anticipatedStartDate: secondDate,
         anticipatedEndDate: thirdDate,
         name: "C",
       });
       unitD = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB, unitC] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitB, unitC] },
+        ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "D",
@@ -139,14 +145,18 @@ describe("ChainStrainMap", function (): void {
 
       const unitB = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitA] },
+        ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "B",
       });
       const unitC = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitA] },
+        ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "C",
@@ -154,28 +164,36 @@ describe("ChainStrainMap", function (): void {
 
       const unitD = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitB] },
+        ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "D",
       });
       const unitE = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitB] },
+        ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "E",
       });
       const unitF = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB, unitC] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitB, unitC] },
+        ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "F",
       });
       const unitG = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitC] },
+        ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "G",

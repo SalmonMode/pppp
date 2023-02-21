@@ -28,7 +28,7 @@ describe("React Integration: TaskUnitCard", function (): void {
 
     const unitA = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234" }],
+      prerequisitesIterations: [{ id: "1234", approved: true }],
       anticipatedStartDate: firstDate,
       anticipatedEndDate: secondDate,
       name: "A",
@@ -46,7 +46,9 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitB = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+      prerequisitesIterations: [
+        { id: "1234", approved: true, parentUnits: [unitA] },
+      ],
       anticipatedStartDate: secondDate,
       anticipatedEndDate: thirdDate,
       name: "B",
@@ -68,7 +70,7 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitC = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234" }],
+      prerequisitesIterations: [{ id: "1234", approved: true }],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "C",
@@ -86,7 +88,10 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitD = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
+      prerequisitesIterations: [
+        { id: "1234", approved: true, parentUnits: [unitC] },
+        { id: "12343333", approved: true, parentUnits: [unitC] },
+      ],
       anticipatedStartDate: sixthDate,
       anticipatedEndDate: seventhDate,
       name: "D",
@@ -102,7 +107,7 @@ describe("React Integration: TaskUnitCard", function (): void {
         },
         {
           type: EventType.TaskIterationStarted,
-          prerequisitesVersion: 0,
+          prerequisitesVersion: 1,
           date: eighthDate,
         },
         {
@@ -114,7 +119,7 @@ describe("React Integration: TaskUnitCard", function (): void {
 
     const unitE = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234" }],
+      prerequisitesIterations: [{ id: "1234", approved: true }],
       anticipatedStartDate: firstDate,
       anticipatedEndDate: secondDate,
       name: "E",
@@ -132,7 +137,9 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitF = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitE] }],
+      prerequisitesIterations: [
+        { id: "1234", approved: true, parentUnits: [unitA, unitE] },
+      ],
       anticipatedStartDate: secondDate,
       anticipatedEndDate: thirdDate,
       name: "F",
@@ -150,7 +157,9 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitG = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitF] }],
+      prerequisitesIterations: [
+        { id: "1234", approved: true, parentUnits: [unitF] },
+      ],
       anticipatedStartDate: fourthDate,
       anticipatedEndDate: fifthDate,
       name: "G",
@@ -168,7 +177,9 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitH = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitG] }],
+      prerequisitesIterations: [
+        { id: "1234", approved: true, parentUnits: [unitC, unitG] },
+      ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "H",
@@ -191,7 +202,7 @@ describe("React Integration: TaskUnitCard", function (): void {
 
     const unitI = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234" }],
+      prerequisitesIterations: [{ id: "1234", approved: true }],
       anticipatedStartDate: firstDate,
       anticipatedEndDate: secondDate,
       name: "I",
@@ -209,7 +220,9 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitJ = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitI] }],
+      prerequisitesIterations: [
+        { id: "1234", approved: true, parentUnits: [unitA, unitI] },
+      ],
       anticipatedStartDate: secondDate,
       anticipatedEndDate: thirdDate,
       name: "J",
@@ -227,7 +240,9 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitK = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitJ] }],
+      prerequisitesIterations: [
+        { id: "1234", approved: true, parentUnits: [unitJ] },
+      ],
       anticipatedStartDate: fourthDate,
       anticipatedEndDate: fifthDate,
       name: "K",
@@ -245,7 +260,9 @@ describe("React Integration: TaskUnitCard", function (): void {
     });
     const unitL = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitK] }],
+      prerequisitesIterations: [
+        { id: "1234", approved: true, parentUnits: [unitC, unitK] },
+      ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "L",

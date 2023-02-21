@@ -62,7 +62,7 @@ describe("React Integration: Poster", function (): void {
     const ninthDate = add(eighthDate, { days: 1 });
     const unitA = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234" }],
+      prerequisitesIterations: [{ id: "1234", approved: true }],
       anticipatedStartDate: firstDate,
       anticipatedEndDate: secondDate,
       name: "A",
@@ -80,7 +80,9 @@ describe("React Integration: Poster", function (): void {
     });
     const unitB = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+      prerequisitesIterations: [
+        { id: "1234", approved: true, parentUnits: [unitA] },
+      ],
       anticipatedStartDate: secondDate,
       anticipatedEndDate: thirdDate,
       name: "B",
@@ -102,7 +104,7 @@ describe("React Integration: Poster", function (): void {
     });
     const unitC = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234" }],
+      prerequisitesIterations: [{ id: "1234", approved: true }],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "C",
@@ -121,8 +123,8 @@ describe("React Integration: Poster", function (): void {
     const unitD = new TaskUnit({
       now,
       prerequisitesIterations: [
-        { id: "1234", parentUnits: [unitC] },
-        { id: "1234567", parentUnits: [unitC] },
+        { id: "1234", approved: true, parentUnits: [unitC] },
+        { id: "1234567", approved: true, parentUnits: [unitC] },
       ],
       anticipatedStartDate: sixthDate,
       anticipatedEndDate: seventhDate,
@@ -151,7 +153,7 @@ describe("React Integration: Poster", function (): void {
 
     const unitE = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234" }],
+      prerequisitesIterations: [{ id: "1234", approved: true }],
       anticipatedStartDate: firstDate,
       anticipatedEndDate: secondDate,
       name: "E",
@@ -169,7 +171,9 @@ describe("React Integration: Poster", function (): void {
     });
     const unitF = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitE] }],
+      prerequisitesIterations: [
+        { id: "1234", approved: true, parentUnits: [unitA, unitE] },
+      ],
       anticipatedStartDate: secondDate,
       anticipatedEndDate: thirdDate,
       name: "F",
@@ -187,7 +191,9 @@ describe("React Integration: Poster", function (): void {
     });
     const unitG = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitF] }],
+      prerequisitesIterations: [
+        { id: "1234", approved: true, parentUnits: [unitF] },
+      ],
       anticipatedStartDate: fourthDate,
       anticipatedEndDate: fifthDate,
       name: "G",
@@ -205,7 +211,9 @@ describe("React Integration: Poster", function (): void {
     });
     const unitH = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitG] }],
+      prerequisitesIterations: [
+        { id: "1234", approved: true, parentUnits: [unitC, unitG] },
+      ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "H",
@@ -228,7 +236,7 @@ describe("React Integration: Poster", function (): void {
 
     const unitI = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234" }],
+      prerequisitesIterations: [{ id: "1234", approved: true }],
       anticipatedStartDate: firstDate,
       anticipatedEndDate: secondDate,
       name: "I",
@@ -246,7 +254,9 @@ describe("React Integration: Poster", function (): void {
     });
     const unitJ = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitI] }],
+      prerequisitesIterations: [
+        { id: "1234", approved: true, parentUnits: [unitA, unitI] },
+      ],
       anticipatedStartDate: secondDate,
       anticipatedEndDate: thirdDate,
       name: "J",
@@ -264,7 +274,9 @@ describe("React Integration: Poster", function (): void {
     });
     const unitK = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitJ] }],
+      prerequisitesIterations: [
+        { id: "1234", approved: true, parentUnits: [unitJ] },
+      ],
       anticipatedStartDate: fourthDate,
       anticipatedEndDate: fifthDate,
       name: "K",
@@ -282,7 +294,9 @@ describe("React Integration: Poster", function (): void {
     });
     const unitL = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitK] }],
+      prerequisitesIterations: [
+        { id: "1234", approved: true, parentUnits: [unitC, unitK] },
+      ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "L",
@@ -787,7 +801,7 @@ describe("React Integration: Poster", function (): void {
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
+        it("should have snail trail width according to anticipated start and apparent end date", function (): void {
           expect(Number(unitASnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitA.apparentEndDate.getTime(),
@@ -812,7 +826,7 @@ describe("React Integration: Poster", function (): void {
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
+        it("should have snail trail width according to anticipated start and apparent end date", function (): void {
           expect(Number(unitBSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitB.apparentEndDate.getTime(),
@@ -842,7 +856,7 @@ describe("React Integration: Poster", function (): void {
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
+        it("should have snail trail width according to anticipated start and apparent end date", function (): void {
           expect(Number(unitCSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitC.apparentEndDate.getTime(),
@@ -872,7 +886,7 @@ describe("React Integration: Poster", function (): void {
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
+        it("should have snail trail width according to anticipated start and apparent end date", function (): void {
           expect(Number(unitDSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitD.apparentEndDate.getTime(),
@@ -902,7 +916,7 @@ describe("React Integration: Poster", function (): void {
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
+        it("should have snail trail width according to anticipated start and apparent end date", function (): void {
           expect(Number(unitESnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitE.apparentEndDate.getTime(),
@@ -917,7 +931,7 @@ describe("React Integration: Poster", function (): void {
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
+        it("should have snail trail width according to anticipated start and apparent end date", function (): void {
           expect(Number(unitFSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitF.apparentEndDate.getTime(),
@@ -932,7 +946,7 @@ describe("React Integration: Poster", function (): void {
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
+        it("should have snail trail width according to anticipated start and apparent end date", function (): void {
           expect(Number(unitGSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitG.apparentEndDate.getTime(),
@@ -957,7 +971,7 @@ describe("React Integration: Poster", function (): void {
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
+        it("should have snail trail width according to anticipated start and apparent end date", function (): void {
           expect(Number(unitHSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitH.apparentEndDate.getTime(),
@@ -972,7 +986,7 @@ describe("React Integration: Poster", function (): void {
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
+        it("should have snail trail width according to anticipated start and apparent end date", function (): void {
           expect(Number(unitISnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitI.apparentEndDate.getTime(),
@@ -987,7 +1001,7 @@ describe("React Integration: Poster", function (): void {
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
+        it("should have snail trail width according to anticipated start and apparent end date", function (): void {
           expect(Number(unitJSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitJ.apparentEndDate.getTime(),
@@ -1002,7 +1016,7 @@ describe("React Integration: Poster", function (): void {
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
+        it("should have snail trail width according to anticipated start and apparent end date", function (): void {
           expect(Number(unitKSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitK.apparentEndDate.getTime(),
@@ -1017,7 +1031,7 @@ describe("React Integration: Poster", function (): void {
             chroma(theme.snailTrailColor).hex()
           );
         });
-        it("should have snail trail width according to anticipated start date and apparent end date", function (): void {
+        it("should have snail trail width according to anticipated start and apparent end date", function (): void {
           expect(Number(unitLSnailTrailStyles.width.slice(0, -2))).to.equal(
             getPixelGapBetweenTimes(
               unitL.apparentEndDate.getTime(),
@@ -1462,7 +1476,9 @@ describe("React Integration: Poster", function (): void {
       });
       const unitB = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitA] },
+        ],
         anticipatedStartDate: secondDate,
         anticipatedEndDate: fourthDate,
         name: "B",
@@ -1475,7 +1491,9 @@ describe("React Integration: Poster", function (): void {
       });
       const unitD = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitC] },
+        ],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "D",
@@ -1489,21 +1507,27 @@ describe("React Integration: Poster", function (): void {
       });
       const unitF = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitE] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitA, unitE] },
+        ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "F",
       });
       const unitG = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitF] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitF] },
+        ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "G",
       });
       const unitH = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitG] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitC, unitG] },
+        ],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "H",
@@ -1516,21 +1540,27 @@ describe("React Integration: Poster", function (): void {
       });
       const unitJ = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitI] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitA, unitI] },
+        ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "J",
       });
       const unitK = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitJ] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitJ] },
+        ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "K",
       });
       const unitL = new TaskUnit({
         now,
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitK] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitC, unitK] },
+        ],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "L",

@@ -117,7 +117,7 @@ describe("TaskUnit", function (): void {
         () =>
           new TaskUnit({
             now,
-            prerequisitesIterations: [{ id: "1234" }],
+            prerequisitesIterations: [{ id: "1234", approved: true }],
             name: "unit",
             anticipatedStartDate: firstDate,
             anticipatedEndDate: secondDate,
@@ -175,7 +175,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -215,7 +215,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -266,7 +266,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -317,7 +317,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -358,7 +358,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -399,7 +399,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -451,7 +451,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -503,7 +503,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -555,7 +555,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -607,7 +607,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -668,7 +668,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unit = new TaskUnit({
           now,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -737,7 +737,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -760,7 +760,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -783,7 +783,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -809,7 +809,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -835,7 +835,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -854,7 +854,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unitA = new TaskUnit({
           now,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -873,7 +873,9 @@ describe("TaskUnit", function (): void {
             new TaskUnit({
               now,
               name: "unit",
-              prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+              prerequisitesIterations: [
+                { id: "1234", parentUnits: [unitA], approved: true },
+              ],
               anticipatedStartDate: secondDate,
               anticipatedEndDate: thirdDate,
               eventHistory: [
@@ -887,12 +889,33 @@ describe("TaskUnit", function (): void {
         ).to.throw(PrematureTaskStartError);
       });
     });
+    describe("Task Started Before Prerequisites Iteration is Approved", function (): void {
+      it("should throw PrematureTaskStartError", function (): void {
+        expect(
+          () =>
+            new TaskUnit({
+              now,
+              prerequisitesIterations: [{ id: "1234", approved: false }],
+              name: "unit",
+              anticipatedStartDate: firstDate,
+              anticipatedEndDate: secondDate,
+              eventHistory: [
+                {
+                  type: EventType.TaskIterationStarted,
+                  date: firstDate,
+                  prerequisitesVersion: 0,
+                },
+              ],
+            })
+        ).to.throw(PrematureTaskStartError);
+      });
+    });
     describe("Task Started Before Dependency Finished (First Task Was Not Started)", function (): void {
       let unitA: TaskUnit;
       before(function (): void {
         unitA = new TaskUnit({
           now,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -904,7 +927,9 @@ describe("TaskUnit", function (): void {
             new TaskUnit({
               now,
               name: "unit",
-              prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+              prerequisitesIterations: [
+                { id: "1234", parentUnits: [unitA], approved: true },
+              ],
               anticipatedStartDate: secondDate,
               anticipatedEndDate: thirdDate,
               eventHistory: [
@@ -923,7 +948,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unitA = new TaskUnit({
           now,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -945,8 +970,10 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              name: "unit",
-              prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+              name: "B",
+              prerequisitesIterations: [
+                { id: "1234", parentUnits: [unitA], approved: true },
+              ],
               anticipatedStartDate: lateFirstDate,
               anticipatedEndDate: lateSecondDate,
               eventHistory: [
@@ -965,7 +992,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unitA = new TaskUnit({
           now,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           name: "unit",
           anticipatedStartDate: firstDate,
           anticipatedEndDate: secondDate,
@@ -988,7 +1015,9 @@ describe("TaskUnit", function (): void {
             new TaskUnit({
               now,
               name: "unit",
-              prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+              prerequisitesIterations: [
+                { id: "1234", parentUnits: [unitA], approved: true },
+              ],
               anticipatedStartDate: lateFirstDate,
               anticipatedEndDate: lateSecondDate,
               eventHistory: [
@@ -1008,7 +1037,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1050,7 +1079,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1067,7 +1096,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1084,7 +1113,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1104,7 +1133,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1124,7 +1153,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1144,7 +1173,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1169,7 +1198,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1194,7 +1223,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1219,7 +1248,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1244,7 +1273,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1269,7 +1298,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1295,7 +1324,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1320,7 +1349,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1352,7 +1381,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -1385,7 +1414,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -1418,7 +1447,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -1451,7 +1480,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -1485,7 +1514,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -1518,7 +1547,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -1551,7 +1580,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -1584,7 +1613,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -1617,7 +1646,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -1647,7 +1676,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1679,7 +1708,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -1708,12 +1737,52 @@ describe("TaskUnit", function (): void {
       "Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, " +
         "TaskIterationStarted With Sufficient Prerequisites Iterations",
       function (): void {
+        it("should not throw Error", function (): void {
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [
+                  { id: "1234", approved: true },
+                  { id: "4567", approved: true },
+                ],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsRebuild,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: thirdDate,
+                    prerequisitesVersion: 1,
+                  },
+                ],
+              })
+          ).to.not.throw(Error);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, " +
+        "TaskIterationStarted With Approved First Prerequisites Iteration And Unapproved Second Iteration",
+      function (): void {
         it("should throw EventHistoryInvalidError", function (): void {
           expect(
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }, { id: "4567" }],
+                prerequisitesIterations: [
+                  { id: "1234", approved: true },
+                  { id: "4567", approved: false },
+                ],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -1734,7 +1803,7 @@ describe("TaskUnit", function (): void {
                   },
                 ],
               })
-          ).to.not.throw(Error);
+          ).to.throw(EventHistoryInvalidError);
         });
       }
     );
@@ -1747,7 +1816,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -1778,7 +1847,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1810,7 +1879,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -1843,7 +1912,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -1873,7 +1942,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1902,7 +1971,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1931,7 +2000,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1960,7 +2029,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -1989,7 +2058,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -2018,7 +2087,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -2047,7 +2116,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -2076,7 +2145,7 @@ describe("TaskUnit", function (): void {
           () =>
             new TaskUnit({
               now,
-              prerequisitesIterations: [{ id: "1234" }],
+              prerequisitesIterations: [{ id: "1234", approved: true }],
               name: "unit",
               anticipatedStartDate: firstDate,
               anticipatedEndDate: secondDate,
@@ -2109,7 +2178,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -2146,7 +2215,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -2183,7 +2252,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -2220,7 +2289,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -2257,7 +2326,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -2294,7 +2363,7 @@ describe("TaskUnit", function (): void {
             () =>
               new TaskUnit({
                 now,
-                prerequisitesIterations: [{ id: "1234" }],
+                prerequisitesIterations: [{ id: "1234", approved: true }],
                 name: "unit",
                 anticipatedStartDate: firstDate,
                 anticipatedEndDate: secondDate,
@@ -2358,7 +2427,9 @@ describe("TaskUnit", function (): void {
 
     const unitB = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitC] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitA, unitC], approved: true },
+      ],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "B",
@@ -2366,7 +2437,7 @@ describe("TaskUnit", function (): void {
     const unitD = new TaskUnit({
       now,
       prerequisitesIterations: [
-        { id: "1234", parentUnits: [unitA, unitC, unitF] },
+        { id: "1234", parentUnits: [unitA, unitC, unitF], approved: true },
       ],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
@@ -2374,7 +2445,9 @@ describe("TaskUnit", function (): void {
     });
     const unitG = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitF] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitC, unitF], approved: true },
+      ],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "G",
@@ -2383,7 +2456,7 @@ describe("TaskUnit", function (): void {
     const unitE = new TaskUnit({
       now,
       prerequisitesIterations: [
-        { id: "1234", parentUnits: [unitB, unitD, unitG] },
+        { id: "1234", parentUnits: [unitB, unitD, unitG], approved: true },
       ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
@@ -2391,7 +2464,9 @@ describe("TaskUnit", function (): void {
     });
     const unitH = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitD, unitG] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitD, unitG], approved: true },
+      ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "H",
@@ -2522,14 +2597,18 @@ describe("TaskUnit", function (): void {
     });
     const unitB = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitA], approved: true },
+      ],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "B",
     });
     const unitC = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitB] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitA, unitB], approved: true },
+      ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "C",
@@ -2537,7 +2616,7 @@ describe("TaskUnit", function (): void {
     const unitD = new TaskUnit({
       now,
       prerequisitesIterations: [
-        { id: "1234", parentUnits: [unitA, unitB, unitC] },
+        { id: "1234", parentUnits: [unitA, unitB, unitC], approved: true },
       ],
       anticipatedStartDate: seventhDate,
       anticipatedEndDate: eighthDate,
@@ -2610,14 +2689,18 @@ describe("TaskUnit", function (): void {
 
     const unitB = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitA], approved: true },
+      ],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "B",
     });
     const unitF = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitA], approved: true },
+      ],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "F",
@@ -2625,14 +2708,18 @@ describe("TaskUnit", function (): void {
 
     const unitC = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitB, unitF] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitB, unitF], approved: true },
+      ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "C",
     });
     const unitG = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitB, unitF] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitB, unitF], approved: true },
+      ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "G",
@@ -2640,14 +2727,18 @@ describe("TaskUnit", function (): void {
 
     const unitD = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitG] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitC, unitG], approved: true },
+      ],
       anticipatedStartDate: seventhDate,
       anticipatedEndDate: eighthDate,
       name: "D",
     });
     const unitH = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitG] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitC, unitG], approved: true },
+      ],
       anticipatedStartDate: seventhDate,
       anticipatedEndDate: eighthDate,
       name: "H",
@@ -2655,7 +2746,9 @@ describe("TaskUnit", function (): void {
 
     const unitE = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitD, unitH] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitD, unitH], approved: true },
+      ],
       anticipatedStartDate: ninthDate,
       anticipatedEndDate: tenthDate,
       name: "E",
@@ -2819,21 +2912,27 @@ describe("TaskUnit", function (): void {
 
     const unitC = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitA], approved: true },
+      ],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "C",
     });
     const unitD = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitB] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitA, unitB], approved: true },
+      ],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "D",
     });
     const unitE = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitB] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitB], approved: true },
+      ],
       anticipatedStartDate: thirdDate,
       anticipatedEndDate: fourthDate,
       name: "E",
@@ -2841,28 +2940,36 @@ describe("TaskUnit", function (): void {
 
     const unitF = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitC], approved: true },
+      ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "F",
     });
     const unitG = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitD] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitC, unitD], approved: true },
+      ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "G",
     });
     const unitH = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitD, unitE] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitD, unitE], approved: true },
+      ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "H",
     });
     const unitI = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitE] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitE], approved: true },
+      ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "I",
@@ -2870,35 +2977,45 @@ describe("TaskUnit", function (): void {
 
     const unitJ = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitF] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitF], approved: true },
+      ],
       anticipatedStartDate: seventhDate,
       anticipatedEndDate: eighthDate,
       name: "J",
     });
     const unitK = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitF, unitG] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitF, unitG], approved: true },
+      ],
       anticipatedStartDate: seventhDate,
       anticipatedEndDate: eighthDate,
       name: "K",
     });
     const unitL = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitG, unitH] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitG, unitH], approved: true },
+      ],
       anticipatedStartDate: seventhDate,
       anticipatedEndDate: eighthDate,
       name: "L",
     });
     const unitM = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitH, unitI] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitH, unitI], approved: true },
+      ],
       anticipatedStartDate: seventhDate,
       anticipatedEndDate: eighthDate,
       name: "M",
     });
     const unitN = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitI] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitI], approved: true },
+      ],
       anticipatedStartDate: seventhDate,
       anticipatedEndDate: eighthDate,
       name: "N",
@@ -2906,28 +3023,36 @@ describe("TaskUnit", function (): void {
 
     const unitO = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitJ, unitK] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitJ, unitK], approved: true },
+      ],
       anticipatedStartDate: ninthDate,
       anticipatedEndDate: tenthDate,
       name: "O",
     });
     const unitP = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitK, unitL] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitK, unitL], approved: true },
+      ],
       anticipatedStartDate: ninthDate,
       anticipatedEndDate: tenthDate,
       name: "P",
     });
     const unitQ = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitL, unitM] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitL, unitM], approved: true },
+      ],
       anticipatedStartDate: ninthDate,
       anticipatedEndDate: tenthDate,
       name: "Q",
     });
     const unitR = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitM, unitN] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitM, unitN], approved: true },
+      ],
       anticipatedStartDate: ninthDate,
       anticipatedEndDate: tenthDate,
       name: "R",
@@ -2935,28 +3060,36 @@ describe("TaskUnit", function (): void {
 
     const unitS = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitO, unitP] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitO, unitP], approved: true },
+      ],
       anticipatedStartDate: eleventhDate,
       anticipatedEndDate: twelfthDate,
       name: "S",
     });
     const unitT = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitP, unitQ] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitP, unitQ], approved: true },
+      ],
       anticipatedStartDate: eleventhDate,
       anticipatedEndDate: twelfthDate,
       name: "T",
     });
     const unitU = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitQ, unitR] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitQ, unitR], approved: true },
+      ],
       anticipatedStartDate: eleventhDate,
       anticipatedEndDate: twelfthDate,
       name: "U",
     });
     const unitV = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitR] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitR], approved: true },
+      ],
       anticipatedStartDate: eleventhDate,
       anticipatedEndDate: twelfthDate,
       name: "V",
@@ -2964,21 +3097,27 @@ describe("TaskUnit", function (): void {
 
     const unitW = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitS, unitT] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitS, unitT], approved: true },
+      ],
       anticipatedStartDate: thirteenthDate,
       anticipatedEndDate: fourteenthDate,
       name: "W",
     });
     const unitX = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitT, unitU] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitT, unitU], approved: true },
+      ],
       anticipatedStartDate: thirteenthDate,
       anticipatedEndDate: fourteenthDate,
       name: "X",
     });
     const unitY = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", parentUnits: [unitU, unitV] }],
+      prerequisitesIterations: [
+        { id: "1234", parentUnits: [unitU, unitV], approved: true },
+      ],
       anticipatedStartDate: thirteenthDate,
       anticipatedEndDate: fourteenthDate,
       name: "Y",
@@ -3150,7 +3289,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unitA = new TaskUnit({
           now: innerNow,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           anticipatedStartDate: firstDate,
           anticipatedEndDate: fifthDate,
           name: "A",
@@ -3164,14 +3303,18 @@ describe("TaskUnit", function (): void {
         });
         unitB = new TaskUnit({
           now: innerNow,
-          prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+          prerequisitesIterations: [
+            { id: "1234", parentUnits: [unitA], approved: true },
+          ],
           anticipatedStartDate: secondDate,
           anticipatedEndDate: thirdDate,
           name: "B",
         });
         unitC = new TaskUnit({
           now: innerNow,
-          prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+          prerequisitesIterations: [
+            { id: "1234", parentUnits: [unitA], approved: true },
+          ],
           anticipatedStartDate: seventhDate,
           anticipatedEndDate: eighthDate,
           name: "C",
@@ -3243,7 +3386,7 @@ describe("TaskUnit", function (): void {
       before(function (): void {
         unitA = new TaskUnit({
           now: innerNow,
-          prerequisitesIterations: [{ id: "1234" }],
+          prerequisitesIterations: [{ id: "1234", approved: true }],
           anticipatedStartDate: firstDate,
           anticipatedEndDate: fifthDate,
           name: "A",
@@ -3258,14 +3401,18 @@ describe("TaskUnit", function (): void {
         });
         unitB = new TaskUnit({
           now: innerNow,
-          prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+          prerequisitesIterations: [
+            { id: "1234", parentUnits: [unitA], approved: true },
+          ],
           anticipatedStartDate: secondDate,
           anticipatedEndDate: thirdDate,
           name: "B",
         });
         unitC = new TaskUnit({
           now: innerNow,
-          prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+          prerequisitesIterations: [
+            { id: "1234", parentUnits: [unitA], approved: true },
+          ],
           anticipatedStartDate: seventhDate,
           anticipatedEndDate: eighthDate,
           name: "C",

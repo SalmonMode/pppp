@@ -15,7 +15,7 @@ export function getSeedData(): TaskUnitCluster {
   const ninthDate = add(eighthDate, { days: 1 });
   const unitA = new TaskUnit({
     now,
-    prerequisitesIterations: [{ id: "1234" }],
+    prerequisitesIterations: [{ id: "1234", approved: true }],
     anticipatedStartDate: firstDate,
     anticipatedEndDate: secondDate,
     name: "A",
@@ -33,7 +33,9 @@ export function getSeedData(): TaskUnitCluster {
   });
   const unitB = new TaskUnit({
     now,
-    prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+    prerequisitesIterations: [
+      { id: "1234", approved: true, parentUnits: [unitA] },
+    ],
     anticipatedStartDate: secondDate,
     anticipatedEndDate: thirdDate,
     name: "B",
@@ -55,7 +57,7 @@ export function getSeedData(): TaskUnitCluster {
   });
   const unitC = new TaskUnit({
     now,
-    prerequisitesIterations: [{ id: "1234" }],
+    prerequisitesIterations: [{ id: "1234", approved: true }],
     anticipatedStartDate: fifthDate,
     anticipatedEndDate: sixthDate,
     name: "C",
@@ -74,8 +76,8 @@ export function getSeedData(): TaskUnitCluster {
   const unitD = new TaskUnit({
     now,
     prerequisitesIterations: [
-      { id: "1234", parentUnits: [unitC] },
-      { id: "123456", parentUnits: [unitC] },
+      { id: "1234", approved: true, parentUnits: [unitC] },
+      { id: "123456", approved: true, parentUnits: [unitC] },
     ],
     anticipatedStartDate: sixthDate,
     anticipatedEndDate: seventhDate,
@@ -104,7 +106,7 @@ export function getSeedData(): TaskUnitCluster {
 
   const unitE = new TaskUnit({
     now,
-    prerequisitesIterations: [{ id: "1234" }],
+    prerequisitesIterations: [{ id: "1234", approved: true }],
     anticipatedStartDate: firstDate,
     anticipatedEndDate: thirdDate,
     name: "E",
@@ -122,7 +124,9 @@ export function getSeedData(): TaskUnitCluster {
   });
   const unitF = new TaskUnit({
     now,
-    prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitE] }],
+    prerequisitesIterations: [
+      { id: "1234", approved: true, parentUnits: [unitA, unitE] },
+    ],
     anticipatedStartDate: thirdDate,
     anticipatedEndDate: fourthDate,
     name: "F",
@@ -140,7 +144,9 @@ export function getSeedData(): TaskUnitCluster {
   });
   const unitG = new TaskUnit({
     now,
-    prerequisitesIterations: [{ id: "1234", parentUnits: [unitF] }],
+    prerequisitesIterations: [
+      { id: "1234", approved: true, parentUnits: [unitF] },
+    ],
     anticipatedStartDate: fourthDate,
     anticipatedEndDate: fifthDate,
     name: "G",
@@ -158,7 +164,9 @@ export function getSeedData(): TaskUnitCluster {
   });
   const unitH = new TaskUnit({
     now,
-    prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitG] }],
+    prerequisitesIterations: [
+      { id: "1234", approved: true, parentUnits: [unitC, unitG] },
+    ],
     anticipatedStartDate: fifthDate,
     anticipatedEndDate: sixthDate,
     name: "H",
@@ -181,7 +189,7 @@ export function getSeedData(): TaskUnitCluster {
 
   const unitI = new TaskUnit({
     now,
-    prerequisitesIterations: [{ id: "1234" }],
+    prerequisitesIterations: [{ id: "1234", approved: true }],
     anticipatedStartDate: firstDate,
     anticipatedEndDate: secondDate,
     name: "I",
@@ -199,7 +207,9 @@ export function getSeedData(): TaskUnitCluster {
   });
   const unitJ = new TaskUnit({
     now,
-    prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitI] }],
+    prerequisitesIterations: [
+      { id: "1234", approved: true, parentUnits: [unitA, unitI] },
+    ],
     anticipatedStartDate: secondDate,
     anticipatedEndDate: thirdDate,
     name: "J",
@@ -217,7 +227,9 @@ export function getSeedData(): TaskUnitCluster {
   });
   const unitK = new TaskUnit({
     now,
-    prerequisitesIterations: [{ id: "1234", parentUnits: [unitJ] }],
+    prerequisitesIterations: [
+      { id: "1234", approved: true, parentUnits: [unitJ] },
+    ],
     anticipatedStartDate: fourthDate,
     anticipatedEndDate: fifthDate,
     name: "K",
@@ -235,7 +247,9 @@ export function getSeedData(): TaskUnitCluster {
   });
   const unitL = new TaskUnit({
     now,
-    prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitK] }],
+    prerequisitesIterations: [
+      { id: "1234", approved: true, parentUnits: [unitC, unitK] },
+    ],
     anticipatedStartDate: fifthDate,
     anticipatedEndDate: sixthDate,
     name: "L",

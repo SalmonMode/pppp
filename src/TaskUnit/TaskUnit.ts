@@ -1,5 +1,5 @@
 import { add, differenceInSeconds, max } from "date-fns";
-import { assertIsObject, isUndefined } from "primitive-predicates";
+import { assertIsObject, isObject, isUndefined } from "primitive-predicates";
 import { v4 as uuidv4 } from "uuid";
 import {
   EventHistoryInvalidError,
@@ -108,25 +108,17 @@ export default class TaskUnit implements ITaskUnit {
    *    progress) or another review result (and possibly other events after that depending on the result).
    * 9. Any ReviewedAndNeedsRebuild event should be followed by either nothing (meaning the new requirements haven't
    *    been accepted yet) or a TaskIterationStarted event (and possibly other events according to the other rules).
+   * 10. Any TaskIterationStarted event must be associated with a prerequisites iteration that has been approved.
+   * 11. Any TaskIterationStarted event that is after a ReviewedAndNeedsRebuild event must be associated with a later
+   *     prerequisites iteration than the TaskIterationStarted event that came before it.
    */
   private _validateEventHistory(): void {
-    const firstEvent = this.explicitEventHistory[0];
-    if (firstEvent) {
-      if (
-        !this._shouldBeAbleToStart() ||
-        firstEvent.date.getTime() < this._earliestPossibleStartTime
-      ) {
-        throw new PrematureTaskStartError(
-          "Task was started before it should have been allowed to."
-        );
-      } else {
-        // It's allowed to start and the first event's date is on or after the earliest possible time it's allowed to
-        // start.
-      }
-    } else {
-      // This task hasn't been started yet, so there's no need to check if it was started before it should have.
-    }
+    this._assertTaskWasNotStartedPrematurely();
     const now = new Date();
+    /**
+     * Used to track which prereq iteration the TaskIterationStarted events should be pointing to.
+     */
+    let expectedPrereqIteration = 0;
     this.explicitEventHistory.forEach(
       (event: TaskEvent, index: number): void => {
         // Don't check the next event if it can be helped, because if there is a next event, it'll have its turn to
@@ -154,6 +146,14 @@ export default class TaskUnit implements ITaskUnit {
               throw new EventHistoryInvalidError(
                 `The prerequisites iteration (${event.prerequisitesVersion}) specified by the TaskIterationStarted ` +
                   `event could not be found.`
+              );
+            }
+            if (event.prerequisitesVersion !== expectedPrereqIteration) {
+              // TaskIterationStarted event does not point to the right prereq iteration
+              throw new EventHistoryInvalidError(
+                `The prerequisites iteration (${event.prerequisitesVersion}) specified by the TaskIterationStarted ` +
+                  `was expected to be ${expectedPrereqIteration}. Please keep in mind that old prerequisite ` +
+                  `iterations cannot be used after a rebuild.`
               );
             }
             if (prevEvent) {
@@ -196,6 +196,11 @@ export default class TaskUnit implements ITaskUnit {
               ) {
                 // The previous event was either a TaskIterationStarted or ReviewedAndNeedsMajorRevision event, so this
                 // is all good.
+                if (event.type === EventType.ReviewedAndNeedsRebuild) {
+                  // Event was a ReviewedAndNeedsRebuildEvent, so the prereq iteration must go up for the next
+                  // TaskIterationStarted event.
+                  expectedPrereqIteration += 1;
+                }
                 break;
               }
             }
@@ -226,6 +231,58 @@ export default class TaskUnit implements ITaskUnit {
         }
       }
     );
+  }
+  /**
+   * Makes sure the task was not started prematurely.
+   *
+   * @throws {PrematureTaskStartError} if the task should not have been started
+   */
+  private _assertTaskWasNotStartedPrematurely(): void {
+    const firstEvent = this.explicitEventHistory[0];
+    if (isObject(firstEvent)) {
+      // There is an event history. Assume the event is a TaskIterationStarted event, meaning the task was started. Must
+      // check to make sure the conditions are right for the task to start.
+      const firstPrereq = this.prerequisitesIterations[0];
+      if (isObject(firstPrereq)) {
+        // There is at least one prerequisite iteration. Check that it is approved.
+        if (!firstPrereq.approved) {
+          // Prerequisites aren't approved so task was started prematurely.
+          throw new PrematureTaskStartError(
+            "Prerequisites are not approved. Must have approved prerequisites to start the task."
+          );
+        } else {
+          // The prerequisites are approved, so check the prerequisite tasks are complete.
+          const prerequisiteTasksAreComplete = [
+            ...this.directDependencies,
+          ].every((unit: ITaskUnit): boolean => unit.isComplete());
+          if (!prerequisiteTasksAreComplete) {
+            // Not all the prerequisite tasks have been completed
+            throw new PrematureTaskStartError(
+              "Not all of the task's prerequisite tasks are complete. All prerequisite tasks must be completed " +
+                "before the task can start."
+            );
+          } else {
+            // Prerequisite tasks are complete, but check to make sure this task didn't start before they were completed
+            if (firstEvent.date.getTime() < this._earliestPossibleStartTime) {
+              throw new PrematureTaskStartError(
+                "Not all of the task's prerequisite tasks were completed by the time the task started. All " +
+                  "prerequisite tasks must be completed before the task can start."
+              );
+            } else {
+              // There were prerequisite tasks, but they were completed before this task was started.
+            }
+          }
+        }
+      } else {
+        // There are no prerequisites so the task cannot start.
+        throw new PrematureTaskStartError(
+          "Task has no prerequisites. Must have approved prerequisites to start the task."
+        );
+      }
+    } else {
+      // Task hasn't been started yet, so there's nothing to check.
+      return;
+    }
   }
   /**
    * Sometimes, provided dependencies may be redundant. This can occur if a provided direct dependency is provided by
@@ -541,17 +598,5 @@ export default class TaskUnit implements ITaskUnit {
       );
       return latestRequiredDate;
     }
-  }
-  /**
-   *
-   * @returns true, if all direct dependencies are completed and there's at least one prereqs iteration, false, if not
-   */
-  private _shouldBeAbleToStart(): boolean {
-    const prerequisiteTasksAreComplete = [...this.directDependencies].every(
-      (unit: ITaskUnit): boolean => unit.isComplete()
-    );
-    const hasAtLeastOnePrereqsIteration =
-      this.prerequisitesIterations.length > 0;
-    return prerequisiteTasksAreComplete && hasAtLeastOnePrereqsIteration;
   }
 }

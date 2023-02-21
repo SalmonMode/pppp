@@ -22,6 +22,7 @@ export type ITaskUnitParameters =
 
 export interface SerializableTaskPrerequisitesReference {
   readonly id: string;
+  approved: boolean;
 }
 /**
  * The prerequisites that must be in place for the task to be completed, such as:

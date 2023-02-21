@@ -70,7 +70,9 @@ describe("IsolatedDependencyChain", function (): void {
       unitB = new TaskUnit({
         now,
         name: "B",
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitA] },
+        ],
         anticipatedStartDate: secondDate,
         anticipatedEndDate: thirdDate,
       });
@@ -121,14 +123,18 @@ describe("IsolatedDependencyChain", function (): void {
       unitB = new TaskUnit({
         now,
         name: "B",
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitA] },
+        ],
         anticipatedStartDate: secondDate,
         anticipatedEndDate: thirdDate,
       });
       unitC = new TaskUnit({
         now,
         name: "C",
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitB] },
+        ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
@@ -182,35 +188,45 @@ describe("IsolatedDependencyChain", function (): void {
       unitB = new TaskUnit({
         now,
         name: "B",
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitA] },
+        ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
       unitC = new TaskUnit({
         now,
         name: "C",
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitA] },
+        ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
       unitD = new TaskUnit({
         now,
         name: "D",
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB, unitC] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitB, unitC] },
+        ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
       });
       unitE = new TaskUnit({
         now,
         name: "E",
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitD] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitD] },
+        ],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
       });
       unitF = new TaskUnit({
         now,
         name: "F",
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitE] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitE] },
+        ],
         anticipatedStartDate: eighthDate,
         anticipatedEndDate: ninthDate,
       });
@@ -307,7 +323,9 @@ describe("IsolatedDependencyChain", function (): void {
       unitB = new TaskUnit({
         now,
         name: "B",
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitA] },
+        ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
       });
@@ -359,7 +377,9 @@ describe("IsolatedDependencyChain", function (): void {
       unitB = new TaskUnit({
         now,
         name: "B",
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitA] },
+        ],
         anticipatedStartDate: secondDate,
         anticipatedEndDate: fourthDate,
       });
@@ -409,7 +429,9 @@ describe("IsolatedDependencyChain", function (): void {
       unitB = new TaskUnit({
         now,
         name: "B",
-        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
+        prerequisitesIterations: [
+          { id: "1234", approved: true, parentUnits: [unitA] },
+        ],
         anticipatedStartDate: secondDate,
         anticipatedEndDate: fourthDate,
       });

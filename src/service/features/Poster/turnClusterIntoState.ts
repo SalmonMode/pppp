@@ -118,7 +118,10 @@ export function turnClusterIntoState(
               prerequisitesIterations: unit.prerequisitesIterations.map(
                 (
                   iter: ITaskPrerequisites
-                ): SerializableTaskPrerequisitesReference => ({ id: iter.id })
+                ): SerializableTaskPrerequisitesReference => ({
+                  id: iter.id,
+                  approved: iter.approved,
+                })
               ),
             };
           }
