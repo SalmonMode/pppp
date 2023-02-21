@@ -15,7 +15,9 @@ export function getSeedData(): TaskUnitCluster {
   const ninthDate = add(eighthDate, { days: 1 });
   const unitA = new TaskUnit({
     now,
-    prerequisitesIterations: [{ id: "1234", approved: true }],
+    prerequisitesIterations: [
+      { id: "1234", approvedDate: sub(firstDate, { hours: 4 }) },
+    ],
     anticipatedStartDate: firstDate,
     anticipatedEndDate: secondDate,
     name: "A",
@@ -34,7 +36,11 @@ export function getSeedData(): TaskUnitCluster {
   const unitB = new TaskUnit({
     now,
     prerequisitesIterations: [
-      { id: "1234", approved: true, parentUnits: [unitA] },
+      {
+        id: "1234",
+        approvedDate: sub(firstDate, { hours: 4 }),
+        parentUnits: [unitA],
+      },
     ],
     anticipatedStartDate: secondDate,
     anticipatedEndDate: thirdDate,
@@ -57,7 +63,9 @@ export function getSeedData(): TaskUnitCluster {
   });
   const unitC = new TaskUnit({
     now,
-    prerequisitesIterations: [{ id: "1234", approved: true }],
+    prerequisitesIterations: [
+      { id: "1234", approvedDate: sub(firstDate, { hours: 4 }) },
+    ],
     anticipatedStartDate: fifthDate,
     anticipatedEndDate: sixthDate,
     name: "C",
@@ -76,8 +84,12 @@ export function getSeedData(): TaskUnitCluster {
   const unitD = new TaskUnit({
     now,
     prerequisitesIterations: [
-      { id: "1234", approved: true, parentUnits: [unitC] },
-      { id: "123456", approved: true, parentUnits: [unitC] },
+      { id: "1234", approvedDate: fifthDate, parentUnits: [unitC] },
+      {
+        id: "123456",
+        approvedDate: add(seventhDate, { hours: 6 }),
+        parentUnits: [unitC],
+      },
     ],
     anticipatedStartDate: sixthDate,
     anticipatedEndDate: seventhDate,
@@ -106,7 +118,9 @@ export function getSeedData(): TaskUnitCluster {
 
   const unitE = new TaskUnit({
     now,
-    prerequisitesIterations: [{ id: "1234", approved: true }],
+    prerequisitesIterations: [
+      { id: "1234", approvedDate: sub(firstDate, { hours: 4 }) },
+    ],
     anticipatedStartDate: firstDate,
     anticipatedEndDate: thirdDate,
     name: "E",
@@ -125,7 +139,11 @@ export function getSeedData(): TaskUnitCluster {
   const unitF = new TaskUnit({
     now,
     prerequisitesIterations: [
-      { id: "1234", approved: true, parentUnits: [unitA, unitE] },
+      {
+        id: "1234",
+        approvedDate: sub(firstDate, { hours: 4 }),
+        parentUnits: [unitA, unitE],
+      },
     ],
     anticipatedStartDate: thirdDate,
     anticipatedEndDate: fourthDate,
@@ -145,7 +163,11 @@ export function getSeedData(): TaskUnitCluster {
   const unitG = new TaskUnit({
     now,
     prerequisitesIterations: [
-      { id: "1234", approved: true, parentUnits: [unitF] },
+      {
+        id: "1234",
+        approvedDate: sub(firstDate, { hours: 4 }),
+        parentUnits: [unitF],
+      },
     ],
     anticipatedStartDate: fourthDate,
     anticipatedEndDate: fifthDate,
@@ -165,7 +187,11 @@ export function getSeedData(): TaskUnitCluster {
   const unitH = new TaskUnit({
     now,
     prerequisitesIterations: [
-      { id: "1234", approved: true, parentUnits: [unitC, unitG] },
+      {
+        id: "1234",
+        approvedDate: sub(firstDate, { hours: 4 }),
+        parentUnits: [unitC, unitG],
+      },
     ],
     anticipatedStartDate: fifthDate,
     anticipatedEndDate: sixthDate,
@@ -189,7 +215,9 @@ export function getSeedData(): TaskUnitCluster {
 
   const unitI = new TaskUnit({
     now,
-    prerequisitesIterations: [{ id: "1234", approved: true }],
+    prerequisitesIterations: [
+      { id: "1234", approvedDate: sub(firstDate, { hours: 4 }) },
+    ],
     anticipatedStartDate: firstDate,
     anticipatedEndDate: secondDate,
     name: "I",
@@ -208,7 +236,11 @@ export function getSeedData(): TaskUnitCluster {
   const unitJ = new TaskUnit({
     now,
     prerequisitesIterations: [
-      { id: "1234", approved: true, parentUnits: [unitA, unitI] },
+      {
+        id: "1234",
+        approvedDate: sub(firstDate, { hours: 4 }),
+        parentUnits: [unitA, unitI],
+      },
     ],
     anticipatedStartDate: secondDate,
     anticipatedEndDate: thirdDate,
@@ -228,7 +260,11 @@ export function getSeedData(): TaskUnitCluster {
   const unitK = new TaskUnit({
     now,
     prerequisitesIterations: [
-      { id: "1234", approved: true, parentUnits: [unitJ] },
+      {
+        id: "1234",
+        approvedDate: sub(firstDate, { hours: 4 }),
+        parentUnits: [unitJ],
+      },
     ],
     anticipatedStartDate: fourthDate,
     anticipatedEndDate: fifthDate,
@@ -248,7 +284,11 @@ export function getSeedData(): TaskUnitCluster {
   const unitL = new TaskUnit({
     now,
     prerequisitesIterations: [
-      { id: "1234", approved: true, parentUnits: [unitC, unitK] },
+      {
+        id: "1234",
+        approvedDate: sub(firstDate, { hours: 4 }),
+        parentUnits: [unitC, unitK],
+      },
     ],
     anticipatedStartDate: fifthDate,
     anticipatedEndDate: sixthDate,

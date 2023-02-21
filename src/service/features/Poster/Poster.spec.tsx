@@ -62,7 +62,9 @@ describe("React Integration: Poster", function (): void {
     const ninthDate = add(eighthDate, { days: 1 });
     const unitA = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", approved: true }],
+      prerequisitesIterations: [
+        { id: "1234", approvedDate: sub(firstDate, { hours: 4 }) },
+      ],
       anticipatedStartDate: firstDate,
       anticipatedEndDate: secondDate,
       name: "A",
@@ -81,7 +83,11 @@ describe("React Integration: Poster", function (): void {
     const unitB = new TaskUnit({
       now,
       prerequisitesIterations: [
-        { id: "1234", approved: true, parentUnits: [unitA] },
+        {
+          id: "1234",
+          approvedDate: sub(firstDate, { hours: 4 }),
+          parentUnits: [unitA],
+        },
       ],
       anticipatedStartDate: secondDate,
       anticipatedEndDate: thirdDate,
@@ -104,7 +110,9 @@ describe("React Integration: Poster", function (): void {
     });
     const unitC = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", approved: true }],
+      prerequisitesIterations: [
+        { id: "1234", approvedDate: sub(firstDate, { hours: 4 }) },
+      ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
       name: "C",
@@ -123,8 +131,16 @@ describe("React Integration: Poster", function (): void {
     const unitD = new TaskUnit({
       now,
       prerequisitesIterations: [
-        { id: "1234", approved: true, parentUnits: [unitC] },
-        { id: "1234567", approved: true, parentUnits: [unitC] },
+        {
+          id: "1234",
+          approvedDate: sub(firstDate, { hours: 4 }),
+          parentUnits: [unitC],
+        },
+        {
+          id: "1234567",
+          approvedDate: add(seventhDate, { hours: 6 }),
+          parentUnits: [unitC],
+        },
       ],
       anticipatedStartDate: sixthDate,
       anticipatedEndDate: seventhDate,
@@ -153,7 +169,9 @@ describe("React Integration: Poster", function (): void {
 
     const unitE = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", approved: true }],
+      prerequisitesIterations: [
+        { id: "1234", approvedDate: sub(firstDate, { hours: 4 }) },
+      ],
       anticipatedStartDate: firstDate,
       anticipatedEndDate: secondDate,
       name: "E",
@@ -172,7 +190,11 @@ describe("React Integration: Poster", function (): void {
     const unitF = new TaskUnit({
       now,
       prerequisitesIterations: [
-        { id: "1234", approved: true, parentUnits: [unitA, unitE] },
+        {
+          id: "1234",
+          approvedDate: sub(firstDate, { hours: 4 }),
+          parentUnits: [unitA, unitE],
+        },
       ],
       anticipatedStartDate: secondDate,
       anticipatedEndDate: thirdDate,
@@ -192,7 +214,11 @@ describe("React Integration: Poster", function (): void {
     const unitG = new TaskUnit({
       now,
       prerequisitesIterations: [
-        { id: "1234", approved: true, parentUnits: [unitF] },
+        {
+          id: "1234",
+          approvedDate: sub(firstDate, { hours: 4 }),
+          parentUnits: [unitF],
+        },
       ],
       anticipatedStartDate: fourthDate,
       anticipatedEndDate: fifthDate,
@@ -212,7 +238,11 @@ describe("React Integration: Poster", function (): void {
     const unitH = new TaskUnit({
       now,
       prerequisitesIterations: [
-        { id: "1234", approved: true, parentUnits: [unitC, unitG] },
+        {
+          id: "1234",
+          approvedDate: sub(firstDate, { hours: 4 }),
+          parentUnits: [unitC, unitG],
+        },
       ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
@@ -236,7 +266,9 @@ describe("React Integration: Poster", function (): void {
 
     const unitI = new TaskUnit({
       now,
-      prerequisitesIterations: [{ id: "1234", approved: true }],
+      prerequisitesIterations: [
+        { id: "1234", approvedDate: sub(firstDate, { hours: 4 }) },
+      ],
       anticipatedStartDate: firstDate,
       anticipatedEndDate: secondDate,
       name: "I",
@@ -255,7 +287,11 @@ describe("React Integration: Poster", function (): void {
     const unitJ = new TaskUnit({
       now,
       prerequisitesIterations: [
-        { id: "1234", approved: true, parentUnits: [unitA, unitI] },
+        {
+          id: "1234",
+          approvedDate: sub(firstDate, { hours: 4 }),
+          parentUnits: [unitA, unitI],
+        },
       ],
       anticipatedStartDate: secondDate,
       anticipatedEndDate: thirdDate,
@@ -275,7 +311,11 @@ describe("React Integration: Poster", function (): void {
     const unitK = new TaskUnit({
       now,
       prerequisitesIterations: [
-        { id: "1234", approved: true, parentUnits: [unitJ] },
+        {
+          id: "1234",
+          approvedDate: sub(firstDate, { hours: 4 }),
+          parentUnits: [unitJ],
+        },
       ],
       anticipatedStartDate: fourthDate,
       anticipatedEndDate: fifthDate,
@@ -295,7 +335,11 @@ describe("React Integration: Poster", function (): void {
     const unitL = new TaskUnit({
       now,
       prerequisitesIterations: [
-        { id: "1234", approved: true, parentUnits: [unitC, unitK] },
+        {
+          id: "1234",
+          approvedDate: sub(firstDate, { hours: 4 }),
+          parentUnits: [unitC, unitK],
+        },
       ],
       anticipatedStartDate: fifthDate,
       anticipatedEndDate: sixthDate,
@@ -1477,7 +1521,11 @@ describe("React Integration: Poster", function (): void {
       const unitB = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA] },
+          {
+            id: "1234",
+            approvedDate: sub(firstDate, { hours: 4 }),
+            parentUnits: [unitA],
+          },
         ],
         anticipatedStartDate: secondDate,
         anticipatedEndDate: fourthDate,
@@ -1492,7 +1540,11 @@ describe("React Integration: Poster", function (): void {
       const unitD = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC] },
+          {
+            id: "1234",
+            approvedDate: sub(firstDate, { hours: 4 }),
+            parentUnits: [unitC],
+          },
         ],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
@@ -1508,7 +1560,11 @@ describe("React Integration: Poster", function (): void {
       const unitF = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitE] },
+          {
+            id: "1234",
+            approvedDate: sub(firstDate, { hours: 4 }),
+            parentUnits: [unitA, unitE],
+          },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -1517,7 +1573,11 @@ describe("React Integration: Poster", function (): void {
       const unitG = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitF] },
+          {
+            id: "1234",
+            approvedDate: sub(firstDate, { hours: 4 }),
+            parentUnits: [unitF],
+          },
         ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
@@ -1526,7 +1586,11 @@ describe("React Integration: Poster", function (): void {
       const unitH = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC, unitG] },
+          {
+            id: "1234",
+            approvedDate: sub(firstDate, { hours: 4 }),
+            parentUnits: [unitC, unitG],
+          },
         ],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
@@ -1541,7 +1605,11 @@ describe("React Integration: Poster", function (): void {
       const unitJ = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitI] },
+          {
+            id: "1234",
+            approvedDate: sub(firstDate, { hours: 4 }),
+            parentUnits: [unitA, unitI],
+          },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -1550,7 +1618,11 @@ describe("React Integration: Poster", function (): void {
       const unitK = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitJ] },
+          {
+            id: "1234",
+            approvedDate: sub(firstDate, { hours: 4 }),
+            parentUnits: [unitJ],
+          },
         ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
@@ -1559,7 +1631,11 @@ describe("React Integration: Poster", function (): void {
       const unitL = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC, unitK] },
+          {
+            id: "1234",
+            approvedDate: sub(firstDate, { hours: 4 }),
+            parentUnits: [unitC, unitK],
+          },
         ],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,

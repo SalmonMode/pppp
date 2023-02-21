@@ -30,10 +30,25 @@ export interface SerializableTaskPrerequisitesReference {
  * - people who will need to be available to work on the task
  * - necessary work that is supposed to be completed in earlier tasks
  */
-export interface ITaskPrerequisites
-  extends SerializableTaskPrerequisitesReference {
+export interface ITaskPrerequisitesUnapproved {
+  readonly id: string;
+  /**
+   * The date and time the prerequisites were approved. If undefined, then they are not approved.
+   */
+  approvedDate?: never;
   parentUnits?: ITaskUnit[];
 }
+export interface ITaskPrerequisitesApproved {
+  readonly id: string;
+  /**
+   * The date and time the prerequisites were approved. If undefined, then they are not approved.
+   */
+  approvedDate: Date;
+  parentUnits?: ITaskUnit[];
+}
+export type ITaskPrerequisites =
+  | ITaskPrerequisitesUnapproved
+  | ITaskPrerequisitesApproved;
 
 export interface ITaskUnit {
   /**

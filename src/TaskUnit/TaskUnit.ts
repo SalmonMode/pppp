@@ -1,5 +1,5 @@
 import { add, differenceInSeconds, max } from "date-fns";
-import { assertIsObject, isObject, isUndefined } from "primitive-predicates";
+import { assertIsObject, isUndefined } from "primitive-predicates";
 import { v4 as uuidv4 } from "uuid";
 import {
   EventHistoryInvalidError,
@@ -113,7 +113,6 @@ export default class TaskUnit implements ITaskUnit {
    *     prerequisites iteration than the TaskIterationStarted event that came before it.
    */
   private _validateEventHistory(): void {
-    this._assertTaskWasNotStartedPrematurely();
     const now = new Date();
     /**
      * Used to track which prereq iteration the TaskIterationStarted events should be pointing to.
@@ -136,18 +135,17 @@ export default class TaskUnit implements ITaskUnit {
           throw new EventHistoryInvalidError("Events cannot be in the future.");
         }
         switch (event.type) {
-          case EventType.TaskIterationStarted:
-            if (
-              isUndefined(
-                this.prerequisitesIterations[event.prerequisitesVersion]
-              )
-            ) {
+          case EventType.TaskIterationStarted: {
+            const associatedPrereq =
+              this.prerequisitesIterations[event.prerequisitesVersion];
+            if (isUndefined(associatedPrereq)) {
               // This task was supposedly started without having the necessary prerequisites.
               throw new EventHistoryInvalidError(
                 `The prerequisites iteration (${event.prerequisitesVersion}) specified by the TaskIterationStarted ` +
                   `event could not be found.`
               );
             }
+
             if (event.prerequisitesVersion !== expectedPrereqIteration) {
               // TaskIterationStarted event does not point to the right prereq iteration
               throw new EventHistoryInvalidError(
@@ -156,6 +154,10 @@ export default class TaskUnit implements ITaskUnit {
                   `iterations cannot be used after a rebuild.`
               );
             }
+            this._assertTaskIterationWasNotStartedPrematurely(
+              event.date,
+              associatedPrereq
+            );
             if (prevEvent) {
               if (prevEvent.type !== EventType.ReviewedAndNeedsRebuild) {
                 // The previous event was not a ReviewedAndNeedsRebuild event, so this event doesn't make sense.
@@ -171,6 +173,7 @@ export default class TaskUnit implements ITaskUnit {
               // first time.
             }
             break;
+          }
           case EventType.MinorRevisionComplete:
             if (prevEvent) {
               if (prevEvent.type === EventType.ReviewedAndNeedsMinorRevision) {
@@ -233,55 +236,45 @@ export default class TaskUnit implements ITaskUnit {
     );
   }
   /**
-   * Makes sure the task was not started prematurely.
+   * Makes sure the task iteration was not started prematurely.
    *
    * @throws {PrematureTaskStartError} if the task should not have been started
    */
-  private _assertTaskWasNotStartedPrematurely(): void {
-    const firstEvent = this.explicitEventHistory[0];
-    if (isObject(firstEvent)) {
-      // There is an event history. Assume the event is a TaskIterationStarted event, meaning the task was started. Must
-      // check to make sure the conditions are right for the task to start.
-      const firstPrereq = this.prerequisitesIterations[0];
-      if (isObject(firstPrereq)) {
-        // There is at least one prerequisite iteration. Check that it is approved.
-        if (!firstPrereq.approved) {
-          // Prerequisites aren't approved so task was started prematurely.
-          throw new PrematureTaskStartError(
-            "Prerequisites are not approved. Must have approved prerequisites to start the task."
-          );
-        } else {
-          // The prerequisites are approved, so check the prerequisite tasks are complete.
-          const prerequisiteTasksAreComplete = [
-            ...this.directDependencies,
-          ].every((unit: ITaskUnit): boolean => unit.isComplete());
-          if (!prerequisiteTasksAreComplete) {
-            // Not all the prerequisite tasks have been completed
-            throw new PrematureTaskStartError(
-              "Not all of the task's prerequisite tasks are complete. All prerequisite tasks must be completed " +
-                "before the task can start."
-            );
-          } else {
-            // Prerequisite tasks are complete, but check to make sure this task didn't start before they were completed
-            if (firstEvent.date.getTime() < this._earliestPossibleStartTime) {
-              throw new PrematureTaskStartError(
-                "Not all of the task's prerequisite tasks were completed by the time the task started. All " +
-                  "prerequisite tasks must be completed before the task can start."
-              );
-            } else {
-              // There were prerequisite tasks, but they were completed before this task was started.
-            }
-          }
-        }
-      } else {
-        // There are no prerequisites so the task cannot start.
-        throw new PrematureTaskStartError(
-          "Task has no prerequisites. Must have approved prerequisites to start the task."
-        );
-      }
-    } else {
-      // Task hasn't been started yet, so there's nothing to check.
-      return;
+  private _assertTaskIterationWasNotStartedPrematurely(
+    taskIterationStartDate: Date,
+    associatedPrerequisites: ITaskPrerequisites
+  ): void {
+    if (!associatedPrerequisites.approvedDate) {
+      // Task was started before associated prerequisites were approved.
+      throw new PrematureTaskStartError(
+        "Prerequisites are not approved. Must have approved prerequisites to start the task."
+      );
+    }
+    // The prerequisites are approved, so check the prerequisite tasks are complete.
+    const prerequisiteTasksAreComplete = [...this.directDependencies].every(
+      (unit: ITaskUnit): boolean => unit.isComplete()
+    );
+    if (!prerequisiteTasksAreComplete) {
+      // Not all the prerequisite tasks have been completed
+      throw new PrematureTaskStartError(
+        "Not all of the task's prerequisite tasks are complete. All prerequisite tasks must be completed before the " +
+          "task can start."
+      );
+    }
+    // Prerequisite tasks are complete, but check to make sure this task didn't start before they were completed
+    if (taskIterationStartDate.getTime() < this._earliestPossibleStartTime) {
+      throw new PrematureTaskStartError(
+        "Not all of the task's prerequisite tasks were completed by the time the task started. All " +
+          "prerequisite tasks must be completed before the task can start."
+      );
+    }
+    // Prerquisite tasks were completed before this task started, but make sure the prerequisites for this iteration
+    // were approved before it started.
+    if (associatedPrerequisites.approvedDate > taskIterationStartDate) {
+      // The task iteration was started before the prerequisites were approved.
+      throw new PrematureTaskStartError(
+        "Cannot start the task iteration before the prerequisites are approved."
+      );
     }
   }
   /**

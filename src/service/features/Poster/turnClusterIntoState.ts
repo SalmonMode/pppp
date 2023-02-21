@@ -120,7 +120,7 @@ export function turnClusterIntoState(
                   iter: ITaskPrerequisites
                 ): SerializableTaskPrerequisitesReference => ({
                   id: iter.id,
-                  approved: iter.approved,
+                  approved: !!iter.approvedDate,
                 })
               ),
             };

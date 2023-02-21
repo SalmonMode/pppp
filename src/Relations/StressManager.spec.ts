@@ -65,7 +65,7 @@ describe("StressManager", function (): void {
       const unitG = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitC, unitF] },
+          { id: "1234", parentUnits: [unitA, unitC, unitF] },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -73,9 +73,7 @@ describe("StressManager", function (): void {
       });
       const unitH = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitB, unitD] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitB, unitD] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "H",
@@ -83,7 +81,7 @@ describe("StressManager", function (): void {
       const unitI = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitB, unitC, unitE] },
+          { id: "1234", parentUnits: [unitB, unitC, unitE] },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -94,7 +92,6 @@ describe("StressManager", function (): void {
         prerequisitesIterations: [
           {
             id: "1234",
-            approved: true,
             parentUnits: [unitA, unitB, unitD, unitE],
           },
         ],
@@ -105,7 +102,7 @@ describe("StressManager", function (): void {
       const unitK = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC, unitD, unitE] },
+          { id: "1234", parentUnits: [unitC, unitD, unitE] },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -114,7 +111,7 @@ describe("StressManager", function (): void {
       const unitL = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitC, unitF] },
+          { id: "1234", parentUnits: [unitA, unitC, unitF] },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -124,7 +121,7 @@ describe("StressManager", function (): void {
       const unitM = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitG, unitI, unitL] },
+          { id: "1234", parentUnits: [unitG, unitI, unitL] },
         ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
@@ -133,7 +130,7 @@ describe("StressManager", function (): void {
       const unitN = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitH, unitI, unitJ] },
+          { id: "1234", parentUnits: [unitH, unitI, unitJ] },
         ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
@@ -141,9 +138,7 @@ describe("StressManager", function (): void {
       });
       const unitO = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitH, unitI] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitH, unitI] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "O",
@@ -153,7 +148,6 @@ describe("StressManager", function (): void {
         prerequisitesIterations: [
           {
             id: "1234",
-            approved: true,
             parentUnits: [unitH, unitJ, unitK, unitL],
           },
         ],
@@ -164,7 +158,7 @@ describe("StressManager", function (): void {
       const unitQ = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitF, unitI, unitK] },
+          { id: "1234", parentUnits: [unitF, unitI, unitK] },
         ],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
@@ -172,9 +166,7 @@ describe("StressManager", function (): void {
       });
       const unitR = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitG, unitL] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitG, unitL] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "R",
@@ -293,7 +285,7 @@ describe("StressManager", function (): void {
       const unitF = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitB, unitE] },
+          { id: "1234", parentUnits: [unitA, unitB, unitE] },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -302,7 +294,7 @@ describe("StressManager", function (): void {
       const unitG = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitB, unitC] },
+          { id: "1234", parentUnits: [unitA, unitB, unitC] },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -311,7 +303,7 @@ describe("StressManager", function (): void {
       const unitH = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitB, unitC, unitD] },
+          { id: "1234", parentUnits: [unitB, unitC, unitD] },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -319,9 +311,7 @@ describe("StressManager", function (): void {
       });
       const unitI = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC, unitD] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitD] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "I",
@@ -447,9 +437,7 @@ describe("StressManager", function (): void {
 
       const unitI = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitB] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitB] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "I",
@@ -457,7 +445,7 @@ describe("StressManager", function (): void {
       const unitJ = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitB, unitC] },
+          { id: "1234", parentUnits: [unitA, unitB, unitC] },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -468,7 +456,6 @@ describe("StressManager", function (): void {
         prerequisitesIterations: [
           {
             id: "1234",
-            approved: true,
             parentUnits: [unitB, unitC, unitD, unitH],
           },
         ],
@@ -479,7 +466,7 @@ describe("StressManager", function (): void {
       const unitL = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC, unitD, unitE] },
+          { id: "1234", parentUnits: [unitC, unitD, unitE] },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -488,7 +475,7 @@ describe("StressManager", function (): void {
       const unitM = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitD, unitE, unitF] },
+          { id: "1234", parentUnits: [unitD, unitE, unitF] },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -497,7 +484,7 @@ describe("StressManager", function (): void {
       const unitN = new TaskUnit({
         now,
         prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitE, unitF, unitG] },
+          { id: "1234", parentUnits: [unitE, unitF, unitG] },
         ],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
@@ -505,18 +492,14 @@ describe("StressManager", function (): void {
       });
       const unitO = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitF, unitG] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitF, unitG] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "O",
       });
       const unitP = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitH] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitH] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "P",
@@ -628,9 +611,7 @@ describe("StressManager", function (): void {
       });
       const unitB = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: new Date(firstDate.getTime() + 100),
         anticipatedEndDate: new Date(secondDate.getTime() + 100),
         name: "B",
@@ -643,9 +624,7 @@ describe("StressManager", function (): void {
       });
       const unitD = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
         anticipatedStartDate: new Date(fifthDate.getTime() + 100),
         anticipatedEndDate: new Date(sixthDate.getTime() + 100),
         name: "D",
@@ -659,27 +638,21 @@ describe("StressManager", function (): void {
       });
       const unitF = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitE] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitE] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "F",
       });
       const unitG = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitF] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitF] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "G",
       });
       const unitH = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC, unitG] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitG] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "H",
@@ -692,27 +665,21 @@ describe("StressManager", function (): void {
       });
       const unitJ = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitI] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitI] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "J",
       });
       const unitK = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitJ] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitJ] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "K",
       });
       const unitL = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC, unitK] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitK] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "L",
@@ -803,27 +770,21 @@ describe("StressManager", function (): void {
 
       const unitD = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "D",
       });
       const unitE = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitB] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitB] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "E",
       });
       const unitF = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "F",
@@ -831,9 +792,7 @@ describe("StressManager", function (): void {
 
       const unitG = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitE] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitE] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "G",
@@ -846,9 +805,7 @@ describe("StressManager", function (): void {
       });
       const unitI = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitF] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitF] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "I",
@@ -856,27 +813,21 @@ describe("StressManager", function (): void {
 
       const unitJ = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitG] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitG] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "J",
       });
       const unitK = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitH] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitH] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "K",
       });
       const unitL = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitH, unitI] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitH, unitI] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "L",
@@ -955,9 +906,7 @@ describe("StressManager", function (): void {
       });
       const unitB = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: new Date(firstDate.getTime() + 100),
         anticipatedEndDate: new Date(secondDate.getTime() + 100),
         name: "B",
@@ -970,9 +919,7 @@ describe("StressManager", function (): void {
       });
       const unitD = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "D",
@@ -986,27 +933,21 @@ describe("StressManager", function (): void {
       });
       const unitF = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitE] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitE] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "F",
       });
       const unitG = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitF] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitF] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "G",
       });
       const unitH = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC, unitG] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitG] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "H",
@@ -1019,27 +960,21 @@ describe("StressManager", function (): void {
       });
       const unitJ = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitI] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitI] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "J",
       });
       const unitK = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitJ] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitJ] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "K",
       });
       const unitL = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC, unitK] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitK] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "L",
@@ -1121,9 +1056,7 @@ describe("StressManager", function (): void {
       });
       const unitB = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "B",
@@ -1136,9 +1069,7 @@ describe("StressManager", function (): void {
       });
       const unitD = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
         anticipatedStartDate: new Date(fifthDate.getTime() + 100),
         anticipatedEndDate: new Date(sixthDate.getTime() + 100),
         name: "D",
@@ -1152,27 +1083,21 @@ describe("StressManager", function (): void {
       });
       const unitF = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitE] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitE] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "F",
       });
       const unitG = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitF] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitF] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "G",
       });
       const unitH = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC, unitG] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitG] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "H",
@@ -1185,27 +1110,21 @@ describe("StressManager", function (): void {
       });
       const unitJ = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitI] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitI] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "J",
       });
       const unitK = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitJ] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitJ] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "K",
       });
       const unitL = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC, unitK] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitK] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "L",
@@ -1291,9 +1210,7 @@ describe("StressManager", function (): void {
       });
       const unitB = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA] }],
         anticipatedStartDate: new Date(firstDate.getTime() + 100),
         anticipatedEndDate: new Date(secondDate.getTime() + 100),
         name: "B",
@@ -1306,9 +1223,7 @@ describe("StressManager", function (): void {
       });
       const unitD = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC] }],
         anticipatedStartDate: new Date(fifthDate.getTime() + 100),
         anticipatedEndDate: new Date(sixthDate.getTime() + 100),
         name: "D",
@@ -1322,27 +1237,21 @@ describe("StressManager", function (): void {
       });
       const unitF = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitE] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitE] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "F",
       });
       const unitG = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitF] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitF] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "G",
       });
       const unitH = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC, unitG] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitG] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "H",
@@ -1355,27 +1264,21 @@ describe("StressManager", function (): void {
       });
       const unitJ = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitA, unitI] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitA, unitI] }],
         anticipatedStartDate: thirdDate,
         anticipatedEndDate: fourthDate,
         name: "J",
       });
       const unitK = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitJ] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitJ] }],
         anticipatedStartDate: fifthDate,
         anticipatedEndDate: sixthDate,
         name: "K",
       });
       const unitL = new TaskUnit({
         now,
-        prerequisitesIterations: [
-          { id: "1234", approved: true, parentUnits: [unitC, unitK] },
-        ],
+        prerequisitesIterations: [{ id: "1234", parentUnits: [unitC, unitK] }],
         anticipatedStartDate: seventhDate,
         anticipatedEndDate: eighthDate,
         name: "L",
