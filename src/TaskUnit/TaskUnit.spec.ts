@@ -1903,6 +1903,53 @@ describe("TaskUnit", function (): void {
     );
     describe(
       "Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, " +
+        "TaskIterationStarted With Sufficient Prerequisites Iterations And Changing Parent Units To Incomplete Units",
+      function (): void {
+        it("should throw PrematureTaskStartError", function (): void {
+          const newPreUnit = new TaskUnit({
+            now,
+            name: "unit",
+            anticipatedStartDate: thirdDate,
+            anticipatedEndDate: fourthDate,
+          });
+          expect(
+            () =>
+              new TaskUnit({
+                now,
+                prerequisitesIterations: [
+                  { id: "1234", approvedDate: sub(firstDate, { seconds: 1 }) },
+                  {
+                    id: "4567",
+                    approvedDate: lateSecondDate,
+                    parentUnits: [newPreUnit],
+                  },
+                ],
+                name: "unit",
+                anticipatedStartDate: firstDate,
+                anticipatedEndDate: secondDate,
+                eventHistory: [
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: firstDate,
+                    prerequisitesVersion: 0,
+                  },
+                  {
+                    type: EventType.ReviewedAndNeedsRebuild,
+                    date: secondDate,
+                  },
+                  {
+                    type: EventType.TaskIterationStarted,
+                    date: thirdDate,
+                    prerequisitesVersion: 1,
+                  },
+                ],
+              })
+          ).to.throw(PrematureTaskStartError);
+        });
+      }
+    );
+    describe(
+      "Starts With TaskIterationStarted, ReviewedAndNeedsRebuild, " +
         "TaskIterationStarted With Approved First Prerequisites Iteration And Unapproved Second Iteration",
       function (): void {
         it("should throw PrematureTaskStartError", function (): void {
