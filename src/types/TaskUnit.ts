@@ -23,6 +23,28 @@ export type ITaskUnitParameters =
 export interface SerializableTaskPrerequisitesReference {
   readonly id: string;
   approved: boolean;
+  /**
+   * IDs of dependencies.
+   */
+  parentUnits: string[];
+}
+
+export interface BaseTaskPrerequisites {
+  readonly id: string;
+  parentUnits?: ITaskUnit[];
+}
+
+/**
+ * The prerequisites that must be in place for the task to be completed, such as:
+ * - requirements that serve as the measurement for the review
+ * - people who will need to be available to work on the task
+ * - necessary work that is supposed to be completed in earlier tasks
+ */
+export interface ITaskPrerequisitesUnapproved extends BaseTaskPrerequisites {
+  /**
+   * The date and time the prerequisites were approved. If undefined, then they are not approved.
+   */
+  approvedDate?: never;
 }
 /**
  * The prerequisites that must be in place for the task to be completed, such as:
@@ -30,21 +52,11 @@ export interface SerializableTaskPrerequisitesReference {
  * - people who will need to be available to work on the task
  * - necessary work that is supposed to be completed in earlier tasks
  */
-export interface ITaskPrerequisitesUnapproved {
-  readonly id: string;
-  /**
-   * The date and time the prerequisites were approved. If undefined, then they are not approved.
-   */
-  approvedDate?: never;
-  parentUnits?: ITaskUnit[];
-}
-export interface ITaskPrerequisitesApproved {
-  readonly id: string;
+export interface ITaskPrerequisitesApproved extends BaseTaskPrerequisites {
   /**
    * The date and time the prerequisites were approved. If undefined, then they are not approved.
    */
   approvedDate: Date;
-  parentUnits?: ITaskUnit[];
 }
 export type ITaskPrerequisites =
   | ITaskPrerequisitesUnapproved

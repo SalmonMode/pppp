@@ -121,6 +121,7 @@ export function turnClusterIntoState(
                 ): SerializableTaskPrerequisitesReference => ({
                   id: iter.id,
                   approved: !!iter.approvedDate,
+                  parentUnits: (iter.parentUnits || []).map((unit) => unit.id),
                 })
               ),
             };

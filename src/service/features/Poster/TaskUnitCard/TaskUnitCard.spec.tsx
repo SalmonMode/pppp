@@ -916,14 +916,14 @@ describe("React Integration: TaskUnitCard", function (): void {
             }
           );
           it(
-            "should have static, pending review, pending prereqs, and prereq included class name and not the other " +
+            "should have static, pending review, missing prereqs, and prereq included class name and not the other " +
               "variant names",
             function (): void {
               expect(thirdIterationClassNames)
                 .to.contain.members([
                   "staticTaskBox",
                   "prereqsBoxIncluded",
-                  "prereqsPending",
+                  "prereqsMissing",
                   "pendingReview",
                 ])
                 .and.not.to.contain.members([

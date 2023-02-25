@@ -1,11 +1,15 @@
 import { css } from "@emotion/react";
 import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
-import { isUndefined } from "primitive-predicates";
-import { IterationRelativePosition, ReviewType } from "../../../../types";
+import { isNull, isUndefined } from "primitive-predicates";
+import {
+  IterationRelativePosition,
+  ReviewType,
+  SerializableTaskPrerequisitesReference,
+} from "../../../../types";
 import { theme } from "../../../app/theme";
 import CoreTaskWrapper from "./CoreTaskWrapper";
 import { ExtensionTrail } from "./ExtensionTrail";
-import PrerequisitesBox from "./PrerequisitesBox";
+import PrerequisitesBox from "./PrerequisitesBox/PrerequisitesBox";
 import ReviewBox, { reviewVariantClassMap } from "./ReviewBox";
 
 /**
@@ -21,7 +25,7 @@ import ReviewBox, { reviewVariantClassMap } from "./ReviewBox";
 export default function StaticTaskBox({
   expectedDurationWidth,
   actualDurationWidth,
-  prereqsAccepted,
+  prereqs,
   reviewVariant,
   relativeIterationPosition,
   label,
@@ -36,7 +40,12 @@ export default function StaticTaskBox({
    * the extension trail showing how long the task is behind what was planned.
    */
   actualDurationWidth: number;
-  prereqsAccepted?: boolean;
+  /**
+   * The prerequisites information to include for the task box. If undefined, it means no prerequisites box should be
+   * included. If null, it means there should be one, but no prerequisites exist for it yet. If it's a
+   * SerializableTaskPrerequisitesReference object, then the details of the prerequisites are available.
+   */
+  prereqs?: SerializableTaskPrerequisitesReference | null;
 
   /**
    * Can only be a pending review if the task iteration is projected. This means the review box should be placed within
@@ -48,6 +57,25 @@ export default function StaticTaskBox({
   relativeIterationPosition: IterationRelativePosition;
   label?: string;
 }): EmotionJSX.Element {
+  let prereqsBox: EmotionJSX.Element | undefined;
+  let prereqsAdjustmentWidth = 0;
+  const prereqsClassNameArray: string[] = [];
+  if (!isUndefined(prereqs)) {
+    // must include the prereqs
+    prereqsBox = <PrerequisitesBox prerequisiteDetails={prereqs} />;
+    prereqsAdjustmentWidth = theme.prerequisitesBoxWidth;
+    prereqsClassNameArray.push("prereqsBoxIncluded");
+    if (isNull(prereqs)) {
+      prereqsClassNameArray.push("prereqsMissing");
+    } else if (prereqs.approved) {
+      prereqsClassNameArray.push("prereqsAccepted");
+    } else {
+      prereqsClassNameArray.push("prereqsPending");
+    }
+  } else {
+    // won't be providing prereqs box, so this iteration is either after a major or minor review
+    prereqsClassNameArray.push("prereqsBoxNotIncluded");
+  }
   let borderAdjustment: number;
   switch (relativeIterationPosition) {
     case IterationRelativePosition.IntermediateIteration:
@@ -61,25 +89,6 @@ export default function StaticTaskBox({
       borderAdjustment = theme.borderWidth;
       break;
   }
-  let prereqsBox: EmotionJSX.Element | undefined;
-  if (!isUndefined(prereqsAccepted)) {
-    // must include the prereqs
-    prereqsBox = <PrerequisitesBox started={prereqsAccepted} />;
-  } else {
-    // won't be providing prereqs box, so this iteration is either after a major or minor review
-  }
-  let prereqsAdjustmentWidth: number = theme.prerequisitesBoxWidth;
-  let prereqClass = "prereqsBoxIncluded";
-  if (isUndefined(prereqsAccepted)) {
-    prereqsAdjustmentWidth = 0;
-    prereqClass = "prereqsBoxNotIncluded";
-  } else {
-    if (prereqsAccepted) {
-      prereqClass += " prereqsAccepted";
-    } else {
-      prereqClass += " prereqsPending";
-    }
-  }
   const reviewClass = reviewVariantClassMap[reviewVariant];
 
   const adjustedCoreWidth =
@@ -88,10 +97,12 @@ export default function StaticTaskBox({
     prereqsAdjustmentWidth -
     borderAdjustment;
 
+  const prereqsClassNamesAsString = prereqsClassNameArray.join(" ");
+
   return (
     <div
       css={styles}
-      className={`taskIteration staticTaskBox ${prereqClass} ${reviewClass}`}
+      className={`taskIteration staticTaskBox ${prereqsClassNamesAsString} ${reviewClass}`}
       style={{
         width: actualDurationWidth - borderAdjustment,
       }}

@@ -1,10 +1,15 @@
 import { css } from "@emotion/react";
 import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
-import { IterationRelativePosition, ReviewType } from "../../../../types";
+import { isUndefined } from "primitive-predicates";
+import {
+  IterationRelativePosition,
+  ReviewType,
+  SerializableTaskPrerequisitesReference,
+} from "../../../../types";
 import { theme } from "../../../app/theme";
 import CoreTaskWrapper from "./CoreTaskWrapper";
 import { ExtensionTrail } from "./ExtensionTrail";
-import PrerequisitesBox from "./PrerequisitesBox";
+import PrerequisitesBox from "./PrerequisitesBox/PrerequisitesBox";
 import ReviewBox from "./ReviewBox";
 
 /**
@@ -20,7 +25,7 @@ import ReviewBox from "./ReviewBox";
 export default function ActiveTaskBox({
   expectedDurationWidth,
   actualDurationWidth,
-  includePrereqs,
+  prereqs,
   relativeIterationPosition,
   label,
 }: {
@@ -34,16 +39,21 @@ export default function ActiveTaskBox({
    * the extension trail showing how long the task is behind what was planned.
    */
   actualDurationWidth: number;
-  includePrereqs: boolean;
+  /**
+   * The prerequisites information to include for the task box. If undefined, it means no prerequisites box should be
+   * included. If null, it means there should be one, but no prerequisites exist for it yet. If it's a
+   * SerializableTaskPrerequisitesReference object, then the details of the prerequisites are available.
+   */
+  prereqs?: SerializableTaskPrerequisitesReference | null;
   relativeIterationPosition: IterationRelativePosition;
   label?: string;
 }): EmotionJSX.Element {
   let prereqsBox: EmotionJSX.Element | undefined;
   let prereqsAdjustmentWidth = 0;
   let prereqsClassName = "prereqsBoxNotIncluded";
-  if (includePrereqs) {
+  if (!isUndefined(prereqs)) {
     // must include the prereqs
-    prereqsBox = <PrerequisitesBox started={true} />;
+    prereqsBox = <PrerequisitesBox prerequisiteDetails={prereqs} />;
     prereqsAdjustmentWidth = theme.prerequisitesBoxWidth;
     prereqsClassName = "prereqsBoxIncluded prereqsAccepted";
   } else {

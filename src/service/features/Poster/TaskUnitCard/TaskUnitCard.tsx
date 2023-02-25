@@ -11,6 +11,7 @@ import {
   IterationRelativePosition,
   ReviewType,
   SerializableTaskEvent,
+  SerializableTaskPrerequisitesReference,
   SerializableTaskReviewEvent,
   TaskUnitDetails,
 } from "../../../../types";
@@ -179,17 +180,21 @@ interface BaseTaskBoxCreationDetails {
   relativeIterationPosition: IterationRelativePosition;
   label?: string;
   /**
+   * The prerequisites information to include for the task box. If undefined, it means no prerequisites box should be
+   * included. If null, it means there should be one, but no prerequisites exist for it yet. If it's a
+   * SerializableTaskPrerequisitesReference object, then the details of the prerequisites are available.
+   */
+  prereqs?: SerializableTaskPrerequisitesReference | null;
+  /**
    * Discriminator. If true, is ActiveTaskBoxCreationDetails, if false, is StaticTaskBoxCreationDetails
    */
   isActive: boolean;
 }
 interface ActiveTaskBoxCreationDetails extends BaseTaskBoxCreationDetails {
   isActive: true;
-  includePrereqs: boolean;
 }
 interface StaticTaskBoxCreationDetails extends BaseTaskBoxCreationDetails {
   isActive: false;
-  prereqsAccepted?: boolean;
   reviewVariant: ReviewType;
 }
 type TaskBoxCreationDetails =
@@ -218,14 +223,17 @@ function getTaskBoxCreationDetails(
   prevPrevEvent: SerializableTaskEvent | undefined,
   projected: boolean
 ): TaskBoxCreationDetails {
-  let includePrereqs: boolean;
-  let prereqsAccepted: undefined | boolean;
+  /**
+   * The prerequisites information to include for the task box. If undefined, it means no prerequisites box should be
+   * included. If null, it means there should be one, but no prerequisites exist for it yet. If it's a
+   * SerializableTaskPrerequisitesReference object, then the details of the prerequisites are available.
+   */
+  let prereqs: SerializableTaskPrerequisitesReference | null | undefined;
   if (prevEvent.type === EventType.TaskIterationStarted) {
-    includePrereqs = true;
-    prereqsAccepted =
-      !!unit.prerequisitesIterations[prevEvent.prerequisitesVersion];
+    prereqs =
+      unit.prerequisitesIterations[prevEvent.prerequisitesVersion] || null;
   } else {
-    includePrereqs = false;
+    // prereqs should remain undefined because the prereq box doesn't need to be displayed.
   }
   const expectedDurationWidth = getPixelGapBetweenTimes(
     unit.anticipatedEndTime,
@@ -246,7 +254,7 @@ function getTaskBoxCreationDetails(
     const details: ActiveTaskBoxCreationDetails = {
       actualDurationWidth,
       expectedDurationWidth,
-      includePrereqs,
+      prereqs,
       overallEventIndex,
       relativeIterationPosition,
       label,
@@ -262,7 +270,7 @@ function getTaskBoxCreationDetails(
     overallEventIndex,
     relativeIterationPosition,
     label,
-    prereqsAccepted,
+    prereqs,
     reviewVariant,
     isActive: false,
   };
@@ -285,7 +293,7 @@ function getTaskBox(details: TaskBoxCreationDetails): JSX.Element {
         actualDurationWidth={details.actualDurationWidth}
         relativeIterationPosition={details.relativeIterationPosition}
         label={details.label}
-        includePrereqs={details.includePrereqs}
+        prereqs={details.prereqs}
       />
     );
   } else {
@@ -296,7 +304,7 @@ function getTaskBox(details: TaskBoxCreationDetails): JSX.Element {
         actualDurationWidth={details.actualDurationWidth}
         relativeIterationPosition={details.relativeIterationPosition}
         label={details.label}
-        prereqsAccepted={details.prereqsAccepted}
+        prereqs={details.prereqs}
         reviewVariant={details.reviewVariant}
       />
     );
