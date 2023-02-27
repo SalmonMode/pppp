@@ -71,6 +71,7 @@ export default function TaskUnitCard({
   return (
     <Box
       data-testid={`task-${unit.id}`}
+      id={`task-${unit.id}`}
       css={boxStyles}
       style={{ left: position.x, top: position.y }}
     >

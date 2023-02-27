@@ -194,6 +194,10 @@ describe("React Integration: Prerequisites Box", function (): void {
   });
   describe("Prerequisites Button Clicked, Approved Prerequisites, Two Dependencies", function (): void {
     let tooltipText: string;
+    let firstLinkHref: string;
+    let secondLinkHref: string;
+    let firstLinkTitle: string;
+    let secondLinkTitle: string;
     beforeEach(async function () {
       const {
         renderResult: { container },
@@ -297,6 +301,22 @@ describe("React Integration: Prerequisites Box", function (): void {
       const possibleTooltipText = tooltip.textContent;
       assertIsString(possibleTooltipText);
       tooltipText = possibleTooltipText;
+      const firstLink = tooltip.querySelectorAll("a")[0];
+      assertIsObject(firstLink);
+      const secondLink = tooltip.querySelectorAll("a")[1];
+      assertIsObject(secondLink);
+      const possibleFirstLinkHref = firstLink.getAttribute("href");
+      assertIsString(possibleFirstLinkHref);
+      firstLinkHref = possibleFirstLinkHref;
+      const possibleSecondLinkHref = secondLink.getAttribute("href");
+      assertIsString(possibleSecondLinkHref);
+      secondLinkHref = possibleSecondLinkHref;
+      const possibleFirstLinkTitle = firstLink.getAttribute("title");
+      assertIsString(possibleFirstLinkTitle);
+      firstLinkTitle = possibleFirstLinkTitle;
+      const possibleSecondLinkTitle = secondLink.getAttribute("title");
+      assertIsString(possibleSecondLinkTitle);
+      secondLinkTitle = possibleSecondLinkTitle;
     });
     it("should have pending tooltip text", function () {
       expect(tooltipText).to.equal(
@@ -305,6 +325,18 @@ describe("React Integration: Prerequisites Box", function (): void {
           "A Unit" +
           "B Unit"
       );
+    });
+    it("should have first link with href pointing to A unit task card", function () {
+      expect(firstLinkHref).to.equal(`#task-${"5678"}`);
+    });
+    it("should have first link with title referencing A's name", function () {
+      expect(firstLinkTitle).to.equal(`Jump to task: ${"A Unit"}`);
+    });
+    it("should have second link with href pointing to B unit task card", function () {
+      expect(secondLinkHref).to.equal(`#task-${"91011"}`);
+    });
+    it("should have second link with title referencing B's name", function () {
+      expect(secondLinkTitle).to.equal(`Jump to task: ${"B Unit"}`);
     });
   });
   describe("Prerequisites Button Clicked, Close Tooltip", async function (): Promise<void> {

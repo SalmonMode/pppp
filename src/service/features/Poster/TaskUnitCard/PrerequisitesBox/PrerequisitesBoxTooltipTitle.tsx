@@ -1,11 +1,14 @@
 import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
+import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
+import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import { assertIsObject, isNull } from "primitive-predicates";
 import React from "react";
 import type { SerializableTaskPrerequisitesReference } from "../../../../../types";
 import { useAppSelector } from "../../../../app/hooks";
 import type { AppState } from "../../../../app/types";
 import type { TaskUnitMap } from "../../taskUnitsSlice";
+import { css } from "@emotion/react";
 
 export default function PrerequisitesBoxTooltipTitle({
   prerequisiteDetails,
@@ -32,23 +35,38 @@ export default function PrerequisitesBoxTooltipTitle({
         const unitDetails = units[depId];
         assertIsObject(unitDetails);
         return (
-          <Typography color="inherit" key={index}>
-            {unitDetails.name}
-          </Typography>
+          <div css={depListItemStyles}>
+            <div>
+              <Link
+                href={`#task-${depId}`}
+                title={`Jump to task: ${unitDetails.name}`}
+              >
+                <ArrowCircleRightIcon />
+              </Link>
+            </div>
+            <div>
+              <Typography color="inherit" key={index}>
+                {unitDetails.name}
+              </Typography>
+            </div>
+          </div>
         );
       }
     );
+    let depsTextContent: EmotionJSX.Element;
     if (depsTexts.length === 0) {
-      depsTexts.push(
+      depsTextContent = (
         <Typography color="inherit" key={0}>
           N/A
         </Typography>
       );
+    } else {
+      depsTextContent = <div css={depListStyles}>{depsTexts}</div>;
     }
     tooltipTitleDeps = (
       <React.Fragment>
         <Typography color="inherit">Dependencies:</Typography>
-        {depsTexts}
+        {depsTextContent}
       </React.Fragment>
     );
     if (prerequisiteDetails.approved) {
@@ -65,3 +83,17 @@ export default function PrerequisitesBoxTooltipTitle({
     </React.Fragment>
   );
 }
+
+const depListStyles = css({
+  display: "flex",
+  flexDirection: "column",
+  paddingTop: 10,
+});
+const depListItemStyles = css({
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "flex-start",
+  p: {
+    paddingLeft: 5,
+  },
+});
