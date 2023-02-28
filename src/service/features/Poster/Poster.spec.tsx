@@ -1,13 +1,13 @@
-import { screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import { expect } from "chai";
 import chroma from "chroma-js";
 import { add, startOfDay, sub } from "date-fns";
+import { assertIsObject, assertIsString } from "primitive-predicates";
 import { createSandbox, SinonSandbox, SinonStub } from "sinon";
-import { theme } from "../../app/theme";
 import ConnectedPoints from "../../../Graphing/ConnectedPoints";
 import { TaskUnit, TaskUnitCluster } from "../../../Relations";
-import { assertIsObject, assertIsString } from "primitive-predicates";
 import { EventType } from "../../../types";
+import { theme } from "../../app/theme";
 import { renderWithProvider } from "../../Utility/TestRenderers";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
 import getYOfTrackTop from "./getYOfTrackTop";
@@ -1672,6 +1672,77 @@ describe("React Integration: Poster", function (): void {
     });
     it("should have A-C-D on third track (index 2)", function (): void {
       expect([...thirdTrackText]).to.have.members(["A", "C", "D"]);
+    });
+  });
+  describe("Simple Layout, Clicking Prerequisite Link", function (): void {
+    let sandbox: SinonSandbox;
+    const firstDate = add(now, { days: 1 });
+    const secondDate = add(firstDate, { days: 1 });
+    const thirdDate = add(secondDate, { days: 1 });
+
+    before(async function (): Promise<void> {
+      sandbox = createSandbox();
+      Element.prototype.scrollIntoView = function (): void {
+        // Purely exists because jsdom does not actually support this method so it cannot be stubbed without something
+        // here.
+        return;
+      };
+      sandbox.stub(Element.prototype, "scrollIntoView");
+    });
+    after(function (): void {
+      sandbox.restore();
+    });
+
+    it("should have animation data attribute change through animation lifecycle", async function (): Promise<void> {
+      const unitA = new TaskUnit({
+        now,
+        anticipatedStartDate: firstDate,
+        anticipatedEndDate: secondDate,
+        name: "A",
+      });
+      const unitB = new TaskUnit({
+        now,
+        prerequisitesIterations: [
+          {
+            id: "1234",
+            approvedDate: sub(firstDate, { hours: 4 }),
+            parentUnits: [unitA],
+          },
+        ],
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+        name: "B",
+      });
+
+      const cluster = new TaskUnitCluster([unitB]);
+
+      const initialState = turnClusterIntoState(cluster);
+      renderWithProvider(<Poster />, {
+        preloadedState: {
+          taskUnits: initialState,
+        },
+      });
+      const aCardBox = await screen.findByTestId(`task-${unitA.id}`);
+      const aCard = aCardBox.querySelector(`.taskUnit`);
+      assertIsObject(aCard);
+      // Should be false before anything happens
+      expect(aCard.getAttribute("data-animated")).to.equal("false");
+      const bCardBox = await screen.findByTestId(`task-${unitB.id}`);
+      const bPrereqButton = bCardBox.querySelector("button");
+      assertIsObject(bPrereqButton);
+      fireEvent.click(bPrereqButton);
+      const tooltip = screen.getByRole("tooltip");
+      const tooltipLink = tooltip.querySelector("a");
+      assertIsObject(tooltipLink);
+      fireEvent.click(tooltipLink);
+      // Should be true after the link was clicked
+      expect(aCard.getAttribute("data-animated")).to.equal("true");
+      fireEvent.animationEnd(tooltip);
+      // Should stay true after the tooltip animation ended
+      expect(aCard.getAttribute("data-animated")).to.equal("true");
+      fireEvent.animationEnd(aCard);
+      // Should be false after pulse animation ended
+      expect(aCard.getAttribute("data-animated")).to.equal("false");
     });
   });
 });

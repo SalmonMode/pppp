@@ -4,11 +4,13 @@ import {
   PreloadedState,
 } from "@reduxjs/toolkit";
 import coefficientHelpModalOpenSlice from "../features/CoefficientModal/coefficientHelpModalOpenSlice";
+import taskUnitCardFocusSlice from "../features/Poster/TaskUnitCard/taskUnitCardAttentionSlice";
 import taskUnitsSlice from "../features/Poster/taskUnitsSlice";
 import type { AppStore } from "./types";
 
 const rootReducer = combineReducers({
   taskUnits: taskUnitsSlice.reducer,
+  taskUnitCardFocus: taskUnitCardFocusSlice.reducer,
   coefficientHelpModal: coefficientHelpModalOpenSlice.reducer,
 });
 

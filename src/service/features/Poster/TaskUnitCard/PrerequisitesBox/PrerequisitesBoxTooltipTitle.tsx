@@ -1,14 +1,15 @@
+import { css } from "@emotion/react";
 import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
+import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import { assertIsObject, isNull } from "primitive-predicates";
 import React from "react";
 import type { SerializableTaskPrerequisitesReference } from "../../../../../types";
-import { useAppSelector } from "../../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import type { AppState } from "../../../../app/types";
 import type { TaskUnitMap } from "../../taskUnitsSlice";
-import { css } from "@emotion/react";
+import { setTaskUnitCardAttention } from "../taskUnitCardAttentionSlice";
 
 export default function PrerequisitesBoxTooltipTitle({
   prerequisiteDetails,
@@ -23,6 +24,7 @@ export default function PrerequisitesBoxTooltipTitle({
       "This component should only be used if the state has finished loading"
     );
   });
+  const dispatch = useAppDispatch();
 
   let tooltipText: string;
   let tooltipTitleDeps: EmotionJSX.Element | undefined;
@@ -35,19 +37,20 @@ export default function PrerequisitesBoxTooltipTitle({
         const unitDetails = units[depId];
         assertIsObject(unitDetails);
         return (
-          <div css={depListItemStyles}>
+          <div css={depListItemStyles} key={index}>
             <div>
               <Link
                 href={`#task-${depId}`}
                 title={`Jump to task: ${unitDetails.name}`}
+                onClick={(_event): void => {
+                  dispatch(setTaskUnitCardAttention(depId));
+                }}
               >
                 <ArrowCircleRightIcon />
               </Link>
             </div>
             <div>
-              <Typography color="inherit" key={index}>
-                {unitDetails.name}
-              </Typography>
+              <Typography color="inherit">{unitDetails.name}</Typography>
             </div>
           </div>
         );

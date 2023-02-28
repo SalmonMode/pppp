@@ -1,10 +1,10 @@
-import { css } from "@emotion/react";
+import { css, keyframes } from "@emotion/react";
 import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { assertIsObject } from "primitive-predicates";
-import { theme } from "../../../app/theme";
+import { useRef } from "react";
 import {
   Coordinate,
   EventType,
@@ -15,10 +15,17 @@ import {
   SerializableTaskReviewEvent,
   TaskUnitDetails,
 } from "../../../../types";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { theme } from "../../../app/theme";
+import type { AppState } from "../../../app/types";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 import ActiveTaskBox from "./ActiveTaskBox";
 import { ExtensionTrailFixedSize } from "./ExtensionTrail";
 import StaticTaskBox from "./StaticTaskBox";
+import {
+  resetTaskUnitCardAttention,
+  TaskUnitCardAttentionState,
+} from "./taskUnitCardAttentionSlice";
 
 export default function TaskUnitCard({
   unit,
@@ -27,6 +34,9 @@ export default function TaskUnitCard({
   unit: TaskUnitDetails;
   position: Coordinate;
 }): EmotionJSX.Element {
+  const { attentionCardId } = useAppSelector(
+    (state: AppState): TaskUnitCardAttentionState => state.taskUnitCardFocus
+  );
   const explicitCardPieces = unit.explicitEventHistory.map(
     (event: SerializableTaskEvent, index: number): EmotionJSX.Element[] => {
       const nextEvent =
@@ -68,14 +78,30 @@ export default function TaskUnitCard({
     ...explicitCardPieces,
     ...projectedCardPieces,
   ];
+
+  const isFocus = attentionCardId === unit.id;
+  const dispatch = useAppDispatch();
+  const cardId = `task-${unit.id}`;
+  const cardRef = useRef(null);
   return (
     <Box
-      data-testid={`task-${unit.id}`}
-      id={`task-${unit.id}`}
+      data-testid={cardId}
+      id={cardId}
       css={boxStyles}
       style={{ left: position.x, top: position.y }}
     >
-      <Card variant="outlined" className="taskUnit" css={cardStyles}>
+      <Card
+        variant="outlined"
+        className="taskUnit"
+        css={cardStyles}
+        ref={cardRef}
+        onAnimationEnd={(event): void => {
+          if (event.target === cardRef.current) {
+            dispatch(resetTaskUnitCardAttention());
+          }
+        }}
+        data-animated={isFocus}
+      >
         <CardContent css={cardContentStyles}>
           <div css={cardContentInnerStyles} className="cardContentDiv">
             {cardPieces}
@@ -382,12 +408,28 @@ const boxStyles = css({
   height: theme.trackHeight,
   position: "absolute",
 });
+
+export const pulse = keyframes`
+  0% {
+    -webkit-box-shadow: 0 0 0 0 rgba(255,0,0, 0.9);
+  }
+  70% {
+      -webkit-box-shadow: 0 0 0 20px rgba(255,0,0, 0);
+  }
+  100% {
+      -webkit-box-shadow: 0 0 0 0 rgba(255,0,0, 0);
+  }
+`;
+
 const cardStyles = css({
   height: theme.trackHeight,
   position: "absolute",
   boxSizing: "border-box",
   top: 0,
   borderWidth: theme.borderWidth,
+  "&[data-animated='true']": {
+    animation: `${pulse} 0.5s 2`,
+  },
 });
 const cardContentStyles = css({
   padding: 0,
