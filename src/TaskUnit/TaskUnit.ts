@@ -27,6 +27,7 @@ export default class TaskUnit implements ITaskUnit {
    */
   private _providedDirectDependencies: ITaskUnit[];
   private _directDependencies: Set<ITaskUnit>;
+  private _staleDirectDependencies: Set<ITaskUnit>;
   private _allDependencies: Set<ITaskUnit>;
   private _attachmentMap: RelationshipMapping;
   private _attachmentToDependencies: number;
@@ -61,6 +62,7 @@ export default class TaskUnit implements ITaskUnit {
     }
     this._providedDirectDependencies = parentUnits || [];
     this._directDependencies = this._getTrueDirectDependencies();
+    this._staleDirectDependencies = this._getStaleDirectDependencies();
     this._earliestPossibleStartTime = this._getEarliestPossibleStartTime();
     this._validateEventHistory();
     this._apparentStartDate = this._determineApparentStartDate();
@@ -306,6 +308,23 @@ export default class TaskUnit implements ITaskUnit {
     return new Set(trueDirect);
   }
   /**
+   * Gets the dependencies that are no longer relevant because the prerequisites have changed.
+   *
+   * When prerequisites change, the dependencies can change as well. This provides access to the ones that got left
+   * behind (if there are any).
+   *
+   * @returns a set of former dependencies
+   */
+  private _getStaleDirectDependencies(): Set<ITaskUnit> {
+    const staleDependencies = this.prerequisitesIterations
+      .reduce<ITaskUnit[]>(
+        (acc, prereqIter) => [...acc, ...(prereqIter.parentUnits || [])],
+        []
+      )
+      .filter((unit) => !this.directDependencies.has(unit));
+    return new Set(staleDependencies);
+  }
+  /**
    * Get the earliest possible time this unit could possibly start, given it's dependencies.
    *
    * This is used to figure out when the unit's apparent start time is. When tasks haven't been completed, we don't know
@@ -438,6 +457,9 @@ export default class TaskUnit implements ITaskUnit {
   }
   get directDependencies(): Set<ITaskUnit> {
     return this._directDependencies;
+  }
+  get staleDirectDependencies(): Set<ITaskUnit> {
+    return this._staleDirectDependencies;
   }
   /**
    * All task units this unit depends on.

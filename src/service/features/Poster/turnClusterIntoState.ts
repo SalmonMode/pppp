@@ -83,6 +83,9 @@ export function turnClusterIntoState(
               directDependencies: [...unit.directDependencies].map(
                 (u: ITaskUnit): string => u.id
               ),
+              staleDirectDependencies: [...unit.staleDirectDependencies].map(
+                (u: ITaskUnit): string => u.id
+              ),
               explicitEventHistory: unit.explicitEventHistory.map(
                 (event: TaskEvent): SerializableTaskEvent => {
                   const time = event.date.getTime();

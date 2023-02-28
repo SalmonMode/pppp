@@ -140,6 +140,10 @@ export interface ITaskUnit {
    */
   directDependencies: Set<ITaskUnit>;
   /**
+   * The direct dependencies of this {@link ITaskUnit} that are no longer relevant because the prerequisites changed.
+   */
+  staleDirectDependencies: Set<ITaskUnit>;
+  /**
    * All task units this unit depends on.
    */
   getAllDependencies(): Set<ITaskUnit>;
@@ -230,6 +234,7 @@ export interface ITaskUnit {
 
 export interface TaskUnitDetails {
   id: ITaskUnit["id"];
+  staleDirectDependencies: ITaskUnit["id"][];
   directDependencies: ITaskUnit["id"][];
   /**
    * The time the task was anticipated to start when it was first made.

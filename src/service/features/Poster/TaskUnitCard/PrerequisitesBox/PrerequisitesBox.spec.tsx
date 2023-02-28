@@ -148,6 +148,7 @@ describe("React Integration: Prerequisites Box", function (): void {
                   id: "1234",
                   name: "unit",
                   directDependencies: [],
+                  staleDirectDependencies: [],
                   explicitEventHistory: [],
                   projectedEventHistory: [
                     {
@@ -222,6 +223,7 @@ describe("React Integration: Prerequisites Box", function (): void {
                   id: "1234",
                   name: "unit",
                   directDependencies: [],
+                  staleDirectDependencies: [],
                   explicitEventHistory: [],
                   projectedEventHistory: [
                     {
@@ -244,6 +246,7 @@ describe("React Integration: Prerequisites Box", function (): void {
                   id: "5678",
                   name: "A Unit",
                   directDependencies: [],
+                  staleDirectDependencies: [],
                   explicitEventHistory: [],
                   projectedEventHistory: [
                     {
@@ -266,6 +269,7 @@ describe("React Integration: Prerequisites Box", function (): void {
                   id: "91011",
                   name: "B Unit",
                   directDependencies: [],
+                  staleDirectDependencies: [],
                   explicitEventHistory: [],
                   projectedEventHistory: [
                     {

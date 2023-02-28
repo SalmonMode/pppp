@@ -23,6 +23,7 @@ export const theme = {
   extensionColor: "#FE7E6D",
   dateLineStrokeColor: "#A4A4A4",
   connectionPathStrokeColor: "black",
+  staleConnectionPathStrokeColor: "#8B8B8B",
   connectionPathOutlineStrokeColor: "white",
   prerequisitesBoxWidth: 25,
   reviewBoxWidth: 25,

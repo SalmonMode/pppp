@@ -21,6 +21,45 @@ export default function PosterSvg({
 }): EmotionJSX.Element {
   return (
     <svg data-testid="posterSvg" css={svgStyles} style={{ width, height }}>
+      {/* First get the stale connections so they render behind all others */}
+      {Object.values(taskUnits.units).map(
+        (unit: TaskUnitDetails): EmotionJSX.Element[] => {
+          {
+            return [...unit.staleDirectDependencies].map(
+              (depUnitId: string): EmotionJSX.Element => {
+                const depUnitData = taskUnits.units[depUnitId];
+                assertIsObject(depUnitData);
+                const depUnitConnPoint: Coordinate = {
+                  x: getPixelGapBetweenTimes(
+                    depUnitData.apparentEndTime,
+                    earliestStartTime
+                  ),
+                  y:
+                    getYOfTrackTop(depUnitData.trackIndex) +
+                    theme.trackHeight / 2,
+                };
+                const unitConnPoint: Coordinate = {
+                  x: getPixelGapBetweenTimes(
+                    unit.apparentStartTime,
+                    earliestStartTime
+                  ),
+                  y: getYOfTrackTop(unit.trackIndex) + theme.trackHeight / 2,
+                };
+                return (
+                  <ConnectingLine
+                    data-testid={`pathGroup-${unit.id}-${depUnitId}`}
+                    key={`${unit.id}-${depUnitId}`}
+                    variant={"stale"}
+                    unitConnectionPoint={unitConnPoint}
+                    depConnectionPoint={depUnitConnPoint}
+                  />
+                );
+              }
+            );
+          }
+        }
+      )}
+      {/* Then get the current connections so they render in front of the stale ones */}
       {Object.values(taskUnits.units).map(
         (unit: TaskUnitDetails): EmotionJSX.Element[] => {
           {

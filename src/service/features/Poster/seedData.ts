@@ -84,7 +84,7 @@ export function getSeedData(): TaskUnitCluster {
   const unitD = new TaskUnit({
     now,
     prerequisitesIterations: [
-      { id: "1234", approvedDate: fifthDate, parentUnits: [unitC] },
+      { id: "1234", approvedDate: fifthDate, parentUnits: [unitB, unitC] },
       {
         id: "123456",
         approvedDate: add(seventhDate, { hours: 6 }),

@@ -100,6 +100,99 @@ describe("TaskUnit", function (): void {
       ]);
     });
   });
+  describe("Changing Dependencies Through Prerequisites", function (): void {
+    let unitA: TaskUnit;
+    let unitB: TaskUnit;
+    let unitC: TaskUnit;
+    before(function (): void {
+      unitA = new TaskUnit({
+        now,
+        name: "A",
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+        prerequisitesIterations: [
+          {
+            id: "1234",
+            approvedDate: firstDate,
+          },
+        ],
+        eventHistory: [
+          {
+            type: EventType.TaskIterationStarted,
+            date: secondDate,
+            prerequisitesVersion: 0,
+          },
+          {
+            type: EventType.ReviewedAndAccepted,
+            date: thirdDate,
+          },
+        ],
+      });
+      unitB = new TaskUnit({
+        now,
+        name: "B",
+        anticipatedStartDate: secondDate,
+        anticipatedEndDate: thirdDate,
+        prerequisitesIterations: [
+          {
+            id: "1234",
+            approvedDate: firstDate,
+          },
+        ],
+        eventHistory: [
+          {
+            type: EventType.TaskIterationStarted,
+            date: secondDate,
+            prerequisitesVersion: 0,
+          },
+          {
+            type: EventType.ReviewedAndAccepted,
+            date: thirdDate,
+          },
+        ],
+      });
+      unitC = new TaskUnit({
+        now,
+        name: "C",
+        anticipatedStartDate: thirdDate,
+        anticipatedEndDate: fourthDate,
+        prerequisitesIterations: [
+          {
+            id: "1234",
+            approvedDate: firstDate,
+            parentUnits: [unitA],
+          },
+          {
+            id: "5678",
+            approvedDate: fifthDate,
+            parentUnits: [unitB],
+          },
+        ],
+        eventHistory: [
+          {
+            type: EventType.TaskIterationStarted,
+            date: thirdDate,
+            prerequisitesVersion: 0,
+          },
+          {
+            type: EventType.ReviewedAndNeedsRebuild,
+            date: fourthDate,
+          },
+          {
+            type: EventType.TaskIterationStarted,
+            date: sixthDate,
+            prerequisitesVersion: 1,
+          },
+        ],
+      });
+    });
+    it("should have unit B as the only direct dependency for unit C", function (): void {
+      expect([...unitC.directDependencies]).to.have.members([unitB]);
+    });
+    it("should have unit A as the only stale direct dependency for unit C", function (): void {
+      expect([...unitC.staleDirectDependencies]).to.have.members([unitA]);
+    });
+  });
   describe("Future Event", function (): void {
     const firstDate = new Date(now.getTime() + 100000);
     const secondDate = new Date(firstDate.getTime() + 1000);
