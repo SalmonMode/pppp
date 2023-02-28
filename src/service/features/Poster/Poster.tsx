@@ -2,15 +2,15 @@ import { css } from "@emotion/react";
 import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Typography from "@mui/material/Typography";
 import { add, eachDayOfInterval, sub } from "date-fns";
+import { assertIsObject } from "primitive-predicates";
+import type { TaskUnitDetails } from "../../../types";
 import { useAppSelector } from "../../app/hooks";
 import { theme } from "../../app/theme";
 import type { AppState } from "../../app/types";
-import { assertIsObject } from "primitive-predicates";
-import type { TaskUnitDetails } from "../../../types";
 import DateLinesSvg from "./DateLinesSvg";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
 import PosterContent from "./PosterContent";
-import PosterSvg from "./PosterSvg";
+import { PosterSvg } from "./PosterSvg";
 import SnailTrailContainer from "./SnailTrailContainer";
 import type { TaskUnitsState } from "./taskUnitsSlice";
 

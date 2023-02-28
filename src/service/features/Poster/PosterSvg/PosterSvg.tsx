@@ -1,12 +1,12 @@
 import { css } from "@emotion/react";
 import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
-import { theme } from "../../app/theme";
-import ConnectedPoints from "../../../Graphing/ConnectedPoints";
 import { assertIsObject } from "primitive-predicates";
-import type { Coordinate, TaskUnitDetails } from "../../../types";
-import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
-import getYOfTrackTop from "./getYOfTrackTop";
-import type { TaskUnitsLoadingCompleteState } from "./taskUnitsSlice";
+import type { Coordinate, TaskUnitDetails } from "../../../../types";
+import { theme } from "../../../app/theme";
+import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
+import getYOfTrackTop from "../getYOfTrackTop";
+import type { TaskUnitsLoadingCompleteState } from "../taskUnitsSlice";
+import ConnectingLine from "./ConnectingLine";
 
 export default function PosterSvg({
   taskUnits,
@@ -44,26 +44,13 @@ export default function PosterSvg({
                   ),
                   y: getYOfTrackTop(unit.trackIndex) + theme.trackHeight / 2,
                 };
-                const connection = new ConnectedPoints(
-                  depUnitConnPoint,
-                  unitConnPoint
-                );
-                const curveAsPathString =
-                  connection.getCubicBezierCurvePathShape();
                 return (
-                  <g
+                  <ConnectingLine
                     data-testid={`pathGroup-${unit.id}-${depUnitId}`}
                     key={`${unit.id}-${depUnitId}`}
-                  >
-                    <path
-                      d={curveAsPathString}
-                      css={connectionPathOutlineStyles}
-                    ></path>
-                    <path
-                      d={curveAsPathString}
-                      css={connectionPathStyles}
-                    ></path>
-                  </g>
+                    unitConnectionPoint={unitConnPoint}
+                    depConnectionPoint={depUnitConnPoint}
+                  />
                 );
               }
             );
@@ -79,14 +66,4 @@ const svgStyles = css({
   left: 0,
   top: 0,
   pointerEvents: "none",
-});
-const connectionPathStyles = css({
-  stroke: theme.connectionPathStrokeColor,
-  strokeWidth: "2px",
-  fill: "none",
-});
-const connectionPathOutlineStyles = css({
-  stroke: theme.connectionPathOutlineStrokeColor,
-  strokeWidth: "6px",
-  fill: "none",
 });
