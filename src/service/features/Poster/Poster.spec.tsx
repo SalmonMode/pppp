@@ -1745,4 +1745,139 @@ describe("React Integration: Poster", function (): void {
       expect(aCard.getAttribute("data-animated")).to.equal("false");
     });
   });
+  describe("Stale Dependency", function (): void {
+    let sandbox: SinonSandbox;
+    let cToAClassNames: string[];
+    let cToBClassNames: string[];
+    const firstDate = sub(now, { days: 7 });
+    const secondDate = add(firstDate, { days: 1 });
+    const thirdDate = add(secondDate, { days: 1 });
+    const fourthDate = add(thirdDate, { days: 1 });
+    const fifthDate = add(fourthDate, { days: 1 });
+    const sixthDate = add(fifthDate, { days: 1 });
+    const unitA = new TaskUnit({
+      now,
+      name: "A",
+      anticipatedStartDate: secondDate,
+      anticipatedEndDate: thirdDate,
+      prerequisitesIterations: [
+        {
+          id: "1234",
+          approvedDate: firstDate,
+        },
+      ],
+      eventHistory: [
+        {
+          type: EventType.TaskIterationStarted,
+          date: secondDate,
+          prerequisitesVersion: 0,
+        },
+        {
+          type: EventType.ReviewedAndAccepted,
+          date: thirdDate,
+        },
+      ],
+    });
+    const unitB = new TaskUnit({
+      now,
+      name: "B",
+      anticipatedStartDate: secondDate,
+      anticipatedEndDate: thirdDate,
+      prerequisitesIterations: [
+        {
+          id: "1234",
+          approvedDate: firstDate,
+        },
+      ],
+      eventHistory: [
+        {
+          type: EventType.TaskIterationStarted,
+          date: secondDate,
+          prerequisitesVersion: 0,
+        },
+        {
+          type: EventType.ReviewedAndAccepted,
+          date: thirdDate,
+        },
+      ],
+    });
+    const unitC = new TaskUnit({
+      now,
+      name: "C",
+      anticipatedStartDate: thirdDate,
+      anticipatedEndDate: fourthDate,
+      prerequisitesIterations: [
+        {
+          id: "1234",
+          approvedDate: firstDate,
+          parentUnits: [unitA],
+        },
+        {
+          id: "5678",
+          approvedDate: fifthDate,
+          parentUnits: [unitB],
+        },
+      ],
+      eventHistory: [
+        {
+          type: EventType.TaskIterationStarted,
+          date: thirdDate,
+          prerequisitesVersion: 0,
+        },
+        {
+          type: EventType.ReviewedAndNeedsRebuild,
+          date: fourthDate,
+        },
+        {
+          type: EventType.TaskIterationStarted,
+          date: sixthDate,
+          prerequisitesVersion: 1,
+        },
+      ],
+    });
+
+    before(async function (): Promise<void> {
+      sandbox = createSandbox();
+      Element.prototype.scrollIntoView = function (): void {
+        // Purely exists because jsdom does not actually support this method so it cannot be stubbed without something
+        // here.
+        return;
+      };
+      sandbox.stub(Element.prototype, "scrollIntoView");
+      const cluster = new TaskUnitCluster([unitC, unitA]);
+
+      const initialState = turnClusterIntoState(cluster);
+      renderWithProvider(<Poster />, {
+        preloadedState: {
+          taskUnits: initialState,
+        },
+      });
+      const cToAPathGroup = await screen.findByTestId(
+        `pathGroup-${unitC.id}-${unitA.id}`
+      );
+      const cToAClassAttr = cToAPathGroup.getAttribute("class");
+      assertIsString(cToAClassAttr);
+      cToAClassNames = cToAClassAttr.split(" ");
+      const cToBPathGroup = await screen.findByTestId(
+        `pathGroup-${unitC.id}-${unitB.id}`
+      );
+      const cToBClassAttr = cToBPathGroup.getAttribute("class");
+      assertIsString(cToBClassAttr);
+      cToBClassNames = cToBClassAttr.split(" ");
+    });
+    after(function (): void {
+      sandbox.restore();
+    });
+
+    it("should have stale line from C to A", async function (): Promise<void> {
+      expect(cToAClassNames)
+        .to.contain.members(["stale"])
+        .and.not.to.contain.members(["standard"]);
+    });
+    it("should have standard line from C to B", async function (): Promise<void> {
+      expect(cToBClassNames)
+        .to.contain.members(["standard"])
+        .and.not.to.contain.members(["stale"]);
+    });
+  });
 });
