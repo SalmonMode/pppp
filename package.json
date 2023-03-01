@@ -1,6 +1,6 @@
 {
   "name": "pppp",
-  "version": "0.27.1",
+  "version": "0.27.2",
   "description": "Gerald Weinberg's PPPP brought to life.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,7 +9,8 @@
     "start": "next start",
     "next:build": "next build",
     "build": "TS_NODE_PROJECT='./tsconfig.test.json' npx tsc -b",
-    "build:diagnostic": "TS_NODE_PROJECT='./tsconfig.test.json' npx tsc -b --extendedDiagnostics",
+    "build:diagnostic": "TS_NODE_PROJECT='./tsconfig.test.json' npx tsc -b --extendedDiagnostics --generateTrace tracing_output_folder",
+    "analyze": "TS_NODE_PROJECT='./tsconfig.test.json' npx analyze-trace --expandTypes true tracing_output_folder",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
     "test": "TS_NODE_PROJECT='./tsconfig.test.json' nyc mocha --recursive ./src/",
@@ -82,6 +83,7 @@
     "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "@typescript-eslint/parser": "^5.50.0",
+    "@typescript/analyze-trace": "^0.10.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "eslint": "^8.33.0",
@@ -97,7 +99,7 @@
     "source-map-support": "^0.5.21",
     "ts-node": "^10.9.1",
     "tslib": "^2.4.1",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.5"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",

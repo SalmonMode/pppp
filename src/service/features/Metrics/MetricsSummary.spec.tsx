@@ -105,9 +105,8 @@ describe("React Integration: MetricsSummary", function (): void {
       fireEvent.click(button);
     });
     it("should have coefficient help modal", async function (): Promise<void> {
-      const modal = await screen.findByTestId(`coefficient-help-modal`);
-      const title = modal.querySelector("#modal-modal-title");
-      assertIsObject(title);
+      await screen.findByTestId(`coefficient-help-modal`);
+      const title = await screen.findByTestId("modal-modal-title");
       expect(title.textContent).to.equal(
         "Correlation of Estimated to Actual Times"
       );
@@ -127,10 +126,10 @@ describe("React Integration: MetricsSummary", function (): void {
       );
       const button = await screen.findByRole("button");
       fireEvent.click(button);
-      const presentation = await screen.findByRole("presentation");
-      const backdrop = await presentation.querySelector(".MuiModal-backdrop");
-      assertIsObject(backdrop);
-      fireEvent.click(backdrop);
+      const modal = await screen.findByTestId(`coefficient-help-modal`);
+      const closeButton = modal.querySelector("button");
+      assertIsObject(closeButton);
+      fireEvent.click(closeButton);
     });
     it("should not have coefficient help modal", async function (): Promise<void> {
       expect(screen.findByTestId(`coefficient-help-modal`)).to.eventually.be
