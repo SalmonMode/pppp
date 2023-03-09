@@ -92,7 +92,19 @@
     "noEmit": true,
     "skipLibCheck": true,
     "importsNotUsedAsValues": "error",
-    "composite": true
+    "composite": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@types": ["./types"],
+      "@types/*": ["./types/*"],
+      "@errors": ["./errors/Error"],
+      "@matrix": ["./matrix/Matrix"],
+      "@TaskUnit": ["./TaskUnit/TaskUnit"],
+      "@Relations": ["./Relations"],
+      "@service/*": ["./service/*"],
+      "@graphing/*": ["./Graphing/*"],
+      "@testing/TestRenderers": ["./service/Utility/TestRenderers"]
+    }
   },
   "include": ["./src"],
   "exclude": ["node_modules"]

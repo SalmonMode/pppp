@@ -1,5 +1,5 @@
-import { Matrix } from "../matrix";
-import type { ITaskUnit } from "../types";
+import Matrix from "@matrix";
+import type { ITaskUnit } from "@types";
 
 /**
  * A simple abstraction around a matrix of the unit relations to perform helpful operations.

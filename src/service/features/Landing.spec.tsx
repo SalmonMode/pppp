@@ -1,8 +1,8 @@
 import { screen } from "@testing-library/react";
 import * as chai from "chai";
 import { default as chaiAsPromised } from "chai-as-promised";
-import { createSandbox, SinonSandbox } from "sinon";
-import { renderWithProvider } from "../Utility/TestRenderers";
+import { createSandbox, type SinonSandbox } from "sinon";
+import { renderWithProvider } from "@testing/TestRenderers";
 import LandingPage from "./Landing";
 
 chai.use(chaiAsPromised);

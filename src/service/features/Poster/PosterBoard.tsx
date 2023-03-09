@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import { useEffect } from "react";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch } from "@service/app/hooks";
 import Poster from "./Poster";
 import { generateCluster } from "./taskUnitsSlice";
 

@@ -1,6 +1,7 @@
 import { add, sub } from "date-fns";
-import { TaskUnit, TaskUnitCluster } from "../../../Relations";
-import { EventType } from "../../../types";
+import { TaskUnitCluster } from "@Relations";
+import { EventType } from "@types";
+import TaskUnit from "@TaskUnit";
 
 export function getSeedData(): TaskUnitCluster {
   const now = new Date();

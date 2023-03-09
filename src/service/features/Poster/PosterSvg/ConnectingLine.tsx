@@ -1,8 +1,8 @@
 import { css } from "@emotion/react";
 import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
-import ConnectedPoints from "../../../../Graphing/ConnectedPoints";
-import type { Coordinate } from "../../../../types";
-import { theme } from "../../../app/theme";
+import ConnectedPoints from "@graphing/ConnectedPoints";
+import type { Coordinate } from "@types";
+import { theme } from "@service/app/theme";
 
 type ConnectingLineType = "standard" | "stale";
 

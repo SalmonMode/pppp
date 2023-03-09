@@ -4,7 +4,7 @@ import type {
   CoordinateString,
   CubicBezierCurve,
   CubicBezierCurveString,
-} from "../types";
+} from "@types";
 
 export default class ConnectedPoints {
   /**

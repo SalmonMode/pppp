@@ -3,7 +3,7 @@ import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Typography from "@mui/material/Typography";
 import { add, sub } from "date-fns";
 import { useEffect, useRef } from "react";
-import { theme } from "../../app/theme";
+import { theme } from "@service/app/theme";
 import { assertIsObject } from "primitive-predicates";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
 

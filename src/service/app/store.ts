@@ -1,11 +1,11 @@
 import {
   combineReducers,
   configureStore,
-  PreloadedState,
+  type PreloadedState,
 } from "@reduxjs/toolkit";
-import coefficientHelpModalOpenSlice from "../features/CoefficientModal/coefficientHelpModalOpenSlice";
-import taskUnitCardFocusSlice from "../features/Poster/TaskUnitCard/taskUnitCardAttentionSlice";
-import taskUnitsSlice from "../features/Poster/taskUnitsSlice";
+import coefficientHelpModalOpenSlice from "@service/features/CoefficientModal/coefficientHelpModalOpenSlice";
+import taskUnitCardFocusSlice from "@service/features/Poster/TaskUnitCard/taskUnitCardAttentionSlice";
+import taskUnitsSlice from "@service/features/Poster/taskUnitsSlice";
 import type { AppStore } from "./types";
 
 const rootReducer = combineReducers({

@@ -1,4 +1,4 @@
-import { unitTaskTimeConversion } from "../../app/theme";
+import { unitTaskTimeConversion } from "@service/app/theme";
 
 /**
  * Given two times (ms since epoch), find how wide the visual gap should be between them given the time conversion.

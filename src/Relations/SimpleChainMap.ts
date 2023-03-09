@@ -1,6 +1,5 @@
-import { DependencyOrderError, NoSuchChainError } from "../errors/Error";
-import type { ConnectedResourcesSetMap, ResourceMap } from "../types";
-import type { ITaskUnit } from "../types";
+import { DependencyOrderError, NoSuchChainError } from "@errors";
+import type { ConnectedResourcesSetMap, ITaskUnit, ResourceMap } from "@types";
 import { IsolatedDependencyChain, UnitPathMatrix } from "./";
 
 /**

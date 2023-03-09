@@ -3,17 +3,18 @@ import { expect } from "chai";
 import chroma from "chroma-js";
 import { add, startOfDay, sub } from "date-fns";
 import { assertIsObject, assertIsString } from "primitive-predicates";
-import { createSandbox, SinonSandbox, SinonStub } from "sinon";
-import ConnectedPoints from "../../../Graphing/ConnectedPoints";
-import { TaskUnit, TaskUnitCluster } from "../../../Relations";
-import { EventType } from "../../../types";
-import { theme } from "../../app/theme";
-import { renderWithProvider } from "../../Utility/TestRenderers";
+import { createSandbox, type SinonSandbox, type SinonStub } from "sinon";
+import ConnectedPoints from "@graphing/ConnectedPoints";
+import { TaskUnitCluster } from "@Relations";
+import { EventType } from "@types";
+import { theme } from "@service/app/theme";
+import { renderWithProvider } from "@testing/TestRenderers";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
 import getYOfTrackTop from "./getYOfTrackTop";
 import Poster from "./Poster";
 import type { TaskUnitsLoadingCompleteState } from "./taskUnitsSlice";
 import { turnClusterIntoState } from "./turnClusterIntoState";
+import TaskUnit from "@TaskUnit";
 
 const now = new Date();
 

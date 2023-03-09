@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { assertIsObject, assertIsString } from "primitive-predicates";
-import { renderWithProvider } from "../../../Utility/TestRenderers";
+import { renderWithProvider } from "@testing/TestRenderers";
 import CoreTaskWrapper from "./CoreTaskWrapper";
 
 describe("React Integration: CoreTaskWrapper", function (): void {

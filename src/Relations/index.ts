@@ -5,6 +5,5 @@ export { default as SimpleChainMap } from "./SimpleChainMap";
 export { default as SimpleChainPathMap } from "./SimpleChainPathMap";
 export { default as StressManager } from "./StressManager";
 export { default as StressTracker } from "./StressTracker";
-export { default as TaskUnit } from "../TaskUnit/TaskUnit";
 export { default as TaskUnitCluster } from "./TaskUnitCluster";
 export { default as UnitPathMatrix } from "./UnitPathMatrix";

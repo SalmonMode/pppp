@@ -1,11 +1,7 @@
 import { expect } from "chai";
-import { NoSuchChainError } from "../errors/Error";
-import {
-  ChainStrainMap,
-  IsolatedDependencyChain,
-  SimpleChainMap,
-  TaskUnit,
-} from "./";
+import { NoSuchChainError } from "@errors";
+import { ChainStrainMap, IsolatedDependencyChain, SimpleChainMap } from "./";
+import TaskUnit from "@TaskUnit";
 
 const now = new Date();
 const firstDate = new Date(now.getTime() - 100000);

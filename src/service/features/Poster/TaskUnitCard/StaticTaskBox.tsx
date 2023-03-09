@@ -4,9 +4,9 @@ import { isNull, isUndefined } from "primitive-predicates";
 import {
   IterationRelativePosition,
   ReviewType,
-  SerializableTaskPrerequisitesReference,
-} from "../../../../types";
-import { theme } from "../../../app/theme";
+  type SerializableTaskPrerequisitesReference,
+} from "@types";
+import { theme } from "@service/app/theme";
 import CoreTaskWrapper from "./CoreTaskWrapper";
 import { ExtensionTrail } from "./ExtensionTrail";
 import PrerequisitesBox from "./PrerequisitesBox/PrerequisitesBox";

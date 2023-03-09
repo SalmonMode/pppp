@@ -7,8 +7,8 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import type { Action } from "@reduxjs/toolkit";
 import React from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import type { AppState } from "../../app/types";
+import { useAppDispatch, useAppSelector } from "@service/app/hooks";
+import type { AppState } from "@service/app/types";
 import { closeCoefficientHelpModal } from "./coefficientHelpModalOpenSlice";
 
 export default function CoefficientHelpModal(): EmotionJSX.Element {

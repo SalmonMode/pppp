@@ -1,8 +1,8 @@
 import { css } from "@emotion/react";
 import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import { assertIsObject } from "primitive-predicates";
-import type { Coordinate, TaskUnitDetails } from "../../../../types";
-import { theme } from "../../../app/theme";
+import type { Coordinate, TaskUnitDetails } from "@types";
+import { theme } from "@service/app/theme";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 import getYOfTrackTop from "../getYOfTrackTop";
 import type { TaskUnitsLoadingCompleteState } from "../taskUnitsSlice";

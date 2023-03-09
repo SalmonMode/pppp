@@ -1,15 +1,15 @@
-import { v4 as uuidv4 } from "uuid";
-import { NoSuchChainPathError } from "../errors/Error";
+import { NoSuchChainPathError } from "@errors";
+import type { ITaskUnit, ResourceMap } from "@types";
 import { assertIsObject } from "primitive-predicates";
-import type { ResourceMap } from "../types";
-import type { ChainPath, IsolatedDependencyChain } from "./";
-import type { ITaskUnit } from "../types";
+import { v4 as uuidv4 } from "uuid";
 import {
   ChainStrainMap,
   SimpleChainMap,
   SimpleChainPathMap,
   StressManager,
   StressTracker,
+  type ChainPath,
+  type IsolatedDependencyChain,
 } from "./";
 
 /**

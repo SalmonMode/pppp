@@ -7,8 +7,8 @@ import ReportGmailerrorredOutlinedIcon from "@mui/icons-material/ReportGmailerro
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import type SvgIcon from "@mui/material/SvgIcon";
 import Tooltip from "@mui/material/Tooltip";
-import { theme } from "../../../app/theme";
-import { ReviewType } from "../../../../types";
+import { theme } from "@service/app/theme";
+import { ReviewType } from "@types";
 
 export default function ReviewBox({
   variant,

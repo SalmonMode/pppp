@@ -1,9 +1,9 @@
 import {
-  ActionReducerMapBuilder,
+  type ActionReducerMapBuilder,
   createAsyncThunk,
   createSlice,
 } from "@reduxjs/toolkit";
-import type { ITaskUnit, TaskUnitDetails } from "../../../types";
+import type { ITaskUnit, TaskUnitDetails } from "@types";
 import { getSeedData } from "./seedData";
 import { turnClusterIntoState } from "./turnClusterIntoState";
 

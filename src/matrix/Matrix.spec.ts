@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { default as Matrix } from "./Matrix";
+import Matrix from "./Matrix";
 
 describe("Matrix", function (): void {
   describe("Empty Matrix", function (): void {

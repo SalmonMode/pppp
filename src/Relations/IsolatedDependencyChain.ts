@@ -1,6 +1,6 @@
+import { DependencyOrderError } from "@errors";
+import type { ITaskUnit } from "@types";
 import { v4 as uuidv4 } from "uuid";
-import { DependencyOrderError } from "../errors/Error";
-import type { ITaskUnit } from "../types";
 
 /**
  * A set of {@link ITaskUnit}s that comprise a single "chain", i.e., one that will be positioned on the graph as a row.

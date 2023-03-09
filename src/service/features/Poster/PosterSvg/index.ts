@@ -1,2 +1,1 @@
-export {};
-export { default as PosterSvg } from "./PosterSvg";
+export { default } from "./PosterSvg";

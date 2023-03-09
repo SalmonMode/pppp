@@ -6,10 +6,10 @@ import {
 import { expect } from "chai";
 import chroma from "chroma-js";
 import { assertIsObject, assertIsString } from "primitive-predicates";
-import { EventType } from "../../../../../types";
-import { makeStore } from "../../../../app/store";
-import { theme } from "../../../../app/theme";
-import { renderWithProvider } from "../../../../Utility/TestRenderers";
+import { EventType } from "@types";
+import { makeStore } from "@service/app/store";
+import { theme } from "@service/app/theme";
+import { renderWithProvider } from "@testing/TestRenderers";
 import PrerequisitesBox from "./PrerequisitesBox";
 
 describe("React Integration: Prerequisites Box", function (): void {

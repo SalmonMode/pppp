@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react";
 import * as chai from "chai";
 import { default as chaiAsPromised } from "chai-as-promised";
-import { createSandbox, SinonSandbox } from "sinon";
+import { createSandbox, type SinonSandbox } from "sinon";
 import IndexPage from ".";
 import { renderWithProvider } from "../service/Utility/TestRenderers";
 

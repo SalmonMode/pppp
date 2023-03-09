@@ -3,5 +3,6 @@ spec:
   - "src/**/*.spec.{js,jsx,ts,tsx}"
 require:
   - "ts-node/register"
+  - "tsconfig-paths/register"
   - "source-map-support/register"
   - "global-jsdom/register"

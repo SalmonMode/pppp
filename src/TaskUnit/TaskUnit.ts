@@ -1,18 +1,15 @@
 import { add, differenceInSeconds, max } from "date-fns";
 import { assertIsObject, isUndefined } from "primitive-predicates";
 import { v4 as uuidv4 } from "uuid";
-import {
-  EventHistoryInvalidError,
-  PrematureTaskStartError,
-} from "../errors/Error";
+import { EventHistoryInvalidError, PrematureTaskStartError } from "@errors";
 import {
   EventType,
-  ITaskPrerequisites,
-  ITaskUnit,
-  ITaskUnitParameters,
-  RelationshipMapping,
-  TaskEvent,
-} from "../types";
+  type ITaskPrerequisites,
+  type ITaskUnit,
+  type ITaskUnitParameters,
+  type RelationshipMapping,
+  type TaskEvent,
+} from "@types";
 
 export default class TaskUnit implements ITaskUnit {
   public readonly id: string;

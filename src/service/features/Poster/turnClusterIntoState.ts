@@ -1,15 +1,15 @@
 import incrmpcorr from "@stdlib/stats-incr-mpcorr";
 import { differenceInSeconds } from "date-fns";
 import { assertIsNumber } from "primitive-predicates";
-import type { ChainPath, TaskUnitCluster } from "../../../Relations";
+import type { ChainPath, TaskUnitCluster } from "@Relations";
 import {
   EventType,
-  ITaskPrerequisites,
-  ITaskUnit,
-  SerializableTaskEvent,
-  SerializableTaskPrerequisitesReference,
-  TaskEvent,
-} from "../../../types";
+  type ITaskPrerequisites,
+  type ITaskUnit,
+  type SerializableTaskEvent,
+  type SerializableTaskPrerequisitesReference,
+  type TaskEvent,
+} from "@types";
 import type {
   TaskMetrics,
   TaskUnitMap,

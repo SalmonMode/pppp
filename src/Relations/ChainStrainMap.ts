@@ -1,7 +1,10 @@
-import { NoSuchChainError } from "../errors/Error";
-import type { RelationshipMapping } from "../types";
-import type { IsolatedDependencyChain, SimpleChainMap } from "./";
-import { ChainPath } from "./";
+import { NoSuchChainError } from "@errors";
+import type { RelationshipMapping } from "@types";
+import {
+  ChainPath,
+  type IsolatedDependencyChain,
+  type SimpleChainMap,
+} from "./";
 
 /**
  * A helper for how much "strain" each {@link IsolatedDependencyChain} is under.

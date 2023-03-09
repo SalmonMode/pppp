@@ -1,12 +1,9 @@
 import { expect } from "chai";
-import { add, sub } from "date-fns";
-import {
-  EventHistoryInvalidError,
-  PrematureTaskStartError,
-} from "../errors/Error";
+import { add, secondsInDay, sub } from "date-fns";
+import { EventHistoryInvalidError, PrematureTaskStartError } from "@errors";
 import { assertIsNumber, assertIsObject } from "primitive-predicates";
-import { EventType } from "../types";
-import { TaskUnit } from "./";
+import { EventType } from "@types";
+import TaskUnit from "./TaskUnit";
 
 const now = new Date();
 const firstDate = new Date(now.getTime() - 100000);
@@ -3748,14 +3745,14 @@ describe("TaskUnit", function (): void {
   });
   describe("Cascading Date Influence", function (): void {
     const innerNow = new Date();
-    const firstDate = sub(innerNow, { days: 3 });
-    const secondDate = sub(innerNow, { days: 2 });
-    const thirdDate = sub(innerNow, { days: 1 });
+    const firstDate = sub(innerNow, { seconds: 3 * secondsInDay });
+    const secondDate = sub(innerNow, { seconds: 2 * secondsInDay });
+    const thirdDate = sub(innerNow, { seconds: 1 * secondsInDay });
     // fourth date is now, but is skipped because we don't reference it
-    const fifthDate = add(innerNow, { days: 1 });
+    const fifthDate = add(innerNow, { seconds: 1 * secondsInDay });
     // sixth date is skipped because we don't reference it
-    const seventhDate = add(innerNow, { days: 3 });
-    const eighthDate = add(innerNow, { days: 4 });
+    const seventhDate = add(innerNow, { seconds: 3 * secondsInDay });
+    const eighthDate = add(innerNow, { seconds: 4 * secondsInDay });
     describe("Delay Cascades", function (): void {
       /**
        * ```text

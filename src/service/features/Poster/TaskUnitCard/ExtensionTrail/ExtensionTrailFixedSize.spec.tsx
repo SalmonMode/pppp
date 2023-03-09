@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import chroma from "chroma-js";
 import { assertIsObject } from "primitive-predicates";
-import { theme } from "../../../../app/theme";
-import { renderWithProvider } from "../../../../Utility/TestRenderers";
+import { theme } from "@service/app/theme";
+import { renderWithProvider } from "@testing/TestRenderers";
 import ExtensionTrailFixedSize from "./ExtensionTrailFixedSize";
 
 describe("React Integration: Extension Trail Fixed Size", function (): void {

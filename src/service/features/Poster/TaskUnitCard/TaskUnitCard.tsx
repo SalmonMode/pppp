@@ -6,25 +6,25 @@ import CardContent from "@mui/material/CardContent";
 import { assertIsObject } from "primitive-predicates";
 import { useRef } from "react";
 import {
-  Coordinate,
+  type Coordinate,
   EventType,
   IterationRelativePosition,
   ReviewType,
-  SerializableTaskEvent,
-  SerializableTaskPrerequisitesReference,
-  SerializableTaskReviewEvent,
-  TaskUnitDetails,
-} from "../../../../types";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { theme } from "../../../app/theme";
-import type { AppState } from "../../../app/types";
+  type SerializableTaskEvent,
+  type SerializableTaskPrerequisitesReference,
+  type SerializableTaskReviewEvent,
+  type TaskUnitDetails,
+} from "@types";
+import { useAppDispatch, useAppSelector } from "@service/app/hooks";
+import { theme } from "@service/app/theme";
+import type { AppState } from "@service/app/types";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 import ActiveTaskBox from "./ActiveTaskBox";
 import { ExtensionTrailFixedSize } from "./ExtensionTrail";
 import StaticTaskBox from "./StaticTaskBox";
 import {
   resetTaskUnitCardAttention,
-  TaskUnitCardAttentionState,
+  type TaskUnitCardAttentionState,
 } from "./taskUnitCardAttentionSlice";
 
 export default function TaskUnitCard({

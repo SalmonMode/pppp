@@ -1,10 +1,10 @@
-import { NoSuchChainPathError } from "../errors/Error";
+import { NoSuchChainPathError } from "@errors";
 import type {
   InterconnectionStrengthMapping,
   ITaskUnit,
   RelationshipMapping,
   ResourceMap,
-} from "../types";
+} from "@types";
 import type { ChainPath, IsolatedDependencyChain, SimpleChainMap } from "./";
 
 /**

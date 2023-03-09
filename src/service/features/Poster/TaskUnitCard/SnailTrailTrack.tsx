@@ -1,8 +1,8 @@
 import { css } from "@emotion/react";
 import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Box from "@mui/material/Box";
-import { theme } from "../../../app/theme";
-import type { TaskUnitDetails } from "../../../../types";
+import { theme } from "@service/app/theme";
+import type { TaskUnitDetails } from "@types";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 import getYOfTrackTop from "../getYOfTrackTop";
 import TaskUnitSnailTrail from "./TaskUnitSnailTrail";

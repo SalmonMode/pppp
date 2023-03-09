@@ -1,11 +1,11 @@
-import { NoSuchChainPathError } from "../errors/Error";
+import { NoSuchChainPathError } from "@errors";
 import {
   assertIsNumber,
   assertIsObject,
   assertIsString,
 } from "primitive-predicates";
-import type { RelationshipMapping } from "../types";
-import Matrix from "../matrix/Matrix";
+import type { RelationshipMapping } from "@types";
+import Matrix from "@matrix";
 import type { ChainPath, SimpleChainPathMap } from "./";
 
 /**

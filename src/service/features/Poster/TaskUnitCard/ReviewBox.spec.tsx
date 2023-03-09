@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import chroma from "chroma-js";
 import { assertIsObject } from "primitive-predicates";
-import { ReviewType } from "../../../../types";
-import { theme } from "../../../app/theme";
-import { renderWithProvider } from "../../../Utility/TestRenderers";
+import { ReviewType } from "@types";
+import { theme } from "@service/app/theme";
+import { renderWithProvider } from "@testing/TestRenderers";
 import ReviewBox from "./ReviewBox";
 
 describe("React Integration: Review Box", function (): void {
