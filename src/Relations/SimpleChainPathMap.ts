@@ -101,8 +101,8 @@ export default class SimpleChainPathMap {
                 }
               }
               // We can remove the connected unit, because it can only exist in otherPath, and if we already know it
-              // exists in otherPath, we don't need to check if it exists in the other paths we have yet to iterate over.
-              // Removing it speeds up the remaining iterations of the inner loop.
+              // exists in otherPath, we don't need to check if it exists in the other paths we have yet to iterate
+              // over. Removing it speeds up the remaining iterations of the inner loop.
               unitsConnectedToUnitsInPath.delete(connectedUnit);
             }
           }

@@ -49,19 +49,27 @@ describe("Matrix", function (): void {
         [5, 6],
       ]);
     });
-    it("should throw RangeError when multiplying by matrix with fewer rows than good matrix has columns", function (): void {
-      const otherMatrix = new Matrix([[1, 2, 3, 4, 5, 6]]);
-      expect(() => matrix.multiply(otherMatrix)).to.throw(RangeError);
-    });
-    it("should throw RangeError when multiplying by matrix with more rows than good matrix has columns", function (): void {
-      const otherMatrix = new Matrix([
-        [1, 2],
-        [3, 4],
-        [5, 6],
-        [7, 8],
-      ]);
-      expect(() => matrix.multiply(otherMatrix)).to.throw(RangeError);
-    });
+    it(
+      "should throw RangeError when multiplying by matrix with fewer rows than good matrix has " +
+        "columns",
+      function (): void {
+        const otherMatrix = new Matrix([[1, 2, 3, 4, 5, 6]]);
+        expect(() => matrix.multiply(otherMatrix)).to.throw(RangeError);
+      }
+    );
+    it(
+      "should throw RangeError when multiplying by matrix with more rows than good matrix has " +
+        "columns",
+      function (): void {
+        const otherMatrix = new Matrix([
+          [1, 2],
+          [3, 4],
+          [5, 6],
+          [7, 8],
+        ]);
+        expect(() => matrix.multiply(otherMatrix)).to.throw(RangeError);
+      }
+    );
     it("should produce correct matrix when multiplying by another good matrix", function (): void {
       const otherMatrix = new Matrix([
         [1, 2, 3],

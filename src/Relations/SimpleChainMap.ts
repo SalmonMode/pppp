@@ -294,8 +294,9 @@ export default class SimpleChainMap {
         }
       } else {
         // has zero deps, so its a dead end. The logic below will take care of building the chain. This can only be
-        // reached if we're at the end of a mergeless chain that went on for at least one unit prior to the possibleTail,
-        // or the possibleTail is a standalone head with no dependencies and no units that are dependent on it.
+        // reached if we're at the end of a mergeless chain that went on for at least one unit prior to the
+        // possibleTail, or the possibleTail is a standalone head with no dependencies and no units that are dependent
+        // on it.
         isMergingPoint = false;
         bufferedChainSoFar.push(possibleTail);
       }

@@ -6,10 +6,10 @@ import type IsolatedDependencyChain from "./IsolatedDependencyChain";
 /**
  * A set of {@link ITaskUnit}s that comprise a single "chain", i.e., one that will be positioned on the graph as a row.
  *
- * In order to make visualizing the dependencies coherent and as organized as possible, the {@link ITaskUnit}s must first
- * be broken apart into "isolated" rows that can show a linear dependency between each other. Because there will be
- * issues with this, given that each {@link ITaskUnit} can have multiple dependencies, there must be some way to decide
- * how to break things up. The method chosen is to focus on "visual density", with more dense chains being given
+ * In order to make visualizing the dependencies coherent and as organized as possible, the {@link ITaskUnit}s must
+ * first be broken apart into "isolated" rows that can show a linear dependency between each other. Because there will
+ * be issues with this, given that each {@link ITaskUnit} can have multiple dependencies, there must be some way to
+ * decide how to break things up. The method chosen is to focus on "visual density", with more dense chains being given
  * priority for maintaining their linear sequence.
  *
  * "Chains" are the path from a "head" to the end of a "tail". Heads are {@link ITaskUnit}s that either no other
