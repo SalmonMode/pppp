@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
-import { expect } from "chai";
 import { renderWithProvider } from "@testing/TestRenderers";
+import { expect } from "chai";
 import EstimateCoefficientChart from "./EstimateCoefficientChart";
 
 describe("React Integration: EstimateCoefficientChart", function (): void {

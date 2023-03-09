@@ -7,7 +7,7 @@ import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import type SvgIcon from "@mui/material/SvgIcon";
 import Tooltip from "@mui/material/Tooltip";
 import { theme } from "@service/app/theme";
-import { ReviewType } from "@types";
+import { ReviewType } from "@typing/TaskUnit";
 
 export default function ReviewBox({
   variant,

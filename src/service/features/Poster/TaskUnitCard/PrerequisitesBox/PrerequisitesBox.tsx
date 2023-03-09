@@ -2,14 +2,14 @@ import { css, type SerializedStyles } from "@emotion/react";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import PendingOutlinedIcon from "@mui/icons-material/PendingOutlined";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
-import IconButton from "@mui/material/IconButton";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
+import IconButton from "@mui/material/IconButton";
 import type SvgIcon from "@mui/material/SvgIcon";
 import Tooltip from "@mui/material/Tooltip";
+import { theme } from "@service/app/theme";
+import type { SerializableTaskPrerequisitesReference } from "@typing/TaskUnit";
 import { isNull } from "primitive-predicates";
 import React from "react";
-import type { SerializableTaskPrerequisitesReference } from "@types";
-import { theme } from "@service/app/theme";
 import PrerequisitesBoxTooltipTitle from "./PrerequisitesBoxTooltipTitle";
 
 export default function PrerequisitesBox({

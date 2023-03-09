@@ -1,13 +1,11 @@
-import { expect } from "chai";
 import { NoSuchChainPathError } from "@errors";
-import type { ResourceMap } from "@types";
-import {
-  ChainPath,
-  SimpleChainMap,
-  SimpleChainPathMap,
-  StressTracker,
-} from "./";
 import TaskUnit from "@TaskUnit";
+import type { ResourceMap } from "@typing/Mapping";
+import { expect } from "chai";
+import ChainPath from "./ChainPath";
+import SimpleChainMap from "./SimpleChainMap";
+import SimpleChainPathMap from "./SimpleChainPathMap";
+import StressTracker from "./StressTracker";
 
 const now = new Date();
 const firstDate = new Date(now.getTime() + 100000);

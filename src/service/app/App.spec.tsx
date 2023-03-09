@@ -1,9 +1,9 @@
+import LandingPage from "@service/features/Landing";
 import { render, screen } from "@testing-library/react";
 import { expect, use } from "chai";
 import { default as chaiAsPromised } from "chai-as-promised";
 import type { Router } from "next/router";
 import { createSandbox, type SinonSandbox } from "sinon";
-import LandingPage from "@service/features/Landing";
 import App from "./App";
 
 use(chaiAsPromised);

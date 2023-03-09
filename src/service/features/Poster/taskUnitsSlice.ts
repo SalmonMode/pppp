@@ -1,14 +1,15 @@
 import {
-  type ActionReducerMapBuilder,
   createAsyncThunk,
   createSlice,
+  type ActionReducerMapBuilder,
 } from "@reduxjs/toolkit";
-import type { ITaskUnit, TaskUnitDetails } from "@types";
+import type { ResourceID } from "@typing/Mapping";
+import type { TaskUnitDetails } from "@typing/TaskUnit";
 import { getSeedData } from "./seedData";
 import { turnClusterIntoState } from "./turnClusterIntoState";
 
 export interface TaskUnitMap {
-  [key: ITaskUnit["id"]]: TaskUnitDetails;
+  [key: ResourceID]: TaskUnitDetails;
 }
 export interface TaskMetrics {
   cumulativeDelays: Duration;
@@ -16,7 +17,7 @@ export interface TaskMetrics {
   processTime: Duration;
   estimatesCoefficient: number;
 }
-export type TrackToUnitMap = ITaskUnit["id"][][];
+export type TrackToUnitMap = ResourceID[][];
 
 export type TaskUnitsLoadingState = {
   loading: true;

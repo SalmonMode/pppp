@@ -1,11 +1,11 @@
 import { css } from "@emotion/react";
 import Typography from "@mui/material/Typography";
-import { add, eachDayOfInterval, sub } from "date-fns";
-import { assertIsObject } from "primitive-predicates";
-import type { TaskUnitDetails } from "@types";
 import { useAppSelector } from "@service/app/hooks";
 import { theme } from "@service/app/theme";
 import type { AppState } from "@service/app/types";
+import type { TaskUnitDetails } from "@typing/TaskUnit";
+import { add, eachDayOfInterval, sub } from "date-fns";
+import { assertIsObject } from "primitive-predicates";
 import DateLinesSvg from "./DateLinesSvg";
 import getPixelGapBetweenTimes from "./getPixelGapBetweenTimes";
 import PosterContent from "./PosterContent";

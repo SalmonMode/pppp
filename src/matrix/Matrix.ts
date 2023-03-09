@@ -1,4 +1,6 @@
-export default class Matrix {
+import type IMatrix from "@typing/IMatrix";
+
+export default class Matrix implements IMatrix {
   /** The first row of the matrix.
    *
    * Cached during construction to avoid having to check index access for undefined when accessing the first row.
@@ -27,21 +29,12 @@ export default class Matrix {
     this._rowCount = this.data.length;
     this._columnCount = this._firstRow.length;
   }
-  /** The number of rows the matrix has. */
   get numberOfRows(): number {
     return this._rowCount;
   }
-  /** The number of columns the matrix has. */
   get numberOfColumns(): number {
     return this._columnCount;
   }
-  /**
-   * Get the element from the specified position.
-   *
-   * @param rowIndex The index of the row to find
-   * @param columnIndex The index of the column within the row to get
-   * @returns the number from the specified position
-   */
   getElementAtPosition(rowIndex: number, columnIndex: number): number {
     const row = this.getRow(rowIndex);
     const entry = row[columnIndex];
@@ -52,12 +45,6 @@ export default class Matrix {
     }
     return entry;
   }
-  /**
-   * Get the column of the matrix at the specified index
-   *
-   * @param columnIndex the index of the column to get
-   * @returns an array containing the numbers of the column in order
-   */
   getColumn(columnIndex: number): number[] {
     const column: number[] = this.data.map(
       (row: number[], rowIndex: number): number => {
@@ -73,12 +60,6 @@ export default class Matrix {
 
     return column;
   }
-  /**
-   * Get the row of the matrix at the specified index
-   *
-   * @param rowIndex the index of the row to get
-   * @returns an array containing the numbers of the row in order
-   */
   getRow(rowIndex: number): number[] {
     const row = this.data[rowIndex];
     if (row === undefined) {
@@ -95,25 +76,7 @@ export default class Matrix {
       throw new RangeError("All rows of the matrix must have the same size");
     }
   }
-  /**
-   * Add this matrix by the passed matrix and return a new Matrix object containing the sum.
-   *
-   * This produces a new matrix, where the elements in each position are the sum of the elements in the respective
-   * positions in this matrix and the passed matrix. For example:
-   *
-   * ```text
-   *      A           B
-   *  ┏       ┓   ┏       ┓   ┏       ┓
-   *  ┃ 0 1 3 ┃   ┃ 0 0 5 ┃   ┃ 0 1 8 ┃
-   *  ┃ 2 0 1 ┃ + ┃ 0 0 3 ┃ = ┃ 2 0 4 ┃
-   *  ┃ 5 1 0 ┃   ┃ 0 6 1 ┃   ┃ 5 7 1 ┃
-   *  ┗       ┛   ┗       ┛   ┗       ┛
-   * ```
-   *
-   * @param otherMatrix The matrix to add by
-   * @returns a new Matrix object containing the sum
-   */
-  add(otherMatrix: Matrix): Matrix {
+  add(otherMatrix: IMatrix): IMatrix {
     this._verifyMatrixIsCompatibleForAdditionAndSubtraction(otherMatrix);
     const sumMatrixData: number[][] = [];
     for (let rowIndex = 0; rowIndex < this.numberOfRows; rowIndex++) {
@@ -128,25 +91,7 @@ export default class Matrix {
     }
     return new Matrix(sumMatrixData);
   }
-  /**
-   * Subtract this matrix by the passed matrix and return a new Matrix object containing the difference.
-   *
-   * This produces a new matrix, where the elements in each position are the difference of the elements in the
-   * respective positions in this matrix and the passed matrix. For example:
-   *
-   * ```text
-   *      A           B
-   *  ┏       ┓   ┏       ┓   ┏         ┓
-   *  ┃ 0 1 3 ┃   ┃ 0 0 5 ┃   ┃ 0  1 -2 ┃
-   *  ┃ 2 0 3 ┃ - ┃ 0 0 1 ┃ = ┃ 2  0  2 ┃
-   *  ┃ 5 6 7 ┃   ┃ 0 1 4 ┃   ┃ 0  5  3 ┃
-   *  ┗       ┛   ┗       ┛   ┗         ┛
-   * ```
-   *
-   * @param otherMatrix The matrix to subtract by
-   * @returns a new Matrix object containing the difference
-   */
-  subtract(otherMatrix: Matrix): Matrix {
+  subtract(otherMatrix: IMatrix): IMatrix {
     this._verifyMatrixIsCompatibleForAdditionAndSubtraction(otherMatrix);
     const differenceMatrixData: number[][] = [];
     for (let rowIndex = 0; rowIndex < this.numberOfRows; rowIndex++) {
@@ -161,17 +106,7 @@ export default class Matrix {
     }
     return new Matrix(differenceMatrixData);
   }
-  /**
-   * Multiply this matrix by the passed matrix and return a new Matrix object containing the product.
-   *
-   * This iterates over the rows of the source matrix, the columns of the target matrix, and the columns of the source
-   * matrix, incrementing the numbers in each position of the product matrix as it finds the product of the relevant
-   * numbers for that position in the product matrix.
-   *
-   * @param otherMatrix The matrix to multiply by
-   * @returns a new Matrix object containing the product
-   */
-  multiply(otherMatrix: Matrix): Matrix {
+  multiply(otherMatrix: IMatrix): IMatrix {
     this._verifyMatrixIsCompatibleForMultiplication(otherMatrix);
     const productMatrixData: number[][] = [];
     // Figure out the products for the numbers in the first row of this matrix
@@ -192,15 +127,7 @@ export default class Matrix {
     }
     return new Matrix(productMatrixData);
   }
-  /**
-   * Transpose this matrix and return a new Matrix object containing the result.
-   *
-   * Transposing a matrix means reflecting it over its X and Y axis. This can be done in one swift action by turning the
-   * rows into columns.
-   *
-   * @returns a new Matrix object containing the transposed result
-   */
-  transpose(): Matrix {
+  transpose(): IMatrix {
     const newData: number[][] = [];
     // Each row needs to become each column in the transposed matrix.
     for (const row of this.data) {
@@ -223,7 +150,7 @@ export default class Matrix {
    * @param matrix the other matrix to check for compatiblity
    */
   private _verifyMatrixIsCompatibleForAdditionAndSubtraction(
-    matrix: Matrix
+    matrix: IMatrix
   ): void {
     if (
       this.numberOfRows !== matrix.numberOfRows ||
@@ -243,7 +170,7 @@ export default class Matrix {
    *
    * @param matrix the other matrix to check for compatiblity
    */
-  private _verifyMatrixIsCompatibleForMultiplication(matrix: Matrix): void {
+  private _verifyMatrixIsCompatibleForMultiplication(matrix: IMatrix): void {
     if (this.numberOfColumns !== matrix.numberOfRows) {
       throw new RangeError(
         "The passed matrix doesn't have as many rows as this matrix has columns, so they cannot be multiplied."

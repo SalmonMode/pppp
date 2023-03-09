@@ -1,8 +1,8 @@
+import { theme } from "@service/app/theme";
+import { renderWithProvider } from "@testing/TestRenderers";
 import { expect } from "chai";
 import chroma from "chroma-js";
 import { assertIsObject } from "primitive-predicates";
-import { theme } from "@service/app/theme";
-import { renderWithProvider } from "@testing/TestRenderers";
 import ExtensionTrail from "./ExtensionTrail";
 
 describe("React Integration: Extension Trail", function (): void {

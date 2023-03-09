@@ -1,6 +1,11 @@
 import { DependencyOrderError, NoSuchChainError } from "@errors";
-import type { ConnectedResourcesSetMap, ITaskUnit, ResourceMap } from "@types";
-import { IsolatedDependencyChain, UnitPathMatrix } from "./";
+import type ITaskUnit from "@typing/ITaskUnit";
+import type { ConnectedResourcesSetMap, ResourceMap } from "@typing/Mapping";
+import type IIsolatedDependencyChain from "@typing/Relations/IIsolatedDepedencyChain";
+import type ISimpleChainMap from "@typing/Relations/ISimpleChainMap";
+import type IUnitPathMatrix from "@typing/Relations/IUnitPathMatrix";
+import IsolatedDependencyChain from "./IsolatedDependencyChain";
+import UnitPathMatrix from "./UnitPathMatrix";
 
 /**
  * A collection of interconnected {@link ITaskUnit}s, along with helpful functions to make reasoning about them easier.
@@ -13,14 +18,14 @@ import { IsolatedDependencyChain, UnitPathMatrix } from "./";
  * most helpful as well as what would reduce the amount of edge intersections. How these are broken up will be based
  * around getting the most interconnected chains figured out first.
  */
-export default class SimpleChainMap {
-  private _chains: IsolatedDependencyChain[] = [];
-  private _unitToChainMap: ResourceMap<IsolatedDependencyChain> = {};
-  private _chainMap: ResourceMap<IsolatedDependencyChain> = {};
-  private _chainConnections: ConnectedResourcesSetMap<IsolatedDependencyChain> =
+export default class SimpleChainMap implements ISimpleChainMap {
+  private _chains: IIsolatedDependencyChain[] = [];
+  private _unitToChainMap: ResourceMap<IIsolatedDependencyChain> = {};
+  private _chainMap: ResourceMap<IIsolatedDependencyChain> = {};
+  private _chainConnections: ConnectedResourcesSetMap<IIsolatedDependencyChain> =
     {};
-  unitPathMatrix: UnitPathMatrix;
-  private _headChains: IsolatedDependencyChain[];
+  unitPathMatrix: IUnitPathMatrix;
+  private _headChains: IIsolatedDependencyChain[];
   private _heads: Set<ITaskUnit>;
   private _units: Set<ITaskUnit>;
   constructor(heads: ITaskUnit[]) {
@@ -65,7 +70,7 @@ export default class SimpleChainMap {
   get heads(): ITaskUnit[] {
     return [...this._heads];
   }
-  get chains(): IsolatedDependencyChain[] {
+  get chains(): IIsolatedDependencyChain[] {
     return this._chains;
   }
   /**
@@ -86,7 +91,7 @@ export default class SimpleChainMap {
    * Iterate through all the units building out the chains.
    */
   private _buildChains(): void {
-    for (const head of this.getHeadUnits()) {
+    for (const head of this._getHeadUnits()) {
       this._buildForklessChains(head, []);
     }
     this._chains = [...new Set(Object.values(this._unitToChainMap))];
@@ -94,19 +99,19 @@ export default class SimpleChainMap {
       this._chainMap[chain.id] = chain;
     }
   }
-  getHeadUnits(): ITaskUnit[] {
+  private _getHeadUnits(): ITaskUnit[] {
     return [...this._heads];
   }
-  getHeadChains(): IsolatedDependencyChain[] {
+  getHeadChains(): IIsolatedDependencyChain[] {
     return [...this._headChains];
   }
   /**
    *
    * @returns The chains that no other chains are dependent on
    */
-  private _getHeadChains(): IsolatedDependencyChain[] {
-    return this.getHeadUnits().map(
-      (unit: ITaskUnit): IsolatedDependencyChain => this.getChainOfUnit(unit)
+  private _getHeadChains(): IIsolatedDependencyChain[] {
+    return this._getHeadUnits().map(
+      (unit: ITaskUnit): IIsolatedDependencyChain => this.getChainOfUnit(unit)
     );
   }
   /**
@@ -135,7 +140,7 @@ export default class SimpleChainMap {
    * @param ancestorUnit The unit we want to see if its own dependent is the descendentUnit
    * @returns true, if there is onlya straight line from the ancestorUnit to the descendentUnit, false, if not
    */
-  unitIsOnlyPureLineageOfUnit(
+  private _unitIsOnlyPureLineageOfUnit(
     descendentUnit: ITaskUnit,
     ancestorUnit: ITaskUnit
   ): boolean {
@@ -263,7 +268,7 @@ export default class SimpleChainMap {
      */
     const isForkingPoint = !!(
       discoveringUnit &&
-      !this.unitIsOnlyPureLineageOfUnit(discoveringUnit, possibleTail)
+      !this._unitIsOnlyPureLineageOfUnit(discoveringUnit, possibleTail)
     );
     if (!isForkingPoint) {
       const deps = [...possibleTail.directDependencies];
@@ -334,7 +339,7 @@ export default class SimpleChainMap {
    * @param unit The unit to get the chain for
    * @returns the chain that the passed unit is a part of
    */
-  getChainOfUnit(unit: ITaskUnit): IsolatedDependencyChain {
+  getChainOfUnit(unit: ITaskUnit): IIsolatedDependencyChain {
     const chain = this._unitToChainMap[unit.id];
     if (chain === undefined) {
       throw new NoSuchChainError(`No chain found for unit with ID: ${unit.id}`);
@@ -349,12 +354,12 @@ export default class SimpleChainMap {
    * @returns a set of the chains this chain is dependent on
    */
   getAllDependenciesOfChain(
-    chain: IsolatedDependencyChain
-  ): Set<IsolatedDependencyChain> {
+    chain: IIsolatedDependencyChain
+  ): Set<IIsolatedDependencyChain> {
     const allDependencyUnits = chain.lastUnit.getAllDependencies();
-    return new Set<IsolatedDependencyChain>(
+    return new Set<IIsolatedDependencyChain>(
       [...allDependencyUnits].map(
-        (unit: ITaskUnit): IsolatedDependencyChain => this.getChainOfUnit(unit)
+        (unit: ITaskUnit): IIsolatedDependencyChain => this.getChainOfUnit(unit)
       )
     );
   }
@@ -364,11 +369,11 @@ export default class SimpleChainMap {
    * @returns the immediate dependencies of the passed chain
    */
   getDirectDependenciesOfChain(
-    chain: IsolatedDependencyChain
-  ): Set<IsolatedDependencyChain> {
+    chain: IIsolatedDependencyChain
+  ): Set<IIsolatedDependencyChain> {
     return new Set(
       [...chain.lastUnit.directDependencies].map(
-        (unit: ITaskUnit): IsolatedDependencyChain => this.getChainOfUnit(unit)
+        (unit: ITaskUnit): IIsolatedDependencyChain => this.getChainOfUnit(unit)
       )
     );
   }
@@ -381,8 +386,8 @@ export default class SimpleChainMap {
    * @returns true, if the chains are directly connected, false, if not
    */
   chainsAreConnected(
-    chainA: IsolatedDependencyChain,
-    chainB: IsolatedDependencyChain
+    chainA: IIsolatedDependencyChain,
+    chainB: IIsolatedDependencyChain
   ): boolean {
     return (
       chainA.isDirectlyDependentOn(chainB) ||
@@ -398,10 +403,10 @@ export default class SimpleChainMap {
   private _buildChainConnections(): void {
     for (const chain of this.chains) {
       const mappingForChain = (this._chainConnections[chain.id] ??=
-        new Set<IsolatedDependencyChain>());
+        new Set<IIsolatedDependencyChain>());
       for (const dep of this.getDirectDependenciesOfChain(chain)) {
         const mappingForDepChain = (this._chainConnections[dep.id] ??=
-          new Set<IsolatedDependencyChain>());
+          new Set<IIsolatedDependencyChain>());
         mappingForChain.add(dep);
         mappingForDepChain.add(chain);
       }
@@ -417,8 +422,8 @@ export default class SimpleChainMap {
    * @returns the chains that are either a direct dependent of the provided chain, or are direct dependencies of it.
    */
   getChainsConnectedToChain(
-    chain: IsolatedDependencyChain
-  ): Set<IsolatedDependencyChain> {
+    chain: IIsolatedDependencyChain
+  ): Set<IIsolatedDependencyChain> {
     const connectedChains = this._chainConnections[chain.id];
     if (!connectedChains) {
       throw new NoSuchChainError(`Could not find chain with ID ${chain.id}`);

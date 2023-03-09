@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react";
+import { renderWithProvider } from "@testing/TestRenderers";
 import { expect } from "chai";
 import { createSandbox, type SinonSandbox } from "sinon";
-import { renderWithProvider } from "@testing/TestRenderers";
 import PosterBoard from "./PosterBoard";
 
 describe("React Integration: PosterBoard", function (): void {

@@ -1,31 +1,11 @@
 import { NoMoreSortingOptionsError } from "@errors";
-import type { ChainPath, StressTracker } from "./";
+import type { ResourceID } from "@typing/Mapping";
+import type IStressManager from "@typing/Relations/IStressManager";
+import { MoveType, NextMove } from "@typing/Relations/IStressManager";
+import type IStressTracker from "@typing/Relations/IStressTracker";
 
-enum MoveType {
-  Stay,
-  Swap,
-  Below,
-  Converge,
-  Top,
-}
-
-interface MoveDetails<T extends MoveType> {
-  type: T;
-  totalDistance: number;
-  totalTracks: number;
-  pathA: T extends MoveType.Stay ? undefined : ChainPath["id"];
-  pathB: T extends MoveType.Top | MoveType.Stay ? undefined : ChainPath["id"];
-}
-
-type NextMove =
-  | MoveDetails<MoveType.Stay>
-  | MoveDetails<MoveType.Swap>
-  | MoveDetails<MoveType.Below>
-  | MoveDetails<MoveType.Converge>
-  | MoveDetails<MoveType.Top>;
-
-export default class StressManager {
-  constructor(public stressTracker: StressTracker) {
+export default class StressManager implements IStressManager {
+  constructor(public stressTracker: IStressTracker) {
     this._organizePathsByStress();
   }
   /**
@@ -183,8 +163,8 @@ export default class StressManager {
    * @returns the total (absolute) distance of all paths if the path was moved below the other.
    */
   private _getTotalDistanceFromSwap(
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
+    pathId: ResourceID,
+    otherPathId: ResourceID
   ): number {
     const posMatrix =
       this.stressTracker.getUpdatedRelativePositionsMatrixFromSwitchingPositionsOfPathsById(
@@ -200,8 +180,8 @@ export default class StressManager {
    * @returns the number of tracks if the path was moved below the other.
    */
   private _getNumberOfTracksFromSwap(
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
+    pathId: ResourceID,
+    otherPathId: ResourceID
   ): number {
     const posMatrix =
       this.stressTracker.getUpdatedRelativePositionsMatrixFromSwitchingPositionsOfPathsById(
@@ -217,8 +197,8 @@ export default class StressManager {
    * @returns the total (absolute) distance of all paths if the path moved next to the other path at their middle point
    */
   private _getTotalDistanceFromConverge(
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
+    pathId: ResourceID,
+    otherPathId: ResourceID
   ): number {
     const posMatrix =
       this.stressTracker.getUpdatedRelativePositionsMatrixFromConvergingPathsById(
@@ -234,8 +214,8 @@ export default class StressManager {
    * @returns the number of tracks if the the path moved next to the other path at their middle point.
    */
   private _getNumberOfTracksFromConverge(
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
+    pathId: ResourceID,
+    otherPathId: ResourceID
   ): number {
     const posMatrix =
       this.stressTracker.getUpdatedRelativePositionsMatrixFromConvergingPathsById(
@@ -249,7 +229,7 @@ export default class StressManager {
    * @param pathId
    * @returns the total (absolute) distance of all paths if the path was moved to the top
    */
-  private _getTotalDistanceFromShiftToTop(pathId: ChainPath["id"]): number {
+  private _getTotalDistanceFromShiftToTop(pathId: ResourceID): number {
     const posMatrix =
       this.stressTracker.getUpdatedRelativePositionsMatrixFromMovingPathToTopById(
         pathId
@@ -261,7 +241,7 @@ export default class StressManager {
    * @param pathId
    * @returns the number of tracks if the path was moved to the top
    */
-  private _getNumberOfTracksFromShiftToTop(pathId: ChainPath["id"]): number {
+  private _getNumberOfTracksFromShiftToTop(pathId: ResourceID): number {
     const posMatrix =
       this.stressTracker.getUpdatedRelativePositionsMatrixFromMovingPathToTopById(
         pathId
@@ -275,8 +255,8 @@ export default class StressManager {
    * @returns the total (absolute) distance of all paths if the path was moved below the other.
    */
   private _getTotalDistanceFromMovingBelow(
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
+    pathId: ResourceID,
+    otherPathId: ResourceID
   ): number {
     const posMatrix =
       this.stressTracker.getUpdatedRelativePositionsMatrixFromMovingPathBelowPathById(
@@ -292,8 +272,8 @@ export default class StressManager {
    * @returns the number of tracks if the path was moved below the other.
    */
   private _getNumberOfTracksFromMovingBelow(
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
+    pathId: ResourceID,
+    otherPathId: ResourceID
   ): number {
     const posMatrix =
       this.stressTracker.getUpdatedRelativePositionsMatrixFromMovingPathBelowPathById(
@@ -328,7 +308,7 @@ export default class StressManager {
    *
    * @returns the path IDs sorted from top to bottom according to their positions.
    */
-  getRankings(): ChainPath["id"][] {
+  getRankings(): ResourceID[] {
     return this.stressTracker.getRankings();
   }
 }

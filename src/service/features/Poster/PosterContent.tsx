@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
+import type { TaskUnitDetails } from "@typing/TaskUnit";
 import { assertIsObject } from "primitive-predicates";
-import type { TaskUnitDetails } from "@types";
 import TaskTrack from "./TaskUnitCard/TaskTrack";
 import type { TaskUnitsLoadingCompleteState } from "./taskUnitsSlice";
 

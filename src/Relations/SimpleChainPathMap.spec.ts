@@ -1,8 +1,13 @@
-import { expect } from "chai";
 import { NoSuchChainPathError } from "@errors";
-import type { InterconnectionStrengthMapping, ResourceMap } from "@types";
-import { ChainPath, SimpleChainMap, SimpleChainPathMap } from "./";
 import TaskUnit from "@TaskUnit";
+import type {
+  InterconnectionStrengthMapping,
+  ResourceMap,
+} from "@typing/Mapping";
+import { expect } from "chai";
+import ChainPath from "./ChainPath";
+import SimpleChainMap from "./SimpleChainMap";
+import SimpleChainPathMap from "./SimpleChainPathMap";
 
 describe("SimpleChainPathMap", function (): void {
   describe("No Units", function (): void {

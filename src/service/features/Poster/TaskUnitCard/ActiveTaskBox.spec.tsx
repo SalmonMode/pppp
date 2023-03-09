@@ -1,8 +1,8 @@
-import { expect } from "chai";
-import { assertIsObject, assertIsString } from "primitive-predicates";
-import { IterationRelativePosition } from "@types";
 import { theme } from "@service/app/theme";
 import { renderWithProvider } from "@testing/TestRenderers";
+import { IterationRelativePosition } from "@typing/TaskUnit";
+import { expect } from "chai";
+import { assertIsObject, assertIsString } from "primitive-predicates";
 import ActiveTaskBox from "./ActiveTaskBox";
 
 describe("React Integration: ActiveTaskBox", function (): void {

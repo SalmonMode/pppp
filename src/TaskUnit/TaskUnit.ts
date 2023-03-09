@@ -1,15 +1,15 @@
-import { add, differenceInSeconds, max } from "date-fns";
-import { assertIsObject, isUndefined } from "primitive-predicates";
-import { v4 as uuidv4 } from "uuid";
 import { EventHistoryInvalidError, PrematureTaskStartError } from "@errors";
+import type ITaskUnit from "@typing/ITaskUnit";
+import type { RelationshipMapping } from "@typing/Mapping";
 import {
   EventType,
   type ITaskPrerequisites,
-  type ITaskUnit,
   type ITaskUnitParameters,
-  type RelationshipMapping,
   type TaskEvent,
-} from "@types";
+} from "@typing/TaskUnit";
+import { add, differenceInSeconds, max } from "date-fns";
+import { assertIsObject, isUndefined } from "primitive-predicates";
+import { v4 as uuidv4 } from "uuid";
 
 export default class TaskUnit implements ITaskUnit {
   public readonly id: string;

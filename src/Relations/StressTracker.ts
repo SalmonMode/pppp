@@ -1,32 +1,18 @@
 import { NoSuchChainPathError } from "@errors";
+import Matrix from "@matrix";
+import type IMatrix from "@typing/IMatrix";
+import type { RelationshipMapping, ResourceID } from "@typing/Mapping";
+import type IChainPath from "@typing/Relations/IChainPath";
+import type ISimpleChainPathMap from "@typing/Relations/ISimpleChainPathMap";
+import type IStressTracker from "@typing/Relations/IStressTracker";
+import type { TrackDetails } from "@typing/Relations/IStressTracker";
 import {
   assertIsNumber,
   assertIsObject,
-  assertIsString,
+  assertIsString
 } from "primitive-predicates";
-import type { RelationshipMapping } from "@types";
-import Matrix from "@matrix";
-import type { ChainPath, SimpleChainPathMap } from "./";
 
-/**
- * The information detailing a given "track". This includes how tall the track is (i.e., how many "subtracks" are
- * within this track), and which ChainPaths are in that track.
- *
- * Each track contains only paths that can be placed horizontally of each other without overlapping. This would suggest
- * that the height should be 1, but each path can overlap with itself, and so might need to be layered vertically in
- * order to fit. This layering creates "subtracks" within the track itself, which is why the "height" of the track
- * isn't always 1. The ChainPath requiring the most layers/subtracks determines the "height" of the track, because
- * that is the smallest amount of subtracks necessary to make sure every included ChainPath can fit.
- *
- * This height matters, because it is the vertical distance a connecting line will have to travel should it go over that
- * track, and we want to keep this number as low as possible.
- */
-interface TrackDetails {
-  height: number;
-  paths: ChainPath["id"][];
-}
-
-export default class StressTracker {
+export default class StressTracker implements IStressTracker {
   /**
    * A matrix that will track the above/below position of every path relative to every other path. If it is above a
    * path, it will have a 1. If below, a -1. For itself, it will always have a 0. This is useful for calculating the
@@ -34,13 +20,13 @@ export default class StressTracker {
    * number of connections between each path, ordered in the same way. As paths are swapped with each other to find the
    * optimal order, this matrix will be modified.
    */
-  private _positionsMatrix: Matrix;
+  private __positionsMatrix: IMatrix;
   /**
    * The current distance from each path to the others.
    *
    * This factors in track height.
    */
-  private _distanceMatrix: Matrix;
+  private _distanceMatrix: IMatrix;
   private _currentTotalDistance: number;
   /**
    * The current information about which paths are on which tracks, and how tall each track is.
@@ -52,16 +38,16 @@ export default class StressTracker {
    * in the matrix.
    */
   readonly pathMatrixKeys: string[];
-  constructor(public pathMap: SimpleChainPathMap) {
+  constructor(public pathMap: ISimpleChainPathMap) {
     this.pathMatrixKeys = this._getPathMatrixKeys();
-    this._positionsMatrix = this._buildPositionsMatrix();
-    this._allTracksDetails = this.getPathTrackDetailsWithPositions(
-      this.positionsMatrix
+    this.__positionsMatrix = this._buildPositionsMatrix();
+    this._allTracksDetails = this._getPathTrackDetailsWithPositions(
+      this._positionsMatrix
     );
-    this._distanceMatrix = this.getDistanceMatrixUsingPositions(
-      this.positionsMatrix
+    this._distanceMatrix = this._getDistanceMatrixUsingPositions(
+      this._positionsMatrix
     );
-    this._currentTotalDistance = this.getTotalDistanceWithDistances(
+    this._currentTotalDistance = this._getTotalDistanceWithDistances(
       this._distanceMatrix
     );
   }
@@ -72,24 +58,24 @@ export default class StressTracker {
    * number of connections between each path, ordered in the same way. As paths are swapped with each other to find the
    * optimal order, this matrix will be modified.
    */
-  get positionsMatrix(): Matrix {
-    return this._positionsMatrix;
+  private get _positionsMatrix(): IMatrix {
+    return this.__positionsMatrix;
   }
-  set positionsMatrix(positionsMatrix: Matrix) {
-    this._positionsMatrix = positionsMatrix;
+  private set _positionsMatrix(positionsMatrix: IMatrix) {
+    this.__positionsMatrix = positionsMatrix;
     this._allTracksDetails =
-      this.getPathTrackDetailsWithPositions(positionsMatrix);
-    this._distanceMatrix = this.getDistanceMatrixUsingPositionsAndTrackDetails(
+      this._getPathTrackDetailsWithPositions(positionsMatrix);
+    this._distanceMatrix = this._getDistanceMatrixUsingPositionsAndTrackDetails(
       positionsMatrix,
       this._allTracksDetails
     );
-    this._currentTotalDistance = this.getTotalDistanceWithDistances(
+    this._currentTotalDistance = this._getTotalDistanceWithDistances(
       this._distanceMatrix
     );
   }
-  getTotalConnectionDistanceForPathWithDistancesById(
-    distances: Matrix,
-    pathId: ChainPath["id"]
+  private _getTotalConnectionDistanceForPathWithDistancesById(
+    distances: IMatrix,
+    pathId: ResourceID
   ): number {
     let distance = 0;
     const pathMatrixIndex = this.getMatrixIndexForPathId(pathId);
@@ -123,7 +109,7 @@ export default class StressTracker {
    *
    * @returns a matrix showing the initial positions of each path relative to each other.
    */
-  private _buildPositionsMatrix(): Matrix {
+  private _buildPositionsMatrix(): IMatrix {
     const matrixData: number[][] = [];
     // The initial order doesn't matter, so we can assume we're positioning them in the order of their keys. The first
     // path will be positioned on top of everything else, so it should have a 0 in its first position, and 1s in the
@@ -142,7 +128,7 @@ export default class StressTracker {
    * @param pathId
    * @returns The index in matrices that correspond with the row and column index of the path associated with the id.
    */
-  getPathIdForMatrixIndex(index: number): ChainPath["id"] {
+  getPathIdForMatrixIndex(index: number): ResourceID {
     const pathId = this.pathMatrixKeys[index];
     if (!pathId) {
       throw new NoSuchChainPathError(`No path found at matrix index ${index}`);
@@ -162,8 +148,8 @@ export default class StressTracker {
    * @param pathId
    * @param otherPathId
    */
-  swapPathsById(pathId: ChainPath["id"], otherPathId: ChainPath["id"]): void {
-    this.positionsMatrix =
+  swapPathsById(pathId: ResourceID, otherPathId: ResourceID): void {
+    this._positionsMatrix =
       this.getUpdatedRelativePositionsMatrixFromSwitchingPositionsOfPathsById(
         pathId,
         otherPathId
@@ -175,11 +161,8 @@ export default class StressTracker {
    * @param pathId
    * @param otherPathId
    */
-  convergePathsById(
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
-  ): void {
-    this.positionsMatrix =
+  convergePathsById(pathId: ResourceID, otherPathId: ResourceID): void {
+    this._positionsMatrix =
       this.getUpdatedRelativePositionsMatrixFromConvergingPathsById(
         pathId,
         otherPathId
@@ -191,11 +174,8 @@ export default class StressTracker {
    * @param pathId
    * @param otherPathId
    */
-  movePathBelowPathById(
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
-  ): void {
-    this.positionsMatrix =
+  movePathBelowPathById(pathId: ResourceID, otherPathId: ResourceID): void {
+    this._positionsMatrix =
       this.getUpdatedRelativePositionsMatrixFromMovingPathBelowPathById(
         pathId,
         otherPathId
@@ -206,8 +186,8 @@ export default class StressTracker {
    *
    * @param pathId
    */
-  movePathToTopById(pathId: ChainPath["id"]): void {
-    this.positionsMatrix =
+  movePathToTopById(pathId: ResourceID): void {
+    this._positionsMatrix =
       this.getUpdatedRelativePositionsMatrixFromMovingPathToTopById(pathId);
   }
   /**
@@ -218,17 +198,17 @@ export default class StressTracker {
    * @returns a matrix showing the relative positions of all paths after swapping the positions of two paths
    */
   getUpdatedRelativePositionsMatrixFromSwitchingPositionsOfPathsById(
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
-  ): Matrix {
-    const diff = this.getDifferenceBetweenPathsById(pathId, otherPathId);
+    pathId: ResourceID,
+    otherPathId: ResourceID
+  ): IMatrix {
+    const diff = this._getDifferenceBetweenPathsById(pathId, otherPathId);
     const matrixIndexOfPath = this.getMatrixIndexForPathId(pathId);
     const matrixIndexOfOtherPath = this.getMatrixIndexForPathId(otherPathId);
 
     // Produce a new matrix containing the updated relative positions.
     const updatedPositionData: number[][] = [];
     this.pathMatrixKeys.forEach((_key: string, index: number): void => {
-      const oldRow = [...this.positionsMatrix.getRow(index)];
+      const oldRow = [...this._positionsMatrix.getRow(index)];
       if (diff[index]) {
         // this row was affected so update it
         if (index === matrixIndexOfPath || index === matrixIndexOfOtherPath) {
@@ -277,16 +257,16 @@ export default class StressTracker {
    * @returns a matrix showing the relative positions of all paths after moving the paths next to each other
    */
   getUpdatedRelativePositionsMatrixFromConvergingPathsById(
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
-  ): Matrix {
-    const pathsBetween = this.getPathsBetweenPathsWithPositionsById(
-      this.positionsMatrix,
+    pathId: ResourceID,
+    otherPathId: ResourceID
+  ): IMatrix {
+    const pathsBetween = this._getPathsBetweenPathsWithPositionsById(
+      this._positionsMatrix,
       pathId,
       otherPathId
     );
     if (pathsBetween.length === 0) {
-      return this.positionsMatrix;
+      return this._positionsMatrix;
     }
     const currentRankings = this.getRankings();
     const [upperPathId, lowerPathId] = [pathId, otherPathId].sort(
@@ -307,7 +287,7 @@ export default class StressTracker {
       );
     // Now move the lower path below the upper path
     const secondMoveMatrix =
-      this.getUpdatedRelativePositionsMatrixFromMovingPathBelowPathWithPositionsById(
+      this._getUpdatedRelativePositionsMatrixFromMovingPathBelowPathWithPositionsById(
         firstMoveMatrix,
         lowerPathId,
         upperPathId
@@ -324,11 +304,11 @@ export default class StressTracker {
    * @param otherPathId the ID of the path that the moving path is moving below
    * @returns a matrix showing the relative positions of all paths after moving the path below the other path
    */
-  getUpdatedRelativePositionsMatrixFromMovingPathBelowPathWithPositionsById(
-    positions: Matrix,
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
-  ): Matrix {
+  private _getUpdatedRelativePositionsMatrixFromMovingPathBelowPathWithPositionsById(
+    positions: IMatrix,
+    pathId: ResourceID,
+    otherPathId: ResourceID
+  ): IMatrix {
     const matrixIndexOfPathThatIsMoving = this.getMatrixIndexForPathId(pathId);
     const matrixIndexOfPathThatItIsMovingBelow =
       this.getMatrixIndexForPathId(otherPathId);
@@ -379,11 +359,11 @@ export default class StressTracker {
    * @returns a matrix showing the relative positions of all paths after moving the path below the other path
    */
   getUpdatedRelativePositionsMatrixFromMovingPathBelowPathById(
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
-  ): Matrix {
-    return this.getUpdatedRelativePositionsMatrixFromMovingPathBelowPathWithPositionsById(
-      this.positionsMatrix,
+    pathId: ResourceID,
+    otherPathId: ResourceID
+  ): IMatrix {
+    return this._getUpdatedRelativePositionsMatrixFromMovingPathBelowPathWithPositionsById(
+      this._positionsMatrix,
       pathId,
       otherPathId
     );
@@ -396,8 +376,8 @@ export default class StressTracker {
    * @returns a matrix showing the relative positions of all paths after moving the path above the other path
    */
   getUpdatedRelativePositionsMatrixFromMovingPathToTopById(
-    pathId: ChainPath["id"]
-  ): Matrix {
+    pathId: ResourceID
+  ): IMatrix {
     const matrixIndexOfPathThatIsMoving = this.getMatrixIndexForPathId(pathId);
 
     // Produce a new matrix containing the updated relative positions.
@@ -406,13 +386,13 @@ export default class StressTracker {
       let updatedRow: number[];
       if (key === pathId) {
         // This is the row that is moving, so make it all 1s except for a 0 for itself.
-        updatedRow = this.positionsMatrix
+        updatedRow = this._positionsMatrix
           .getRow(matrixIndexOfPathThatIsMoving)
           .map((value: number): number => (value === 0 ? 0 : 1));
       } else {
         // This is for the rows of every other path. The only thing that might need to change here is that their
         // position relative to the moving path should -1 (since everything is below it now).
-        updatedRow = [...this.positionsMatrix.getRow(index)];
+        updatedRow = [...this._positionsMatrix.getRow(index)];
         updatedRow[matrixIndexOfPathThatIsMoving] = -1;
       }
       updatedPositionData.push(updatedRow);
@@ -470,12 +450,12 @@ export default class StressTracker {
    * @param otherPathId the second path's ID
    * @returns an array indicating which relative positions need to be updated
    */
-  getDifferenceBetweenPathsById(
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
+  private _getDifferenceBetweenPathsById(
+    pathId: ResourceID,
+    otherPathId: ResourceID
   ): number[] {
-    return this.getDifferenceBetweenPathsWithPositionsById(
-      this.positionsMatrix,
+    return this._getDifferenceBetweenPathsWithPositionsById(
+      this._positionsMatrix,
       pathId,
       otherPathId
     );
@@ -532,10 +512,10 @@ export default class StressTracker {
    * @param otherPathId the second path's ID
    * @returns an array indicating which paths are between the two provided (including the two paths themselves)
    */
-  getDifferenceBetweenPathsWithPositionsById(
-    positions: Matrix,
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
+  private _getDifferenceBetweenPathsWithPositionsById(
+    positions: IMatrix,
+    pathId: ResourceID,
+    otherPathId: ResourceID
   ): number[] {
     const pathIndex = this.getMatrixIndexForPathId(pathId);
     const otherPathIndex = this.getMatrixIndexForPathId(otherPathId);
@@ -554,10 +534,10 @@ export default class StressTracker {
    * @param positionsMatrix the positions of all paths relative to each other
    * @returns a matrix showing the relative stress vectors of each path
    */
-  getDistanceMatrixUsingPositions(positions: Matrix): Matrix {
+  private _getDistanceMatrixUsingPositions(positions: IMatrix): IMatrix {
     const tracks = this._getPathTracksWithPositions(positions);
     const allTracksDetails = this._getPathTrackDetails(tracks);
-    return this.getDistanceMatrixUsingPositionsAndTrackDetails(
+    return this._getDistanceMatrixUsingPositionsAndTrackDetails(
       positions,
       allTracksDetails
     );
@@ -569,10 +549,10 @@ export default class StressTracker {
    * @param positionsMatrix the positions of all paths relative to each other
    * @returns a matrix showing the relative stress vectors of each path
    */
-  getDistanceMatrixUsingPositionsAndTrackDetails(
-    positions: Matrix,
+  private _getDistanceMatrixUsingPositionsAndTrackDetails(
+    positions: IMatrix,
     allTracksDetails: TrackDetails[]
-  ): Matrix {
+  ): IMatrix {
     const distanceData: number[][] = [];
     /**
      * Tracks which track each path is on to speed up lookup times.
@@ -608,7 +588,7 @@ export default class StressTracker {
           pathRow.push(0);
           continue;
         }
-        const inBetweens = this.getDifferenceBetweenPathsWithPositionsById(
+        const inBetweens = this._getDifferenceBetweenPathsWithPositionsById(
           positions,
           pathId,
           otherPathId
@@ -643,10 +623,10 @@ export default class StressTracker {
    * @param distances The matrix showing how far each path is from every other path
    * @returns the amount of distance each path's connections must take to reach their connected paths
    */
-  getTotalDistanceWithDistances(distances: Matrix): number {
+  private _getTotalDistanceWithDistances(distances: IMatrix): number {
     let distance = 0;
     for (const pathId of this.pathMatrixKeys) {
-      distance += this.getTotalConnectionDistanceForPathWithDistancesById(
+      distance += this._getTotalConnectionDistanceForPathWithDistancesById(
         distances,
         pathId
       );
@@ -666,11 +646,11 @@ export default class StressTracker {
    * @param positions the positions of the paths
    * @returns an array of ChainPath arrays, with each ChainPath array representing a track
    */
-  private _getPathTracksWithPositions(positions: Matrix): ChainPath[][] {
-    const rankings = this.getRankingsUsingPositions(positions);
+  private _getPathTracksWithPositions(positions: IMatrix): IChainPath[][] {
+    const rankings = this._getRankingsUsingPositions(positions);
     // First figure out the tracks
-    let trackCurrentlyBeingBuilt: ChainPath[] = [];
-    const pathTracks: ChainPath[][] = [trackCurrentlyBeingBuilt];
+    let trackCurrentlyBeingBuilt: IChainPath[] = [];
+    const pathTracks: IChainPath[][] = [trackCurrentlyBeingBuilt];
     for (const pathId of rankings) {
       const path = this.pathMap.getPathById(pathId);
       let overlapFound = false;
@@ -699,17 +679,17 @@ export default class StressTracker {
    * @param tracks the paths of each track
    * @returns the track details for all tracks
    */
-  private _getPathTrackDetails(tracks: ChainPath[][]): TrackDetails[] {
+  private _getPathTrackDetails(tracks: IChainPath[][]): TrackDetails[] {
     const trackDetails: TrackDetails[] = [];
     for (const track of tracks) {
       const height = track.reduce<number>(
-        (acc: number, path: ChainPath): number =>
+        (acc: number, path: IChainPath): number =>
           Math.max(acc, path.tracks.length),
         0
       );
       trackDetails.push({
         height,
-        paths: track.map((path: ChainPath): string => path.id),
+        paths: track.map((path: IChainPath): string => path.id),
       });
     }
     return trackDetails;
@@ -720,7 +700,9 @@ export default class StressTracker {
    * @param positions the positions of the paths
    * @returns the track details
    */
-  getPathTrackDetailsWithPositions(positions: Matrix): TrackDetails[] {
+  private _getPathTrackDetailsWithPositions(
+    positions: IMatrix
+  ): TrackDetails[] {
     const tracks = this._getPathTracksWithPositions(positions);
     return this._getPathTrackDetails(tracks);
   }
@@ -731,9 +713,9 @@ export default class StressTracker {
    * @param positions the positions of the paths
    * @returns the cumulative distance each path would have to travel to reach each of its connected paths
    */
-  getTotalDistanceOfPathsWithPositions(positions: Matrix): number {
-    const allTracksDetails = this.getPathTrackDetailsWithPositions(positions);
-    return this.getTotalDistanceOfPathsWithPositionsWithTrackDetails(
+  getTotalDistanceOfPathsWithPositions(positions: IMatrix): number {
+    const allTracksDetails = this._getPathTrackDetailsWithPositions(positions);
+    return this._getTotalDistanceOfPathsWithPositionsWithTrackDetails(
       positions,
       allTracksDetails
     );
@@ -746,15 +728,15 @@ export default class StressTracker {
    * @param allTracksDetails the track details
    * @returns the cumulative distance each path would have to travel to reach each of its connected paths
    */
-  getTotalDistanceOfPathsWithPositionsWithTrackDetails(
-    positions: Matrix,
+  private _getTotalDistanceOfPathsWithPositionsWithTrackDetails(
+    positions: IMatrix,
     allTracksDetails: TrackDetails[]
   ): number {
-    const distances = this.getDistanceMatrixUsingPositionsAndTrackDetails(
+    const distances = this._getDistanceMatrixUsingPositionsAndTrackDetails(
       positions,
       allTracksDetails
     );
-    return this.getTotalDistanceWithDistances(distances);
+    return this._getTotalDistanceWithDistances(distances);
   }
   /**
    * Get the IDs of the ChainPaths that are between the two paths provided, according to the provided positions matrix.
@@ -766,17 +748,17 @@ export default class StressTracker {
    * @param otherPathId one of the two outer paths to consider
    * @returns an array of ChainPath IDs
    */
-  getPathsBetweenPathsWithPositionsById(
-    positions: Matrix,
-    pathId: ChainPath["id"],
-    otherPathId: ChainPath["id"]
-  ): ChainPath["id"][] {
-    const inBetweens = this.getDifferenceBetweenPathsWithPositionsById(
+  private _getPathsBetweenPathsWithPositionsById(
+    positions: IMatrix,
+    pathId: ResourceID,
+    otherPathId: ResourceID
+  ): ResourceID[] {
+    const inBetweens = this._getDifferenceBetweenPathsWithPositionsById(
       positions,
       pathId,
       otherPathId
     );
-    const pathIdsInvolved: ChainPath["id"][] = [];
+    const pathIdsInvolved: ResourceID[] = [];
     inBetweens.forEach((value: number, index: number): void => {
       if (value) {
         // is in between
@@ -795,14 +777,14 @@ export default class StressTracker {
    *
    * @returns the path IDs sorted from top to bottom according to their positions.
    */
-  getRankings(): ChainPath["id"][] {
-    return this.getRankingsUsingPositions(this.positionsMatrix);
+  getRankings(): ResourceID[] {
+    return this._getRankingsUsingPositions(this._positionsMatrix);
   }
   /**
    *
    * @returns the path IDs sorted from top to bottom according to their positions.
    */
-  getRankingsUsingPositions(positions: Matrix): ChainPath["id"][] {
+  private _getRankingsUsingPositions(positions: IMatrix): ResourceID[] {
     const rankings: RelationshipMapping = {};
     for (const id of this.pathMatrixKeys) {
       const matrixIndex = this.getMatrixIndexForPathId(id);
@@ -836,7 +818,7 @@ export default class StressTracker {
    * @param positions the positions of each path
    * @returns the track details
    */
-  getTracksWithPositions(positions: Matrix): TrackDetails[] {
+  getTracksWithPositions(positions: IMatrix): TrackDetails[] {
     const tracks = this._getPathTracksWithPositions(positions);
     const allTracksDetails = this._getPathTrackDetails(tracks);
     return allTracksDetails;

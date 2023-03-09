@@ -2,11 +2,11 @@ import { css } from "@emotion/react";
 import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import { assertIsObject, isNull } from "primitive-predicates";
-import React from "react";
-import type { SerializableTaskPrerequisitesReference } from "@types";
 import { useAppDispatch, useAppSelector } from "@service/app/hooks";
 import type { AppState } from "@service/app/types";
+import type { SerializableTaskPrerequisitesReference } from "@typing/TaskUnit";
+import { assertIsObject, isNull } from "primitive-predicates";
+import React from "react";
 import type { TaskUnitMap } from "../../taskUnitsSlice";
 import { setTaskUnitCardAttention } from "../taskUnitCardAttentionSlice";
 

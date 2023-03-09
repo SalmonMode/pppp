@@ -1,8 +1,8 @@
 import { fireEvent, screen } from "@testing-library/react";
+import { renderWithProvider } from "@testing/TestRenderers";
 import { expect, use } from "chai";
 import chaiAsPromised from "chai-as-promised";
 import { assertIsObject } from "primitive-predicates";
-import { renderWithProvider } from "@testing/TestRenderers";
 import MetricsSummary from "./MetricsSummary";
 
 use(chaiAsPromised);

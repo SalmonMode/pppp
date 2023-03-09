@@ -1,7 +1,8 @@
-import { v4 as uuidv4 } from "uuid";
 import { DependencyOrderError } from "@errors";
-import type { ITaskUnit } from "@types";
-import type IsolatedDependencyChain from "./IsolatedDependencyChain";
+import type ITaskUnit from "@typing/ITaskUnit";
+import type IChainPath from "@typing/Relations/IChainPath";
+import type IIsolatedDependencyChain from "@typing/Relations/IIsolatedDepedencyChain";
+import { v4 as uuidv4 } from "uuid";
 
 /**
  * A set of {@link ITaskUnit}s that comprise a single "chain", i.e., one that will be positioned on the graph as a row.
@@ -28,7 +29,7 @@ import type IsolatedDependencyChain from "./IsolatedDependencyChain";
  * ```
  *
  * The highest density chain would be `F-C-D-E`, so it will be broken out first. This leaves `A-B`, `F`, and `G-H` as
- * their own {@link IsolatedDependencyChain}s. `F-C-D-E` could technically be more dense without `E`, or by excluding
+ * their own {@link IIsolatedDependencyChain}s. `F-C-D-E` could technically be more dense without `E`, or by excluding
  * `F`, but to simplify things, it goes all the way to whatever tail ends it can, as mentioned before.
  *
  * This is part of a large, complex sorting system to help reduce the amount of edge intersections between chains as
@@ -40,23 +41,23 @@ import type IsolatedDependencyChain from "./IsolatedDependencyChain";
  * information about the units passed to it. A chain being created does not mean that it will be used to render the
  * graph. It will, however, at least make sure the units passed are a linear, unbroken chain.
  */
-export default class ChainPath {
+export default class ChainPath implements IChainPath {
   public id: string;
   private _chainAnticipatedStartDate: Date;
   private _units: Set<ITaskUnit>;
-  private _head: IsolatedDependencyChain;
-  private _tail: IsolatedDependencyChain[];
-  private _lastChain: IsolatedDependencyChain;
+  private _head: IIsolatedDependencyChain;
+  private _tail: IIsolatedDependencyChain[];
+  private _lastChain: IIsolatedDependencyChain;
   private _pathTotalTime: number;
   private _pathPresenceTime: number;
   public tracks: ITaskUnit[][];
-  constructor(public readonly chains: IsolatedDependencyChain[]) {
+  constructor(public readonly chains: IIsolatedDependencyChain[]) {
     this.id = uuidv4();
     this._verifyUnitsAreUnbrokenChain();
     const copyOfChains = [...this.chains];
     const chain = copyOfChains.shift();
     if (chain === undefined) {
-      throw new RangeError("Must provide at least 1 IsolatedDependencyChain");
+      throw new RangeError("Must provide at least 1 IIsolatedDependencyChain");
     }
     this._head = chain;
     this._tail = copyOfChains;
@@ -66,7 +67,7 @@ export default class ChainPath {
     this._pathTotalTime =
       this.endDate.getTime() - this.anticipatedStartDate.getTime();
     this._pathPresenceTime = this.chains.reduce<number>(
-      (sum: number, curr: IsolatedDependencyChain): number =>
+      (sum: number, curr: IIsolatedDependencyChain): number =>
         sum + curr.presenceTime,
       0
     );
@@ -79,11 +80,11 @@ export default class ChainPath {
     this.tracks = this._buildTracks();
   }
   /**
-   * The latest {@link IsolatedDependencyChain} in the path.
+   * The latest {@link IIsolatedDependencyChain} in the path.
    *
    * Where the path ends, is where this chain ends as well. This chain depends on all other chains in this path.
    */
-  get head(): IsolatedDependencyChain {
+  get head(): IIsolatedDependencyChain {
     return this._head;
   }
   /**
@@ -113,7 +114,7 @@ export default class ChainPath {
     return this.head.endDate;
   }
   /**
-   * The earliest point in time for this path of {@link IsolatedDependencyChain}s that has presence.
+   * The earliest point in time for this path of {@link IIsolatedDependencyChain}s that has presence.
    */
   get anticipatedStartDate(): Date {
     return this._chainAnticipatedStartDate;

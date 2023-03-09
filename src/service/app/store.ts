@@ -1,7 +1,7 @@
 import {
   combineReducers,
   configureStore,
-  type PreloadedState,
+  type PreloadedState
 } from "@reduxjs/toolkit";
 import coefficientHelpModalOpenSlice from "@service/features/CoefficientModal/coefficientHelpModalOpenSlice";
 import taskUnitCardFocusSlice from "@service/features/Poster/TaskUnitCard/taskUnitCardAttentionSlice";

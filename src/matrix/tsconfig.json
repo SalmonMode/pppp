@@ -3,5 +3,10 @@
   "compilerOptions": {
     "rootDir": "../../src",
     "composite": true
-  }
+  },
+  "references": [
+    {
+      "path": "../types"
+    }
+  ]
 }

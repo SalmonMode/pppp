@@ -1,6 +1,6 @@
 import TaskUnit from "@TaskUnit";
 import { expect } from "chai";
-import { UnitPathMatrix } from "./";
+import UnitPathMatrix from "./UnitPathMatrix";
 
 describe("UnitPathMatrix", function (): void {
   describe("Get Unit for Matrix Index That Doesn't Exist", function (): void {

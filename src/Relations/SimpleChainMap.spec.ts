@@ -2,7 +2,8 @@ import { DependencyOrderError, NoSuchChainError } from "@errors";
 import TaskUnit from "@TaskUnit";
 import { expect } from "chai";
 import { assertIsObject } from "primitive-predicates";
-import { IsolatedDependencyChain, SimpleChainMap } from "./";
+import IsolatedDependencyChain from "./IsolatedDependencyChain";
+import SimpleChainMap from "./SimpleChainMap";
 
 const now = new Date();
 const firstDate = new Date(now.getTime() - 100000);

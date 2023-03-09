@@ -1,9 +1,10 @@
-import { add, sub } from "date-fns";
-import { TaskUnitCluster } from "@Relations";
-import { EventType } from "@types";
+import TaskUnitCluster from "@Relations/TaskUnitCluster";
 import TaskUnit from "@TaskUnit";
+import type ITaskUnitCluster from "@typing/Relations/ITaskUnitCluster";
+import { EventType } from "@typing/TaskUnit";
+import { add, sub } from "date-fns";
 
-export function getSeedData(): TaskUnitCluster {
+export function getSeedData(): ITaskUnitCluster {
   const now = new Date();
   const firstDate = sub(now, { days: 9 });
   const secondDate = add(firstDate, { days: 1 });

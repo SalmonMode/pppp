@@ -1,16 +1,16 @@
+import TaskUnitCluster from "@Relations/TaskUnitCluster";
+import { theme } from "@service/app/theme";
+import TaskUnit from "@TaskUnit";
 import { screen } from "@testing-library/react";
+import { renderWithProvider } from "@testing/TestRenderers";
+import { EventType } from "@typing/TaskUnit";
 import { expect } from "chai";
 import { add, sub } from "date-fns";
 import { assertIsObject } from "primitive-predicates";
-import { TaskUnitCluster } from "@Relations";
-import { EventType } from "@types";
-import { theme } from "@service/app/theme";
-import { renderWithProvider } from "@testing/TestRenderers";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 import type { TaskUnitsLoadingCompleteState } from "../taskUnitsSlice";
 import { turnClusterIntoState } from "../turnClusterIntoState";
 import TaskUnitCard from "./TaskUnitCard";
-import TaskUnit from "@TaskUnit";
 
 const now = new Date();
 const firstDate = sub(now, { days: 9 });

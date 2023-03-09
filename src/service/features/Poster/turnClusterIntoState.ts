@@ -1,15 +1,16 @@
 import incrmpcorr from "@stdlib/stats-incr-mpcorr";
-import { differenceInSeconds } from "date-fns";
-import { assertIsNumber } from "primitive-predicates";
-import type { ChainPath, TaskUnitCluster } from "@Relations";
+import type ITaskUnit from "@typing/ITaskUnit";
+import type IChainPath from "@typing/Relations/IChainPath";
+import type ITaskUnitCluster from "@typing/Relations/ITaskUnitCluster";
 import {
   EventType,
   type ITaskPrerequisites,
-  type ITaskUnit,
   type SerializableTaskEvent,
   type SerializableTaskPrerequisitesReference,
   type TaskEvent,
-} from "@types";
+} from "@typing/TaskUnit";
+import { differenceInSeconds } from "date-fns";
+import { assertIsNumber } from "primitive-predicates";
 import type {
   TaskMetrics,
   TaskUnitMap,
@@ -19,16 +20,16 @@ import type {
 } from "./taskUnitsSlice";
 
 export function turnClusterIntoState(
-  cluster: TaskUnitCluster
+  cluster: ITaskUnitCluster
 ): TaskUnitsLoadingCompleteState {
   const totalPresence = cluster.paths.reduce<number>(
-    (acc: number, path: ChainPath): number => acc + path.presenceTime,
+    (acc: number, path: IChainPath): number => acc + path.presenceTime,
     0
   );
   const halfwayPresencePoint = totalPresence / 2;
 
-  let trackCurrentlyBeingBuilt: ChainPath[] = [];
-  const pathTracks: ChainPath[][] = [trackCurrentlyBeingBuilt];
+  let trackCurrentlyBeingBuilt: IChainPath[] = [];
+  const pathTracks: IChainPath[][] = [trackCurrentlyBeingBuilt];
   for (const path of cluster.pathsSortedByRanking) {
     let overlapFound = false;
     for (const trackedPath of trackCurrentlyBeingBuilt) {
@@ -53,12 +54,12 @@ export function turnClusterIntoState(
   const unitCoords: TaskUnitMap = {};
   for (const track of pathTracks) {
     const pathsHeights = track.map(
-      (path: ChainPath): number => path.tracks.length
+      (path: IChainPath): number => path.tracks.length
     );
 
     const tallestPathHeight = Math.max(...pathsHeights);
     const beforeHalfwayPoint = presenceSoFar < halfwayPresencePoint;
-    track.forEach((path: ChainPath): void => {
+    track.forEach((path: IChainPath): void => {
       while (path.tracks.length < tallestPathHeight) {
         // fill with empty arrays to make positioning and determining coordinates easier when above the center point.
         // Otherwise, tracks won't be positioned towards the bottom, and we'd have to do more expensive calculations to
@@ -134,7 +135,7 @@ export function turnClusterIntoState(
     });
     // These steps must be done outside the track.forEach to make sure the paths in the track stay together
     unitTracksSoFar += tallestPathHeight;
-    track.forEach((path: ChainPath): void => {
+    track.forEach((path: IChainPath): void => {
       presenceSoFar += path.presenceTime;
     });
   }

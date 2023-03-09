@@ -1,14 +1,12 @@
+import TaskUnit from "@TaskUnit";
+import type { ResourceMap } from "@typing/Mapping";
 import { expect } from "chai";
 import { createSandbox, type SinonSandbox, type SinonStub } from "sinon";
-import type { ResourceMap } from "@types";
-import {
-  ChainPath,
-  SimpleChainMap,
-  SimpleChainPathMap,
-  StressManager,
-  StressTracker,
-} from "./";
-import TaskUnit from "@TaskUnit";
+import ChainPath from "./ChainPath";
+import SimpleChainMap from "./SimpleChainMap";
+import SimpleChainPathMap from "./SimpleChainPathMap";
+import StressManager from "./StressManager";
+import StressTracker from "./StressTracker";
 
 const now = new Date();
 const firstDate = new Date(now.getTime() + 100000);

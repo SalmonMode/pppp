@@ -1,7 +1,8 @@
 import { css } from "@emotion/react";
 import Box from "@mui/material/Box";
 import { theme } from "@service/app/theme";
-import type { Coordinate, TaskUnitDetails } from "@types";
+import type { Coordinate } from "@typing/ConnectedPoints";
+import type { TaskUnitDetails } from "@typing/TaskUnit";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 
 export default function TaskUnitSnailTrail({

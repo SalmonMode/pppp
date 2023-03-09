@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
-import { useEffect } from "react";
 import { useAppDispatch } from "@service/app/hooks";
+import { useEffect } from "react";
 import Poster from "./Poster";
 import { generateCluster } from "./taskUnitsSlice";
 

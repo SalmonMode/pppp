@@ -1,16 +1,21 @@
 import { NoSuchChainPathError } from "@errors";
-import type { ITaskUnit, ResourceMap } from "@types";
+import type ITaskUnit from "@typing/ITaskUnit";
+import type { ResourceMap } from "@typing/Mapping";
+import type IChainPath from "@typing/Relations/IChainPath";
+import type IChainStrainMap from "@typing/Relations/IChainStrainMap";
+import type IIsolatedDependencyChain from "@typing/Relations/IIsolatedDepedencyChain";
+import type ISimpleChainMap from "@typing/Relations/ISimpleChainMap";
+import type ISimpleChainPathMap from "@typing/Relations/ISimpleChainPathMap";
+import type IStressManager from "@typing/Relations/IStressManager";
+import type IStressTracker from "@typing/Relations/IStressTracker";
+import type ITaskUnitCluster from "@typing/Relations/ITaskUnitCluster";
 import { assertIsObject } from "primitive-predicates";
 import { v4 as uuidv4 } from "uuid";
-import {
-  ChainStrainMap,
-  SimpleChainMap,
-  SimpleChainPathMap,
-  StressManager,
-  StressTracker,
-  type ChainPath,
-  type IsolatedDependencyChain,
-} from "./";
+import ChainStrainMap from "./ChainStrainMap";
+import SimpleChainMap from "./SimpleChainMap";
+import SimpleChainPathMap from "./SimpleChainPathMap";
+import StressManager from "./StressManager";
+import StressTracker from "./StressTracker";
 
 /**
  * A collection of interconnected {@link ITaskUnit}s, along with helpful functions to make reasoning about them easier.
@@ -23,16 +28,16 @@ import {
  * most helpful as well as what would reduce the amount of edge intersections. How these are broken up will be based
  * around getting the most dense chains figured out first.
  */
-export default class TaskUnitCluster {
+export default class TaskUnitCluster implements ITaskUnitCluster {
   public readonly id: string;
-  strainMap: ChainStrainMap;
-  chainMap: SimpleChainMap;
-  private _chainToPathMap: ResourceMap<ChainPath> = {};
-  private _paths: ChainPath[] = [];
-  private _pathMap: ResourceMap<ChainPath> = {};
-  private _simplePathMap: SimpleChainPathMap;
-  stressTracker: StressTracker;
-  stressManager: StressManager;
+  strainMap: IChainStrainMap;
+  chainMap: ISimpleChainMap;
+  private _chainToPathMap: ResourceMap<IChainPath> = {};
+  private _paths: IChainPath[] = [];
+  private _pathMap: ResourceMap<IChainPath> = {};
+  private _simplePathMap: ISimpleChainPathMap;
+  stressTracker: IStressTracker;
+  stressManager: IStressManager;
   constructor(public readonly heads: ITaskUnit[]) {
     this.id = uuidv4();
     this.chainMap = new SimpleChainMap(heads);
@@ -45,12 +50,12 @@ export default class TaskUnitCluster {
   /**
    * The paths determined for this cluster.
    */
-  get paths(): ChainPath[] {
+  get paths(): IChainPath[] {
     return [...this._paths];
   }
-  get pathsSortedByRanking(): ChainPath[] {
+  get pathsSortedByRanking(): IChainPath[] {
     const rankings = this.stressManager.getRankings();
-    const paths: ChainPath[] = [];
+    const paths: IChainPath[] = [];
     for (const rankedId of rankings) {
       const path = this._pathMap[rankedId];
       assertIsObject(path);
@@ -66,7 +71,7 @@ export default class TaskUnitCluster {
    * @param chain
    * @returns the path of the chain provided, if one exists
    */
-  getPathOfChain(chain: IsolatedDependencyChain): ChainPath {
+  getPathOfChain(chain: IIsolatedDependencyChain): IChainPath {
     const path = this._chainToPathMap[chain.id];
     if (path === undefined) {
       throw new NoSuchChainPathError(
@@ -77,13 +82,13 @@ export default class TaskUnitCluster {
   }
   /**
    *
-   * @returns The {@link IsolatedDependencyChain}s in the cluster that no other chains are dependent on.
+   * @returns The {@link IIsolatedDependencyChain}s in the cluster that no other chains are dependent on.
    */
-  getHeadsWithoutChains(
-    unavailableChains: IsolatedDependencyChain[]
-  ): IsolatedDependencyChain[] {
+  private _getHeadsWithoutChains(
+    unavailableChains: IIsolatedDependencyChain[]
+  ): IIsolatedDependencyChain[] {
     const unavailableUnits: ITaskUnit[] = unavailableChains.reduce<ITaskUnit[]>(
-      (acc: ITaskUnit[], chain: IsolatedDependencyChain): ITaskUnit[] => {
+      (acc: ITaskUnit[], chain: IIsolatedDependencyChain): ITaskUnit[] => {
         return [...acc, ...chain.units];
       },
       []
@@ -93,7 +98,7 @@ export default class TaskUnitCluster {
         unavailableUnits
       );
     const headChains = headUnits.map(
-      (unit: ITaskUnit): IsolatedDependencyChain =>
+      (unit: ITaskUnit): IIsolatedDependencyChain =>
         this.strainMap.chainMap.getChainOfUnit(unit)
     );
     return headChains;
@@ -108,23 +113,23 @@ export default class TaskUnitCluster {
    * recursive calls. Then, the available heads are figured out again, and the process is repeated until no available
    * heads remain.
    */
-  private _buildPaths(isolatedChains: IsolatedDependencyChain[]): void {
+  private _buildPaths(isolatedChains: IIsolatedDependencyChain[]): void {
     // start by getting the available heads.
-    const heads = this.getHeadsWithoutChains(isolatedChains);
+    const heads = this._getHeadsWithoutChains(isolatedChains);
     // Rely on the strain map to figure out the preffered path for that given head. The best path for each head will
     // be compared against the others, finding the most preferred out of all of them. It will then be stored, its chains
     // marked as off limits, and this function will be called again with the updated list of off limits chains.
     const pathsForHeads = heads.map(
-      (head: IsolatedDependencyChain): ChainPath[] =>
+      (head: IIsolatedDependencyChain): IChainPath[] =>
         this.strainMap.getPathsMostFamiliarWithChainWithoutChains(
           head,
           isolatedChains
         )
     );
-    const potentialPreferredPaths: ChainPath[] = pathsForHeads.reduce<
-      ChainPath[]
+    const potentialPreferredPaths: IChainPath[] = pathsForHeads.reduce<
+      IChainPath[]
     >(
-      (acc: ChainPath[], chains: ChainPath[]): ChainPath[] => [
+      (acc: IChainPath[], chains: IChainPath[]): IChainPath[] => [
         ...acc,
         ...chains,
       ],
@@ -137,10 +142,12 @@ export default class TaskUnitCluster {
       // There must not have been any remaining heads left, so we're done building the chains.
       return;
     }
-    nextMostDensePath.chains.forEach((chain: IsolatedDependencyChain): void => {
-      isolatedChains.push(chain);
-      this._chainToPathMap[chain.id] = nextMostDensePath;
-    });
+    nextMostDensePath.chains.forEach(
+      (chain: IIsolatedDependencyChain): void => {
+        isolatedChains.push(chain);
+        this._chainToPathMap[chain.id] = nextMostDensePath;
+      }
+    );
     this._paths.push(nextMostDensePath);
     this._pathMap[nextMostDensePath.id] = nextMostDensePath;
     // Dive back in to get the next path
@@ -152,9 +159,9 @@ export default class TaskUnitCluster {
    * @param paths The list of paths to sort in the preferred order
    * @returns a new array of the same paths, in the preferred order
    */
-  private _getSortedPaths(paths: ChainPath[]): ChainPath[] {
+  private _getSortedPaths(paths: IChainPath[]): IChainPath[] {
     const sortedPaths = [...paths];
-    sortedPaths.sort((prev: ChainPath, next: ChainPath): number => {
+    sortedPaths.sort((prev: IChainPath, next: IChainPath): number => {
       // use the sum of the relative familiarity of all chains in the path (more preferred)
       const nextFamiliarity = this.strainMap.getRelativeFamiliarityOfPath(next);
       const prevFamiliarity = this.strainMap.getRelativeFamiliarityOfPath(prev);

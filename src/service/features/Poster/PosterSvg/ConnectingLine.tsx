@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import ConnectedPoints from "@graphing/ConnectedPoints";
-import type { Coordinate } from "@types";
 import { theme } from "@service/app/theme";
+import type { Coordinate } from "@typing/ConnectedPoints";
 
 type ConnectingLineType = "standard" | "stale";
 

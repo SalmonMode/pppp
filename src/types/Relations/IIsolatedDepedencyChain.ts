@@ -1,7 +1,4 @@
-import { DependencyOrderError } from "@errors";
 import type ITaskUnit from "@typing/ITaskUnit";
-import type IIsolatedDependencyChain from "@typing/Relations/IIsolatedDepedencyChain";
-import { v4 as uuidv4 } from "uuid";
 
 /**
  * A set of {@link ITaskUnit}s that comprise a single "chain", i.e., one that will be positioned on the graph as a row.
@@ -28,7 +25,7 @@ import { v4 as uuidv4 } from "uuid";
  * ```
  *
  * The highest density chain would be `F-C-D-E`, so it will be broken out first. This leaves `A-B`, `F`, and `G-H` as
- * their own {@link IsolatedDependencyChain}s. `F-C-D-E` could technically be more dense without `E`, or by excluding
+ * their own {@link IIsolatedDependencyChain}s. `F-C-D-E` could technically be more dense without `E`, or by excluding
  * `F`, but to simplify things, it goes all the way to whatever tail ends it can, as mentioned before.
  *
  * This is part of a large, complex sorting system to help reduce the amount of edge intersections between chains as
@@ -40,90 +37,34 @@ import { v4 as uuidv4 } from "uuid";
  * information about the units passed to it. A chain being created does not mean that it will be used to render the
  * graph. It will, however, at least make sure the units passed are a linear, unbroken chain.
  */
-export default class IsolatedDependencyChain
-  implements IIsolatedDependencyChain
-{
-  public readonly id: string;
-  private _chainAnticipatedStartDate: Date;
-  private _head: ITaskUnit;
-  private _tail: ITaskUnit[];
-  private _lastUnit: ITaskUnit;
-  private _chainTotalTime: number;
-  private _chainPresenceTime: number;
-  private _externalDependencies: Set<ITaskUnit>;
-  constructor(public readonly units: ITaskUnit[]) {
-    this.id = uuidv4();
-    this._verifyUnitsAreUnbrokenChain();
-    const copyOfUnits = [...this.units];
-    const unit = copyOfUnits.shift();
-    if (unit === undefined) {
-      throw new RangeError("Must provide at least 1 ITaskUnit");
-    }
-    this._head = unit;
-    this._tail = copyOfUnits;
-    this._lastUnit = this._tail[this._tail.length - 1] || this.head;
-    this._chainAnticipatedStartDate = this.lastUnit.anticipatedStartDate;
-
-    this._chainTotalTime =
-      this.endDate.getTime() - this.anticipatedStartDate.getTime();
-    this._chainPresenceTime = this.units.reduce<number>(
-      (sum: number, curr: ITaskUnit): number => sum + curr.presenceTime,
-      0
-    );
-    this._externalDependencies = this._getExternalDependencies();
-  }
+export default interface IIsolatedDependencyChain {
+  id: string;
+  /**
+   * The units within the chain.
+   */
+  units: ITaskUnit[];
   /**
    * The latest {@link ITaskUnit} in the chain.
    *
    * Where the chain ends, is where this unit ends as well. This unit depends on all other units in this chain.
    */
-  get head(): ITaskUnit {
-    return this._head;
-  }
-  /**
-   * make sure all the units passed to the constructor are an unbroken chain, with each unit explicitely depending on
-   * the next in the array.
-   */
-  private _verifyUnitsAreUnbrokenChain(): void {
-    const copyOfUnits = [...this.units];
-    let unit = copyOfUnits.shift();
-    while (unit !== undefined) {
-      const nextUnit = copyOfUnits.shift();
-      if (nextUnit !== undefined) {
-        if (!unit.directDependencies.has(nextUnit)) {
-          throw new DependencyOrderError(
-            "Units must be provided in the order they are dependent on each other."
-          );
-        }
-      }
-      unit = nextUnit;
-    }
-    // Nothing more to check, so all units must be a chain, and in the proper order.
-  }
+  head: ITaskUnit;
   /**
    * The final point in time this chain has presence.
    */
-  get endDate(): Date {
-    return this.head.apparentEndDate;
-  }
+  endDate: Date;
   /**
    * The earliest point in time for this chain of {@link ITaskUnit}s that has presence.
    */
-  get anticipatedStartDate(): Date {
-    return this._chainAnticipatedStartDate;
-  }
+  anticipatedStartDate: Date;
   /**
    * The amount of milliseconds from the start of the last item in the chain to the end date of the head.
    */
-  get timeSpan(): number {
-    return this._chainTotalTime;
-  }
+  timeSpan: number;
   /**
    * The amount of presence this chain of units has in total.
    */
-  get presenceTime(): number {
-    return this._chainPresenceTime;
-  }
+  presenceTime: number;
   /**
    * The amount of visual presence the units in the chain collectively have, divided by the timespan of the chain.
    *
@@ -162,39 +103,7 @@ export default class IsolatedDependencyChain
    * and third diagrams are far more likely (the third looking this way probably because of other dependencies not in
    * the chain).
    */
-  get visualDensity(): number {
-    return this.presenceTime / this.timeSpan;
-  }
-  /**
-   * All the {@link ITaskUnit}s not in this chain that the units in this chain are directly dependent on.
-   *
-   * For example, given the following chains:
-   *
-   * ```text
-   *  Chain 1:      A---B
-   *                 \ /
-   *  Chain 2:  F-----C---D-----E
-   *                   \ /
-   *  Chain 3:     G----H-------I
-   * ```
-   *
-   * Chain 3 is dependent on `C`. It's also connected to Chain 2 through `D`'s dependency on H, but the list of external
-   * dependencies for Chain 3 would only include `C`.
-   *
-   * This is only used in the constructor to get a cached version of this set.
-   */
-  private _getExternalDependencies(): Set<ITaskUnit> {
-    const dependencies: Set<ITaskUnit> = new Set<ITaskUnit>();
-    for (const unit of this.units) {
-      const unitParents = unit.directDependencies;
-      for (const parentalUnit of unitParents) {
-        if (!this.units.includes(parentalUnit)) {
-          dependencies.add(parentalUnit);
-        }
-      }
-    }
-    return dependencies;
-  }
+  visualDensity: number;
   /**
    * All the {@link ITaskUnit}s not in this chain that the units in this chain are directly dependent on.
    *
@@ -211,28 +120,33 @@ export default class IsolatedDependencyChain
    * Chain 3 is dependent on `C`. It's also connected to Chain 2 through `D`'s dependency on H, but the list of external
    * dependencies for Chain 3 would only include `C`.
    */
-  getExternalDependencies(): Set<ITaskUnit> {
-    return this._externalDependencies;
-  }
-  get lastUnit(): ITaskUnit {
-    return this._lastUnit;
-  }
-  get attachmentToDependencies(): number {
-    return this.lastUnit.attachmentToDependencies;
-  }
-  getNumberOfPathsToDependency(chain: IsolatedDependencyChain): number {
-    return this.lastUnit.getNumberOfPathsToDependency(chain.head);
-  }
+  getExternalDependencies(): Set<ITaskUnit>;
+  /**
+   * The last unit in the chain. This refers to the unit that is earliest in the timeline. All other units in the chain
+   * are dependent on this one.
+   */
+  lastUnit: ITaskUnit;
+  /**
+   * The number of paths to a given dependency.
+   */
+  attachmentToDependencies: number;
+  /**
+   * Given a chain that this chain is dependent on, return the number of paths to that chain from this chain.
+   *
+   * @param chain the dependency
+   */
+  getNumberOfPathsToDependency(chain: IIsolatedDependencyChain): number;
   /**
    * Check whether or not the passed chain is a dependency of this chain.
    *
    * @param chain the chain to check if its a dependency
    * @returns true, if this chain is dependent on the passed chain, false, if not
    */
-  isDirectlyDependentOn(chain: IsolatedDependencyChain): boolean {
-    return this.unitsDirectlyDependentOn.has(chain.head);
-  }
-  get unitsDirectlyDependentOn(): Set<ITaskUnit> {
-    return this.lastUnit.directDependencies;
-  }
+  isDirectlyDependentOn(chain: IIsolatedDependencyChain): boolean;
+  /**
+   * The units this chain is directly dependent on.
+   *
+   * This is just a shortcut to reference the direct dependencies of the last unit.
+   */
+  unitsDirectlyDependentOn: Set<ITaskUnit>;
 }

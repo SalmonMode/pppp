@@ -1,24 +1,23 @@
 import { NoSuchChainError } from "@errors";
-import type { RelationshipMapping } from "@types";
-import {
-  ChainPath,
-  type IsolatedDependencyChain,
-  type SimpleChainMap,
-} from "./";
+import type { RelationshipMapping } from "@typing/Mapping";
+import type IChainStrainMap from "@typing/Relations/IChainStrainMap";
+import type IIsolatedDependencyChain from "@typing/Relations/IIsolatedDepedencyChain";
+import type ISimpleChainMap from "@typing/Relations/ISimpleChainMap";
+import ChainPath from "./ChainPath";
 
 /**
- * A helper for how much "strain" each {@link IsolatedDependencyChain} is under.
+ * A helper for how much "strain" each {@link IIsolatedDependencyChain} is under.
  *
  * "Strain" for a unit is effectively the sum of two numbers for that unit: the number of possible paths to it from the
  * heads of the cluster; and all paths available from it to its dependencies. "Strain" for a chain is effectively the
  * sum of the strain of all units in the chain.
  */
-export default class ChainStrainMap {
+export default class ChainStrainMap implements IChainStrainMap {
   /**
    * The amount of paths that lead to a unit plus the amount of paths it leads to.
    */
   private _chainStrainMap: RelationshipMapping = {};
-  constructor(public readonly chainMap: SimpleChainMap) {
+  constructor(public readonly chainMap: ISimpleChainMap) {
     this._buildStrainMap();
   }
   /**
@@ -253,15 +252,15 @@ export default class ChainStrainMap {
    * @returns a list of chains with the same amount of strain
    */
   getPathsMostFamiliarWithChainWithoutChains(
-    head: IsolatedDependencyChain,
-    unavailableChains: IsolatedDependencyChain[],
-    pathSoFar: IsolatedDependencyChain[] = []
+    head: IIsolatedDependencyChain,
+    unavailableChains: IIsolatedDependencyChain[],
+    pathSoFar: IIsolatedDependencyChain[] = []
   ): ChainPath[] {
-    const root: IsolatedDependencyChain = pathSoFar[0] || head;
+    const root: IIsolatedDependencyChain = pathSoFar[0] || head;
     // Filter out the dependencies that we can't use.
     const headDirectDeps = this.chainMap.getDirectDependenciesOfChain(head);
     const availableDeps = [...headDirectDeps].filter(
-      (dep: IsolatedDependencyChain): boolean =>
+      (dep: IIsolatedDependencyChain): boolean =>
         !unavailableChains.includes(dep)
     );
     // We want any paths with a greater relative familiarity to stand out. We can filter out any deps after the first
@@ -274,7 +273,7 @@ export default class ChainStrainMap {
       );
     // Get the dependencies that are the least discouraged. Relative familiarity is a good shortcut to avoid stepping on
     // the toes of other potential heads.
-    const leastDiscouragedHeads: IsolatedDependencyChain[] =
+    const leastDiscouragedHeads: IIsolatedDependencyChain[] =
       this._getLeastDiscouragedHeads(sortedAvailableDeps, root);
     const potentialPaths: ChainPath[] =
       this._getMostFamiliarPathsFromLeastDiscouragedHeads(
@@ -306,14 +305,14 @@ export default class ChainStrainMap {
    * @returns an array of chains sorted from least to most discouraged
    */
   private _getAvailableDependenciesSortedByLeastDiscouraged(
-    availableDeps: IsolatedDependencyChain[],
-    root: IsolatedDependencyChain
-  ): IsolatedDependencyChain[] {
+    availableDeps: IIsolatedDependencyChain[],
+    root: IIsolatedDependencyChain
+  ): IIsolatedDependencyChain[] {
     const sortedDeps = [...availableDeps];
     sortedDeps.sort(
       (
-        prev: IsolatedDependencyChain,
-        next: IsolatedDependencyChain
+        prev: IIsolatedDependencyChain,
+        next: IIsolatedDependencyChain
       ): number => {
         // use the familiarity of the path option relative to the root (more preferred)
         const nextFamiliarity = this.getRelativeFamiliarityOfChainWithChain(
@@ -331,10 +330,10 @@ export default class ChainStrainMap {
     return sortedDeps;
   }
   private _getMostFamiliarPathsFromLeastDiscouragedHeads(
-    leastDiscouragedHeads: IsolatedDependencyChain[],
-    unavailableChains: IsolatedDependencyChain[],
-    pathSoFar: IsolatedDependencyChain[],
-    head: IsolatedDependencyChain
+    leastDiscouragedHeads: IIsolatedDependencyChain[],
+    unavailableChains: IIsolatedDependencyChain[],
+    pathSoFar: IIsolatedDependencyChain[],
+    head: IIsolatedDependencyChain
   ): ChainPath[] {
     const potentialPaths: ChainPath[] = [];
     for (const dep of leastDiscouragedHeads) {
@@ -368,12 +367,12 @@ export default class ChainStrainMap {
    * @returns the chains from sortedAvailableDeps with the greatest relative familiarity
    */
   private _getLeastDiscouragedHeads(
-    sortedAvailableDeps: IsolatedDependencyChain[],
-    root: IsolatedDependencyChain
-  ): IsolatedDependencyChain[] {
-    const leastDiscouragedHeads: IsolatedDependencyChain[] = [];
+    sortedAvailableDeps: IIsolatedDependencyChain[],
+    root: IIsolatedDependencyChain
+  ): IIsolatedDependencyChain[] {
+    const leastDiscouragedHeads: IIsolatedDependencyChain[] = [];
     let highestRelativeFamiliarity: number | undefined;
-    let firstDep: IsolatedDependencyChain | undefined;
+    let firstDep: IIsolatedDependencyChain | undefined;
     for (const dep of sortedAvailableDeps) {
       if (!firstDep) {
         // first iteration, so grab a reference to it in order to be able to consistently compare against the most
@@ -443,9 +442,9 @@ export default class ChainStrainMap {
       // They must have had the same relative familiarity, so we need to check if the next path has more unfamiliarity
       if (!lowestPathUnfamiliarity) {
         // need to actually grab the lowest unfamiliarity because there's another path we need to check.
-        lowestPathUnfamiliarity = this.getUnfamiliarityOfPath(firstPath);
+        lowestPathUnfamiliarity = this._getUnfamiliarityOfPath(firstPath);
       }
-      const pathUnfamiliarity = this.getUnfamiliarityOfPath(path);
+      const pathUnfamiliarity = this._getUnfamiliarityOfPath(path);
       if (pathUnfamiliarity > lowestPathUnfamiliarity) {
         // Path can't compete with first path so end it here.
         break;
@@ -474,8 +473,8 @@ export default class ChainStrainMap {
       const familiarityDiff = nextFamiliarity - prevFamiliarity;
       if (familiarityDiff === 0) {
         // use the unfamiliarity of each path (less preferred)
-        const nextUnfamiliarity = this.getUnfamiliarityOfPath(next);
-        const prevUnfamiliarity = this.getUnfamiliarityOfPath(prev);
+        const nextUnfamiliarity = this._getUnfamiliarityOfPath(next);
+        const prevUnfamiliarity = this._getUnfamiliarityOfPath(prev);
         const unfamiliarityDiff = prevUnfamiliarity - nextUnfamiliarity;
         if (unfamiliarityDiff === 0) {
           // use the sum of the strain of all units in the chain (more preferred)
@@ -500,7 +499,7 @@ export default class ChainStrainMap {
    * @param chain the chain to get the strain of
    * @returns how much strain the chain has
    */
-  getStrainOfChain(chain: IsolatedDependencyChain): number {
+  getStrainOfChain(chain: IIsolatedDependencyChain): number {
     const strain = this._chainStrainMap[chain.id];
     if (strain === undefined) {
       throw new NoSuchChainError(
@@ -517,7 +516,7 @@ export default class ChainStrainMap {
    */
   getStrainOfPath(path: ChainPath): number {
     return path.chains.reduce<number>(
-      (sum: number, chain: IsolatedDependencyChain): number =>
+      (sum: number, chain: IIsolatedDependencyChain): number =>
         sum + this.getStrainOfChain(chain),
       0
     );
@@ -530,7 +529,7 @@ export default class ChainStrainMap {
    */
   getRelativeFamiliarityOfPath(path: ChainPath): number {
     return path.chains.reduce<number>(
-      (sum: number, chain: IsolatedDependencyChain): number =>
+      (sum: number, chain: IIsolatedDependencyChain): number =>
         sum + this.getRelativeFamiliarityOfChainWithChain(chain, path.head),
       0
     );
@@ -541,11 +540,11 @@ export default class ChainStrainMap {
    * @param path the path to get the total strain of
    * @returns how much strain the path has
    */
-  getUnfamiliarityOfPath(path: ChainPath): number {
+  private _getUnfamiliarityOfPath(path: ChainPath): number {
     return path.chains.reduce<number>(
-      (sum: number, chain: IsolatedDependencyChain): number =>
+      (sum: number, chain: IIsolatedDependencyChain): number =>
         sum +
-        this.getUnfamiliarStrainOnChainRelativeToObservingChain(
+        this._getUnfamiliarStrainOnChainRelativeToObservingChain(
           chain,
           path.head
         ),
@@ -562,7 +561,7 @@ export default class ChainStrainMap {
    * @param chain The chain to find the number of paths to
    * @returns how many paths there are to the chain from all heads
    */
-  getPathsToChain(chain: IsolatedDependencyChain): number {
+  private _getPathsToChain(chain: IIsolatedDependencyChain): number {
     return this.chainMap.getNumberOfPathsToUnit(chain.head);
   }
   /**
@@ -576,13 +575,13 @@ export default class ChainStrainMap {
    * @param observingChain
    * @returns
    */
-  getFamiliarAttachmentToChainRelativeToObservingChain(
-    targetChain: IsolatedDependencyChain,
-    observingChain: IsolatedDependencyChain
+  private _getFamiliarAttachmentToChainRelativeToObservingChain(
+    targetChain: IIsolatedDependencyChain,
+    observingChain: IIsolatedDependencyChain
   ): number {
     return (
       observingChain.getNumberOfPathsToDependency(targetChain) *
-      this.getPathsToChain(observingChain)
+      this._getPathsToChain(observingChain)
     );
   }
   /**
@@ -592,13 +591,13 @@ export default class ChainStrainMap {
    * @param observingChain
    * @returns
    */
-  getUnfamiliarStrainOnChainRelativeToObservingChain(
-    targetChain: IsolatedDependencyChain,
-    observingChain: IsolatedDependencyChain
+  private _getUnfamiliarStrainOnChainRelativeToObservingChain(
+    targetChain: IIsolatedDependencyChain,
+    observingChain: IIsolatedDependencyChain
   ): number {
     return (
-      this.getPathsToChain(targetChain) -
-      this.getFamiliarAttachmentToChainRelativeToObservingChain(
+      this._getPathsToChain(targetChain) -
+      this._getFamiliarAttachmentToChainRelativeToObservingChain(
         targetChain,
         observingChain
       )
@@ -631,16 +630,16 @@ export default class ChainStrainMap {
    * @returns How much strain the chain is under from the head, minus the attachment from everything else
    */
   getRelativeFamiliarityOfChainWithChain(
-    targetChain: IsolatedDependencyChain,
-    observingChain: IsolatedDependencyChain
+    targetChain: IIsolatedDependencyChain,
+    observingChain: IIsolatedDependencyChain
   ): number {
     const unfamiliarInfluence =
-      this.getUnfamiliarStrainOnChainRelativeToObservingChain(
+      this._getUnfamiliarStrainOnChainRelativeToObservingChain(
         targetChain,
         observingChain
       );
     return (
-      this.getFamiliarAttachmentToChainRelativeToObservingChain(
+      this._getFamiliarAttachmentToChainRelativeToObservingChain(
         targetChain,
         observingChain
       ) - unfamiliarInfluence

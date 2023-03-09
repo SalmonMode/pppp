@@ -3,7 +3,7 @@ import * as chai from "chai";
 import { default as chaiAsPromised } from "chai-as-promised";
 import { createSandbox, type SinonSandbox } from "sinon";
 import IndexPage from ".";
-import { renderWithProvider } from "../service/Utility/TestRenderers";
+import { renderWithProvider } from "@testing/TestRenderers";
 
 chai.use(chaiAsPromised);
 

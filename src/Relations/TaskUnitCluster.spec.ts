@@ -1,7 +1,9 @@
-import { expect } from "chai";
 import { NoSuchChainPathError } from "@errors";
-import { IsolatedDependencyChain, TaskUnitCluster } from "./";
 import TaskUnit from "@TaskUnit";
+import type IIsolatedDependencyChain from "@typing/Relations/IIsolatedDepedencyChain";
+import { expect } from "chai";
+import IsolatedDependencyChain from "./IsolatedDependencyChain";
+import TaskUnitCluster from "./TaskUnitCluster";
 
 const now = new Date();
 const firstDate = new Date(now.getTime());
@@ -86,13 +88,13 @@ describe("TaskUnitCluster", function (): void {
      *          G┗━━━┛
      * ```
      */
-    let chainA: IsolatedDependencyChain;
-    let chainB: IsolatedDependencyChain;
-    let chainC: IsolatedDependencyChain;
-    let chainD: IsolatedDependencyChain;
-    let chainE: IsolatedDependencyChain;
-    let chainF: IsolatedDependencyChain;
-    let chainG: IsolatedDependencyChain;
+    let chainA: IIsolatedDependencyChain;
+    let chainB: IIsolatedDependencyChain;
+    let chainC: IIsolatedDependencyChain;
+    let chainD: IIsolatedDependencyChain;
+    let chainE: IIsolatedDependencyChain;
+    let chainF: IIsolatedDependencyChain;
+    let chainG: IIsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function (): void {
       const unitA = new TaskUnit({
@@ -212,16 +214,16 @@ describe("TaskUnitCluster", function (): void {
      *          G┗━━━┛
      * ```
      */
-    let chainA: IsolatedDependencyChain;
-    let chainB: IsolatedDependencyChain;
-    let chainC: IsolatedDependencyChain;
-    let chainD: IsolatedDependencyChain;
-    let chainE: IsolatedDependencyChain;
-    let chainF: IsolatedDependencyChain;
-    let chainG: IsolatedDependencyChain;
-    let chainH: IsolatedDependencyChain;
-    let chainI: IsolatedDependencyChain;
-    let chainJ: IsolatedDependencyChain;
+    let chainA: IIsolatedDependencyChain;
+    let chainB: IIsolatedDependencyChain;
+    let chainC: IIsolatedDependencyChain;
+    let chainD: IIsolatedDependencyChain;
+    let chainE: IIsolatedDependencyChain;
+    let chainF: IIsolatedDependencyChain;
+    let chainG: IIsolatedDependencyChain;
+    let chainH: IIsolatedDependencyChain;
+    let chainI: IIsolatedDependencyChain;
+    let chainJ: IIsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function (): void {
       const unitA = new TaskUnit({
@@ -358,15 +360,15 @@ describe("TaskUnitCluster", function (): void {
      *         G┗━━━┛ I┗━━━┛  ┗━━━┛H
      * ```
      */
-    let chainA: IsolatedDependencyChain;
-    let chainB: IsolatedDependencyChain;
-    let chainC: IsolatedDependencyChain;
-    let chainD: IsolatedDependencyChain;
-    let chainE: IsolatedDependencyChain;
-    let chainF: IsolatedDependencyChain;
-    let chainG: IsolatedDependencyChain;
-    let chainH: IsolatedDependencyChain;
-    let chainI: IsolatedDependencyChain;
+    let chainA: IIsolatedDependencyChain;
+    let chainB: IIsolatedDependencyChain;
+    let chainC: IIsolatedDependencyChain;
+    let chainD: IIsolatedDependencyChain;
+    let chainE: IIsolatedDependencyChain;
+    let chainF: IIsolatedDependencyChain;
+    let chainG: IIsolatedDependencyChain;
+    let chainH: IIsolatedDependencyChain;
+    let chainI: IIsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function (): void {
       const unitA = new TaskUnit({
@@ -522,31 +524,31 @@ describe("TaskUnitCluster", function (): void {
      *                          ┗━━━┛N  ┗━━━┛R  ┗━━━┛V  ┗━━━┛Y
      * ```
      */
-    let chainA: IsolatedDependencyChain;
-    let chainB: IsolatedDependencyChain;
-    let chainC: IsolatedDependencyChain;
-    let chainD: IsolatedDependencyChain;
-    let chainE: IsolatedDependencyChain;
-    let chainF: IsolatedDependencyChain;
-    let chainG: IsolatedDependencyChain;
-    let chainH: IsolatedDependencyChain;
-    let chainI: IsolatedDependencyChain;
-    let chainJ: IsolatedDependencyChain;
-    let chainK: IsolatedDependencyChain;
-    let chainL: IsolatedDependencyChain;
-    let chainM: IsolatedDependencyChain;
-    let chainN: IsolatedDependencyChain;
-    let chainO: IsolatedDependencyChain;
-    let chainP: IsolatedDependencyChain;
-    let chainQ: IsolatedDependencyChain;
-    let chainR: IsolatedDependencyChain;
-    let chainS: IsolatedDependencyChain;
-    let chainT: IsolatedDependencyChain;
-    let chainU: IsolatedDependencyChain;
-    let chainV: IsolatedDependencyChain;
-    let chainW: IsolatedDependencyChain;
-    let chainX: IsolatedDependencyChain;
-    let chainY: IsolatedDependencyChain;
+    let chainA: IIsolatedDependencyChain;
+    let chainB: IIsolatedDependencyChain;
+    let chainC: IIsolatedDependencyChain;
+    let chainD: IIsolatedDependencyChain;
+    let chainE: IIsolatedDependencyChain;
+    let chainF: IIsolatedDependencyChain;
+    let chainG: IIsolatedDependencyChain;
+    let chainH: IIsolatedDependencyChain;
+    let chainI: IIsolatedDependencyChain;
+    let chainJ: IIsolatedDependencyChain;
+    let chainK: IIsolatedDependencyChain;
+    let chainL: IIsolatedDependencyChain;
+    let chainM: IIsolatedDependencyChain;
+    let chainN: IIsolatedDependencyChain;
+    let chainO: IIsolatedDependencyChain;
+    let chainP: IIsolatedDependencyChain;
+    let chainQ: IIsolatedDependencyChain;
+    let chainR: IIsolatedDependencyChain;
+    let chainS: IIsolatedDependencyChain;
+    let chainT: IIsolatedDependencyChain;
+    let chainU: IIsolatedDependencyChain;
+    let chainV: IIsolatedDependencyChain;
+    let chainW: IIsolatedDependencyChain;
+    let chainX: IIsolatedDependencyChain;
+    let chainY: IIsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function (): void {
       const unitA = new TaskUnit({
@@ -821,17 +823,17 @@ describe("TaskUnitCluster", function (): void {
      *
      * ```
      */
-    let chainA: IsolatedDependencyChain;
-    let chainB: IsolatedDependencyChain;
-    let chainC: IsolatedDependencyChain;
-    let chainD: IsolatedDependencyChain;
-    let chainE: IsolatedDependencyChain;
-    let chainF: IsolatedDependencyChain;
-    let chainG: IsolatedDependencyChain;
-    let chainH: IsolatedDependencyChain;
-    let chainI: IsolatedDependencyChain;
-    let chainJ: IsolatedDependencyChain;
-    let chainK: IsolatedDependencyChain;
+    let chainA: IIsolatedDependencyChain;
+    let chainB: IIsolatedDependencyChain;
+    let chainC: IIsolatedDependencyChain;
+    let chainD: IIsolatedDependencyChain;
+    let chainE: IIsolatedDependencyChain;
+    let chainF: IIsolatedDependencyChain;
+    let chainG: IIsolatedDependencyChain;
+    let chainH: IIsolatedDependencyChain;
+    let chainI: IIsolatedDependencyChain;
+    let chainJ: IIsolatedDependencyChain;
+    let chainK: IIsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function (): void {
       const unitA = new TaskUnit({
@@ -976,16 +978,16 @@ describe("TaskUnitCluster", function (): void {
      *
      * ```
      */
-    let chainA: IsolatedDependencyChain;
-    let chainB: IsolatedDependencyChain;
-    let chainC: IsolatedDependencyChain;
-    let chainD: IsolatedDependencyChain;
-    let chainE: IsolatedDependencyChain;
-    let chainF: IsolatedDependencyChain;
-    let chainG: IsolatedDependencyChain;
-    let chainH: IsolatedDependencyChain;
-    let chainI: IsolatedDependencyChain;
-    let chainJ: IsolatedDependencyChain;
+    let chainA: IIsolatedDependencyChain;
+    let chainB: IIsolatedDependencyChain;
+    let chainC: IIsolatedDependencyChain;
+    let chainD: IIsolatedDependencyChain;
+    let chainE: IIsolatedDependencyChain;
+    let chainF: IIsolatedDependencyChain;
+    let chainG: IIsolatedDependencyChain;
+    let chainH: IIsolatedDependencyChain;
+    let chainI: IIsolatedDependencyChain;
+    let chainJ: IIsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function (): void {
       const unitA = new TaskUnit({
@@ -1120,16 +1122,16 @@ describe("TaskUnitCluster", function (): void {
      *
      * ```
      */
-    let chainA: IsolatedDependencyChain;
-    let chainB: IsolatedDependencyChain;
-    let chainC: IsolatedDependencyChain;
-    let chainD: IsolatedDependencyChain;
-    let chainE: IsolatedDependencyChain;
-    let chainF: IsolatedDependencyChain;
-    let chainG: IsolatedDependencyChain;
-    let chainH: IsolatedDependencyChain;
-    let chainI: IsolatedDependencyChain;
-    let chainJ: IsolatedDependencyChain;
+    let chainA: IIsolatedDependencyChain;
+    let chainB: IIsolatedDependencyChain;
+    let chainC: IIsolatedDependencyChain;
+    let chainD: IIsolatedDependencyChain;
+    let chainE: IIsolatedDependencyChain;
+    let chainF: IIsolatedDependencyChain;
+    let chainG: IIsolatedDependencyChain;
+    let chainH: IIsolatedDependencyChain;
+    let chainI: IIsolatedDependencyChain;
+    let chainJ: IIsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function (): void {
       const unitA = new TaskUnit({
@@ -1260,15 +1262,15 @@ describe("TaskUnitCluster", function (): void {
      *                ┗━━━┛F
      * ```
      */
-    let chainA: IsolatedDependencyChain;
-    let chainB: IsolatedDependencyChain;
-    let chainC: IsolatedDependencyChain;
-    let chainD: IsolatedDependencyChain;
-    let chainE: IsolatedDependencyChain;
-    let chainF: IsolatedDependencyChain;
-    let chainG: IsolatedDependencyChain;
-    let chainH: IsolatedDependencyChain;
-    let chainI: IsolatedDependencyChain;
+    let chainA: IIsolatedDependencyChain;
+    let chainB: IIsolatedDependencyChain;
+    let chainC: IIsolatedDependencyChain;
+    let chainD: IIsolatedDependencyChain;
+    let chainE: IIsolatedDependencyChain;
+    let chainF: IIsolatedDependencyChain;
+    let chainG: IIsolatedDependencyChain;
+    let chainH: IIsolatedDependencyChain;
+    let chainI: IIsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function (): void {
       const unitA = new TaskUnit({
@@ -1397,18 +1399,18 @@ describe("TaskUnitCluster", function (): void {
      *                                       ┗━━━┛K
      * ```
      */
-    let chainA: IsolatedDependencyChain;
-    let chainB: IsolatedDependencyChain;
-    let chainC: IsolatedDependencyChain;
-    let chainD: IsolatedDependencyChain;
-    let chainE: IsolatedDependencyChain;
-    let chainF: IsolatedDependencyChain;
-    let chainG: IsolatedDependencyChain;
-    let chainH: IsolatedDependencyChain;
-    let chainI: IsolatedDependencyChain;
-    let chainJ: IsolatedDependencyChain;
-    let chainK: IsolatedDependencyChain;
-    let chainL: IsolatedDependencyChain;
+    let chainA: IIsolatedDependencyChain;
+    let chainB: IIsolatedDependencyChain;
+    let chainC: IIsolatedDependencyChain;
+    let chainD: IIsolatedDependencyChain;
+    let chainE: IIsolatedDependencyChain;
+    let chainF: IIsolatedDependencyChain;
+    let chainG: IIsolatedDependencyChain;
+    let chainH: IIsolatedDependencyChain;
+    let chainI: IIsolatedDependencyChain;
+    let chainJ: IIsolatedDependencyChain;
+    let chainK: IIsolatedDependencyChain;
+    let chainL: IIsolatedDependencyChain;
     let cluster: TaskUnitCluster;
     before(function (): void {
       const unitA = new TaskUnit({

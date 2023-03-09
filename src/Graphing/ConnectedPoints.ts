@@ -1,10 +1,10 @@
-import { assertIsNumber, assertIsString } from "primitive-predicates";
 import type {
   Coordinate,
   CoordinateString,
   CubicBezierCurve,
   CubicBezierCurveString,
-} from "@types";
+} from "@typing/ConnectedPoints";
+import { assertIsNumber, assertIsString } from "primitive-predicates";
 
 export default class ConnectedPoints {
   /**

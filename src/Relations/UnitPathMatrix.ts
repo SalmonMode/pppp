@@ -1,10 +1,12 @@
 import Matrix from "@matrix";
-import type { ITaskUnit } from "@types";
+import type IMatrix from "@typing/IMatrix";
+import type ITaskUnit from "@typing/ITaskUnit";
+import type IUnitPathMatrix from "@typing/Relations/IUnitPathMatrix";
 
 /**
  * A simple abstraction around a matrix of the unit relations to perform helpful operations.
  */
-export default class UnitPathMatrix {
+export default class UnitPathMatrix implements IUnitPathMatrix {
   /**
    * The units sorted alphabetically by their IDs.
    *
@@ -26,13 +28,13 @@ export default class UnitPathMatrix {
    * to, or where they can be stepped to from in exactly one step. This is useful for identifying interconnections,
    * which is necessary to sort according to the stress model.
    */
-  private _symmetricSingleStepMatrix: Matrix;
+  private _symmetricSingleStepMatrix: IMatrix;
   /**
    * A matrix showing the direct dependencies of each unit. This will show where each unit can "step" to in just a
    * single step. This is useful for easily and efficiently identifying which units are usable as heads when other units
    * have been eliminated.
    */
-  private _singleStepMatrix: Matrix;
+  private _singleStepMatrix: IMatrix;
   constructor(units: ITaskUnit[]) {
     const firstUnit = units[0];
     if (firstUnit === undefined) {
@@ -75,28 +77,28 @@ export default class UnitPathMatrix {
    *
    * This is useful for identifying interconnections, which is necessary to sort according to the stress model.
    */
-  get taskUnitInterconnections(): Matrix {
+  private _getTaskUnitInterconnections(): IMatrix {
     return this._symmetricSingleStepMatrix;
   }
   /**
    * @param unit
    * @returns The index in the path and single step matrices that correspond with the row and column index of the unit.
    */
-  getMatrixIndexForUnit(unit: ITaskUnit): number {
+  private _getMatrixIndexForUnit(unit: ITaskUnit): number {
     return this._pathMatrixKeys.indexOf(unit.id);
   }
   /**
    * Build a matrix that shows the direct dependencies of each unit. This will show where each unit can "step" to in
    * just a single step. In others words M1.
    */
-  private _buildSingleStepMatrix(): Matrix {
+  private _buildSingleStepMatrix(): IMatrix {
     const pathMatrixData: number[][] = [];
     for (const unit of this._unitsSortedById) {
       const rowData: number[] = new Array(this._unitsSortedById.length);
       // fill with 0s by default, since we'll only be replacing the relevant places with 1s.
       rowData.fill(0);
       for (const dep of unit.directDependencies) {
-        const depIndex = this.getMatrixIndexForUnit(dep);
+        const depIndex = this._getMatrixIndexForUnit(dep);
         rowData[depIndex] = 1;
       }
       pathMatrixData.push(rowData);
@@ -107,7 +109,7 @@ export default class UnitPathMatrix {
    * Build a matrix that shows the interconnections of each unit. This will show where each unit can "step" to, or be
    * stepped to from in exactly a single step.
    */
-  private _buildSymmetricSingleStepMatrix(): Matrix {
+  private _buildSymmetricSingleStepMatrix(): IMatrix {
     const singleStepM = this._singleStepMatrix;
     // We can get the symmetric matrix by adding the single step matrix to the transposed version of itself.
     return singleStepM.add(singleStepM.transpose());
@@ -119,11 +121,11 @@ export default class UnitPathMatrix {
    * @param sortedUnits
    * @returns a matrix showing which units each unit can reach in a single step (i.e. their direct dependencies)
    */
-  private _buildSubsetSingleStepMatrix(sortedUnits: ITaskUnit[]): Matrix {
+  private _buildSubsetSingleStepMatrix(sortedUnits: ITaskUnit[]): IMatrix {
     // get slice of single step for relevant units
     const matrixData: number[][] = [];
     const sliceIndexes = sortedUnits.map((unit: ITaskUnit): number =>
-      this.getMatrixIndexForUnit(unit)
+      this._getMatrixIndexForUnit(unit)
     );
     for (const row of sliceIndexes) {
       const rowData: number[] = [];
@@ -162,7 +164,7 @@ export default class UnitPathMatrix {
    */
   private _getHeadsUsingMatrix(
     sortedAllowedUnits: ITaskUnit[],
-    matrix: Matrix
+    matrix: IMatrix
   ): ITaskUnit[] {
     const headUnits: ITaskUnit[] = [];
     for (const [indexAsString, unit] of Object.entries(sortedAllowedUnits)) {
@@ -195,8 +197,9 @@ export default class UnitPathMatrix {
    */
   getUnitsConnectedToUnit(unit: ITaskUnit): Set<ITaskUnit> {
     const connectedUnits = new Set<ITaskUnit>();
-    const unitIndex = this.getMatrixIndexForUnit(unit);
-    const connectionsRow = this.taskUnitInterconnections.getRow(unitIndex);
+    const unitIndex = this._getMatrixIndexForUnit(unit);
+    const connectionsRow =
+      this._getTaskUnitInterconnections().getRow(unitIndex);
     connectionsRow.forEach((walks: number, connectionIndex: number): void => {
       if (walks) {
         connectedUnits.add(this.getUnitForMatrixIndex(connectionIndex));

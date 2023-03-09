@@ -1,7 +1,10 @@
-import { expect } from "chai";
 import { NoSuchChainError } from "@errors";
-import { ChainStrainMap, IsolatedDependencyChain, SimpleChainMap } from "./";
 import TaskUnit from "@TaskUnit";
+import type IIsolatedDependencyChain from "@typing/Relations/IIsolatedDepedencyChain";
+import { expect } from "chai";
+import ChainStrainMap from "./ChainStrainMap";
+import IsolatedDependencyChain from "./IsolatedDependencyChain";
+import SimpleChainMap from "./SimpleChainMap";
 
 const now = new Date();
 const firstDate = new Date(now.getTime() - 100000);
@@ -120,9 +123,9 @@ describe("ChainStrainMap", function (): void {
      *                ┗━━━┛G
      * ```
      */
-    let chainB: IsolatedDependencyChain;
-    let chainC: IsolatedDependencyChain;
-    let chainF: IsolatedDependencyChain;
+    let chainB: IIsolatedDependencyChain;
+    let chainC: IIsolatedDependencyChain;
+    let chainF: IIsolatedDependencyChain;
     let chainMap: SimpleChainMap;
     let strainMap: ChainStrainMap;
     before(function (): void {

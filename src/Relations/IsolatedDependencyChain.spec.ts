@@ -1,7 +1,7 @@
 import { DependencyOrderError } from "@errors";
 import TaskUnit from "@TaskUnit";
 import { expect } from "chai";
-import { IsolatedDependencyChain } from "./";
+import IsolatedDependencyChain from "./IsolatedDependencyChain";
 
 const now = new Date();
 const firstDate = new Date(now.getTime() + 100000);

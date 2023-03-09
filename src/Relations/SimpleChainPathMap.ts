@@ -1,11 +1,15 @@
 import { NoSuchChainPathError } from "@errors";
+import type ITaskUnit from "@typing/ITaskUnit";
 import type {
   InterconnectionStrengthMapping,
-  ITaskUnit,
   RelationshipMapping,
+  ResourceID,
   ResourceMap,
-} from "@types";
-import type { ChainPath, IsolatedDependencyChain, SimpleChainMap } from "./";
+} from "@typing/Mapping";
+import type IChainPath from "@typing/Relations/IChainPath";
+import type IIsolatedDependencyChain from "@typing/Relations/IIsolatedDepedencyChain";
+import type ISimpleChainMap from "@typing/Relations/ISimpleChainMap";
+import type ISimpleChainPathMap from "@typing/Relations/ISimpleChainPathMap";
 
 /**
  * A collection of interconnected {@link ITaskUnit}s, along with helpful functions to make reasoning about them easier.
@@ -18,17 +22,17 @@ import type { ChainPath, IsolatedDependencyChain, SimpleChainMap } from "./";
  * most helpful as well as what would reduce the amount of edge intersections. How these are broken up will be based
  * around getting the most interconnected chains figured out first.
  */
-export default class SimpleChainPathMap {
-  paths: ChainPath[];
+export default class SimpleChainPathMap implements ISimpleChainPathMap {
+  paths: IChainPath[];
   connectionStrengthMapping: InterconnectionStrengthMapping = {};
   constructor(
-    private _pathMap: ResourceMap<ChainPath>,
-    public chainMap: SimpleChainMap
+    private _pathMap: ResourceMap<IChainPath>,
+    public chainMap: ISimpleChainMap
   ) {
     this.paths = [...Object.values(this._pathMap)];
     this._buildPathInterconnections();
   }
-  getPathById(pathId: ChainPath["id"]): ChainPath {
+  getPathById(pathId: ResourceID): IChainPath {
     const path = this._pathMap[pathId];
     if (!path) {
       throw new NoSuchChainPathError(
@@ -37,7 +41,7 @@ export default class SimpleChainPathMap {
     }
     return path;
   }
-  getConnectionsForPathById(pathId: ChainPath["id"]): RelationshipMapping {
+  getConnectionsForPathById(pathId: ResourceID): RelationshipMapping {
     const connections = this.connectionStrengthMapping[pathId];
     if (!connections) {
       throw new NoSuchChainPathError(
@@ -124,7 +128,7 @@ export default class SimpleChainPathMap {
    * @param path
    * @returns a set of units not in the provided path that have a direct connection to/from the units in the path
    */
-  private _getUnitsConnectedToPath(path: ChainPath): Set<ITaskUnit> {
+  private _getUnitsConnectedToPath(path: IChainPath): Set<ITaskUnit> {
     const unitsInPath = this._getUnitsInPath(path);
     const unitsConnectedToUnitsInPath = new Set<ITaskUnit>();
     for (const unit of unitsInPath) {
@@ -146,10 +150,10 @@ export default class SimpleChainPathMap {
    * @param path
    * @returns A set of task units that are a part of the provided path
    */
-  private _getUnitsInPath(path: ChainPath): Set<ITaskUnit> {
+  private _getUnitsInPath(path: IChainPath): Set<ITaskUnit> {
     return new Set<ITaskUnit>(
       path.chains.reduce<ITaskUnit[]>(
-        (acc: ITaskUnit[], chain: IsolatedDependencyChain): ITaskUnit[] => [
+        (acc: ITaskUnit[], chain: IIsolatedDependencyChain): ITaskUnit[] => [
           ...acc,
           ...chain.units,
         ],

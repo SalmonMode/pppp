@@ -2,10 +2,11 @@ import { css, keyframes } from "@emotion/react";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import { assertIsObject } from "primitive-predicates";
-import { useRef } from "react";
+import { useAppDispatch, useAppSelector } from "@service/app/hooks";
+import { theme } from "@service/app/theme";
+import type { AppState } from "@service/app/types";
+import type { Coordinate } from "@typing/ConnectedPoints";
 import {
-  type Coordinate,
   EventType,
   IterationRelativePosition,
   ReviewType,
@@ -13,10 +14,9 @@ import {
   type SerializableTaskPrerequisitesReference,
   type SerializableTaskReviewEvent,
   type TaskUnitDetails,
-} from "@types";
-import { useAppDispatch, useAppSelector } from "@service/app/hooks";
-import { theme } from "@service/app/theme";
-import type { AppState } from "@service/app/types";
+} from "@typing/TaskUnit";
+import { assertIsObject } from "primitive-predicates";
+import { useRef } from "react";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 import ActiveTaskBox from "./ActiveTaskBox";
 import { ExtensionTrailFixedSize } from "./ExtensionTrail";

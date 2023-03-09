@@ -1,8 +1,8 @@
+import { EventHistoryInvalidError, PrematureTaskStartError } from "@errors";
+import { EventType } from "@typing/TaskUnit";
 import { expect } from "chai";
 import { add, secondsInDay, sub } from "date-fns";
-import { EventHistoryInvalidError, PrematureTaskStartError } from "@errors";
 import { assertIsNumber, assertIsObject } from "primitive-predicates";
-import { EventType } from "@types";
 import TaskUnit from "./TaskUnit";
 
 const now = new Date();

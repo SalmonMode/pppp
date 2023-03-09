@@ -1,11 +1,11 @@
 import { css } from "@emotion/react";
-import { isNull, isUndefined } from "primitive-predicates";
+import { theme } from "@service/app/theme";
 import {
   IterationRelativePosition,
   ReviewType,
   type SerializableTaskPrerequisitesReference,
-} from "@types";
-import { theme } from "@service/app/theme";
+} from "@typing/TaskUnit";
+import { isNull, isUndefined } from "primitive-predicates";
 import CoreTaskWrapper from "./CoreTaskWrapper";
 import { ExtensionTrail } from "./ExtensionTrail";
 import PrerequisitesBox from "./PrerequisitesBox/PrerequisitesBox";

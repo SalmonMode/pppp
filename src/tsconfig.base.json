@@ -50,15 +50,16 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@types": ["./types"],
-      "@types/*": ["./types/*"],
-      "@errors": ["./errors/Error"],
-      "@matrix": ["./matrix/Matrix"],
-      "@TaskUnit": ["./TaskUnit/TaskUnit"],
-      "@Relations": ["./Relations"],
-      "@service/*": ["./service/*"],
-      "@graphing/*": ["./Graphing/*"],
-      "@testing/TestRenderers": ["./service/Utility/TestRenderers"]
+      "@typing": ["types"],
+      "@typing/*": ["types/*"],
+      "@errors": ["errors/Error"],
+      "@matrix": ["matrix/Matrix"],
+      "@TaskUnit": ["TaskUnit/TaskUnit"],
+      "@Relations": ["Relations"],
+      "@Relations/*": ["Relations/*"],
+      "@service/*": ["service/*"],
+      "@graphing/*": ["Graphing/*"],
+      "@testing/TestRenderers": ["service/Utility/TestRenderers"]
     }
   },
   "include": ["."],

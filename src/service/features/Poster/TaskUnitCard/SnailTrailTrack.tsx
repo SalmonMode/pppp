@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import Box from "@mui/material/Box";
 import { theme } from "@service/app/theme";
-import type { TaskUnitDetails } from "@types";
+import type { TaskUnitDetails } from "@typing/TaskUnit";
 import getPixelGapBetweenTimes from "../getPixelGapBetweenTimes";
 import getYOfTrackTop from "../getYOfTrackTop";
 import TaskUnitSnailTrail from "./TaskUnitSnailTrail";
