@@ -1,5 +1,4 @@
 import { css, keyframes } from "@emotion/react";
-import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -33,12 +32,12 @@ export default function TaskUnitCard({
 }: {
   unit: TaskUnitDetails;
   position: Coordinate;
-}): EmotionJSX.Element {
+}): JSX.Element {
   const { attentionCardId } = useAppSelector(
     (state: AppState): TaskUnitCardAttentionState => state.taskUnitCardFocus
   );
   const explicitCardPieces = unit.explicitEventHistory.map(
-    (event: SerializableTaskEvent, index: number): EmotionJSX.Element[] => {
+    (event: SerializableTaskEvent, index: number): JSX.Element[] => {
       const nextEvent =
         unit.explicitEventHistory[index + 1] || unit.projectedEventHistory[0];
       const prevEvent = unit.explicitEventHistory[index - 1];
@@ -55,7 +54,7 @@ export default function TaskUnitCard({
     }
   );
   const projectedCardPieces = unit.projectedEventHistory.map(
-    (event: SerializableTaskEvent, index: number): EmotionJSX.Element[] => {
+    (event: SerializableTaskEvent, index: number): JSX.Element[] => {
       const nextEvent = unit.projectedEventHistory[index + 1];
       const prevEvent =
         unit.projectedEventHistory[index - 1] ||
@@ -74,7 +73,7 @@ export default function TaskUnitCard({
       });
     }
   );
-  const cardPieces: EmotionJSX.Element[][] = [
+  const cardPieces: JSX.Element[][] = [
     ...explicitCardPieces,
     ...projectedCardPieces,
   ];

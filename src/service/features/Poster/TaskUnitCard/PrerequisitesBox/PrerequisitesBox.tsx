@@ -1,5 +1,4 @@
 import { css, type SerializedStyles } from "@emotion/react";
-import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import PendingOutlinedIcon from "@mui/icons-material/PendingOutlined";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
@@ -17,7 +16,7 @@ export default function PrerequisitesBox({
   prerequisiteDetails,
 }: {
   prerequisiteDetails: SerializableTaskPrerequisitesReference | null;
-}): EmotionJSX.Element {
+}): JSX.Element {
   const [open, setOpen] = React.useState(false);
   const handleTooltipClose = (): void => {
     setOpen(false);

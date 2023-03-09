@@ -1,5 +1,4 @@
 import { css } from "@emotion/react";
-import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Box from "@mui/material/Box";
 import { theme } from "@service/app/theme";
 import type { TaskUnitDetails } from "@types";
@@ -15,7 +14,7 @@ export default function SnailTrailTrack({
   units: TaskUnitDetails[];
   trackIndex: number;
   pathStartDate: Date;
-}): EmotionJSX.Element {
+}): JSX.Element {
   return (
     <Box
       css={styles}
@@ -25,7 +24,7 @@ export default function SnailTrailTrack({
       }}
       data-testid={`snailTrailTrack-${trackIndex}`}
     >
-      {units.map((unit: TaskUnitDetails, index: number): EmotionJSX.Element => {
+      {units.map((unit: TaskUnitDetails, index: number): JSX.Element => {
         const adjustedX = getPixelGapBetweenTimes(
           unit.anticipatedStartTime,
           pathStartDate.getTime()

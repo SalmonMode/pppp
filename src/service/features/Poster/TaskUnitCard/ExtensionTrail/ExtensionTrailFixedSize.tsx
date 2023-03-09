@@ -1,11 +1,10 @@
-import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import { fixedExtensionTrailStyles } from "./styles";
 
 export default function ExtensionTrailFixedSize({
   width,
 }: {
   width: number;
-}): EmotionJSX.Element {
+}): JSX.Element {
   return (
     <div
       css={fixedExtensionTrailStyles}

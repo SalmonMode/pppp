@@ -1,5 +1,4 @@
 import { css } from "@emotion/react";
-import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Typography from "@mui/material/Typography";
 
 /**
@@ -21,7 +20,7 @@ export default function CoreTaskWrapper({
    */
   expectedDurationWidth: number;
   label?: string;
-}): EmotionJSX.Element {
+}): JSX.Element {
   return (
     <div
       css={durationStyles}

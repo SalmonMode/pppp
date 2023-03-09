@@ -1,5 +1,4 @@
 import { css } from "@emotion/react";
-import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import ConnectedPoints from "@graphing/ConnectedPoints";
 import type { Coordinate } from "@types";
 import { theme } from "@service/app/theme";
@@ -16,7 +15,7 @@ export default function ConnectingLine({
   depConnectionPoint: Coordinate;
   "data-testid"?: string;
   variant?: ConnectingLineType;
-}): EmotionJSX.Element {
+}): JSX.Element {
   const connection = new ConnectedPoints(
     depConnectionPoint,
     unitConnectionPoint

@@ -1,5 +1,4 @@
 import { css } from "@emotion/react";
-import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import { assertIsObject } from "primitive-predicates";
 import type { Coordinate, TaskUnitDetails } from "@types";
 import { theme } from "@service/app/theme";
@@ -18,15 +17,15 @@ export default function PosterSvg({
   width: number;
   height: number;
   earliestStartTime: number;
-}): EmotionJSX.Element {
+}): JSX.Element {
   return (
     <svg data-testid="posterSvg" css={svgStyles} style={{ width, height }}>
       {/* First get the stale connections so they render behind all others */}
       {Object.values(taskUnits.units).map(
-        (unit: TaskUnitDetails): EmotionJSX.Element[] => {
+        (unit: TaskUnitDetails): JSX.Element[] => {
           {
             return [...unit.staleDirectDependencies].map(
-              (depUnitId: string): EmotionJSX.Element => {
+              (depUnitId: string): JSX.Element => {
                 const depUnitData = taskUnits.units[depUnitId];
                 assertIsObject(depUnitData);
                 const depUnitConnPoint: Coordinate = {
@@ -61,10 +60,10 @@ export default function PosterSvg({
       )}
       {/* Then get the current connections so they render in front of the stale ones */}
       {Object.values(taskUnits.units).map(
-        (unit: TaskUnitDetails): EmotionJSX.Element[] => {
+        (unit: TaskUnitDetails): JSX.Element[] => {
           {
             return [...unit.directDependencies].map(
-              (depUnitId: string): EmotionJSX.Element => {
+              (depUnitId: string): JSX.Element => {
                 const depUnitData = taskUnits.units[depUnitId];
                 assertIsObject(depUnitData);
                 const depUnitConnPoint: Coordinate = {

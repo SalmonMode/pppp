@@ -1,5 +1,4 @@
 import { css } from "@emotion/react";
-import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Typography from "@mui/material/Typography";
 import { add, eachDayOfInterval, sub } from "date-fns";
 import { assertIsObject } from "primitive-predicates";
@@ -14,7 +13,7 @@ import PosterSvg from "./PosterSvg";
 import SnailTrailContainer from "./SnailTrailContainer";
 import type { TaskUnitsState } from "./taskUnitsSlice";
 
-export default function Poster(): EmotionJSX.Element {
+export default function Poster(): JSX.Element {
   const taskUnits = useAppSelector(
     (state: AppState): TaskUnitsState => state.taskUnits
   );

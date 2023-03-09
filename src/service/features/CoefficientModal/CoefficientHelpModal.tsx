@@ -1,4 +1,3 @@
-import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import CloseIcon from "@mui/icons-material/Close";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -11,7 +10,7 @@ import { useAppDispatch, useAppSelector } from "@service/app/hooks";
 import type { AppState } from "@service/app/types";
 import { closeCoefficientHelpModal } from "./coefficientHelpModalOpenSlice";
 
-export default function CoefficientHelpModal(): EmotionJSX.Element {
+export default function CoefficientHelpModal(): JSX.Element {
   const isOpen = useAppSelector(
     (state: AppState): boolean => state.coefficientHelpModal.open
   );

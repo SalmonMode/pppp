@@ -1,5 +1,4 @@
 import { css } from "@emotion/react";
-import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import { isUndefined } from "primitive-predicates";
 import {
   IterationRelativePosition,
@@ -47,8 +46,8 @@ export default function ActiveTaskBox({
   prereqs?: SerializableTaskPrerequisitesReference | null;
   relativeIterationPosition: IterationRelativePosition;
   label?: string;
-}): EmotionJSX.Element {
-  let prereqsBox: EmotionJSX.Element | undefined;
+}): JSX.Element {
+  let prereqsBox: JSX.Element | undefined;
   let prereqsAdjustmentWidth = 0;
   let prereqsClassName = "prereqsBoxNotIncluded";
   if (!isUndefined(prereqs)) {

@@ -1,5 +1,4 @@
 import { css } from "@emotion/react";
-import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
@@ -15,7 +14,7 @@ export default function PrerequisitesBoxTooltipTitle({
   prerequisiteDetails,
 }: {
   prerequisiteDetails: SerializableTaskPrerequisitesReference | null;
-}): EmotionJSX.Element {
+}): JSX.Element {
   const units = useAppSelector((state: AppState): TaskUnitMap => {
     if (!state.taskUnits.loading) {
       return state.taskUnits.units;
@@ -27,12 +26,12 @@ export default function PrerequisitesBoxTooltipTitle({
   const dispatch = useAppDispatch();
 
   let tooltipText: string;
-  let tooltipTitleDeps: EmotionJSX.Element | undefined;
+  let tooltipTitleDeps: JSX.Element | undefined;
   if (isNull(prerequisiteDetails)) {
     tooltipText =
       "The prerequisites for this iteration have not been drafted yet";
   } else {
-    const depsTexts: EmotionJSX.Element[] = prerequisiteDetails.parentUnits.map(
+    const depsTexts: JSX.Element[] = prerequisiteDetails.parentUnits.map(
       (depId: string, index: number) => {
         const unitDetails = units[depId];
         assertIsObject(unitDetails);
@@ -56,7 +55,7 @@ export default function PrerequisitesBoxTooltipTitle({
         );
       }
     );
-    let depsTextContent: EmotionJSX.Element;
+    let depsTextContent: JSX.Element;
     if (depsTexts.length === 0) {
       depsTextContent = (
         <Typography color="inherit" key={0}>

@@ -1,5 +1,4 @@
 import { css } from "@emotion/react";
-import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import type { Action } from "@reduxjs/toolkit";
@@ -16,7 +15,7 @@ export default function MetricsSummary({
   metrics,
 }: {
   metrics: TaskMetrics;
-}): EmotionJSX.Element {
+}): JSX.Element {
   // If all the anticipated durations are the same, or all the apparent durations are the same, there will be no
   // covariance, and then the formula to determine the coefficient breaksdown because it ends up dividing by 0. When
   // this happens, the coefficient is NaN, and this can make things wonky, so to avoid this, we assume the coefficient

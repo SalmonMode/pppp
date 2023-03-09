@@ -1,5 +1,4 @@
 import { css } from "@emotion/react";
-import type { EmotionJSX } from "@emotion/react/types/jsx-namespace";
 import Typography from "@mui/material/Typography";
 import { theme } from "@service/app/theme";
 import colorScale from "./colorScale";
@@ -8,7 +7,7 @@ export default function EstimateCoefficientChart({
   coefficient,
 }: {
   coefficient: number;
-}): EmotionJSX.Element {
+}): JSX.Element {
   const adjustedCoefficient = (coefficient + 1) / 2;
 
   return (
