@@ -1,8 +1,9 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "../../src",
+    "types": ["mocha"],
     "composite": true
   },
+  "include": ["."],
   "references": [{ "path": "../types" }]
 }
