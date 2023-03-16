@@ -1,6 +1,6 @@
 {
   "name": "pppp",
-  "version": "0.30.1",
+  "version": "0.30.2",
   "description": "Gerald Weinberg's PPPP brought to life.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,14 +21,13 @@
     "analyze": "TS_NODE_PROJECT='./tsconfig.test.json' npx analyze-trace --expandTypes true tracing_output_folder",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
-    "test": "TS_NODE_PROJECT='./tsconfig.test.json' nyc mocha --recursive ./src/",
-    "test:unit": "TS_NODE_PROJECT='./tsconfig.test.json' nyc mocha --recursive ./src/ -g 'Integration' -i",
-    "test:integration": "TS_NODE_PROJECT='./tsconfig.test.json' nyc mocha --recursive ./src/ -g 'Integration'",
-    "test:integration:react": "TS_NODE_PROJECT='./tsconfig.test.json' nyc mocha --recursive ./src/ -g 'React Integration'",
-    "test:ci": "TS_NODE_PROJECT='./tsconfig.test.json' nyc mocha --recursive ./src/ --reporter mocha-junit-reporter"
+    "test": "TS_NODE_PROJECT='./tsconfig.test.json' c8 mocha --recursive ./src/",
+    "test:unit": "TS_NODE_PROJECT='./tsconfig.test.json' c8 mocha --recursive ./src/ -g 'Integration' -i",
+    "test:integration": "TS_NODE_PROJECT='./tsconfig.test.json' c8 mocha --recursive ./src/ -g 'Integration'",
+    "test:integration:react": "TS_NODE_PROJECT='./tsconfig.test.json' c8 mocha --recursive ./src/ -g 'React Integration'",
+    "test:ci": "TS_NODE_PROJECT='./tsconfig.test.json' c8 mocha --recursive ./src/ --reporter mocha-junit-reporter"
   },
-  "nyc": {
-    "extends": "nyc-config-tsx",
+  "c8": {
     "extension": [
       ".ts",
       ".js",
@@ -61,8 +60,7 @@
       "importMeta",
       "objectRestSpread",
       "optionalCatchBinding"
-    ],
-    "all": true
+    ]
   },
   "repository": {
     "type": "git",
@@ -71,7 +69,6 @@
   "author": "Chris NeJame",
   "license": "MIT",
   "devDependencies": {
-    "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@testing-library/dom": "^8.19.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
@@ -92,6 +89,7 @@
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "@typescript-eslint/parser": "^5.50.0",
     "@typescript/analyze-trace": "^0.10.0",
+    "c8": "^7.13.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "eslint": "^8.33.0",
@@ -101,8 +99,6 @@
     "mocha-junit-reporter": "^2.2.0",
     "nock": "^13.2.9",
     "node-mocks-http": "^1.12.1",
-    "nyc": "^15.1.0",
-    "nyc-config-tsx": "^0.1.0",
     "sinon": "^14.0.2",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.9.1",
